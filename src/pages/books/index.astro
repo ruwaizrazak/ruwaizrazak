@@ -11,12 +11,13 @@ import H2 from '../../components/mdxComponents/H2.astro';
 
 const allBooks = await getCollection('books');
 
+// Separate reading and completed books
 const readingBooks = allBooks
-  .filter(book => ['reading', 'completed'].includes(book.data.readStatus))
+  .filter(book => ['reading', 'completed'].includes(book.data.readStatus || 'to-read'))
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
 const toReadBooks = allBooks
-  .filter(book => book.data.readStatus === 'to-read')
+  .filter(book => (book.data.readStatus || 'to-read') === 'to-read')
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 ---
 
@@ -35,12 +36,12 @@ const toReadBooks = allBooks
 						<li>
 							<BookCard
 								title={book.data.title}
-								description={book.data.description}
+								description={book.data.description || 'No description available'}
 								date={book.data.pubDate}
 								url={`/books/${book.id}/`}
-								heroImage={book.data.heroImage}
-								author={book.data.author}
-								readStatus={book.data.readStatus}
+								heroImage={book.data.heroImage || '/placeholder-book.jpg'}
+								author={book.data.author || 'Unknown Author'}
+								readStatus={book.data.readStatus || 'to-read'}
 							/>
 						</li>
 					))}
@@ -54,12 +55,12 @@ const toReadBooks = allBooks
 						<li>
 							<BookCard
 								title={book.data.title}
-								description={book.data.description}
+								description={book.data.description || 'No description available'}
 								date={book.data.pubDate}
 								url={`/books/${book.id}/`}
-								heroImage={book.data.heroImage}
-								author={book.data.author}
-								readStatus={book.data.readStatus}
+								heroImage={book.data.heroImage || '/placeholder-book.jpg'}
+								author={book.data.author || 'Unknown Author'}
+								readStatus={book.data.readStatus || 'to-read'}
 							/>
 						</li>
 					))}
