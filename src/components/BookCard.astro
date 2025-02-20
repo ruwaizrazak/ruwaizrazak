@@ -22,12 +22,12 @@ const statusColors = {
 ---
 
 <div class="book-card group">
-  <a href={url} class="block rounded-lg overflow-hidden border border-gray-100 hover:shadow-lg transition-all">
+  <a href={url} class={`block rounded-lg overflow-hidden border border-gray-100 hover:shadow-lg transition-all ${readStatus === 'completed' ? 'bg-green-50/50' : ''}`}>
     <div class="relative aspect-[3/5]">
-      <Image 
-        src={heroImage} 
-        alt={title} 
-        class="w-full h-full object-cover"
+      <Image
+        src={heroImage}
+        alt={title}
+        class={`w-full h-full object-cover ${readStatus === 'completed' ? 'opacity-90' : ''}`}
       />
       <div class="absolute top-2 right-2">
         <span class={`px-2 py-1 rounded-full text-xs font-medium ${statusColors[readStatus]}`}>
