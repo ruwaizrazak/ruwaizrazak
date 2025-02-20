@@ -26,6 +26,27 @@ const caseStudies = allPosts
     }) && tags.some(tag => tag.toLowerCase() === 'featured');
   })
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+// Get 10 featured posts from each collection
+const notes = (await getCollection('notes'))
+  .filter(post => post.data.tags?.includes('featured'))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 10);
+
+const essays = (await getCollection('essays'))
+  .filter(post => post.data.tags?.includes('featured'))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 10);
+
+const casestudies = (await getCollection('casestudies'))
+  .filter(post => post.data.tags?.includes('featured'))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 10);
+
+const books = (await getCollection('books'))
+  .filter(post => post.data.tags?.includes('featured'))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 10);
 ---
 
 <!doctype html>
@@ -63,6 +84,86 @@ const caseStudies = allPosts
                 ))
             }
         </ul>
+      </section>
+
+      <section class="mt-20">
+        <H2>Featured Notes</H2>
+        <ul class="grid grid-cols-1 md:grid-cols-3 sm:grid-cols-2 gap-4">
+            {notes.map((post) => (
+                <li class="card hover:shadow-lg transition-shadow">
+                    <a href={`/notes/${post.id}/`} class="block">
+                        <Image src={post.data.heroImage} alt={post.data.title} class="w-full" />
+                        <div class="p-4">
+                            <h4 class="title text-xl font-bold">{post.data.title}</h4>
+                            <p class="date text-gray-600">
+                                <FormattedDate date={post.data.pubDate} />
+                            </p>
+                        </div>
+                    </a>
+                </li>
+            ))}
+        </ul>
+      </section>
+
+      <section class="mt-20 flex gap-8">
+        <div class="w-2/3">
+          <H2>Featured Essays</H2>
+          <ul class="grid grid-cols-3 gap-4">
+              {essays.map((post) => (
+                  <li class="card hover:shadow-lg transition-shadow">
+                      <a href={`/essays/${post.id}/`} class="block">
+                          <Image src={post.data.heroImage} alt={post.data.title} class="w-full" />
+                          <div class="p-4">
+                              <h4 class="title text-xl font-bold">{post.data.title}</h4>
+                              <p class="date text-gray-600">
+                                  <FormattedDate date={post.data.pubDate} />
+                              </p>
+                          </div>
+                      </a>
+                  </li>
+              ))}
+          </ul>
+        </div>
+
+        <div class="w-1/3">
+          <H2>Featured Notes</H2>
+          <ul class="flex flex-col gap-4">
+              {notes.map((post) => (
+                  <li class="card hover:shadow-lg transition-shadow">
+                      <a href={`/notes/${post.id}/`} class="block">
+                          <Image src={post.data.heroImage} alt={post.data.title} class="w-full" />
+                          <div class="p-4">
+                              <h4 class="title text-xl font-bold">{post.data.title}</h4>
+                              <p class="date text-gray-600">
+                                  <FormattedDate date={post.data.pubDate} />
+                              </p>
+                          </div>
+                      </a>
+                  </li>
+              ))}
+          </ul>
+        </div>
+      </section>
+
+      <section class="mt-20">
+        <H2>Featured Books</H2>
+        <ul class="grid grid-cols-1 md:grid-cols-3 sm:grid-cols-2 gap-4">
+            {books.map((post) => (
+                <li class="card hover:shadow-lg transition-shadow">
+                    <a href={`/books/${post.id}/`} class="block">
+                        <Image src={post.data.heroImage} alt={post.data.title} class="w-full" />
+                        <div class="p-4">
+                            <h4 class="title text-xl font-bold">{post.data.title}</h4>
+                            {post.data.author && <p class="text-gray-500">By {post.data.author}</p>}
+                            <p class="date text-gray-600">
+                                <FormattedDate date={post.data.pubDate} />
+                            </p>
+                        </div>
+                    </a>
+                </li>
+            ))}
+        </ul>
+      </section>
       </section>
 
       <section class="flex">
