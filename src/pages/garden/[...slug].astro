@@ -1,0 +1,32 @@
+---
+import { type CollectionEntry, getCollection } from 'astro:content';
+import { render } from 'astro:content';
+import notesPost from '../../layouts/notesPost.astro';
+
+export async function getStaticPaths() {
+  const notes = await getCollection('notes');
+  const essays = await getCollection('essays');
+  const casestudies = await getCollection('casestudies');
+  const books = await getCollection('books');
+
+  const allCollections = [
+    ...notes.map(post => ({ collection: 'notes', ...post })),
+    ...essays.map(post => ({ collection: 'essays', ...post })),
+    ...casestudies.map(post => ({ collection: 'casestudies', ...post })),
+    ...books.map(post => ({ collection: 'books', ...post }))
+  ];
+
+  return allCollections.map((post) => ({
+    params: { slug: `${post.collection}/${post.id}` },
+    props: post,
+  }));
+}
+type Props = CollectionEntry<'notes' | 'essays' | 'casestudies' | 'books'>;
+
+const post = Astro.props;
+const { Content } = await render(post);
+---
+
+<notesPost {...post.data}>
+  <Content />
+</notesPost>
