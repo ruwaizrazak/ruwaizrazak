@@ -17,7 +17,6 @@ const essays = defineCollection({
   }),
   schema: baseSchema,
 });
-
 const notes = defineCollection({
   loader: glob({
     base: './src/content/notes',
@@ -27,18 +26,12 @@ const notes = defineCollection({
 });
 
 const casestudies = defineCollection({
-  loader: glob({
-    base: './src/content/casestudies',
-    pattern: '**/*.{md,mdx}',
-  }),
+  type: 'content',
   schema: baseSchema,
 });
 
 const books = defineCollection({
-  loader: glob({
-    base: './src/content/books',
-    pattern: '**/*.{md,mdx}',
-  }),
+  type: 'content',
   schema: baseSchema.extend({
     author: z.string(),
     rating: z.number().min(1).max(5).optional(),

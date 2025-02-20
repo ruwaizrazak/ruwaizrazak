@@ -1,0 +1,29 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+
+type Props = HTMLAttributes<'img'>;
+
+const {
+  src,
+  alt,
+  width = 300,
+  height = 150,
+  class: className = "w-full",
+  ...props
+} = Astro.props;
+---
+<img
+  src={src}
+  alt={alt}
+  width={width}
+  height={height}
+  class:list={["object-cover", className]}
+  {...props}
+/>
+
+<style>
+  img {
+    height: auto;
+    border-radius: 8px;
+  }
+</style>
