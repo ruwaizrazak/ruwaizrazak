@@ -1,0 +1,56 @@
+---
+import FormattedDate from './FormattedDate.astro';
+import Image from './mdxComponents/Image.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  date: Date;
+  url: string;
+  heroImage: string;
+  author: string;
+  readStatus?: 'reading' | 'completed' | 'to-read';
+}
+
+const { title, description, date, url, heroImage, author, readStatus = 'to-read' } = Astro.props;
+
+const statusColors = {
+  'reading': 'bg-yellow-100 text-yellow-800',
+  'completed': 'bg-green-100 text-green-800',
+  'to-read': 'bg-gray-100 text-gray-800'
+};
+---
+
+<div class="book-card group">
+  <a href={url} class="block rounded-lg overflow-hidden border border-gray-100 hover:shadow-lg transition-all">
+    <div class="relative aspect-[3/5]">
+      <Image 
+        src={heroImage} 
+        alt={title} 
+        class="w-full h-full object-cover"
+      />
+      <div class="absolute top-2 right-2">
+        <span class={`px-2 py-1 rounded-full text-xs font-medium ${statusColors[readStatus]}`}>
+          {readStatus}
+        </span>
+      </div>
+    </div>
+    <div class="p-4">
+      <h3 class="text-xl font-bold mb-1 group-hover:text-blue-600 transition-colors">{title}</h3>
+      <p class="text-sm text-gray-600 mb-2">by {author}</p>
+      <p class="text-gray-600 mb-3 line-clamp-2 text-sm">{description}</p>
+      <div class="text-xs text-gray-500">
+        <FormattedDate date={date} />
+      </div>
+    </div>
+  </a>
+</div>
+
+<style>
+  .book-card {
+    transition: transform 0.2s ease;
+  }
+  .book-card:hover {
+    transform: translateY(-4px);
+  }
+</style>
