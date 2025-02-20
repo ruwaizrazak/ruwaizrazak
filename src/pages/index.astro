@@ -3,6 +3,7 @@ import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
+import Link from '../components/mdxComponents/Link.astro';
 ---
 
 <!doctype html>
@@ -36,7 +37,7 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 			<p>
 				Have fun! If you get stuck, remember to <a href="https://docs.astro.build/"
 					>read the docs
-				</a> or <a href="https://astro.build/chat">join us on Discord</a> to ask questions.
+				</a> or <Link href="https://astro.build/chat">join us on Discord</Link> to ask questions.
 			</p>
 			<p>
 				Looking for a blog template with a bit more personality? Check out <a
