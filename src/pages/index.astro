@@ -3,10 +3,27 @@ import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
-import Link from '../components/mdxComponents/Link.astro';
 import H1 from '../components/mdxComponents/H1.astro';
 import P from '../components/mdxComponents/P.astro';
-import Main from '../components/Main.astro';
+import H2 from '../components/mdxComponents/H2.astro';
+import Link  from '../components/mdxComponents/Link.astro';
+import FormattedDate from '../components/FormattedDate.astro';
+import { getCollection } from 'astro:content';
+
+// Get all blog posts and filter for case studies
+const allPosts = await getCollection('blog');
+// Add console.log to debug
+console.log('All posts:', allPosts.map(post => ({ title: post.data.title, tags: post.data.tags })));
+
+const caseStudies = allPosts
+  .filter(post => {
+    const tags = post.data.tags || [];
+    return tags.some(tag => {
+      const lowercaseTag = tag.toLowerCase();
+      return (lowercaseTag === 'case-studies' || lowercaseTag === 'case-study');
+    }) && tags.some(tag => tag.toLowerCase() === 'featured');
+  })
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 ---
 
 <!doctype html>
@@ -16,39 +33,44 @@ import Main from '../components/Main.astro';
 	</head>
 	<body>
 		<Header />
-		<Main>
-			<H1>🧑‍🚀 Hello, Astronaut!</H1>
-			<P>
-				Welcome to the official <a href="https://astro.build/">Astro</a> blog starter template. This
-				template serves as a lightweight, minimally-styled starting point for anyone looking to build
-				a personal website, blog, or portfolio with Astro.
-			</P>
-			<P>
-				This template comes with a few integrations already configured in your
-				<code>astro.config.mjs</code> file. You can customize your setup with
-				<a href="https://astro.build/integrations">Astro Integrations</a> to add tools like Tailwind,
-				React, or Vue to your project.
-			</P>
-			<P>Here are a few ideas on how to get started with the template:</P>
-			<ul>
-				<li>Edit this page in <code>src/pages/index.astro</code></li>
-				<li>Edit the site header items in <code>src/components/Header.astro</code></li>
-				<li>Add your name to the footer in <code>src/components/Footer.astro</code></li>
-				<li>Check out the included blog posts in <code>src/content/blog/</code></li>
-				<li>Customize the blog post page layout in <code>src/layouts/BlogPost.astro</code></li>
-			</ul>
-			<P>
-				Have fun! If you get stuck, remember to <Link href="https://docs.astro.build/"
-					>read the docs
-				</Link> or <Link href="https://astro.build/chat">join us on Discord</Link> to ask questions.
-			</P>
-			<P>
-				Looking for a blog template with a bit more personality? Check out <Link
-					href="https://github.com/Charca/astro-blog-template"
-					>astro-blog-template
-				</Link> by <Link href="https://twitter.com/Charca">Maxi Ferreira</Link>.
-			</P>
-		</Main>
+		<main class="lg:ml-50 lg:mr-50 md:ml-20 md:mr-20 sm:mr-10 sm:ml-10">
+      <article class="prose lg:max-w-2xl">
+        <H1><b>Ruwaiz</b> is a <mark>user experience designer</mark>, who loves to build things</H1>
+        <P>Designer, Reader who loves to build on weekends.</P>
+      </article>
+      <br>
+
+      <div class="prose lg:max-w max-w-none">
+        <H2> Career</H2>
+        <P> I work currently as a Senior UX Designer at<Link href="https://www.nordeus.com">Nordeus.</Link>My expertise is in building experience for video games through research heavy and optimized design pipeline. Take a look at my<Link href="/about">About</Link>if you are interested in my experiences.</P>
+      </div>
+      <section class="mt-20">
+        <H2>Case Studies</H2>
+        <ul class="grid grid-cols-1 md:grid-cols-3 sm:grid-cols-2 gap-4">
+            {
+                caseStudies.map((post) => (
+                    <li class="card hover:shadow-lg transition-shadow">
+                        <a href={`/blog/${post.id}/`} class="block">
+                            <img
+                                width={300}
+                                height={150}
+                                src={post.data.heroImage}
+                                alt={post.data.title}
+                                class="w-full h-48 object-cover"
+                            />
+                            <div class="p-4">
+                                <h4 class="title text-xl font-bold">{post.data.title}</h4>
+                                <p class="date text-gray-600">
+                                    <FormattedDate date={post.data.pubDate} />
+                                </p>
+                            </div>
+                        </a>
+                    </li>
+                ))
+            }
+        </ul>
+      </section>
+		</main>
 		<Footer />
 	</body>
 </html>
