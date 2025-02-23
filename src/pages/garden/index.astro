@@ -4,169 +4,104 @@ import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
 import { getCollection } from 'astro:content';
-import FormattedDate from '../../components/FormattedDate.astro';
+import Main from '../../components/Main.astro';
+import NoteCard from '../../components/NoteCard.astro';
+import BookCard from '../../components/BookCard.astro';
 
-const notes = (await getCollection('notes')).sort(
-	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
-);
-const essays = (await getCollection('essays')).sort(
-	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
-);
-const casestudies = (await getCollection('casestudies')).sort(
-	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
-);
-const books = (await getCollection('books')).sort(
-	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
-);
+// Fetch all collections
+const [notes, essays, casestudies, books] = await Promise.all([
+  getCollection('notes'),
+  getCollection('essays'),
+  getCollection('casestudies'),
+  getCollection('books')
+]);
+
+// Combine and sort all posts
+const allPosts = [
+  ...notes.map(post => ({ ...post, collection: 'notes' })),
+  ...essays.map(post => ({ ...post, collection: 'essays' })),
+  ...casestudies.map(post => ({ ...post, collection: 'casestudies' })),
+  ...books.map(post => ({ ...post, collection: 'books' }))
+].sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const collections = ['all', 'notes', 'essays', 'casestudies', 'books'];
 ---
 
 <!doctype html>
 <html lang="en">
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-		<style>
-			main {
-				width: 960px;
-			}
-			ul {
-				display: flex;
-				flex-wrap: wrap;
-				gap: 2rem;
-				list-style-type: none;
-				margin: 0;
-				padding: 0;
-			}
-			ul li {
-				width: calc(50% - 1rem);
-			}
-			ul li * {
-				text-decoration: none;
-				transition: 0.2s ease;
-			}
-			ul li:first-child {
-				width: 100%;
-				margin-bottom: 1rem;
-				text-align: center;
-			}
-			ul li:first-child img {
-				width: 100%;
-			}
-			ul li:first-child .title {
-				font-size: 2.369rem;
-			}
-			ul li img {
-				margin-bottom: 0.5rem;
-				border-radius: 12px;
-			}
-			ul li a {
-				display: block;
-			}
-			.title {
-				margin: 0;
-				color: rgb(var(--black));
-				line-height: 1;
-			}
-			.date {
-				margin: 0;
-				color: rgb(var(--gray));
-			}
-			ul li a:hover h4,
-			ul li a:hover .date {
-				color: rgb(var(--accent));
-			}
-			ul a:hover img {
-				box-shadow: var(--box-shadow);
-			}
-			@media (max-width: 720px) {
-				ul {
-					gap: 0.5em;
-				}
-				ul li {
-					width: 100%;
-					text-align: center;
-				}
-				ul li:first-child {
-					margin-bottom: 0;
-				}
-				ul li:first-child .title {
-					font-size: 1.563em;
-				}
-			}
-		</style>
 	</head>
 	<body>
 		<Header />
-		<main>
-			<section>
-				<h2>Notes</h2>
-				<ul>
-					{notes.map((post) => (
-						<li>
-							<a href={`/notes/${post.id}/`}>
-								<img width={720} height={360} src={post.data.heroImage} alt="" />
-								<h4 class="title">{post.data.title}</h4>
-								<p class="date">
-									<FormattedDate date={post.data.pubDate} />
-								</p>
-							</a>
-						</li>
-					))}
-				</ul>
-			</section>
+		<Main>
+			<div class="flex justify-center gap-4 mb-8">
+				{collections.map(collection => (
+					<button
+						class="filter-btn px-4 py-2 rounded-full border border-gray-200 hover:bg-gray-100"
+						data-collection={collection}
+					>
+						{collection.charAt(0).toUpperCase() + collection.slice(1)}
+					</button>
+				))}
+			</div>
 
-			<section>
-				<h2>Essays</h2>
-				<ul>
-					{essays.map((post) => (
-						<li>
-							<a href={`/essays/${post.id}/`}>
-								<img width={720} height={360} src={post.data.heroImage} alt="" />
-								<h4 class="title">{post.data.title}</h4>
-								<p class="date">
-									<FormattedDate date={post.data.pubDate} />
-								</p>
-							</a>
-						</li>
-					))}
-				</ul>
-			</section>
-
-			<section>
-				<h2>Case Studies</h2>
-				<ul>
-					{casestudies.map((post) => (
-						<li>
-							<a href={`/casestudies/${post.id}/`}>
-								<img width={720} height={360} src={post.data.heroImage} alt="" />
-								<h4 class="title">{post.data.title}</h4>
-								<p class="date">
-									<FormattedDate date={post.data.pubDate} />
-								</p>
-							</a>
-						</li>
-					))}
-				</ul>
-			</section>
-
-			<section>
-				<h2>Books</h2>
-				<ul>
-					{books.map((post) => (
-						<li>
-							<a href={`/books/${post.id}/`}>
-								<img width={720} height={360} src={post.data.heroImage} alt="" />
-								<h4 class="title">{post.data.title}</h4>
-								<p class="date">
-									<FormattedDate date={post.data.pubDate} />
-								</p>
-								{post.data.author && <p class="author">By {post.data.author}</p>}
-								{post.data.rating && <p class="rating">Rating: {post.data.rating}/5</p>}
-							</a>
-						</li>
-					))}
-				</ul>
-			</section>
-		</main>
+			<div class="masonry-grid columns-1 md:columns-2 lg:columns-3 gap-4">
+				{allPosts.map((post) => (
+					<div class="break-inside-avoid mb-4 post-item" data-collection={post.collection}>
+						{post.collection === 'books' ? (
+							<BookCard
+								title={post.data.title}
+								description={post.data.description || 'No description available'}
+								date={post.data.pubDate}
+								url={`/books/${post.id}/`}
+								heroImage={post.data.heroImage || '/placeholder-book.jpg'}
+								author={post.data.author || 'Unknown Author'}
+								readStatus={post.data.readStatus || 'to-read'}
+							/>
+						) : (
+							<NoteCard
+								title={post.data.title}
+								description={post.data.description || 'No description available'}
+								date={post.data.pubDate}
+								url={`/${post.collection}/${post.id}/`}
+							/>
+						)}
+					</div>
+				))}
+			</div>
+		</Main>
 		<Footer />
+
+		<script>
+			const filterButtons = document.querySelectorAll('.filter-btn');
+			const posts = document.querySelectorAll('.post-item');
+
+			filterButtons.forEach(button => {
+				button.addEventListener('click', () => {
+					const collection = button.dataset.collection;
+
+					filterButtons.forEach(btn => btn.classList.remove('bg-gray-100'));
+					button.classList.add('bg-gray-100');
+
+					posts.forEach(post => {
+						if (collection === 'all' || post.dataset.collection === collection) {
+							post.style.display = 'block';
+						} else {
+							post.style.display = 'none';
+						}
+					});
+				});
+			});
+		</script>
 	</body>
 </html>
+
+<style>
+	.masonry-grid {
+		column-gap: 1rem;
+	}
+	.break-inside-avoid {
+		break-inside: avoid;
+	}
+</style>
