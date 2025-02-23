@@ -1,6 +1,8 @@
 ---
 import FormattedDate from './FormattedDate.astro';
 import Image from './mdxComponents/Image.astro';
+import P from './mdxComponents/P.astro';
+import Type from './type.astro';
 
 interface Props {
   title: string;
@@ -21,9 +23,9 @@ const statusColors = {
 };
 ---
 
-<div class="book-card group">
-  <a href={url} class={`block rounded-lg overflow-hidden border border-gray-100 hover:shadow-lg transition-all ${readStatus === 'completed' ? 'bg-green-50/50' : ''}`}>
-    <div class="relative aspect-[3/5]">
+<div class="book-card w-90">
+  <a href={url} class={`block rounded-lg overflow-hidden hover:shadow-lg transition-all ${readStatus === 'completed' ? 'bg-green-50/50' : ''}`}>
+    <div>
       <Image
         src={heroImage}
         alt={title}
@@ -39,8 +41,9 @@ const statusColors = {
       <h3 class="text-xl font-bold mb-1 group-hover:text-blue-600 transition-colors">{title}</h3>
       <p class="text-sm text-gray-600 mb-2">by {author}</p>
       <p class="text-gray-600 mb-3 line-clamp-2 text-sm">{description}</p>
-      <div class="text-xs text-gray-500">
+      <div class="flex flex-row gap-4 flex-wrap text-sm items-start text-gray-500"">
         <FormattedDate date={date} />
+        <Type>Books</Type>
       </div>
     </div>
   </a>
@@ -49,8 +52,12 @@ const statusColors = {
 <style>
   .book-card {
     transition: transform 0.2s ease;
+    filter: sepia(50%);
   }
   .book-card:hover {
     transform: translateY(-4px);
+    filter: sepia(0%);
+
   }
+
 </style>
