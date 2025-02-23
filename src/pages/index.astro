@@ -84,22 +84,6 @@ const books = (await getCollection('books'))
         </ul>
       </section>
 
-      <section class="mt-20">
-        <H2>Featured Notes</H2>
-        <ul class="grid grid-cols-1 md:grid-cols-3 sm:grid-cols-2 gap-4">
-            {notes.map((post) => (
-                <li>
-                    <NoteCard
-                        title={post.data.title}
-                        description={post.data.description}
-                        date={post.data.pubDate}
-                        url={`/notes/${post.id}/`}
-                    />
-                </li>
-            ))}
-        </ul>
-      </section>
-
       <section class="mt-20 flex flex-col md:flex-row gap-8">
             <div class="w-full md:w-2/3">
               <H2>Featured Essays</H2>
