@@ -3,6 +3,8 @@ import FormattedDate from './FormattedDate.astro';
 import Image from './mdxComponents/Image.astro';
 import P from './mdxComponents/P.astro';
 import Type from './type.astro';
+import Link from './mdxComponents/Link.astro';
+import H3 from './mdxComponents/H3.astro';
 
 interface Props {
   title: string;
@@ -39,9 +41,10 @@ const statusColors = {
       </div>
     </div>
     <div class="p-4">
-      <h3 class="text-xl font-bold mb-1 group-hover:text-blue-600 transition-colors">{title}</h3>
-      <p class="text-sm text-gray-600 mb-2">by {author}</p>
-      <p class="text-gray-600 mb-3 line-clamp-2 text-sm">{description}</p>
+        <H3 className='transition-colors'>{title}</H3>
+        <p class="text-sm">by {author}</p>
+
+      <P className='text-gray-600 line-clamp-2 text-base'>{description}</P>
       <div class="flex flex-row gap-4 flex-wrap text-sm items-start text-gray-500"">
         <FormattedDate date={date} />
         <Type>Books</Type>
@@ -59,6 +62,12 @@ const statusColors = {
     transform: translateY(-4px);
     filter: sepia(0%);
 
+  }
+  h1 {
+    font-family: var(--font-serif);
+  }
+  p {
+    font-family: var(--font-sans);
   }
 
 </style>
