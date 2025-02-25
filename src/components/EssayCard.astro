@@ -16,7 +16,7 @@ const { title, description, date, url, heroImage, imageClass = '' } = Astro.prop
 ---
 
 <div class="essay-card">
-  <a href={url} class="block rounded-lg overflow-hidden hover:shadow-lg transition-all">
+  <a href={url} class="block rounded-lg overflow-hidden hover:shadow-lg transition-all bg-stone-100 hover:bg-yellow-50 p-5">
     {heroImage && (
       <div>
         <Image
