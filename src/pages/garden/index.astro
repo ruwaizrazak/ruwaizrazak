@@ -47,10 +47,10 @@ const currentTag = 'all';
 		<Main>
       <div class="prose lg:max-w max-w-none">
         <H1 className="mb-0">Garden.</H1>
-        <P>In a nutshell, a wiki can be comprised of Essays,  Case Studies and imperfect notes along with whatever resources I find interesting and felt might be useful at a later stage.</P>
+        <P className='leading-8'>In a nutshell, a wiki can be comprised of <Link href="/essays">Essays</Link>,<Link href="/books">Books</Link> and imperfect<Link href="/notes">Notes</Link>along with whatever resources I find interesting and felt might be useful at a later stage.</P>
       </div>
       <div>
-        <div class="flex flex-wrap justify-between content-start gap-4 items-center">
+        <div class="flex flex-wrap justify-between content-start gap-4 mb-8 items-center">
           <div class="flex flex-wrap justify-start gap-4 mb-8">
             {allTags.map(tag => (
               <Link
