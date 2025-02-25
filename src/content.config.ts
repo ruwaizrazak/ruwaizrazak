@@ -42,6 +42,9 @@ const books = defineCollection({
   schema: baseSchema.extend({
     author: z.string(),
     rating: z.number().min(1).max(5).optional(),
+    readStatus: z
+      .enum(['reading', 'completed', 'to-read'])
+      .default('to-read'),
   }),
 });
 
