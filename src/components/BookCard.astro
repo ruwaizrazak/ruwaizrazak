@@ -12,9 +12,10 @@ interface Props {
   heroImage: string;
   author: string;
   readStatus?: 'reading' | 'completed' | 'to-read';
+  imageClass?: string;
 }
 
-const { title, description, date, url, heroImage, author, readStatus = 'to-read' } = Astro.props;
+const { title, description, date, url, heroImage, author, readStatus = 'to-read', imageClass = '' } = Astro.props;
 
 const statusColors = {
   'reading': 'bg-yellow-100 text-yellow-800',
@@ -23,13 +24,13 @@ const statusColors = {
 };
 ---
 
-<div class="book-card w-90">
+<div class="book-card">
   <a href={url} class={`block rounded-lg overflow-hidden hover:shadow-lg transition-all ${readStatus === 'completed' ? 'bg-green-50/50' : ''}`}>
     <div>
       <Image
         src={heroImage}
         alt={title}
-        class={`w-full h-full object-cover ${readStatus === 'completed' ? 'opacity-90' : ''}`}
+        class={`w-full h-full object-cover ${readStatus === 'completed' ? 'opacity-90' : ''} ${imageClass}`}
       />
       <div class="absolute top-2 right-2">
         <span class={`px-2 py-1 rounded-full text-xs font-medium ${statusColors[readStatus]}`}>
