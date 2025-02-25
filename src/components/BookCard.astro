@@ -27,15 +27,15 @@ const statusColors = {
 ---
 
 <div class="book-card">
-  <a href={url} class={`block rounded-lg overflow-hidden hover:shadow-lg transition-all ${readStatus === 'completed' ? 'bg-green-50/50' : ''}`}>
-    <div>
+  <a href={url} class={`${readStatus === 'completed' ? 'bg-green-50/50' : ''}`}>
+    <div class="relative">
       <Image
         src={heroImage}
         alt={title}
-        class={`w-full h-full object-cover ${readStatus === 'completed' ? 'opacity-90' : ''} ${imageClass}`}
+        class={`xs:w-full sm:8/9 h-full object-cover rounded-lg transition-opacity ${readStatus === 'completed' ? 'opacity-90' : ''} ${imageClass} book-card-image`}
       />
-      <div class="absolute top-2 right-2">
-        <span class={`px-2 py-1 rounded-full text-xs font-medium ${statusColors[readStatus]}`}>
+      <div class="absolute top-2 left-2">
+        <span class={`px-5 py-1 text-xs font-medium ${statusColors[readStatus]}`}>
           {readStatus}
         </span>
       </div>
@@ -56,12 +56,14 @@ const statusColors = {
 <style>
   .book-card {
     transition: transform 0.2s ease;
-    filter: sepia(50%);
+    filter: opacity(100%);
   }
   .book-card:hover {
     transform: translateY(-4px);
-    filter: sepia(0%);
-
+    filter: opacity(50%);
+  }
+  .book-card:hover .book-card-image {
+    opacity: 0.5;
   }
   h1 {
     font-family: var(--font-serif);
