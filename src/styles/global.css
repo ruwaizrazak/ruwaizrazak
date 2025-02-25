@@ -8,14 +8,21 @@
 @config "./tailwind.config.js";
 
 @theme {
-  --font-sans: "Inter", sans-serif;
-  --font-serif: "Space Grotesk", sans-serif;
+  --font-sans: "Lato",serif;
+  --font-serif: "Libre Caslon Text",serif;
   --font-mono: "JetBrains Mono", serif;
 
   --marker-color: chartreuese;
   --accent: #ffff00;
 }
 
+h1,h2,h3,h4,h5,h6 {
+  font-family: var(--font-serif);
+}
+
+p, a {
+  font-family: var(--font-sans);
+}
 
 p {
   margin-bottom: 1em;
