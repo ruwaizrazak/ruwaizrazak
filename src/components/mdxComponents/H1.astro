@@ -7,8 +7,14 @@ const { className } = Astro.props;
 ---
 
 <h1 class:list={[
-  "xs:text-3xl sm:text-6xl md:text-7xl lg:text-7xl font-medium lg:mt-30 sm:mt-20 xs:mt-20 md:mt-30 mt-10",
+  "text-3xl sm:text-6xl md:text-7xl lg:text-7xl font-medium lg:mt-20 mt-10 md:mt-15",
   className
 ]}>
   <slot />
 </h1>
+
+<style>
+  h1 {
+    font-family: var(--font-serif);
+  }
+</style>
