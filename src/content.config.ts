@@ -8,6 +8,7 @@ const baseSchema = z.object({
   updatedDate: z.coerce.date().optional(),
   heroImage: z.string().optional(),
   tags: z.array(z.string()).default([]),
+  featured: z.boolean().optional().default(false),
 });
 
 const essays = defineCollection({
@@ -31,7 +32,12 @@ const works = defineCollection({
     base: './src/content/works',
     pattern: '**/*.{md,mdx}',
   }),
-  schema: baseSchema,
+  schema: baseSchema.extend({
+    company: z.string(), // Made required
+    duration: z.string(), // Made required
+    role: z.string().optional(),
+    location: z.string().optional(),
+  }),
 });
 
 const books = defineCollection({
