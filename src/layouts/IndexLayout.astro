@@ -16,9 +16,18 @@ interface Props {
   posts: any[];
   tags?: string[];
   collections?: string[];
+  showCollections?: boolean; // Add this prop
 }
 
-const { title, description, posts, tags = ['all'], collections = ['all'] } = Astro.props;
+const { 
+  title, 
+  description, 
+  posts, 
+  tags = ['all'], 
+  collections = ['all'],
+  showCollections = false // Default to false
+} = Astro.props;
+
 const currentTag = 'all';
 
 // Sort tags with 'all' first, then alphabetically
@@ -51,7 +60,16 @@ const sortedTags = ['all', ...tags.filter(tag => tag !== 'all').sort()];
               </a>
             ))}
           </div>
-
+          
+          {showCollections && collections.length > 1 && (
+            <select class="collection-filter px-4 py-2 mb-8 border border-gray-200 hover:bg-yellow-300">
+              {collections.map(collection => (
+                <option value={collection}>
+                  {collection.charAt(0).toUpperCase() + collection.slice(1)}
+                </option>
+              ))}
+            </select>
+          )}
         </div>
 
         <div class="masonry-grid columns-1 sm:columns-2 md:columns-2 lg:columns-3 gap-4 md:gap-7 lg:gap-10">
