@@ -40,11 +40,11 @@ const statusColors = {
         </span>
       </div>
     </div>
-    <div class="p-4">
+    <div class="pt-4">
         <H3 className='transition-colors'>{title}</H3>
-        <p class="text-sm">by {author}</p>
+        <P class="text-sm">by {author}</P>
 
-      <P className='text-gray-600 line-clamp-2 text-base'>{description}</P>
+      <P className='text-gray-600 line-clamp-2 text-base md:text-lg lg:text-1xl'>{description}</P>
       <div class="flex flex-row gap-4 flex-wrap text-sm items-start text-gray-500"">
         <FormattedDate date={date} />
         <Type>Books</Type>

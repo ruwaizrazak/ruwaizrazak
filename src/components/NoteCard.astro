@@ -16,7 +16,7 @@ interface Props {
 const { title, description, date, url } = Astro.props;
 ---
 
-<div class="note-card">
+<div class="note-card  border-b-1 border-gray-300">
   <a href={url} class="block p-4 rounded-lg hover:bg-yellow-50 transition-colors">
     <H3>{title}</H3>
     <P>{description}</P>
