@@ -2,29 +2,35 @@
 import FormattedDate from './FormattedDate.astro';
 import Image from './mdxComponents/Image.astro';
 
-import P from './mdxComponents/P.astro';
+import SmallText from './mdxComponents/SmallText.astro';
 import H3 from './mdxComponents/H3.astro';
+
 
 interface Props {
   title: string;
-  date: Date;
   url: string;
   heroImage: string;
+  company: string;
+  role?: string;
 }
 
-const { title, date, url, heroImage } = Astro.props;
+const {
+  title,
+  url,
+  heroImage,
+  company,
+  role,
+} = Astro.props;
 ---
 
-<div class="case-study-card">
-  <a href={url} class="block bg-stone-100 hover:shadow-lg transition-shadow rounded-lg overflow-hidden p-5 hover:bg-yellow-100">
-    <div class="relative">
-      <Image src={heroImage} alt={title} class="w-full transition-opacity case-study-image" />
-    </div>
-    <div class="p-4">
-      <H3 class="title text-xl font-bold mb-2">{title}</H3>
-      <P className='date text-gray-600'>
-        <FormattedDate date={date} />
-      </P>
+<div class="case-study-card m-0 negativeMargin">
+  <a href={url} class="rounded-l overflow-hidden hover:bg-yellow-100">
+    <img src={heroImage} alt={title} class="w-full aspect-video transition-opacity case-study-image m-0 " />
+    <div class="p-0 m-0 negativeMargin">
+      <H3 class="text-xl font-bold mb-2 mt-0 ">{title}</H3>
+      <SmallText className="text-gray-600 text-sm block">
+        {company} {role && `• ${role}`}
+      </SmallText>
     </div>
   </a>
 </div>
@@ -33,4 +39,14 @@ const { title, date, url, heroImage } = Astro.props;
   .case-study-card:hover .case-study-image {
     opacity: 0.8;
   }
+  img{
+      width: 100%;
+      max-height: 250px;
+      height: 250px;
+    }
+  .negativeMargin{
+    margin-top: -20px;
+  }
+
+
 </style>
