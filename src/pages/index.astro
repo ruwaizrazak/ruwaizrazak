@@ -13,6 +13,7 @@ import { getCollection } from 'astro:content';
 import Image from '../components/mdxComponents/Image.astro';
 import NoteCard from '../components/NoteCard.astro';
 import BookCard from '../components/BookCard.astro';
+import CaseStudyCard from '../components/CaseStudyCard.astro';
 
 
 // Get 10 featured posts from each collection
@@ -57,7 +58,7 @@ const books = (await getCollection('books'))
 		<Main>
 
       <div class="prose lg:max-w max-w-none">
-        <H1 className='mb-3'><b>Ruwaiz</b> is an <mark>user experience designer</mark>, who loves to create.</H1>
+        <H1 className='mb-3'>Ruwaiz is an <mark>user experience designer</mark>, who loves to create.</H1>
         <P className='mb-10 md:mb-20 lg:mb-25 text-xl md:text-2xl lg:text-3xl '>Designer, Reader who loves to build on weekends.</P>
 
         <H2 className='mt-30 mb-5'> Career</H2>
@@ -65,19 +66,16 @@ const books = (await getCollection('books'))
       </div>
       <section class="mt-20">
         <H2>Case Studies</H2>
-        <ul class="grid grid-cols-1 md:grid-cols-2 sm:grid-cols-2 gap-4">
+        <ul class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {
                 caseStudies.map((post) => (
                     <li class="card hover:shadow-lg transition-shadow">
-                        <a href={`/notes/${post.id}/`} class="block">
-                        <Image src={post.data.heroImage} alt={post.data.title} class="w-full" />
-                            <div class="p-4">
-                                <h4 class="title text-xl font-bold">{post.data.title}</h4>
-                                <p class="date text-gray-600">
-                                    <FormattedDate date={post.data.pubDate} />
-                                </p>
-                            </div>
-                        </a>
+                        <CaseStudyCard
+                        title={post.data.title}
+                        date={post.data.pubDate}
+                        url={`/notes/${post.id}/`}
+                        heroImage={post.data.heroImage}
+                    />
                     </li>
                 ))
             }
