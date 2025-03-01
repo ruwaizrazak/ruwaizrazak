@@ -1,0 +1,68 @@
+---
+import BaseHead from '../../components/BaseHead.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
+import { getCollection } from 'astro:content';
+import Main from '../../components/Main.astro';
+import H1 from '../../components/mdxComponents/H1.astro';
+import H2 from '../../components/mdxComponents/H2.astro';
+import P from '../../components/mdxComponents/P.astro';
+import { render } from 'astro:content';
+
+const livePosts = await getCollection('live');
+const sortedPosts = livePosts.sort((a, b) => {
+  const dateA = new Date(a.data.date);
+  const dateB = new Date(b.data.date);
+  return dateB.getTime() - dateA.getTime();
+});
+
+// Get the most recent post for "Now"
+const nowPost = sortedPosts[0];
+// Get all other posts for "Then"
+const thenPosts = sortedPosts.slice(1);
+
+// Render content for now post
+const nowContent = nowPost ? await render(nowPost) : null;
+// Render content for then posts
+const thenContents = await Promise.all(thenPosts.map(post => render(post)));
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+	</head>
+	<body>
+		<Header />
+		<Main>
+      <div class="prose lg:max-w max-w-none">
+        <H1 className='mb-0'>Now</H1>
+        <P className='mt-5'>Whats happening to me currently or rather what am I doing currently</P>
+        {nowPost && (
+          <div class="mb-8 border-b-2 border-stone-100">
+            <H2>{nowPost.data.Month}</H2>
+            <P>{nowPost.data.OneLiner}</P>
+            <div class="mt-4 prose">
+              <nowContent.Content />
+            </div>
+          </div>
+        )}
+
+        <H2 class="mt-16">Then</H2>
+        <div class="space-y-8">
+          {thenPosts.map((post, index) => (
+            <div class="border-b-2 border-stone-100">
+              <H2>{post.data.Month}</H2>
+              <P>{post.data.OneLiner}</P>
+              <div class="mt-4 prose">
+                <thenContents[index].Content />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+		</Main>
+		<Footer />
+	</body>
+</html>
