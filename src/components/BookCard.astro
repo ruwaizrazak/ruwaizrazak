@@ -32,7 +32,7 @@ const statusColors = {
       <Image
         src={heroImage}
         alt={title}
-        class={`xs:w-full sm:8/9 h-full object-cover rounded-lg transition-opacity ${readStatus === 'completed' ? 'opacity-90' : ''} ${imageClass} book-card-image`}
+        class={`w-full h-full object-cover rounded-lg transition-opacity ${readStatus === 'completed' ? 'opacity-90' : ''} ${imageClass} book-card-image`}
       />
       <div class="absolute top-2 left-2">
         <span class={`px-5 py-1 text-xs font-medium ${statusColors[readStatus]}`}>
