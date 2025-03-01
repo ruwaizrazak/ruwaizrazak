@@ -14,38 +14,31 @@ import Image from '../components/mdxComponents/Image.astro';
 import NoteCard from '../components/NoteCard.astro';
 import BookCard from '../components/BookCard.astro';
 import WorkCard from '../components/workCard.astro';
+import EssayCard from '../components/EssayCard.astro';
+import UL from '../components/mdxComponents/UL.astro';
 
 
 // Get 10 featured posts from each collection
 const notes = (await getCollection('notes'))
-  .filter(post => post.data.tags?.includes('featured'))
+  .filter(post => post.data.featured === true)
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
   .slice(0, 4);
 
 const essays = (await getCollection('essays'))
-  .filter(post => post.data.tags?.includes('featured'))
+  .filter(post => post.data.featured === true)
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
   .slice(0, 10);
 
 const works = (await getCollection('works'))
-  .filter(post => post.data.tags?.includes('featured'))
+  .filter(post => post.data.featured === true)
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
   .slice(0, 10);
 
 const books = (await getCollection('books'))
-  .filter(post => post.data.tags?.includes('featured'))
+  .filter(post => post.data.featured === true)
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
   .slice(0, 10);
 
-  const caseStudies = notes
-  .filter(post => {
-    const tags = post.data.tags || [];
-    return tags.some(tag => {
-      const lowercaseTag = tag.toLowerCase();
-      return (lowercaseTag === 'case-studies' || lowercaseTag === 'case-study');
-    }) && tags.some(tag => tag.toLowerCase() === 'featured');
-  })
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 ---
 
 <!doctype html>
@@ -59,41 +52,39 @@ const books = (await getCollection('books'))
 
       <div class="prose lg:max-w max-w-none">
         <H1 className='mb-3'>Ruwaiz is an <mark>user experience designer</mark>, who loves to create.</H1>
-        <P className='mb-10 md:mb-20 lg:mb-25 text-xl md:text-2xl lg:text-3xl '>Designer, Reader who loves to build on weekends.</P>
+        <P className='prose max-w-4xl prose-stone mt-5 mb-7 md:mb-14 lg:mb-21 text-xl md:text-2xl lg:text-3xl '>Designer, Reader who loves to build on weekends.</P>
 
         <H2 className='mt-30 mb-5'> Career</H2>
-        <P className='mt-0'> I work currently as a Senior UX Designer at<Link href="https://www.nordeus.com">Nordeus.</Link>My expertise is in building experience for video games through research heavy and optimized design pipeline. Take a look at my<Link href="/about">About</Link>if you are interested in my experiences.</P>
-      </div>
-      <section class="mt-20">
-        <H2>Case Studies</H2>
-        <ul class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <P className='prose max-w-4xl prose-stone mt-0 mb-0 text-xl md:text-xl lg:text-2xl'> I work currently as a Senior UX Designer at<Link href="https://www.nordeus.com">Nordeus.</Link>My expertise is in building experience for video games through research heavy and optimized design pipeline. Take a look at my<Link href="/about">About</Link>if you are interested in my experiences.</P>
+        <ul class="ps-0 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {
-                caseStudies.map((post) => (
-                    <li class="card hover:shadow-lg transition-shadow">
-                        <workCard
-                        title={post.data.title}
-                        date={post.data.pubDate}
-                        url={`/notes/${post.id}/`}
-                        heroImage={post.data.heroImage}
-                    />
+                works.map((post) => (
+                    <li class="hover:shadow-lg transition-shadow">
+                        <WorkCard  {/* Fixed capitalization */}
+                            title={post.data.title}
+                            company={post.data.company}
+                            url={`/works/${post.id}/`}  {/* Fixed URL path */}
+                            heroImage={post.data.heroImage || '/placeholder-work.jpg'}
+                        />
                     </li>
                 ))
             }
         </ul>
-      </section>
+      </div>
 
-      <section class="mt-20 flex flex-col md:flex-row gap-8">
+      <section class="mt-20 flex flex-col md:flex-row gap-8 ">
             <div class="w-full md:w-2/3">
               <H2>Featured Essays</H2>
-              <ul class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <ul class="masonry-grid columns-1 sm:columns-1 md:columns-1 lg:columns-2 gap-4 md:gap-7 lg:gap-10">
                   {essays.map((post) => (
                       <li>
-                          <NoteCard
-                              title={post.data.title}
-                              description={post.data.description}
-                              date={post.data.pubDate}
-                              url={`/essays/${post.id}/`}
-                          />
+                          <EssayCard
+                  title={post.data.title}
+                  description={post.data.description || 'No description available'}
+                  date={post.data.pubDate}
+                  url={`/essays/${post.id}/`}
+                  heroImage={post.data.heroImage}
+                />
                       </li>
                   ))}
               </ul>
@@ -144,3 +135,9 @@ const books = (await getCollection('books'))
 		<Footer />
 	</body>
 </html>
+
+<style>
+  ul{
+    margin-block-start: 0em !important;
+  }
+</style>
