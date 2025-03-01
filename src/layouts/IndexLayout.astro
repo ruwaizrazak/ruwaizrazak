@@ -38,23 +38,17 @@ const currentTag = 'all';
         <div class="flex flex-wrap justify-between content-start gap-4 mb-8 items-center">
           <div class="flex flex-wrap justify-start gap-4 mb-8">
             {tags.map(tag => (
-              <Link
-                class={`filter-btn px-10 py-2 text-sm border border-gray-200 hover:bg-yellow-50 ${
-                  tag === currentTag ? 'active' : ''
+              <a
+                class={`filter-btn px-4 py-2 text-sm border border-gray-200 hover:bg-yellow-50 ${
+                  tag === currentTag ? 'bg-yellow-300 text-black active' : 'text-gray-500'
                 }`}
                 data-tag={tag}
               >
                 {tag.charAt(0).toUpperCase() + tag.slice(1)}
-              </Link>
+              </a>
             ))}
           </div>
-          {collections.length > 1 && (
-            <select class="collection-filter px-4 py-2 mb-8 border border-gray-200 hover:bg-yellow-300">
-              {collections.map(collection => (
-                <option value={collection}>{collection.charAt(0).toUpperCase() + collection.slice(1)}</option>
-              ))}
-            </select>
-          )}
+
         </div>
 
         <div class="masonry-grid columns-1 sm:columns-2 md:columns-2 lg:columns-3 gap-4 md:gap-7 lg:gap-10">
@@ -105,8 +99,14 @@ const currentTag = 'all';
           filterButtons.forEach(button => {
             button.addEventListener('click', () => {
               currentTag = button.dataset.tag || 'all';
-              filterButtons.forEach(btn => btn.classList.remove('bg-gray-100'));
-              button.classList.add('bg-gray-100');
+              filterButtons.forEach(btn => {
+                btn.classList.remove('bg-yellow-300', 'text-black','active');
+                btn.classList.add('text-gray-500');
+              });
+              // the code above removes the classes
+              button.classList.remove('text-gray-500');
+              button.classList.add('bg-yellow-300', 'text-black','active');
+              // the code above adds the classes to the specific button
               filterPosts();
             });
           });
@@ -134,5 +134,15 @@ const currentTag = 'all';
   }
   .break-inside-avoid {
     break-inside: avoid;
+  }
+  a:hover{
+    text-decoration: line-through;
+    text-decoration-style: wavy;
+  }
+  .active{
+    text-decoration-thickness: .05em;
+    text-decoration: line-through;
+    text-decoration-style: wavy;
+
   }
 </style>
