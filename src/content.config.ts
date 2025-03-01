@@ -48,9 +48,22 @@ const books = defineCollection({
   }),
 });
 
+const live = defineCollection({
+  loader: glob({
+    base: './src/content/live',
+    pattern: '**/*.{md,mdx}',
+  }),
+  schema: z.object({
+    Month: z.string(),
+    OneLiner: z.string(),
+    date: z.string(), // Changed to string to match the format in MD files
+  }),
+});
+
 export const collections = {
   essays,
   notes,
   casestudies,
   books,
+  live,
 };
