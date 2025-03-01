@@ -72,7 +72,7 @@ const currentTag = 'all';
           </select>
         </div>
 
-        <div class="masonry-grid columns-1 sm:columns-2 md:columns-2 lg:columns-3 gap-4">
+        <div class="masonry-grid columns-1 sm:columns-2 md:columns-2 lg:columns-3 gap-4 md:gap-7 lg:gap-10">
           {allPosts.map((post) => (
             <div class="break-inside-avoid mb-4 post-item" data-tags={post.data.tags?.join(' ')} data-collection={post.collection}>
               {post.collection === 'books' ? (
