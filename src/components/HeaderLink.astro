@@ -21,12 +21,13 @@ const isActive = href === pathname || href === '/' + (subpath?.[0] || '');
   a:hover {
   text-decoration-skip-ink: none;
   background-color:var(--accent) !important;
-  text-decoration-thickness: .1em;
+  text-decoration-thickness: .05em;
   animation: .2s 1 forwards linkAnimation;
 }
 	a.active {
 		text-decoration: line-through;
     text-decoration-style: wavy !important;
+    text-decoration-thickness: .05em;
     pointer-events: none;
 	}
 </style>
