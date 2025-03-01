@@ -1,0 +1,19 @@
+---
+interface Props {
+  className?: string;
+}
+
+const { className } = Astro.props;
+---
+
+<ul class:list={[
+  className
+]}>
+  <slot />
+</ul>
+
+<style>
+  ul {
+    margin-block-start: 0em;
+  }
+</style>
