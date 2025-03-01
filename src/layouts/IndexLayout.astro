@@ -19,11 +19,11 @@ interface Props {
   showCollections?: boolean; // Add this prop
 }
 
-const { 
-  title, 
-  description, 
-  posts, 
-  tags = ['all'], 
+const {
+  title,
+  description,
+  posts,
+  tags = ['all'],
   collections = ['all'],
   showCollections = false // Default to false
 } = Astro.props;
@@ -60,7 +60,7 @@ const sortedTags = ['all', ...tags.filter(tag => tag !== 'all').sort()];
               </a>
             ))}
           </div>
-          
+
           {showCollections && collections.length > 1 && (
             <select class="collection-filter px-4 py-2 mb-8 border border-gray-200 hover:bg-yellow-300">
               {collections.map(collection => (
@@ -72,7 +72,7 @@ const sortedTags = ['all', ...tags.filter(tag => tag !== 'all').sort()];
           )}
         </div>
 
-        <div class="masonry-grid columns-1 sm:columns-2 md:columns-2 lg:columns-3 gap-4 md:gap-7 lg:gap-10">
+        <div class="masonry-grid columns-1 sm:columns-2 md:columns-2 lg:columns-3 gap-5 md:gap-7 lg:gap-10">
           {posts.map((post) => (
             <div class="break-inside-avoid mb-4 post-item" data-tags={post.data.tags?.join(' ')} data-collection={post.collection}>
               {post.collection === 'books' ? (
