@@ -26,9 +26,9 @@ const notes = defineCollection({
   schema: baseSchema,
 });
 
-const casestudies = defineCollection({
+const works = defineCollection({
   loader: glob({
-    base: './src/content/casestudies',
+    base: './src/content/works',
     pattern: '**/*.{md,mdx}',
   }),
   schema: baseSchema,
@@ -63,7 +63,7 @@ const live = defineCollection({
 export const collections = {
   essays,
   notes,
-  casestudies,
+  works, // Changed from casestudies to works
   books,
   live,
 };
