@@ -23,11 +23,11 @@ const {
 } = Astro.props;
 ---
 
-<div class="case-study-card m-0 negativeMargin">
+<div class="case-study-card mt-10 p-5 bg-gray-100 rounded-lg">
   <a href={url} class="rounded-l overflow-hidden hover:bg-yellow-100">
     <img src={heroImage} alt={title} class="w-full aspect-video transition-opacity case-study-image m-0 " />
-    <div class="p-0 m-0 negativeMargin">
-      <H3 class="text-xl font-bold mb-2 mt-0 ">{title}</H3>
+    <div class="p-0 mt-5">
+      <H3 class="text-xl font-bold mb-2">{title}</H3>
       <SmallText className="text-gray-600 text-sm block">
         {company} {role && `• ${role}`}
       </SmallText>
@@ -39,14 +39,4 @@ const {
   .case-study-card:hover .case-study-image {
     opacity: 0.8;
   }
-  img{
-      width: 100%;
-      max-height: 250px;
-      height: 250px;
-    }
-  .negativeMargin{
-    margin-top: -20px;
-  }
-
-
 </style>
