@@ -1,72 +1,40 @@
+
 ---
 import BaseHead from '../../components/BaseHead.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
 import { getCollection } from 'astro:content';
-import FormattedDate from '../../components/FormattedDate.astro';
-import BookCard from '../../components/BookCard.astro';
-import Main from '../../components/Main.astro';
-import H2 from '../../components/mdxComponents/H2.astro';
+import IndexLayout from '../../layouts/IndexLayout.astro';
 
-const allBooks = await getCollection('books');
+// Fetch all collections
+const [books] = await Promise.all([
+  getCollection('books')
+]);
 
-// Separate reading and completed books
-const readingBooks = allBooks
-  .filter(book => ['reading', 'completed'].includes(book.data.readStatus || 'to-read'))
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+// Combine and sort all posts
+const allBooks = [
+  ...books.map(post => ({ ...post, collection: 'books' }))
+].sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
-const toReadBooks = allBooks
-  .filter(book => (book.data.readStatus || 'to-read') === 'to-read')
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+// Get unique tags from all posts
+const allTags = ['all', ...new Set(allBooks.flatMap(post => post.data.tags || []))].sort();
+const collections = ['all', 'notes', 'essays', 'casestudies', 'books'];
 ---
 
-<!doctype html>
-<html lang="en">
-	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-	</head>
-	<body>
-		<Header />
-		<Main>
-			<section class="mt-20">
-				<H2>Currently Reading & Completed</H2>
-				<ul class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-8">
-					{readingBooks.map((book) => (
-						<li>
-							<BookCard
-								title={book.data.title}
-								description={book.data.description || 'No description available'}
-								date={book.data.pubDate}
-								url={`/books/${book.id}/`}
-								heroImage={book.data.heroImage || '/placeholder-book.jpg'}
-								author={book.data.author || 'Unknown Author'}
-								readStatus={book.data.readStatus || 'to-read'}
-							/>
-						</li>
-					))}
-				</ul>
-			</section>
+<IndexLayout
+  title="Books"
+  description="A list of books I've read, Currently Reading and my notes on them."
+  posts={allBooks}
+  tags={allTags}
+  collections={collections}
+/>
 
-			<section class="mt-20">
-				<H2>Reading List</H2>
-				<ul class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-8">
-					{toReadBooks.map((book) => (
-						<li>
-							<BookCard
-								title={book.data.title}
-								description={book.data.description || 'No description available'}
-								date={book.data.pubDate}
-								url={`/books/${book.id}/`}
-								heroImage={book.data.heroImage || '/placeholder-book.jpg'}
-								author={book.data.author || 'Unknown Author'}
-								readStatus={book.data.readStatus || 'to-read'}
-							/>
-						</li>
-					))}
-				</ul>
-			</section>
-		</Main>
-		<Footer />
-	</body>
-</html>
+<style>
+	.masonry-grid {
+		column-gap: 1rem;
+	}
+	.break-inside-avoid {
+		break-inside: avoid;
+	}
+</style>
