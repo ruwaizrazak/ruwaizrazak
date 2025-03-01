@@ -1,0 +1,138 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Main from '../components/Main.astro';
+import H1 from '../components/mdxComponents/H1.astro';
+import P from '../components/mdxComponents/P.astro';
+import Link from '../components/mdxComponents/Link.astro';
+import NoteCard from '../components/NoteCard.astro';
+import BookCard from '../components/BookCard.astro';
+import EssayCard from '../components/EssayCard.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  posts: any[];
+  tags?: string[];
+  collections?: string[];
+}
+
+const { title, description, posts, tags = ['all'], collections = ['all'] } = Astro.props;
+const currentTag = 'all';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead title={title} description={description} />
+  </head>
+  <body>
+    <Header />
+    <Main>
+      <div class="prose lg:max-w max-w-none">
+        <H1 className="mb-0">{title}</H1>
+        <P className='leading-8'>{description}</P>
+      </div>
+      <div>
+        <div class="flex flex-wrap justify-between content-start gap-4 mb-8 items-center">
+          <div class="flex flex-wrap justify-start gap-4 mb-8">
+            {tags.map(tag => (
+              <Link
+                class={`filter-btn px-10 py-2 text-sm border border-gray-200 hover:bg-yellow-50 ${
+                  tag === currentTag ? 'active' : ''
+                }`}
+                data-tag={tag}
+              >
+                {tag.charAt(0).toUpperCase() + tag.slice(1)}
+              </Link>
+            ))}
+          </div>
+          {collections.length > 1 && (
+            <select class="collection-filter px-4 py-2 mb-8 border border-gray-200 hover:bg-yellow-300">
+              {collections.map(collection => (
+                <option value={collection}>{collection.charAt(0).toUpperCase() + collection.slice(1)}</option>
+              ))}
+            </select>
+          )}
+        </div>
+
+        <div class="masonry-grid columns-1 sm:columns-2 md:columns-2 lg:columns-3 gap-4 md:gap-7 lg:gap-10">
+          {posts.map((post) => (
+            <div class="break-inside-avoid mb-4 post-item" data-tags={post.data.tags?.join(' ')} data-collection={post.collection}>
+              {post.collection === 'books' ? (
+                <BookCard
+                  title={post.data.title}
+                  description={post.data.description || 'No description available'}
+                  date={post.data.pubDate}
+                  url={`/books/${post.id}/`}
+                  heroImage={post.data.heroImage || '/placeholder-book.jpg'}
+                  author={post.data.author || 'Unknown Author'}
+                  readStatus={post.data.readStatus || 'to-read'}
+                />
+              ) : post.collection === 'essays' ? (
+                <EssayCard
+                  title={post.data.title}
+                  description={post.data.description || 'No description available'}
+                  date={post.data.pubDate}
+                  url={`/essays/${post.id}/`}
+                  heroImage={post.data.heroImage}
+                />
+              ) : (
+                <NoteCard
+                  title={post.data.title}
+                  description={post.data.description || 'No description available'}
+                  date={post.data.pubDate}
+                  url={`/${post.collection}/${post.id}/`}
+                />
+              )}
+            </div>
+          ))}
+        </div>
+
+        <script>
+          const collectionFilter = document.querySelector('.collection-filter');
+          const filterButtons = document.querySelectorAll('.filter-btn');
+          const posts = document.querySelectorAll('.post-item');
+          let currentTag = 'all';
+          let currentCollection = 'all';
+
+          collectionFilter?.addEventListener('change', (e) => {
+            currentCollection = (e.target as HTMLSelectElement).value;
+            filterPosts();
+          });
+
+          filterButtons.forEach(button => {
+            button.addEventListener('click', () => {
+              currentTag = button.dataset.tag || 'all';
+              filterButtons.forEach(btn => btn.classList.remove('bg-gray-100'));
+              button.classList.add('bg-gray-100');
+              filterPosts();
+            });
+          });
+
+          function filterPosts() {
+            posts.forEach(post => {
+              const postTags = post.dataset.tags?.split(' ') || [];
+              const postCollection = post.dataset.collection;
+              const matchesTag = currentTag === 'all' || postTags.includes(currentTag);
+              const matchesCollection = currentCollection === 'all' || postCollection === currentCollection;
+
+              post.style.display = matchesTag && matchesCollection ? 'block' : 'none';
+            });
+          }
+        </script>
+      </div>
+    </Main>
+    <Footer />
+  </body>
+</html>
+
+<style>
+  .masonry-grid {
+    column-gap: 1rem;
+  }
+  .break-inside-avoid {
+    break-inside: avoid;
+  }
+</style>

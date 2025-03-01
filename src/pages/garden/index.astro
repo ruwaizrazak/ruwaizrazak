@@ -4,14 +4,7 @@ import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
 import { getCollection } from 'astro:content';
-import Main from '../../components/Main.astro';
-import NoteCard from '../../components/NoteCard.astro';
-import BookCard from '../../components/BookCard.astro';
-import H1 from '../../components/mdxComponents/H1.astro';
-import P from '../../components/mdxComponents/P.astro';
-import H2 from '../../components/mdxComponents/H2.astro';
-import Link from '../../components/mdxComponents/Link.astro';
-import EssayCard from '../../components/EssayCard.astro';
+import IndexLayout from '../../layouts/IndexLayout.astro';
 
 // Fetch all collections
 const [notes, essays, casestudies, books] = await Promise.all([
@@ -31,141 +24,16 @@ const allPosts = [
 
 // Get unique tags from all posts
 const allTags = ['all', ...new Set(allPosts.flatMap(post => post.data.tags || []))].sort();
-
 const collections = ['all', 'notes', 'essays', 'casestudies', 'books'];
-// Add currentTag variable
-const currentTag = 'all';
 ---
 
-<!doctype html>
-<html lang="en">
-	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-	</head>
-	<body>
-		<Header />
-		<Main>
-      <div class="prose lg:max-w max-w-none">
-        <H1 className="mb-0">Garden.</H1>
-        <P className='leading-8'>In a nutshell, a wiki can be comprised of <Link href="/essays">Essays</Link>,<Link href="/books">Books</Link> and imperfect<Link href="/notes">Notes</Link>along with whatever resources I find interesting and felt might be useful at a later stage.</P>
-      </div>
-      <div>
-        <div class="flex flex-wrap justify-between content-start gap-4 mb-8 items-center">
-          <div class="flex flex-wrap justify-start gap-4 mb-8">
-            {allTags.map(tag => (
-              <Link
-                class={`filter-btn px-10 py-2 text-sm border border-gray-200 hover:bg-yellow-50 ${
-                  tag === currentTag ? 'active' : ''
-                }`}
-                data-tag={tag}
-              >
-                {tag.charAt(0).toUpperCase() + tag.slice(1)}
-              </Link>
-            ))}
-          </div>
-          <select class="collection-filter px-4 py-2 mb-8 border border-gray-200 hover:bg-yellow-300">
-            <option value="all">All Collections</option>
-            <option value="notes">Notes</option>
-            <option value="essays">Essays</option>
-            <option value="casestudies">Case Studies</option>
-            <option value="books">Books</option>
-          </select>
-        </div>
-
-        <div class="masonry-grid columns-1 sm:columns-2 md:columns-2 lg:columns-3 gap-4 md:gap-7 lg:gap-10">
-          {allPosts.map((post) => (
-            <div class="break-inside-avoid mb-4 post-item" data-tags={post.data.tags?.join(' ')} data-collection={post.collection}>
-              {post.collection === 'books' ? (
-                <BookCard
-                  title={post.data.title}
-                  description={post.data.description || 'No description available'}
-                  date={post.data.pubDate}
-                  url={`/books/${post.id}/`}
-                  heroImage={post.data.heroImage || '/placeholder-book.jpg'}
-                  author={post.data.author || 'Unknown Author'}
-                  readStatus={post.data.readStatus || 'to-read'}
-                />
-              ) : post.collection === 'essays' ? (
-                <EssayCard
-                  title={post.data.title}
-                  description={post.data.description || 'No description available'}
-                  date={post.data.pubDate}
-                  url={`/essays/${post.id}/`}
-                  heroImage={post.data.heroImage}
-                />
-              ) : (
-                <NoteCard
-                  title={post.data.title}
-                  description={post.data.description || 'No description available'}
-                  date={post.data.pubDate}
-                  url={`/${post.collection}/${post.id}/`}
-                />
-              )}
-            </div>
-          ))}
-        </div>
-
-        <script>
-          const collectionFilter = document.querySelector('.collection-filter');
-          const filterButtons = document.querySelectorAll('.filter-btn');
-          const posts = document.querySelectorAll('.post-item');
-          let currentTag = 'all';
-          let currentCollection = 'all';
-
-          collectionFilter?.addEventListener('change', (e) => {
-            currentCollection = (e.target as HTMLSelectElement).value;
-            filterPosts();
-          });
-
-          filterButtons.forEach(button => {
-            button.addEventListener('click', () => {
-              currentTag = button.dataset.tag || 'all';
-              filterButtons.forEach(btn => btn.classList.remove('bg-gray-100'));
-              button.classList.add('bg-gray-100');
-              filterPosts();
-            });
-          });
-
-          function filterPosts() {
-            posts.forEach(post => {
-              const postTags = post.dataset.tags?.split(' ') || [];
-              const postCollection = post.dataset.collection;
-              const matchesTag = currentTag === 'all' || postTags.includes(currentTag);
-              const matchesCollection = currentCollection === 'all' || postCollection === currentCollection;
-
-              post.style.display = matchesTag && matchesCollection ? 'block' : 'none';
-            });
-          }
-        </script>
-
-        <!-- Remove duplicate scripts -->
-      </div>
-		</Main>
-		<Footer />
-
-		<script>
-			const filterButtons = document.querySelectorAll('.filter-btn');
-			const posts = document.querySelectorAll('.post-item');
-
-			filterButtons.forEach(button => {
-				button.addEventListener('click', () => {
-					const collection = button.dataset.collection;
-
-					filterButtons.forEach(btn => btn.classList.remove('active'));
-					button.classList.add('active');
-
-					posts.forEach(post => {
-						if (collection === 'all' || post.dataset.collection === collection) {
-							post.style.display = 'block';
-						} else {
-							post.style.display = 'none';
-						}
-					});
-				});
-			});
-		</script>
-	</body>
-</html>
+<IndexLayout
+  title="Garden"
+  description="In a nutshell, a wiki can be comprised of Essays, Books and imperfect Notes along with whatever resources I find interesting and felt might be useful at a later stage."
+  posts={allPosts}
+  tags={allTags}
+  collections={collections}
+/>
 
 <style>
 	.masonry-grid {
