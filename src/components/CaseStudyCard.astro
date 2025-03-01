@@ -1,0 +1,36 @@
+---
+import FormattedDate from './FormattedDate.astro';
+import Image from './mdxComponents/Image.astro';
+
+import P from './mdxComponents/P.astro';
+import H3 from './mdxComponents/H3.astro';
+
+interface Props {
+  title: string;
+  date: Date;
+  url: string;
+  heroImage: string;
+}
+
+const { title, date, url, heroImage } = Astro.props;
+---
+
+<div class="case-study-card">
+  <a href={url} class="block bg-stone-100 hover:shadow-lg transition-shadow rounded-lg overflow-hidden p-5 hover:bg-yellow-100">
+    <div class="relative">
+      <Image src={heroImage} alt={title} class="w-full transition-opacity case-study-image" />
+    </div>
+    <div class="p-4">
+      <H3 class="title text-xl font-bold mb-2">{title}</H3>
+      <P className='date text-gray-600'>
+        <FormattedDate date={date} />
+      </P>
+    </div>
+  </a>
+</div>
+
+<style>
+  .case-study-card:hover .case-study-image {
+    opacity: 0.8;
+  }
+</style>
