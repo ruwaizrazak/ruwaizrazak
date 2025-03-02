@@ -56,14 +56,14 @@ const books = (await getCollection('books'))
           <P className='prose max-w-4xl prose-stone mt-5 mb-7 md:mb-14 lg:mb-21 text-xl md:text-2xl lg:text-3xl'>Designer, Reader who loves to build on weekends.</P>
         </div>
 
-        <div class="career-section mt-10 md:mt-15 lg:mt-20">
-          <H2 className='mb-5'>Career</H2>
+        <div class="career-section mt-10 md:mt-15 lg:mt-20 lg:w-4/5">
+          <H3 className='mb-5'>Career</H3>
           <P className='prose max-w-4xl prose-stone mt-0 mb-0 text-xl md:text-xl lg:text-2xl'>
             I work currently as a Senior UX Designer at<Link href="https://www.nordeus.com">Nordeus.</Link>My expertise is in building experience for video games through research heavy and optimized design pipeline. Take a look at my<Link href="/about">About</Link>if you are interested in my experiences.
           </P>
-          <ul class="mt-10 ps-0 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+          <ul class="mt-10 ps-0 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-10 auto-rows-[300px]">
             {works.map((post) => (
-              <li class="hover:shadow-lg transition-shadow">
+              <li>
                 <WorkCard
                   title={post.data.title}
                   company={post.data.company}
@@ -75,10 +75,10 @@ const books = (await getCollection('books'))
           </ul>
         </div>
 
-        <div class="featured-grid gap-4 mt-20">
+        <div class="featured-grid gap-4 mt-40">
           <div class="essays-section">
-            <H2>Featured Essays</H2>
-            <ul class="masonry-grid columns-1 sm:columns-1 md:columns-1 lg:columns-2 gap-10">
+            <H3>Featured Essays</H3>
+            <ul class="masonry-grid columns-1 sm:columns-2 md:columns-3 lg:columns-3 gap-5">
               {essays.map((post) => (
                 <li>
                   <EssayCard
@@ -94,7 +94,7 @@ const books = (await getCollection('books'))
           </div>
 
           <div class="notes-section mt-20 mb-10 lg:mt-0 md:m-0">
-            <H2>Featured Notes</H2>
+            <H3>Featured Notes</H3>
             <ul class="flex flex-col gap-4">
               {notes.map((post) => (
                 <li>
@@ -110,8 +110,8 @@ const books = (await getCollection('books'))
           </div>
 
           <div class="books-section mt-20">
-            <H2>Featured Books</H2>
-            <ul class="grid grid-cols-2 md:grid-cols-4 gap-10">
+            <H3>Featured Books</H3>
+            <ul class="grid grid-cols-1 sm:grid-cols-2  md:grid-cols-4 lg:grid-cols-6 gap-5">
               {books.map((post) => (
                 <li>
                   <BookCard
@@ -143,8 +143,8 @@ const books = (await getCollection('books'))
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     grid-template-areas:
-      "essays essays notes"
-      "books books books";
+      "essays essays essays notes"
+      "books books books books";
   }
 
   .essays-section {

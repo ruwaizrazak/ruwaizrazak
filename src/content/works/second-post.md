@@ -6,7 +6,7 @@ company: "Company Name"
 duration: "Jan 2024 - Present"
 role: "UX Designer"  # optional
 location: "Remote"   # optional
-featured: true      # optional
+featured: false    # optional
 heroImage: "public/blog-placeholder-1.jpg"
 ---
 
