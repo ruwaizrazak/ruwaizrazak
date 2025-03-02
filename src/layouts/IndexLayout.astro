@@ -9,6 +9,7 @@ import Link from '../components/mdxComponents/Link.astro';
 import NoteCard from '../components/NoteCard.astro';
 import BookCard from '../components/BookCard.astro';
 import EssayCard from '../components/EssayCard.astro';
+import WorkCard from '../components/workCard.astro';
 
 interface Props {
   title: string;
@@ -43,7 +44,7 @@ const sortedTags = ['all', ...tags.filter(tag => tag !== 'all').sort()];
     <Header />
     <Main>
       <div class="prose lg:max-w max-w-none">
-        <H1 className="mb-0">{title}</H1>
+        <H1 className="mb-0 mt-0">{title}</H1>
         <P className='leading-8'>{description}</P>
       </div>
       <div>
@@ -92,6 +93,14 @@ const sortedTags = ['all', ...tags.filter(tag => tag !== 'all').sort()];
                   date={post.data.pubDate}
                   url={`/essays/${post.id}/`}
                   heroImage={post.data.heroImage}
+                />
+              ) : post.collection === 'works' ? (
+                <WorkCard
+                  title={post.data.title}
+                  company={post.data.company}
+                  url={`/works/${post.id}/`}
+                  heroImage={post.data.heroImage || '/placeholder-work.jpg'}
+                  role={post.data.role}
                 />
               ) : (
                 <NoteCard
