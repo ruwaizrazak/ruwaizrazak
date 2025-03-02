@@ -23,13 +23,13 @@ const {
 } = Astro.props;
 ---
 
-<div class="case-study-card group mt-10 p-5 bg-gray-100 rounded-lg
+<div class="case-study-card group rounded-lg
   motion-safe:hover:scale-[1.02] motion-safe:active:scale-95
-  motion-safe:transform-gpu motion-safe:transition-all">
-  <a href={url} class="rounded-l overflow-hidden">
+  motion-safe:transform-gpu motion-safe:transition-transform">
+  <a href={url} class="block rounded-lg overflow-hidden">
     <div class="motion-safe:transform-gpu motion-safe:transition-all motion-reduce:transition-none
       group-hover:-translate-y-1 group-active:translate-y-0">
-      <img src={heroImage} alt={title} class="w-full aspect-video transition-opacity case-study-image m-0" />
+      <img src={heroImage} alt={title} class="h-48 aspect-video transition-opacity case-study-image m-0" />
       <div class="p-0 mt-5">
         <H3 class="text-xl font-bold mb-2">{title}</H3>
         <SmallText className="text-gray-600 text-sm block">
@@ -42,7 +42,7 @@ const {
 
 <style>
   .case-study-card {
-    transition: all 0.2s ease;
+    transition: transform 0.2s ease;
   }
   .case-study-card:hover .case-study-image {
     opacity: 0.8;

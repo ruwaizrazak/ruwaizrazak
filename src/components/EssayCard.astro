@@ -27,7 +27,7 @@ const { title, description, date, url, heroImage, imageClass = '' } = Astro.prop
         <Image
           src={heroImage}
           alt={title}
-          class={`w-full h-48 object-cover essay-image motion-safe:transition-opacity ${imageClass}`}
+          class={`w-full h-96 aspect aspect-square object-cover essay-image motion-safe:transition-opacity ${imageClass}`}
         />
       </div>
     )}
