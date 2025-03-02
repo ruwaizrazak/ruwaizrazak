@@ -53,12 +53,12 @@ const books = (await getCollection('books'))
       <div class="content-grid gap-5">
         <div class="hero-section">
           <H1 className='mb-3 max-w-5xl'>Ruwaiz is an <mark>user experience designer</mark>, who loves to build.</H1>
-          <P className='prose max-w-4xl prose-stone mt-5 mb-7 md:mb-14 lg:mb-21 text-xl md:text-2xl lg:text-3xl'>Designer, Reader who loves to build on weekends.</P>
+          <P className='prose max-w-4xl prose-stone mt-5 mb-7 md:mb-14 lg:mb-21 text-xl md:text-xl lg:text-2xl'>Designer, Reader who loves to build on weekends.</P>
         </div>
 
         <div class="career-section mt-10 md:mt-15 lg:mt-20 lg:w-4/5">
-          <H3 className='mb-5'>Career</H3>
-          <P className='prose max-w-4xl prose-stone mt-0 mb-0 text-xl md:text-xl lg:text-2xl'>
+          <H2 className='mb-5 prose-stone'>Career</H2>
+          <P className='prose max-w-4xl prose-stone mt-0 mb-0 text-lg md:text-xl lg:text-xl'>
             I work currently as a Senior UX Designer at<Link href="https://www.nordeus.com">Nordeus.</Link>My expertise is in building experience for video games through research heavy and optimized design pipeline. Take a look at my<Link href="/about">About</Link>if you are interested in my experiences.
           </P>
           <ul class="mt-10 ps-0 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-10 auto-rows-[300px]">
@@ -77,7 +77,7 @@ const books = (await getCollection('books'))
 
         <div class="featured-grid gap-4 mt-40">
           <div class="essays-section">
-            <H3>Featured Essays</H3>
+            <H2>Featured Essays</H2>
             <ul class="masonry-grid columns-1 sm:columns-2 md:columns-3 lg:columns-3 gap-5">
               {essays.map((post) => (
                 <li>
@@ -94,7 +94,7 @@ const books = (await getCollection('books'))
           </div>
 
           <div class="notes-section mt-20 mb-10 lg:mt-0 md:m-0">
-            <H3>Featured Notes</H3>
+            <H2>Featured Notes</H2>
             <ul class="flex flex-col gap-4">
               {notes.map((post) => (
                 <li>
@@ -110,7 +110,7 @@ const books = (await getCollection('books'))
           </div>
 
           <div class="books-section mt-20">
-            <H3>Featured Books</H3>
+            <H2>Featured Books</H2>
             <ul class="grid grid-cols-1 sm:grid-cols-2  md:grid-cols-4 lg:grid-cols-6 gap-5">
               {books.map((post) => (
                 <li>
