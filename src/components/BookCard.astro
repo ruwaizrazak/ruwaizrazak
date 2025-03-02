@@ -26,9 +26,12 @@ const statusColors = {
 };
 ---
 
-<div class="book-card">
-  <a href={url} class={`${readStatus === 'completed' ? 'bg-green-50/50' : ''}`}>
-    <div class="relative">
+<div class="book-card group">
+  <a href={url} class={`block ${readStatus === 'completed' ? 'bg-green-50/50' : ''}
+    motion-safe:hover:scale-[1.02] motion-safe:active:scale-95
+    motion-safe:transform-gpu motion-safe:transition-all`}>
+    <div class="relative motion-safe:transform-gpu motion-safe:transition-all motion-reduce:transition-none
+      group-hover:-translate-y-1 group-active:translate-y-0">
       <Image
         src={heroImage}
         alt={title}
@@ -55,15 +58,13 @@ const statusColors = {
 
 <style>
   .book-card {
-    transition: transform 0.2s ease;
-    filter: opacity(100%);
+    transition: all 0.2s ease;
   }
-  .book-card:hover {
-    transform: translateY(-4px);
-    filter: opacity(50%);
+  .book-card-image {
+    transition: opacity 0.2s ease;
   }
   .book-card:hover .book-card-image {
-    opacity: 0.5;
+    opacity: 0.8;
   }
   h1 {
     font-family: var(--font-serif);

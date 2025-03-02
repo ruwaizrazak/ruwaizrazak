@@ -29,7 +29,7 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 				<div class="hero-image">
 					{heroImage && <Image width={1020} height={510} src={heroImage} alt="" />}
 				</div>
-				<div>
+				<div class="">
 					<div class="title">
 						<H1 className='mb-5 mt-5'>{title}</H1>
             <div class="date">
@@ -50,3 +50,9 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 		<Footer />
 	</body>
 </html>
+
+<style>
+  p {
+    font-size: 2 rem;
+  }
+</style>

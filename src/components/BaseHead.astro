@@ -4,6 +4,7 @@
 import '../styles/global.css';
 import { SITE_TITLE } from '../consts';
 
+import { ViewTransitions } from "astro:transitions";
 interface Props {
 	title: string;
 	description: string;
@@ -20,6 +21,7 @@ const { title, description, image = '/blog-placeholder-1.jpg' } = Astro.props;
 <meta name="keywords" content="Designer | Prototyper ">
 <meta name="author" content="Ruwaiz Razak">
 <meta name="viewport" content="width=device-width,initial-scale=1" />
+ <ViewTransitions />
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <link rel="sitemap" href="/sitemap-index.xml" />
 <link

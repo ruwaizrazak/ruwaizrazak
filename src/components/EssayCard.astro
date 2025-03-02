@@ -17,14 +17,17 @@ interface Props {
 const { title, description, date, url, heroImage, imageClass = '' } = Astro.props;
 ---
 
-<div class="essay-card">
-  <a href={url} class="block rounded-lg overflow-hidden hover:shadow-lg transition-all bg-stone-100 hover:bg-yellow-50 p-5">
+<div class="essay-card group">
+  <a href={url} class="block rounded-lg overflow-hidden hover:shadow-lg transition-all bg-stone-100 hover:bg-yellow-50 p-5
+    motion-safe:hover:scale-[1.01] motion-safe:active:scale-95
+    motion-safe:transform-gpu motion-safe:transition-transform">
     {heroImage && (
-      <div>
+      <div class="motion-safe:transform-gpu motion-safe:transition-all motion-reduce:transition-none
+        group-hover:-translate-y-1 group-active:translate-y-0">
         <Image
           src={heroImage}
           alt={title}
-          class={`w-full h-48 object-cover essay-image ${imageClass}`}
+          class={`w-full h-48 object-cover essay-image motion-safe:transition-opacity ${imageClass}`}
         />
       </div>
     )}
@@ -43,11 +46,10 @@ const { title, description, date, url, heroImage, imageClass = '' } = Astro.prop
   .essay-card {
     transition: transform 0.2s ease;
   }
-  .essay-card:hover {
-    transform: translateY(-2px);
+  .essay-image {
+    transition: opacity 0.2s ease;
   }
   .essay-card:hover .essay-image {
     opacity: 0.8;
   }
-
 </style>

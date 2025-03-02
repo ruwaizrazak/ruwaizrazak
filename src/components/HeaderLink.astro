@@ -9,19 +9,28 @@ const subpath = pathname.match(/[^\/]+/g);
 const isActive = href === pathname || href === '/' + (subpath?.[0] || '');
 ---
 
-<a href={href} class:list={["text-xl",className, { active: isActive }]} {...props}>
-	<slot />
+<a href={href}
+  class:list={[
+    "text-xl",
+    className,
+    { active: isActive },
+    "motion-safe:hover:scale-[1.02] motion-safe:active:scale-95",
+    "motion-safe:transform-gpu motion-safe:transition-all duration-200"
+  ]}
+  {...props}>
+  <slot />
 </a>
 <style>
 	a {
 		text-decoration: none;
+    transform-origin: center;
 	}
   a:hover {
-  text-decoration-skip-ink: none;
-  background-color:var(--accent) !important;
-  text-decoration-thickness: .05em;
-  animation: .2s 1 forwards linkAnimation;
-}
+    text-decoration-skip-ink: none;
+    background-color:var(--accent) !important;
+    text-decoration-thickness: .05em;
+    animation: .2s 1 forwards linkAnimation;
+  }
 	a.active {
 		text-decoration: line-through;
     text-decoration-style: wavy !important;
