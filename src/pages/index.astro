@@ -59,9 +59,9 @@ const books = (await getCollection('books'))
         <div class="career-section mt-10 md:mt-15 lg:mt-20 lg:w-4/5">
           <H2 className='mb-5 prose-stone'>Career</H2>
           <P className='prose max-w-4xl prose-stone mt-0 mb-0 text-lg md:text-xl lg:text-xl'>
-            I work currently as a Senior UX Designer at<Link href="https://www.nordeus.com">Nordeus.</Link>My expertise is in building experience for video games through research heavy and optimized design pipeline. Take a look at my<Link href="/about">About</Link>if you are interested in my experiences.
+            I work currently as a Senior UX Designer at<Link href="https://www.nordeus.com">Nordeus.</Link>My expertise is in building experience for video games through research heavy and optimized design pipeline. <br> <br>Following are the selected works from my career and if you are interested in my experiences, take a look at my<Link href="/about">about section</Link>.
           </P>
-          <ul class="mt-10 ps-0 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-10 auto-rows-[300px]">
+          <ul class="mt-10 ps-0 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
             {works.map((post) => (
               <li>
                 <WorkCard
@@ -75,10 +75,10 @@ const books = (await getCollection('books'))
           </ul>
         </div>
 
-        <div class="featured-grid gap-4 mt-40">
+        <div class="featured-grid gap-4 mt-20">
           <div class="essays-section">
             <H2>Featured Essays</H2>
-            <ul class="masonry-grid columns-1 sm:columns-2 md:columns-3 lg:columns-3 gap-5">
+            <ul class="masonry-grid columns-1 sm:columns-1 md:columns-2 lg:columns-2 gap-5">
               {essays.map((post) => (
                 <li>
                   <EssayCard
@@ -109,9 +109,9 @@ const books = (await getCollection('books'))
             </ul>
           </div>
 
-          <div class="books-section mt-20">
+          <div class="books-section my-20">
             <H2>Featured Books</H2>
-            <ul class="grid grid-cols-1 sm:grid-cols-2  md:grid-cols-4 lg:grid-cols-6 gap-5">
+            <ul class="grid grid-cols-1 sm:grid-cols-2  md:grid-cols-3 lg:grid-cols-4 gap-5">
               {books.map((post) => (
                 <li>
                   <BookCard
@@ -143,8 +143,8 @@ const books = (await getCollection('books'))
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     grid-template-areas:
-      "essays essays essays notes"
-      "books books books books";
+      "essays essays notes"
+      "books books  books";
   }
 
   .essays-section {

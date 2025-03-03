@@ -10,17 +10,16 @@ interface Props {
 }
 
 const { items } = Astro.props;
-import H3 from './H3.astro';
 ---
 
-<div class="bg-gray-100 p-5 rounded-lg project-overview grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
+<div class="bg-gray-100 p-5 rounded-xl project-overview grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
   {items.map((item) => (
     <div>
-      <H3>{item.title}</H3>
+      <h3 class="underline underline-offset-5 decoration-gray-400">{item.title}</h3>
       {item.isList ? (
-        <ul>
+        <ul class="list-outside p-0">
           {(item.content as string[]).map((bullet) => (
-            <li>{bullet}</li>
+            <li class="p-0">{bullet}</li>
           ))}
         </ul>
       ) : (

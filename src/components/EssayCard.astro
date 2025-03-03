@@ -18,7 +18,7 @@ const { title, description, date, url, heroImage, imageClass = '' } = Astro.prop
 ---
 
 <div class="essay-card group">
-  <a href={url} class="block rounded-lg overflow-hidden hover:shadow-lg transition-all bg-stone-100 hover:bg-yellow-50 p-5
+  <a href={url} class="block rounded-lg overflow-hidden hover:shadow-lg transition-all bg-stone-50 border-1 border-gray-200 hover:bg-yellow-50 p-5 hover:border-0
     motion-safe:hover:scale-[1.01] motion-safe:active:scale-95
     motion-safe:transform-gpu motion-safe:transition-transform">
     {heroImage && (
@@ -32,8 +32,8 @@ const { title, description, date, url, heroImage, imageClass = '' } = Astro.prop
       </div>
     )}
     <div class="pt-4">
-      <H3 className='text-xl'>{title}</H3>
-      <P className='text-base md:text-lg lg:text-1xl'>{description}</P>
+      <H3>{title}</H3>
+      <P className='text-sm md:text-sm lg:text-base'>{description}</P>
       <div class="flex flex-row gap-4 flex-wrap text-sm items-start text-gray-500">
         <FormattedDate date={date} />
         <Type>Essay</Type>

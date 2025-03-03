@@ -17,13 +17,13 @@ const { title, description, date, url } = Astro.props;
 ---
 
 <div class="note-card group border-b-1 border-gray-300">
-  <a href={url} class="block p-4 rounded-lg hover:bg-yellow-50 transition-colors
+  <a href={url} class="block py-4 rounded-lg hover:bg-yellow-50 transition-colors
     motion-safe:hover:scale-[1.01] motion-safe:active:scale-95
-    motion-safe:transform-gpu motion-safe:transition-transform">
+    motion-safe:transform-gpu motion-safe:transition-transform p-5">
     <div class="motion-safe:transform-gpu motion-safe:transition-all motion-reduce:transition-none
       group-hover:-translate-y-1 group-active:translate-y-0">
       <H3>{title}</H3>
-      <P className='text-sm'>{description}</P>
+      <p className='text-sm'>{description}</p>
       <div class="flex flex-row gap-4 flex-wrap text-sm items-start text-gray-500">
         <FormattedDate date={date} />
         <Type>Notes</Type>

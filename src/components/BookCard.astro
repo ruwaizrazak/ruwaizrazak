@@ -27,7 +27,7 @@ const statusColors = {
 ---
 
 <div class="book-card group">
-  <a href={url} class={`block ${readStatus === 'completed' ? 'bg-green-50/50' : ''}
+  <a href={url} class={`block
     motion-safe:hover:scale-[1.02] motion-safe:active:scale-95
     motion-safe:transform-gpu motion-safe:transition-all`}>
     <div class="relative motion-safe:transform-gpu motion-safe:transition-all motion-reduce:transition-none
@@ -35,21 +35,18 @@ const statusColors = {
       <Image
         src={heroImage}
         alt={title}
-        class={`w-full h-full object-cover rounded-lg transition-opacity ${readStatus === 'completed' ? 'opacity-90' : ''} ${imageClass} book-card-image`}
+        class={`w-full h-full object-cover rounded-l transition-opacity ${readStatus === 'completed' ? 'opacity-90' : ''} ${imageClass} book-card-image`}
       />
-      <div class="absolute top-2 left-2">
-        <span class={`px-5 py-1 text-xs font-medium ${statusColors[readStatus]}`}>
+      <div class="absolute top-2 left-2 ">
+        <span class={`px-5 py-1 text-xs font-medium  ${statusColors[readStatus]}`}>
           {readStatus}
         </span>
       </div>
     </div>
     <div class="pt-4">
         <H3 className='transition-colors'>{title}</H3>
-        <P class="text-sm">by {author}</P>
-
-      <P className='text-gray-600 line-clamp-2 text-base md:text-lg lg:text-1xl'>{description}</P>
+        <p class="text-sm">by {author}</p>
       <div class="flex flex-row gap-4 flex-wrap text-sm items-start text-gray-500"">
-        <FormattedDate date={date} />
         <Type>Books</Type>
       </div>
     </div>
