@@ -14,7 +14,11 @@ const [works] = await Promise.all([
 
 // Combine and sort all posts
 const allworks = [
-  ...works.map(post => ({ ...post, collection: 'works' }))
+  ...works.map(post => ({
+    ...post,
+    collection: 'works',
+    url: `/works/${post.slug}/` // Add explicit URL formatting
+  }))
 ].sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
 // Get unique tags from all posts
