@@ -7,7 +7,7 @@ import { getCollection } from 'astro:content';
 import IndexLayout from '../../layouts/IndexLayout.astro';
 
 // Fetch all collections
-const [notes, essays, casestudies, books] = await Promise.all([
+const [notes, essays, works, books] = await Promise.all([
   getCollection('notes'),
   getCollection('essays'),
   getCollection('works'),
@@ -18,7 +18,7 @@ const [notes, essays, casestudies, books] = await Promise.all([
 const allPosts = [
   ...notes.map(post => ({ ...post, collection: 'notes' })),
   ...essays.map(post => ({ ...post, collection: 'essays' })),
-  ...casestudies.map(post => ({ ...post, collection: 'casestudies' })),
+  ...works.map(post => ({ ...post, collection: 'works' })),
   ...books.map(post => ({ ...post, collection: 'books' }))
 ].sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
