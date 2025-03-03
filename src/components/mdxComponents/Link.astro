@@ -20,13 +20,14 @@ const isActive = href === pathname || href === '/' + (subpath?.[0] || '');
   <slot />
 </a>
 <style>
-	a {
-    color: inherit;
-		text-decoration: underline;
+  a {
+    color:inherit;
+    text-decoration: underline;
+    text-decoration-color:var(--color-fuchsia-600);
     text-underline-offset: .4em;
-    padding: 10px;
-    margin:0;
-	}
+    font-weight: 600;
+    font-style:italic;
+  }
   @keyframes linkAnimation {
   from {
     text-decoration: underline;
@@ -39,12 +40,14 @@ const isActive = href === pathname || href === '/' + (subpath?.[0] || '');
   }
 }
   a:hover {
-    background-color: var(--accent);
+    background-color: yellow;
+    color:var(--black);
     text-decoration: line-through;
     text-decoration-style: wavy;
     text-decoration-color: var(--black) !important;
     text-decoration-thickness: .1em;
     animation: .5s 1 forwards linkAnimation;
+    transition: all .5s ease;
 
 }
 	a.active {

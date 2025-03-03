@@ -20,7 +20,7 @@ const { title, description, date, url, heroImage, imageClass = '' } = Astro.prop
 <div class="essay-card group">
   <a href={url} class="block rounded-lg overflow-hidden hover:shadow-lg transition-all
     motion-safe:hover:scale-[1.01] motion-safe:active:scale-95
-    motion-safe:transform-gpu motion-safe:transition-transform p-5 bg-gray-50 rounded-2xl border-1 border-gray-100">
+    motion-safe:transform-gpu motion-safe:transition-transform p-5 bg-gray-50 rounded-2xl border-1 border-gray-100 hover:bg-yellow-50">
     {heroImage && (
       <div class="motion-safe:transform-gpu motion-safe:transition-all motion-reduce:transition-none
         group-hover:-translate-y-1 group-active:translate-y-0">
@@ -48,8 +48,11 @@ const { title, description, date, url, heroImage, imageClass = '' } = Astro.prop
   }
   .essay-image {
     transition: opacity 0.2s ease;
+    transform:rotate(-1deg);
   }
   .essay-card:hover .essay-image {
     opacity: 0.8;
+    transform:rotate(-0deg);
+    transition:all 0.5s ease;
   }
 </style>
