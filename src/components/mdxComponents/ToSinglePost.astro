@@ -1,0 +1,48 @@
+---
+interface Props {
+  title: string;
+  subtitle: string;
+  company: string;
+  imageSrc: string;
+  url: string;
+  description?: string;
+}
+
+const { title, subtitle, company, imageSrc, url, description = "Here is a case study, if you are interested in understanding how my process would look like in a nutshell." } = Astro.props;
+import H3 from "/src/components/H3.astro";
+import H2 from "/src/components/H2.astro";
+---
+
+<div class="mb-12">
+  <div class="mb-8">
+    <p class="font-bold text-lg">{description}</p>
+  </div>
+
+  <div class="flex flex-col md:flex-row items-center gap-8 bg-stone-50 p-8 rounded-lg hover:bg-stone-100 transition-colors">
+    <div class="md:w-1/2 space-y-4">
+      <H3>{subtitle}</H3>
+      <div>
+        <a href={url} class="group">
+          <H2>{title}</H2>
+        </a>
+        <p class="text-lg text-stone-600">{company}</p>
+      </div>
+    </div>
+    <div class="md:w-1/2">
+      <img src={imageSrc} alt={title} class="w-full rounded-lg shadow-md">
+    </div>
+  </div>
+</div>
+
+<!--
+Usage Examples
+
+<ToSinglePost
+  title="Deer Hunter 2018"
+  subtitle="ASSOCIATE USER EXPERIENCE DESIGNER"
+  company="GLU"
+  imageSrc="/images/DHDeviceMockup.png"
+  url="/works/deerhunter2018"
+/>
+
+-->
