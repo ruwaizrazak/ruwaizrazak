@@ -121,10 +121,14 @@ const sortedTags = ['all', ...tags.filter(tag => tag !== 'all').sort()];
           let currentTag = 'all';
           let currentCollection = 'all';
 
-          collectionFilter?.addEventListener('change', (e) => {
-            currentCollection = (e.target as HTMLSelectElement).value;
-            filterPosts();
-          });
+          // Initialize collection filter
+          if (collectionFilter) {
+            collectionFilter.addEventListener('change', (e) => {
+              const target = e.target as HTMLSelectElement;
+              currentCollection = target.value;
+              filterPosts();
+            });
+          }
 
           filterButtons.forEach(button => {
             button.addEventListener('click', () => {
@@ -145,10 +149,14 @@ const sortedTags = ['all', ...tags.filter(tag => tag !== 'all').sort()];
             posts.forEach(post => {
               const postTags = post.dataset.tags?.split(' ') || [];
               const postCollection = post.dataset.collection;
+
+              // Debug logging
+              console.log('Filtering:', { currentTag, currentCollection, postCollection, postTags });
+
               const matchesTag = currentTag === 'all' || postTags.includes(currentTag);
               const matchesCollection = currentCollection === 'all' || postCollection === currentCollection;
 
-              post.style.display = matchesTag && matchesCollection ? 'block' : 'none';
+              post.style.display = (matchesTag && matchesCollection) ? 'block' : 'none';
             });
           }
         </script>
