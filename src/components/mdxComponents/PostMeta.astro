@@ -1,0 +1,63 @@
+---
+import FormattedDate from '../FormattedDate.astro';
+import Link from './Link.astro';
+import { getMaturityIcon } from '../../utils/maturityIcons';
+import H1 from './H1.astro';
+
+interface Props {
+  title: string;
+  tags?: string[];
+  pubDate?: Date;
+  updatedDate?: Date;
+  collection?: string;
+  maturity?: 'seed' | 'plant' | 'tree';
+}
+
+const { title, tags = [], pubDate, updatedDate, collection, maturity } = Astro.props;
+const maturityIcon = maturity ? getMaturityIcon(maturity) : null;
+---
+
+<div class="prose max-w-none prose-h1:text-6xl mt-20 w-full">
+  <div class="flex gap-3 items-center justify-start text-stone-500 h-8">
+    {collection && (
+      <Link href={`/${collection}`} class="font-medium capitalize flex items-center">{collection}</Link>
+    )}
+    {maturity && (
+      <div class="flex items-center gap-2">
+        <img
+          src={maturityIcon}
+          alt={`${maturity} maturity`}
+          class="w-5 h-5"
+        />
+        <span class="font-medium capitalize flex items-center">{maturity}</span>
+      </div>
+    )}
+  </div>
+  <h1 class="mt-5 text-center w-full">{title}</h1>
+
+
+  <div class="flex justify-between items-center">
+    <div class="sm:w-1/2">
+      {tags.length > 0 && (
+        <div class="flex gap-2 justify-start mt-4 flex-wrap">
+          {tags.map(tag => (
+            <a
+              href={`/tags/${tag}`}
+              class="px-2 py-1 text-sm bg-stone-100 rounded-lg text-stone-600 hover:bg-yellow-100 transition-colors"
+            >
+              {tag}
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
+    <div class="date text-right">
+      <FormattedDate date={pubDate} />
+      {updatedDate && (
+        <div class="last-updated-on">
+          Last updated on <FormattedDate date={updatedDate} />
+        </div>
+      )}
+    </div>
+  </div>
+</div>
