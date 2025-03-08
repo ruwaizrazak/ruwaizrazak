@@ -9,8 +9,8 @@ interface Props {
 }
 
 const { title, subtitle, company, imageSrc, url, description = "Here is a case study, if you are interested in understanding how my process would look like in a nutshell." } = Astro.props;
-import H3 from "/src/components/H3.astro";
-import H2 from "/src/components/H2.astro";
+import H3 from '../mdxComponents/H3.astro';
+import H2 from "../mdxComponents/H2.astro";
 ---
 
 <div class="mb-12">
@@ -29,7 +29,7 @@ import H2 from "/src/components/H2.astro";
       </div>
     </div>
     <div class="md:w-1/2">
-      <img src={imageSrc} alt={title} class="w-full rounded-lg shadow-md">
+      <img src={imageSrc} alt={title} class="w-full">
     </div>
   </div>
 </div>
