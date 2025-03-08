@@ -5,6 +5,7 @@ import P from './mdxComponents/P.astro';
 import Type from './type.astro';
 import Link from './mdxComponents/Link.astro';
 import H3 from './mdxComponents/H3.astro';
+import { getMaturityIcon } from '../utils/maturityIcons';
 
 interface Props {
   title: string;
@@ -17,7 +18,8 @@ interface Props {
   imageClass?: string;
 }
 
-const { title, description, date, url, heroImage, author, readStatus = 'to-read', imageClass = '' } = Astro.props;
+const { title, description, date, url, heroImage, author, readStatus = 'to-read', imageClass = '',maturity = 'seed' } = Astro.props;
+const iconPath = getMaturityIcon(maturity);
 
 const statusColors = {
   'reading': 'bg-yellow-100 text-yellow-800',
@@ -44,7 +46,10 @@ const statusColors = {
       </div>
     </div>
     <div class="pt-4">
+      <div class="flex gap-2 items-center">
+        <img src={iconPath} alt={`${maturity} icon`} class="w-8 h-8 self-start" />
         <H3 className='transition-colors'>{title}</H3>
+      </div>
         <p class="text-sm">by {author}</p>
       <div class="flex flex-row gap-4 flex-wrap text-sm items-start text-gray-500"">
         <Type>Books</Type>

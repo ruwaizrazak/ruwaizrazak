@@ -41,7 +41,7 @@ const iconPath = getMaturityIcon(maturity);
       </div>
       <P className='text-sm md:text-sm lg:text-base'>{description}</P>
       <div class="flex flex-row gap-4 flex-wrap text-sm items-start text-gray-500">
-        <FormattedDate date={date} />
+        <div>Last Updated<FormattedDate date={date} /></div>
         <Type>Essay</Type>
       </div>
     </div>
