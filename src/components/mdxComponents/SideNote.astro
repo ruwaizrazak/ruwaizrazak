@@ -1,0 +1,34 @@
+<div class="sidenote p-4 border-l-2 border-gray-400">
+  <slot />
+</div>
+
+<style is:global>
+  .sidenote {
+    float: right;
+    clear: right;
+    margin-right: -45%;
+    width: 40%;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 0.8em;
+    opacity: 0.8;
+    line-height: 1.3;
+    vertical-align: baseline;
+    position: relative;
+    background-color:var(--color-gray-50);
+  }
+
+  @media (max-width: 1024px) {
+    .sidenote {
+      float: none;
+      margin: 1rem 0;
+      width: 100%;
+    }
+  }
+
+  /* Container for main content to create space for margin notes */
+  .prose {
+    max-width: 65ch;
+    position: relative;
+  }
+</style>
