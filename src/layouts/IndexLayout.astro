@@ -17,7 +17,8 @@ interface Props {
   posts: any[];
   tags?: string[];
   collections?: string[];
-  showCollections?: boolean; // Add this prop
+  showCollections?: boolean;
+  showTags?: boolean; // Add this prop
 }
 
 const {
@@ -26,7 +27,8 @@ const {
   posts,
   tags = ['all'],
   collections = ['all'],
-  showCollections = false // Default to false
+  showCollections = false,
+  showTags = true // Default to true
 } = Astro.props;
 
 const currentTag = 'all';
@@ -49,18 +51,20 @@ const sortedTags = ['all', ...tags.filter(tag => tag !== 'all').sort()];
       </div>
       <div>
         <div class="flex flex-wrap justify-between content-start gap-4 mb-8 items-center">
-          <div class="flex flex-wrap justify-start gap-4 mb-8">
-            {sortedTags.map(tag => (
-              <a
-                class={`filter-btn px-4 py-2 text-sm border border-gray-200 hover:bg-yellow-50 ${
-                  tag === currentTag ? 'bg-yellow-300 text-black active' : 'text-gray-500'
-                }`}
-                data-tag={tag}
-              >
-                {tag.charAt(0).toUpperCase() + tag.slice(1)}
-              </a>
-            ))}
-          </div>
+          {showTags && (
+            <div class="flex flex-wrap justify-start gap-4 mb-8">
+              {sortedTags.map(tag => (
+                <a
+                  class={`filter-btn px-4 py-2 text-sm border border-gray-200 hover:bg-yellow-50 ${
+                    tag === currentTag ? 'bg-yellow-300 text-black active' : 'text-gray-500'
+                  }`}
+                  data-tag={tag}
+                >
+                  {tag.charAt(0).toUpperCase() + tag.slice(1)}
+                </a>
+              ))}
+            </div>
+          )}
 
           {showCollections && collections.length > 1 && (
             <select class="collection-filter px-4 py-2 mb-8 border border-gray-200 hover:bg-yellow-300">
