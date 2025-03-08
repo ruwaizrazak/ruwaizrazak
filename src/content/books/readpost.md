@@ -2,6 +2,7 @@
 title: 'Francis Itty Cora'
 description: 'dooosht'
 pubDate: 'Jul 15 2022'
+updatedDate: 'Jul 16 2022'
 heroImage: 'https://upload.wikimedia.org/wikipedia/en/5/54/Francis_Itty_Cora.jpg'
 tags: ['featured']
 author: 'T D Ramakrishnan'
