@@ -11,10 +11,13 @@ import H2 from '../components/mdxComponents/H2.astro';
 import H1 from '../components/mdxComponents/H1.astro';
 import H3 from '../components/mdxComponents/H3.astro';
 import Image from '../components/mdxComponents/Image.astro';
+import { getMaturityIcon } from '../utils/maturityIcons';
+import Link from '../components/mdxComponents/Link.astro'
 
 type Props = CollectionEntry<'notes'>['data'];
 
-const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage, tags = [],maturity,collection } = Astro.props;
+const maturityIcon = getMaturityIcon(maturity);
 ---
 
 <html lang="en" class="scroll-smooth">
@@ -27,8 +30,24 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 		<Main>
 			<NoteMain>
         <div>
-						<H1 className='text-2xl mb-5 mt-5 text-center'>{title}</H1>
-            <div class="date text-center">
+          <H1 className='text-2xl text-center self-center'>{title}</H1>
+          <div class="flex justify-between items-center">
+            <div class="sm:w-1/2">
+
+          {tags.length > 0 && (
+            <div class="flex gap-2 justify-start mt-4 flex-wrap">
+              {tags.map(tag => (
+                <a
+                  href={`/tags/${tag}`}
+                  class="px-2 py-1 text-sm bg-stone-100 rounded-lg text-stone-600 hover:bg-yellow-100 transition-colors"
+                >
+                  {tag}
+                </a>
+              ))}
+            </div>
+          )}
+        </div>
+        <div class="date text-right">
 							<FormattedDate date={pubDate} />
 							{
 								updatedDate && (
@@ -37,7 +56,12 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 									</div>
 								)
 							}
+
 						</div>
+          </div>
+
+
+
 					</div>
 				<div class="hero-image">
 					{heroImage && <Image width={1024} height={510} src={heroImage} alt="" />}
