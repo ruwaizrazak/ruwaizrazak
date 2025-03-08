@@ -6,6 +6,7 @@ import H1 from './H1.astro';
 
 interface Props {
   title: string;
+  description?: string;
   tags?: string[];
   pubDate?: Date;
   updatedDate?: Date;
@@ -13,7 +14,7 @@ interface Props {
   maturity?: 'seed' | 'plant' | 'tree';
 }
 
-const { title, tags = [], pubDate, updatedDate, collection, maturity } = Astro.props;
+const { title, description, tags = [], pubDate, updatedDate, collection, maturity } = Astro.props;
 const maturityIcon = maturity ? getMaturityIcon(maturity) : null;
 ---
 
@@ -33,11 +34,13 @@ const maturityIcon = maturity ? getMaturityIcon(maturity) : null;
       </div>
     )}
   </div>
-  <h1 class="mt-5 text-center w-full">{title}</h1>
+  <h1 class="mt-5 font-bold w-full mb-5">{title}</h1>
+  <p class="text-gray-800 text-xl mt-0">{description}</p>
 
 
-  <div class="flex justify-between items-center">
-    <div class="sm:w-1/2">
+
+  <div class="flex justify-between items-start align-top">
+    <div class="sm:w-1/2 items-start">
       {tags.length > 0 && (
         <div class="flex gap-2 justify-start mt-4 flex-wrap">
           {tags.map(tag => (
@@ -60,4 +63,5 @@ const maturityIcon = maturity ? getMaturityIcon(maturity) : null;
       )}
     </div>
   </div>
+  <hr class="h-px my-8 bg-gray-100 border-0 dark:bg-gray-300">
 </div>
