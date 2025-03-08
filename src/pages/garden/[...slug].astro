@@ -27,6 +27,6 @@ const post = Astro.props;
 const { Content } = await render(post);
 ---
 
-<notesPost {...post.data}>
+<notesPost {...post.data} collection={post.collection}>
   <Content />
 </notesPost>

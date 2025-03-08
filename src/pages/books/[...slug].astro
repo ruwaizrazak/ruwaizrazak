@@ -16,6 +16,6 @@ const post = Astro.props;
 const { Content } = await render(post);
 ---
 
-<NotesPost {...post.data}>
-	<Content />
+<NotesPost {...post.data} collection="books">
+  <Content />
 </NotesPost>
