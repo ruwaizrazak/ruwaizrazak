@@ -12,7 +12,6 @@ const isActive = href === pathname || href === '/' + (subpath?.[0] || '');
 <a href={href}
   class:list={[
     className,
-    { active: isActive },
     "motion-safe:hover:scale-[1.02] motion-safe:active:scale-95",
     "motion-safe:transform-gpu motion-safe:transition-transform"
   ]}
@@ -48,12 +47,7 @@ const isActive = href === pathname || href === '/' + (subpath?.[0] || '');
     text-decoration-thickness: .1em;
     animation: .5s 1 forwards linkAnimation;
     transition: all .5s ease;
-
-}
-	a.active {
-		text-decoration: line-through;
-    pointer-events: none;
-	}
+  }
 
   a {
     font-family: var(--font-sans);
