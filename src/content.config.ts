@@ -5,11 +5,19 @@ const baseSchema = z.object({
   title: z.string(),
   description: z.string(),
   pubDate: z.coerce.date(),
-  updatedDate: z.coerce.date().optional(),
+  updatedDate: z.coerce
+    .date()
+    .optional()
+    .default(function () {
+      return this.pubDate;
+    }),
   heroImage: z.string().optional(),
   tags: z.array(z.string()).default([]),
   featured: z.boolean().optional().default(false),
-  maturity: z.enum(['seed', 'plant', 'tree']).optional().default('seed'),
+  maturity: z
+    .enum(['seed', 'plant', 'tree'])
+    .optional()
+    .default('seed'),
 });
 
 const essays = defineCollection({
