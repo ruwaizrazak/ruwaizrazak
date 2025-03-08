@@ -89,6 +89,7 @@ const sortedTags = ['all', ...tags.filter(tag => tag !== 'all').sort()];
                   heroImage={post.data.heroImage || '/placeholder-book.jpg'}
                   author={post.data.author || 'Unknown Author'}
                   readStatus={post.data.readStatus || 'to-read'}
+                  maturity={post.data.maturity}
                 />
               ) : post.collection === 'essays' ? (
                 <EssayCard
@@ -97,6 +98,7 @@ const sortedTags = ['all', ...tags.filter(tag => tag !== 'all').sort()];
                   date={post.data.pubDate}
                   url={`/essays/${post.id}/`}
                   heroImage={post.data.heroImage}
+                  maturity={post.data.maturity}
                 />
               ) : post.collection === 'works' ? (
                 <WorkCard
@@ -105,6 +107,7 @@ const sortedTags = ['all', ...tags.filter(tag => tag !== 'all').sort()];
                   url={`/works/${post.id}/`}
                   heroImage={post.data.heroImage || '/placeholder-work.jpg'}
                   role={post.data.role}
+                  maturity={post.data.maturity}
                 />
               ) : (
                 <NoteCard
@@ -112,6 +115,7 @@ const sortedTags = ['all', ...tags.filter(tag => tag !== 'all').sort()];
                   description={post.data.description || 'No description available'}
                   date={post.data.pubDate}
                   url={`/${post.collection}/${post.id}/`}
+                  maturity={post.data.maturity}
                 />
               )}
             </div>
