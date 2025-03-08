@@ -9,6 +9,7 @@ const baseSchema = z.object({
   heroImage: z.string().optional(),
   tags: z.array(z.string()).default([]),
   featured: z.boolean().optional().default(false),
+  maturity: z.enum(['seed', 'plant', 'tree']).optional().default('seed'),
 });
 
 const essays = defineCollection({
