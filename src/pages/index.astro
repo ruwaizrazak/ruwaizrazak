@@ -80,9 +80,9 @@ const books = (await getCollection('books', ({ data }) => data.publish === true)
 
         <div class="featured-grid gap-4 mt-20">
           {essays.length > 0 && (
-            <div class="essays-section">
+            <div class="col-span-1 md:col-span-2">
               <H2>Featured Essays</H2>
-              <ul class="masonry-grid columns-1 sm:columns-1 md:columns-2 lg:columns-2 gap-5">
+              <ul class="grid grid-cols-1 md:grid-cols-2 3xl:grid-cols-3 gap-10 p-0">
                 {essays.map((post) => (
                   <li>
                     <EssayCard
@@ -100,7 +100,7 @@ const books = (await getCollection('books', ({ data }) => data.publish === true)
           )}
 
           {notes.length > 0 && (
-            <div class="notes-section mt-20 mb-10 lg:mt-0 md:m-0">
+            <div class="col-span-1">
               <H2>Featured Notes</H2>
               <ul class="flex flex-col gap-4">
                 {notes.map((post) => (
@@ -119,9 +119,9 @@ const books = (await getCollection('books', ({ data }) => data.publish === true)
           )}
 
           {books.length > 0 && (
-            <div class="books-section my-20">
+            <div class="col-span-1 md:col-span-3 my-20">
               <H2>Featured Books</H2>
-              <ul class="grid grid-cols-1 sm:grid-cols-2  md:grid-cols-3 lg:grid-cols-4 gap-5">
+              <ul class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 3xl:grid-cols-4 gap-5">
                 {books.map((post) => (
                   <li>
                     <BookCard
@@ -149,6 +149,11 @@ const books = (await getCollection('books', ({ data }) => data.publish === true)
 <style>
   .content-grid {
     display: grid;
+    grid-auto-flow: row;
+    gap: 1.25rem; /* equivalent to gap-5 in Tailwind */
+    width: 100%;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
   }
 
   .featured-grid {
@@ -157,6 +162,7 @@ const books = (await getCollection('books', ({ data }) => data.publish === true)
     grid-template-areas:
       "essays essays notes"
       "books books  books";
+    gap: 1rem;
   }
 
   .essays-section {
@@ -185,4 +191,21 @@ const books = (await getCollection('books', ({ data }) => data.publish === true)
   ul {
     margin-block-start: 0em !important;
   }
+</style>
+
+<style>
+  .essay-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+    padding: 0;
+  }
+
+  @media (min-width: 768px) {
+    .essay-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  /* Remove the masonry-grid class styles as they're not well supported in Safari */
 </style>
