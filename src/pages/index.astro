@@ -82,7 +82,7 @@ const books = (await getCollection('books', ({ data }) => data.publish === true)
           {essays.length > 0 && (
             <div class="col-span-1 md:col-span-2">
               <H2>Featured Essays</H2>
-              <ul class="grid grid-cols-1 md:grid-cols-2 3xl:grid-cols-3 gap-10 p-0">
+              <ul class="grid grid-cols-1 lg:grid-cols-2 3xl:grid-cols-3 gap-10 p-0">
                 {essays.map((post) => (
                   <li>
                     <EssayCard
