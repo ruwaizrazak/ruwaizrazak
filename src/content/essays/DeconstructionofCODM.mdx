@@ -7,13 +7,16 @@ heroImage: '/essays/DeconstructingCODM/codm.webp'
 tags: ['design']
 featured: true
 maturity: 'tree'
+publish: true
 ---
 import Image from '../../components/mdxComponents/Image.astro';
 import ImagesLeft from '../../components/mdxComponents/ImagesLeft.astro';
-import targetAudience from '../../components/mdxComponents/targetedAudience.astro';
+import TargetAudience from '../../components/mdxComponents/targetedAudience.astro';
 import SideBySide from '../../components/mdxComponents/SideBySide.astro';
+import SideNote from '../../components/mdxComponents/SideNote.astro';
+import H3 from '../../components/mdxComponents/H3.astro';
 
-<targetedAudience
+<TargetAudience
   description="This document is built for those who are interested in the experience aspect of the game minus the game economy. 🤓"
 />
 
@@ -45,7 +48,7 @@ The aforementioned staggering numbers could be due to multiple factors including
 In the [analysis in Deconstructors of fun](https://www.deconstructoroffun.com/blog/2019/11/20/how-call-of-duty-mobile-left-100m-on-the-table), it was stated that the game have an enormous number of downloads in the initial week but not a good number of revenue per download since launch when compared to its competitor PUBG.
 
 <Image src="https://i.imgur.com/vtB6iOl.png" />
-%%Built using Data from Game Refinary: Total Downloads between CODM and PUBG%%
+<SideNote>Built using Data from Game Refinary: Total Downloads between CODM and PUBG</SideNote>
 
 However, it is not smooth ride for CODM s the revenue per downloads are almost half compared to PUBG.
 
@@ -90,16 +93,14 @@ For any product, let that be a game, application, music or even a physical store
 
 ### Motivation Factor
 <Image src="https://i.imgur.com/vceh9D8.png" />
-%%Screen grab from Gamerefinary.com indicating how the audience are distributed on the basis of motivation%%
+<SideNote>Screen grab from Gamerefinary.com indicating how the audience are distributed on the basis of motivation</SideNote>
 
 Even though there are lots of triggers for the users in Call of Duty, the key Archetypes of users can be categorized as:
+<SideNote>We've reused the archetypes from Gamerefinary.com</SideNote>
 1. Skill Masters
 2. Thrill Seekers
 3. Networkers
 4. King of the Hill
-%% We've reused the archetypes from Gamerefinary.com %%
-
-
 
 <ImagesLeft imageSrc="https://i.imgur.com/u3yR8I0.png">
   Skill masters are the ones who sought to improve themselves over and over and often find themselves in seeking knowledge from several sources including forums, videos and developer documents.
@@ -121,7 +122,7 @@ They will be aware about what are the changes happened to each of the weapons in
 These connection could be the people they knew outside the game or someone who they met through the game and remains within.
 </ImagesLeft>
 
-%%While talking about the Networking aspect of the game, there is a study thats been going around on how games helped people to stay sane and connected during covid. I need to write about it %%.
+<SideNote>While talking about the Networking aspect of the game, there is a study thats been going around on how games helped people to stay sane and connected during covid. I need to write about it.</SideNote>
 
 ### King of the Hill
 
@@ -130,10 +131,10 @@ These connection could be the people they knew outside the game or someone who t
   These players enjoys the recognition resulting from their competitiveness. They use various identifiers to flaunt their expertise in the game.
 A straight example would be the usage of exclusive skins, or chasing Legendary in Ranked mode.
 </ImagesLeft>
-
+<SideNote>Would get a better picture with IAP distributions</SideNote>
 While expressionism remains one of the least motivation factor for the users, There are a certain group of user group who is interested in spending for personalization of player skins and weapon skins.
 
-%%Would get a better picture with IAP distributions.%%
+
 
 ## Age and Gender distribution
 
@@ -166,7 +167,8 @@ The above mentioned is an over simplification of Hook's model. If you are intere
 #### Fogg's model
 <ImagesLeft imageSrc="https://i.imgur.com/0sbnfqE.png">
 The model defines a how a user's Motivation, Ability and Behaviour triggers could lead to target behaviour.
-> Targeted Behaviour = f(Motivation.Ability.Trigger)
+<H3> Targeted Behaviour = f(Motivation.Ability.Trigger) </H3>
+
 That is, if user have to either work hard to acquire something without possessing enough motivation, the likelyhood of acquiring that is narrow.
 </ImagesLeft>
 

@@ -10,7 +10,7 @@ import H2 from '../../components/mdxComponents/H2.astro';
 import P from '../../components/mdxComponents/P.astro';
 import { render } from 'astro:content';
 
-const livePosts = await getCollection('live');
+const livePosts = await getCollection('live', ({ data }) => data.publish === true);
 const sortedPosts = livePosts.sort((a, b) => {
   const dateA = new Date(a.data.date);
   const dateB = new Date(b.data.date);

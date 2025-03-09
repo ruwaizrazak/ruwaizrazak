@@ -11,7 +11,9 @@ const isActive = href === pathname || href === '/' + (subpath?.[0] || '');
 
 <a href={href}
   class:list={[
-    "text-xl",
+    "text-base",
+    "uppercase",
+    "font-semibold",
     className,
     { active: isActive },
     "motion-safe:hover:scale-[1.02] motion-safe:active:scale-95",
@@ -24,6 +26,7 @@ const isActive = href === pathname || href === '/' + (subpath?.[0] || '');
 	a {
 		text-decoration: none;
     transform-origin: center;
+    color:var(--color-slate-800) !important;
 	}
   a:hover {
     text-decoration-skip-ink: none;

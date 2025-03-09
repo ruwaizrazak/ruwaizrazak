@@ -4,10 +4,10 @@ import IndexLayout from '../../layouts/IndexLayout.astro';
 
 export async function getStaticPaths() {
   const [notes, essays, works, books] = await Promise.all([
-    getCollection('notes'),
-    getCollection('essays'),
-    getCollection('works'),
-    getCollection('books')
+    getCollection('notes', ({ data }) => data.publish === true),
+    getCollection('essays', ({ data }) => data.publish === true),
+    getCollection('works', ({ data }) => data.publish === true),
+    getCollection('books', ({ data }) => data.publish === true)
   ]);
 
   const allPosts = [
