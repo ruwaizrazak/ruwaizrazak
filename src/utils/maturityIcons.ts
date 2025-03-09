@@ -2,9 +2,9 @@ export const getMaturityIcon = (
   maturity: 'seed' | 'plant' | 'tree' = 'seed'
 ): string => {
   const iconMap = {
-    seed: '/icons/seed.svg',
-    plant: '/icons/plant.svg',
-    tree: '/icons/tree.svg',
+    seed: '/icons/seed.gif',
+    plant: '/icons/plant.gif',
+    tree: '/icons/tree.gif',
   };
 
   return iconMap[maturity] || iconMap.seed;
