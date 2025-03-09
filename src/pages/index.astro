@@ -54,7 +54,7 @@ const books = (await getCollection('books', ({ data }) => data.publish === true)
       <div class="content-grid gap-5">
         <div class="hero-section">
           <H1 className='mb-3 max-w-5xl'>Ruwaiz is an <mark>user experience designer</mark>, who loves to build.</H1>
-          <P className='prose max-w-4xl prose-stone mt-5 mb-7 md:mb-14 lg:mb-21 text-xl md:text-xl lg:text-2xl'>Designer, Reader who loves to build on weekends.</P>
+          <p class='cursor typewriter-animation text-xl'>Designer, Reader who loves to build on weekends.</p>
         </div>
 
         {works.length > 0 && (
@@ -147,6 +147,35 @@ const books = (await getCollection('books', ({ data }) => data.publish === true)
 </html>
 
 <style>
+    /* Cursor */
+.cursor {
+    position: relative;
+    width: 24em;
+    margin: 0;
+    border-right: 2px solid rgba(0,0,0,.75);
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    transform: none;
+}
+
+/* Animation */
+.typewriter-animation {
+  animation:
+    typewriter 4s steps(40) 1s 1 normal both,
+    blinkingCursor 500ms steps(40) infinite normal;
+  max-width: 100%;
+}
+
+@keyframes typewriter {
+  from { width: 0; }
+  to { width: 22em; }
+}
+
+@keyframes blinkingCursor {
+  from { border-right-color: rgba(0,0,0,.75); }
+  to { border-right-color: transparent; }
+}
   .content-grid {
     display: grid;
     grid-auto-flow: row;
