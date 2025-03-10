@@ -18,7 +18,7 @@ const { title, description, tags = [], pubDate, updatedDate, collection, maturit
 const maturityIcon = maturity ? getMaturityIcon(maturity) : null;
 ---
 
-<div class="prose max-w-none prose-h1:text-6xl mt-20 w-full">
+<div class="prose prose-h1:text-3xl md:prose-h1:text-5xl lg:prose-h1:text-6xl mt-20 w-[95%] lg:w-full">
   <div class="flex gap-3 items-center justify-start text-stone-500 h-8">
     {collection && (
       <Link href={`/${collection}`} class="font-medium capitalize flex items-center">{collection}</Link>
@@ -34,21 +34,29 @@ const maturityIcon = maturity ? getMaturityIcon(maturity) : null;
         <img
           src={maturityIcon}
           alt={`${maturity} maturity`}
-          class="w-5 h-5"
+          class="w-5 h-5 not-prose"
         />
         <span class="font-medium capitalize flex items-center cursor-help">{maturity}</span>
       </div>
     )}
   </div>
   <h1 class="mt-5 font-bold w-full mb-5">{title}</h1>
-  <p class="text-gray-800 text-xl mt-0">{description}</p>
+  <p class="text-gray-800 md:text-lg lg:text-xl mt-0">{description}</p>
 
 
 
-  <div class="flex justify-between items-start align-top">
-    <div class="sm:w-1/2 items-start">
+  <div class="flex flex-col md:flex-row justify-between lg:grid-cols-2 items-start align-top gap-4 md:gap-0">
+    <div class="date text-left w-full md:w-auto">
+      <FormattedDate date={pubDate} />
+      {updatedDate && (
+        <div class="last-updated-on">
+          Last updated on <FormattedDate date={updatedDate} />
+        </div>
+      )}
+    </div>
+    <div class="w-full md:w-1/2 items-start">
       {tags.length > 0 && (
-        <div class="flex gap-2 justify-start mt-4 flex-wrap">
+        <div class="flex gap-2 justify-start md:justify-end mt-4 flex-wrap">
           {tags.map(tag => (
             <a
               href={`/tags/${tag}`}
@@ -60,14 +68,7 @@ const maturityIcon = maturity ? getMaturityIcon(maturity) : null;
         </div>
       )}
     </div>
-    <div class="date text-right">
-      <FormattedDate date={pubDate} />
-      {updatedDate && (
-        <div class="last-updated-on">
-          Last updated on <FormattedDate date={updatedDate} />
-        </div>
-      )}
-    </div>
+
   </div>
   <hr class="h-px my-8 bg-gray-100 border-0 dark:bg-gray-300">
 </div>
