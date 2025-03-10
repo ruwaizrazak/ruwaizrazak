@@ -54,7 +54,7 @@ const books = (await getCollection('books', ({ data }) => data.publish === true)
       <div class="content-grid gap-5">
         <div class="hero-section">
           <H1 className='mb-3 max-w-5xl'>Ruwaiz is an <mark>user experience designer</mark>, who loves to build.</H1>
-          <p class='cursor typewriter-animation text-xl'>Designer, Reader who loves to build on weekends.</p>
+          <p class='w-full cursor typewriter-animation text-sm md:text-base lg:text-xl'>Designer, Reader who loves to build on weekends.</p>
         </div>
 
         {works.length > 0 && (
