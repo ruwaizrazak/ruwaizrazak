@@ -28,39 +28,151 @@ const maturityIcon = getMaturityIcon(maturity);
 
 	<body>
 		<Header />
-		<Main>
-			<NoteMain>
-        <div>
-          <PostMeta
-            tags={tags}
-            pubDate={pubDate}
-            updatedDate={updatedDate}
-            collection={collection}
-            maturity={maturity}
-            title={title}
-            description={description}
-          />
-        </div>
-          </div>
-
-
-
-					</div>
-				<div class="hero-image w-full">
-					{heroImage && (
-					<Image
-					src={heroImage}
-					alt=""
-					class="w-full h-auto object-cover rounded-lg"
-					loading="eager"
-					/>
+		<main>
+			<div class={`max-w-[90rem] mx-auto px-4 md:px-8 xl:px-12`}>
+				<div class={`${collection !== 'works' ? 'block xl:grid xl:grid-cols-[250px_1fr] xl:gap-16 lg:mt-30' : ''}`}>
+					{collection !== 'works' && (
+						<div class="table-of-contents order-first xl:sticky xl:top-[40%] xl:self-start my-8 xl:mb-0 lg:max-xl:border-b-2 xl:border-r-2 border-yellow-300 max-w-[75ch] mx-auto">
+							<div class="p-4 bg-slate-50 rounded-lg">
+								<button id="tocToggle" class="flex items-center justify-between w-full text-left xl:hidden mb-5">
+									<h3 class="text-base font-semibold text-gray-700">On this page</h3>
+									<svg class="w-4 h-4 transform transition-transform duration-200" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+									</svg>
+								</button>
+								<h3 class="text-base font-semibold mb-4 hidden xl:block">On this page</h3>
+								<div id="toc" class="hidden xl:block"></div>
+							</div>
+						</div>
 					)}
+
+					<NoteMain>
+						<div class="max-w-[65ch] mx-auto">
+							<PostMeta
+								tags={tags}
+								pubDate={pubDate}
+								updatedDate={updatedDate}
+								collection={collection}
+								maturity={maturity}
+								title={title}
+								description={description}
+							/>
+
+							<div class="hero-image w-full mt-8">
+								{heroImage && (
+									<Image
+										src={heroImage}
+										alt=""
+										class="w-full h-auto object-cover rounded-lg"
+										loading="eager"
+									/>
+								)}
+							</div>
+							<div class="w-full">
+								<slot />
+							</div>
+						</div>
+					</NoteMain>
 				</div>
-				<div class="w-full">
-					<slot />
-				</div>
-			</NoteMain>
-		</Main>
+			</div>
+		</main>
 		<Footer />
+
+    <script>
+      // Wait for client-side hydration
+      function generateTOC() {
+        const contentArea = document.querySelector('slot');
+        const headings = document.querySelectorAll('h2, h3');
+        const toc = document.getElementById('toc');
+
+        if (toc && headings.length > 0) {
+          toc.innerHTML = '';
+
+          const ul = document.createElement('ul');
+          ul.className = 'space-y-2 list-none p-0';
+
+          headings.forEach((heading) => {
+            // Skip the "On this page" heading
+            if (heading.textContent?.toLowerCase() === 'on this page') return;
+
+            const li = document.createElement('li');
+            const a = document.createElement('a');
+            const id = heading.textContent?.toLowerCase().replace(/\s+/g, '-') || '';
+
+            heading.id = id;
+            a.href = `#${id}`;
+            a.textContent = heading.textContent;
+            a.className = heading.tagName === 'h3' ? 'ml-4 block text-xs text-stone-600 hover:text-stone-900' : 'text -xs block text-stone-800 hover:text-stone-900';
+
+            li.appendChild(a);
+            ul.appendChild(li);
+          });
+
+          toc.appendChild(ul);
+        }
+      }
+
+      // Run on initial load
+      document.addEventListener('DOMContentLoaded', generateTOC);
+
+      // Run after dynamic content updates
+      document.addEventListener('astro:after-swap', generateTOC);
+    </script>
+
+    <script>
+      function setupTOC() {
+        const tocToggle = document.getElementById('tocToggle');
+        const toc = document.getElementById('toc');
+        const arrow = tocToggle?.querySelector('svg');
+
+        tocToggle?.addEventListener('click', () => {
+          toc?.classList.toggle('hidden');
+          arrow?.classList.toggle('rotate-180');
+        });
+      }
+
+      document.addEventListener('DOMContentLoaded', () => {
+        setupTOC();
+        generateTOC();
+      });
+
+      document.addEventListener('astro:after-swap', () => {
+        setupTOC();
+        generateTOC();
+      });
+    </script>
 	</body>
 </html>
+<style global>
+  a {
+    color:inherit;
+    text-decoration-color:var(--color-yellow-500);
+    text-underline-offset: .4em;
+    font-style:italic;
+  }
+  @keyframes linkAnimation {
+  from {
+    text-decoration: underline;
+  }
+
+  to {
+    text-decoration: line-through;
+    text-decoration-style: wavy;
+    text-decoration-color: var(--black) !important;
+  }
+}
+  a:hover {
+    color:var(--black);
+    text-decoration: line-through;
+    text-decoration-style: wavy;
+    text-decoration-color: var(--black) !important;
+    text-decoration-thickness: .1em;
+    animation: .5s 1 forwards linkAnimation;
+    transition: all .5s ease;
+  }
+
+  a {
+    font-family: var(--font-sans);
+  }
+
+</style>
