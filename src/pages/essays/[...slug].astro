@@ -2,6 +2,7 @@
 import { type CollectionEntry, getCollection } from 'astro:content';
 import { render } from 'astro:content';
 import NotesPost from '../../layouts/notesPost.astro';
+import ExternalLink from "../../components/mdxComponents/ExternalLink.astro"
 
 export async function getStaticPaths() {
 	const posts = await getCollection('essays');
@@ -17,5 +18,5 @@ const { Content } = await render(post);
 ---
 
 <NotesPost {...post.data} collection="essays">
-	<Content />
+	<Content components={{ a: ExternalLink }} />
 </NotesPost>
