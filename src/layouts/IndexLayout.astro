@@ -45,8 +45,12 @@ const sortedTags = ['all', ...tags.filter(tag => tag !== 'all').sort()];
   <body>
     <Header />
     <Main>
-      <div class="prose lg:max-w max-w-none">
-        <H1 className="mb-0 mt-0">{title}</H1>
+      <div class="prose lg:max-w max-w-none lg:mt-20 mt-10 md:mt-15">
+    <Link
+    href={Astro.url.pathname.includes('/garden') ? '/' : '/garden'}>
+    ← Back to {Astro.url.pathname.includes('/garden') ? 'Index' : 'Garden'}
+    </Link>
+        <H1 className="mt-5">{title}</H1>
         <P className='leading-8 w-full lg:w-3/4'>{description}</P>
       </div>
       <div>
