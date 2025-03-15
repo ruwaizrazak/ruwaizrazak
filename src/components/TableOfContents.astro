@@ -1,0 +1,80 @@
+---
+interface Props {
+  collection?: string;
+}
+
+const { collection } = Astro.props;
+import H3 from './mdxComponents/H3.astro';
+---
+
+<div class="table-of-contents order-first xl:sticky xl:top-[40%] xl:self-start my-8 xl:mb-0 lg:max-xl:border-b-2 xl:border-r-2 border-yellow-300 max-w-[75ch] mx-auto">
+  <div class="p-4 bg-slate-50 rounded-lg">
+    <button id="tocToggle" class="flex items-center justify-between w-full text-left xl:hidden">
+      <h3 class="text-lxl font-semibold text-gray-700">On this page</h3>
+      <span class="arrow-container">
+        <svg class="w-4 h-4 transform transition-transform duration-200" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+        </svg>
+      </span>
+    </button>
+    <div id="toc" class="hidden xl:block">
+    </div>
+  </div>
+</div>
+
+<script>
+  function generateTOC() {
+    requestAnimationFrame(() => {
+      const headings = document.querySelectorAll('h2, h3');
+      const toc = document.getElementById('toc');
+
+      if (toc && headings.length > 0) {
+        toc.innerHTML = '';
+
+        const ul = document.createElement('ul');
+        ul.className = 'space-y-2 list-none p-0';
+
+        headings.forEach((heading) => {
+          if (heading.textContent?.toLowerCase() === 'on this page') return;
+
+          const li = document.createElement('li');
+          const a = document.createElement('a');
+          const id = heading.textContent?.toLowerCase().replace(/\s+/g, '-') || '';
+
+          heading.id = id;
+          a.href = `#${id}`;
+          a.textContent = heading.textContent;
+          a.className = heading.tagName === 'H3' ? 'ml-4 block text-base text-stone-600 hover:text-yellow-800 hover:font-semibold' : 'text-lg block text-stone-700 hover:text-yellow-700 hover:font-semibold';
+
+          li.appendChild(a);
+          ul.appendChild(li);
+        });
+
+        toc.appendChild(ul);
+      }
+    });
+  }
+
+  function setupTOC() {
+    const tocToggle = document.getElementById('tocToggle');
+    const toc = document.getElementById('toc');
+    const arrow = tocToggle?.querySelector('.arrow-container svg');
+
+    if (!tocToggle || !toc || !arrow) return;
+
+    tocToggle.addEventListener('click', () => {
+      toc.classList.toggle('hidden');
+      arrow.classList.toggle('rotate-180');
+    }, { passive: true });
+  }
+
+  // Initialize TOC on every page load
+  document.addEventListener('astro:page-load', () => {
+    setupTOC();
+    generateTOC();
+  }, { once: false });
+
+  // Also run on initial page load
+  setupTOC();
+  generateTOC();
+</script>
