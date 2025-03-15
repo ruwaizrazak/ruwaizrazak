@@ -4,6 +4,7 @@ import H1 from '../components/mdxComponents/H1.astro'
 import Image from '../components/mdxComponents/Image.astro'
 import P from '../components/mdxComponents/P.astro'
 import Link from '../components/mdxComponents/Link.astro'
+import H3 from '../components/mdxComponents/H3.astro'
 ---
 
 <Layout
@@ -20,23 +21,23 @@ import Link from '../components/mdxComponents/Link.astro'
         </div>
       </div>
 
-      <div class="md:w-2/3 space-y-6">
+      <div class=" w-full md:w-3/4 space-y-6">
         <P>My passion for design and creation started at the age of 16, when I began to teach myself how to code websites to bring my ideas to life.</P>
         <P>I became interested in design because of its ability to make lives easier.</P>
         <P class="font-bold">
           You can contact me via:
           <Link href="https://www.linkedin.com/in/ruwaizrazak/" target="_blank" class="mx-2">LinkedIn</Link>
-          <a href="https://www.threads.net/@ruwaizrazak" target="_blank" class="mx-2">Threads</a>
-          <a href="mailto:hello@ruwaizrazak.com" class="mx-2">hello@ruwaizrazak.com</a>
+          <Link href="https://www.threads.net/@ruwaizrazak" target="_blank" class="mx-2">Threads</Link>
+          <Link href="mailto:hello@ruwaizrazak.com" class="mx-2">hello@ruwaizrazak.com</Link>
         </P>
       </div>
     </section>
 
-    <section class="mb-16">
-        <div class="md:w-1/4 mb-4 md:mb-0">
-          <h4 class="text-xl font-semibold">Games I contributed to so far that I can talk about:</h4>
+    <section class="mb-16 prose">
+        <div class="mb-4 md:mb-0">
+          <H3>Games I contributed to so far that I can talk about:</H3>
         </div>
-        <div class="md:w-2/3 grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="sm:w-full xl:w-3/4 grid grid-cols-4  gap-4">
           <img src="about/DH2018.jpg" alt="DH2018" class="w-full rounded">
           <img src="about/DHC.jpg" alt="DHC" class="w-full rounded">
           <img src="about/DINOHUNTER.jpg" alt="DINOHUNTER" class="w-full rounded">
