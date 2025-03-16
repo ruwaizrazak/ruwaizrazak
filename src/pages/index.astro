@@ -63,7 +63,7 @@ const books = (await getCollection('books', ({ data }) => data.publish === true)
             <P className='prose max-w-4xl prose-stone mt-0 mb-0 text-lg md:text-xl lg:text-xl'>
               I work currently as a Senior UX Designer at<Link href="https://www.nordeus.com">Nordeus.</Link>My expertise is in building experience for video games through research heavy and optimized design pipeline. <br> <br>Following are the selected works from my career and if you are interested in my experiences, take a look at my<Link href="/about">about section</Link>.
             </P>
-            <ul class="mt-10 ps-0 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+            <ul class="mt-10 ps-0 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-10">
               {works.map((post) => (
                 <li>
                   <WorkCard
