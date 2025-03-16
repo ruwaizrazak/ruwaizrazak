@@ -11,48 +11,62 @@ import H3 from './mdxComponents/H3.astro';
   <div class="p-4 bg-slate-50 rounded-lg">
     <button id="tocToggle" class="flex items-center justify-between w-full text-left xl:hidden">
       <h3 class="text-xl font-semibold text-gray-700">On this page</h3>
-      <span class="arrow-container">
+      <span class="arrow-container pointer-events-none">
         <svg class="w-4 h-4 transform transition-transform duration-200" viewBox="0 0 24 24" fill="none" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
         </svg>
       </span>
     </button>
     <div id="toc" class="hidden xl:block">
+      <!-- TOC content will be generated here -->
     </div>
   </div>
 </div>
 
-<script>
+<script is:inline>
   function generateTOC() {
-    requestAnimationFrame(() => {
-      const headings = document.querySelectorAll('h2, h3');
-      const toc = document.getElementById('toc');
+    const headings = document.querySelectorAll('h2, h3');
+    const toc = document.getElementById('toc');
 
-      if (toc && headings.length > 0) {
-        toc.innerHTML = '';
+    if (toc && headings.length > 0) {
+      toc.innerHTML = '';
 
-        const ul = document.createElement('ul');
-        ul.className = 'space-y-2 list-none p-0';
+      const ul = document.createElement('ul');
+      ul.className = 'space-y-2 list-none p-0';
 
-        headings.forEach((heading) => {
-          if (heading.textContent?.toLowerCase() === 'on this page') return;
+      headings.forEach((heading) => {
+        if (heading.textContent?.toLowerCase() === 'on this page') return;
 
-          const li = document.createElement('li');
-          const a = document.createElement('a');
-          const id = heading.textContent?.toLowerCase().replace(/\s+/g, '-') || '';
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        const id = heading.textContent?.toLowerCase().replace(/\s+/g, '-') || '';
 
-          heading.id = id;
-          a.href = `#${id}`;
-          a.textContent = heading.textContent;
-          a.className = heading.tagName === 'H3' ? 'ml-4 block text-sm text-stone-600 hover:text-yellow-800 hover:font-bold' : 'font-semibold text-sm capitalize block text-stone-700 hover:text-yellow-700 hover:font-semibold';
+        heading.id = id;
+        a.href = `#${id}`;
+        a.textContent = heading.textContent;
+        
+        // Apply styles directly with inline styles as a fallback
+        if (heading.tagName === 'H3') {
+          a.className = 'ml-4 block text-sm text-stone-600 hover:text-yellow-800 hover:font-bold mb-2';
+          a.style.marginLeft = '1rem';
+          a.style.fontSize = '0.875rem';
+          a.style.color = '#57534e';
+          a.style.marginBottom = '0.5rem';
+        } else {
+          a.className = 'mb-2 font-semibold text-base capitalize block text-stone-700 hover:text-yellow-700 hover:font-semibold';
+          a.style.marginBottom = '0.5rem';
+          a.style.fontWeight = '600';
+          a.style.fontSize = '1rem';
+          a.style.textTransform = 'capitalize';
+          a.style.color = '#44403c';
+        }
 
-          li.appendChild(a);
-          ul.appendChild(li);
-        });
+        li.appendChild(a);
+        ul.appendChild(li);
+      });
 
-        toc.appendChild(ul);
-      }
-    });
+      toc.appendChild(ul);
+    }
   }
 
   function setupTOC() {
@@ -62,19 +76,34 @@ import H3 from './mdxComponents/H3.astro';
 
     if (!tocToggle || !toc || !arrow) return;
 
+    // Set initial state for mobile
+    if (window.innerWidth < 1280) {
+      toc.classList.add('hidden');
+    } else {
+      toc.classList.remove('hidden');
+    }
+
     tocToggle.addEventListener('click', () => {
       toc.classList.toggle('hidden');
       arrow.classList.toggle('rotate-180');
-    }, { passive: true });
+    });
   }
 
-  // Initialize TOC on every page load
+  // Run on page load
+  document.addEventListener('DOMContentLoaded', () => {
+    setupTOC();
+    generateTOC();
+  });
+
+  // Run when the page is fully loaded
+  window.addEventListener('load', () => {
+    setupTOC();
+    generateTOC();
+  });
+
+  // For Astro view transitions
   document.addEventListener('astro:page-load', () => {
     setupTOC();
     generateTOC();
-  }, { once: false });
-
-  // Also run on initial page load
-  setupTOC();
-  generateTOC();
+  });
 </script>
