@@ -7,10 +7,10 @@ const { collection } = Astro.props;
 import H3 from './mdxComponents/H3.astro';
 ---
 
-<div class="table-of-contents order-first xl:sticky xl:top-[5%] xl:self-start my-8 xl:mb-0 lg:max-xl:border-b-2 xl:border-r-2 border-yellow-300 mx-auto">
+<div class="table-of-contents order-first xl:sticky xl:top-[5%] xl:self-start my-8 xl:mb-0 max-xl:border-b-2 xl:border-r-2 border-yellow-300 mx-auto max-xl:w-[90%]">
   <div class="p-4 bg-slate-50 rounded-lg">
     <button id="tocToggle" class="flex items-center justify-between w-full text-left xl:hidden">
-      <h3 class="text-xl font-semibold text-gray-700">On this page</h3>
+      <h3 class="text-lg capitalize font-semibold text-stone-700">On this page</h3>
       <span class="arrow-container">
         <svg class="w-4 h-4 transform transition-transform duration-200" viewBox="0 0 24 24" fill="none" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
