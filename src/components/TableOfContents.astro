@@ -7,7 +7,7 @@ const { collection } = Astro.props;
 import H3 from './mdxComponents/H3.astro';
 ---
 
-<div class="table-of-contents order-first xl:sticky xl:top-[5%] xl:self-start my-8 xl:mb-0 lg:max-xl:border-b-2 xl:border-r-2 border-yellow-300 mx-auto">
+<div class="table-of-contents order-first xl:sticky xl:top-[5%] xl:self-start my-8 xl:mb-0 lg:max-xl:border-b-2 xl:border-r-2 border-yellow-300 mx-auto hidden xl:block">
   <div class="p-4 bg-slate-50 rounded-lg">
     <button id="tocToggle" class="flex items-center justify-between w-full text-left xl:hidden">
       <h3 class="text-xl font-semibold text-gray-700">On this page</h3>
@@ -17,97 +17,121 @@ import H3 from './mdxComponents/H3.astro';
         </svg>
       </span>
     </button>
-    <div id="toc" class="hidden xl:block">
+    <div id="toc" class="block">
       <!-- TOC content will be generated here -->
     </div>
   </div>
 </div>
 
+<style>
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .toc-item {
+    opacity: 0;
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+</style>
+
 <script is:inline>
   (function() {
+    // Debounce function to limit execution frequency
+    function debounce(func, wait) {
+      let timeout;
+      return function() {
+        const context = this, args = arguments;
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(context, args), wait);
+      };
+    }
+
+    // Generate table of contents from headings
     function generateTOC() {
-      try {
-        const headings = document.querySelectorAll('h2, h3');
-        const toc = document.getElementById('toc');
+      const headings = document.querySelectorAll('h2, h3');
+      const toc = document.getElementById('toc');
 
-        if (toc && headings.length > 0) {
-          toc.innerHTML = '';
+      if (!toc || headings.length === 0) return;
 
-          const ul = document.createElement('ul');
-          ul.className = 'space-y-2 list-none p-0';
+      toc.innerHTML = '';
+      const ul = document.createElement('ul');
+      ul.className = 'space-y-2 list-none p-0';
 
-          headings.forEach((heading) => {
-            if (heading.textContent?.toLowerCase() === 'on this page') return;
+      headings.forEach((heading, index) => {
+        if (heading.textContent?.toLowerCase() === 'on this page') return;
 
-            const li = document.createElement('li');
-            const a = document.createElement('a');
-            const id = heading.textContent?.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '') || '';
+        const id = heading.textContent?.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '') || '';
+        if (!id) return;
 
-            heading.id = id;
-            a.href = `#${id}`;
-            a.textContent = heading.textContent;
-            
-            if (heading.tagName === 'H3') {
-              a.className = 'ml-4 block text-sm text-stone-600 hover:text-yellow-800 hover:font-bold mb-2';
-            } else {
-              a.className = 'mb-2 font-semibold text-base capitalize block text-stone-700 hover:text-yellow-700 hover:font-semibold';
-            }
+        heading.id = id;
 
-            li.appendChild(a);
-            ul.appendChild(li);
-          });
+        const li = document.createElement('li');
+        li.className = 'toc-item';
+        li.style.animationDelay = `${index * 150}ms`;  // Increased delay between items
 
-          toc.appendChild(ul);
-        }
-      } catch (e) {
-        console.error('TOC generation error:', e);
-      }
+        const a = document.createElement('a');
+        a.href = `#${id}`;
+        a.textContent = heading.textContent;
+        a.className = heading.tagName === 'H3'
+          ? 'ml-4 block text-sm text-stone-600 hover:text-yellow-800 hover:font-bold mb-2'
+          : 'mb-2 font-semibold text-base capitalize block text-stone-700 hover:text-yellow-700 hover:font-semibold';
+
+        li.appendChild(a);
+        ul.appendChild(li);
+      });
+
+      toc.appendChild(ul);
     }
 
+    // Set up toggle functionality
     function setupTOC() {
-      try {
-        const tocToggle = document.getElementById('tocToggle');
-        const toc = document.getElementById('toc');
-        const arrow = tocToggle?.querySelector('.arrow-container svg');
+      const tocToggle = document.getElementById('tocToggle');
+      const toc = document.getElementById('toc');
 
-        if (!tocToggle || !toc || !arrow) return;
+      if (!tocToggle || !toc) return;
 
-        // Set initial state for mobile
-        if (window.innerWidth < 1280) {
-          toc.classList.add('hidden');
-        } else {
-          toc.classList.remove('hidden');
-        }
-
-        tocToggle.addEventListener('click', function() {
-          toc.classList.toggle('hidden');
-          arrow.classList.toggle('rotate-180');
-        });
-      } catch (e) {
-        console.error('TOC setup error:', e);
-      }
-    }
-
-    // Self-executing function for initialization
-    function init() {
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', function() {
-          setupTOC();
-          generateTOC();
-        });
+      // Set initial state based on screen size
+      const isMobile = window.innerWidth < 1280;
+      if (isMobile) {
+        toc.classList.add('hidden');
       } else {
-        setupTOC();
-        generateTOC();
+        toc.classList.remove('hidden');
       }
+
+      // Handle toggle click
+      tocToggle.addEventListener('click', function() {
+        toc.classList.toggle('hidden');
+        tocToggle.querySelector('svg')?.classList.toggle('rotate-180');
+      });
+
+      // Handle window resize
+      window.addEventListener('resize', debounce(function() {
+        const isNowMobile = window.innerWidth < 1280;
+        if (isNowMobile !== isMobile) {
+          if (isNowMobile) {
+            toc.classList.add('hidden');
+          } else {
+            toc.classList.remove('hidden');
+          }
+        }
+      }, 100));
     }
 
-    // Initialize
-    init();
-
-    // For Astro view transitions
-    document.addEventListener('astro:page-load', function() {
-      setupTOC();
+    // Initialize on various events
+    function init() {
       generateTOC();
-    });
+      setupTOC();
+    }
+
+    if (document.readyState !== 'loading') {
+      init();
+    } else {
+      document.addEventListener('DOMContentLoaded', init);
+    }
+
+    document.addEventListener('astro:page-load', init);
   })();
 </script>
+</div>
+</div>
