@@ -57,15 +57,33 @@ const maturityIcon = maturity ? getMaturityIcon(maturity) : null;
     <div class="w-full md:w-1/2 items-start">
       {tags.length > 0 && (
         <div class="flex gap-2 justify-start md:justify-end mt-4 flex-wrap">
-          {tags.map(tag => (
+          {tags.map((tag, index) => (
             <a
               href={`/tags/${tag}`}
-              class="px-2 py-1 text-sm bg-stone-100 rounded-lg text-stone-600 hover:bg-yellow-100 transition-colors capitalize"
+              class="px-2 py-1 text-sm bg-stone-100 rounded-lg text-stone-600 hover:bg-yellow-100 transition-colors capitalize opacity-0 slide-in"
+              style={`animation-delay: ${index * 100}ms;`}
             >
               {tag}
             </a>
           ))}
         </div>
+
+<style>
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateX(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  .slide-in {
+    animation: slideIn 0.5s ease-out forwards;
+  }
+</style>
       )}
     </div>
 
