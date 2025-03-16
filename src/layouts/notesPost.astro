@@ -28,13 +28,12 @@ const maturityIcon = getMaturityIcon(maturity);
   </head>
   <body>
     <Header />
-    <main>
-      <div class={`max-w-[90rem] mx-auto px-4 md:px-8 xl:px-12`}>
-        <div class={`${collection !== 'works' ? 'block xl:grid xl:grid-cols-[250px_1fr] xl:gap-16 lg:mt-30' : ''}`}>
+    <main class="mx-auto w-full lg:w-3/4">
+      <div class="px-2">
+        <div class={`${collection !== 'works' ? 'block xl:grid xl:grid-cols-[230px_1fr] xl:gap-0 lg:mt-30' : ''}`}>
           {collection !== 'works' && <TableOfContents collection={collection} />}
-          
-          <NoteMain>
-            <div class="max-w-[65ch] mx-auto">
+          <NoteMain class="xl:-ml-6">
+            <div class="md:max-lg:mx-auto">
               <PostMeta
                 tags={tags}
                 pubDate={pubDate}
