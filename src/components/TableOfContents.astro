@@ -24,86 +24,90 @@ import H3 from './mdxComponents/H3.astro';
 </div>
 
 <script is:inline>
-  function generateTOC() {
-    const headings = document.querySelectorAll('h2, h3');
-    const toc = document.getElementById('toc');
+  (function() {
+    function generateTOC() {
+      try {
+        const headings = document.querySelectorAll('h2, h3');
+        const toc = document.getElementById('toc');
 
-    if (toc && headings.length > 0) {
-      toc.innerHTML = '';
+        if (toc && headings.length > 0) {
+          toc.innerHTML = '';
 
-      const ul = document.createElement('ul');
-      ul.className = 'space-y-2 list-none p-0';
+          const ul = document.createElement('ul');
+          ul.className = 'space-y-2 list-none p-0';
 
-      headings.forEach((heading) => {
-        if (heading.textContent?.toLowerCase() === 'on this page') return;
+          headings.forEach((heading) => {
+            if (heading.textContent?.toLowerCase() === 'on this page') return;
 
-        const li = document.createElement('li');
-        const a = document.createElement('a');
-        const id = heading.textContent?.toLowerCase().replace(/\s+/g, '-') || '';
+            const li = document.createElement('li');
+            const a = document.createElement('a');
+            const id = heading.textContent?.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '') || '';
 
-        heading.id = id;
-        a.href = `#${id}`;
-        a.textContent = heading.textContent;
-        
-        // Apply styles directly with inline styles as a fallback
-        if (heading.tagName === 'H3') {
-          a.className = 'ml-4 block text-sm text-stone-600 hover:text-yellow-800 hover:font-bold mb-2';
-          a.style.marginLeft = '1rem';
-          a.style.fontSize = '0.875rem';
-          a.style.color = '#57534e';
-          a.style.marginBottom = '0.5rem';
+            heading.id = id;
+            a.href = `#${id}`;
+            a.textContent = heading.textContent;
+            
+            if (heading.tagName === 'H3') {
+              a.className = 'ml-4 block text-sm text-stone-600 hover:text-yellow-800 hover:font-bold mb-2';
+            } else {
+              a.className = 'mb-2 font-semibold text-base capitalize block text-stone-700 hover:text-yellow-700 hover:font-semibold';
+            }
+
+            li.appendChild(a);
+            ul.appendChild(li);
+          });
+
+          toc.appendChild(ul);
+        }
+      } catch (e) {
+        console.error('TOC generation error:', e);
+      }
+    }
+
+    function setupTOC() {
+      try {
+        const tocToggle = document.getElementById('tocToggle');
+        const toc = document.getElementById('toc');
+        const arrow = tocToggle?.querySelector('.arrow-container svg');
+
+        if (!tocToggle || !toc || !arrow) return;
+
+        // Set initial state for mobile
+        if (window.innerWidth < 1280) {
+          toc.classList.add('hidden');
         } else {
-          a.className = 'mb-2 font-semibold text-base capitalize block text-stone-700 hover:text-yellow-700 hover:font-semibold';
-          a.style.marginBottom = '0.5rem';
-          a.style.fontWeight = '600';
-          a.style.fontSize = '1rem';
-          a.style.textTransform = 'capitalize';
-          a.style.color = '#44403c';
+          toc.classList.remove('hidden');
         }
 
-        li.appendChild(a);
-        ul.appendChild(li);
-      });
-
-      toc.appendChild(ul);
-    }
-  }
-
-  function setupTOC() {
-    const tocToggle = document.getElementById('tocToggle');
-    const toc = document.getElementById('toc');
-    const arrow = tocToggle?.querySelector('.arrow-container svg');
-
-    if (!tocToggle || !toc || !arrow) return;
-
-    // Set initial state for mobile
-    if (window.innerWidth < 1280) {
-      toc.classList.add('hidden');
-    } else {
-      toc.classList.remove('hidden');
+        tocToggle.addEventListener('click', function() {
+          toc.classList.toggle('hidden');
+          arrow.classList.toggle('rotate-180');
+        });
+      } catch (e) {
+        console.error('TOC setup error:', e);
+      }
     }
 
-    tocToggle.addEventListener('click', () => {
-      toc.classList.toggle('hidden');
-      arrow.classList.toggle('rotate-180');
+    // Self-executing function for initialization
+    function init() {
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() {
+          setupTOC();
+          generateTOC();
+        });
+      } else {
+        setupTOC();
+        generateTOC();
+      }
+    }
+
+    // Initialize
+    init();
+
+    // For Astro view transitions
+    document.addEventListener('astro:page-load', function() {
+      setupTOC();
+      generateTOC();
     });
-  }
-
-  // Run on page load
-  document.addEventListener('DOMContentLoaded', () => {
-    setupTOC();
-    generateTOC();
-  });
-
-  // Run when the page is fully loaded
-  window.addEventListener('load', () => {
-    setupTOC();
-    generateTOC();
-  });
-
-  // For Astro view transitions
-  document.addEventListener('astro:page-load', () => {
-    setupTOC();
-    generateTOC();
-  });
+  })();
 </script>
