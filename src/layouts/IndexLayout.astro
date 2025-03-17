@@ -54,7 +54,7 @@ const sortedTags = ['all', ...tags.filter(tag => tag !== 'all').sort()];
         <P className='leading-8 w-full lg:w-3/4'>{description}</P>
       </div>
       <div>
-        <div class="flex flex-wrap justify-between content-start gap-4 mb-8 items-center">
+        <div class="flex flex-wrap justify-between content-start gap-4 mb-4 items-center">
           {showTags && (
             <div class="flex flex-wrap justify-start gap-4 mb-8">
               {sortedTags.map(tag => (
@@ -71,13 +71,20 @@ const sortedTags = ['all', ...tags.filter(tag => tag !== 'all').sort()];
           )}
 
           {showCollections && collections.length > 1 && (
-            <select class="collection-filter px-4 py-2 mb-8 border border-gray-200 hover:bg-yellow-300">
-              {collections.map(collection => (
-                <option value={collection}>
-                  {collection.charAt(0).toUpperCase() + collection.slice(1)}
-                </option>
-              ))}
-            </select>
+            <div class="relative inline-block self-start">
+              <select class="collection-filter px-4 py-2 text-sm border border-gray-200 hover:bg-yellow-50 text-gray-500 cursor-pointer bg-transparent appearance-none pr-10">
+                {collections.map(collection => (
+                  <option value={collection}>
+                    {collection.charAt(0).toUpperCase() + collection.slice(1)}
+                  </option>
+                ))}
+              </select>
+              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                </svg>
+              </div>
+            </div>
           )}
         </div>
 
