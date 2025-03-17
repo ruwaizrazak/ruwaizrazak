@@ -30,15 +30,16 @@ console.log({
 
     <div class="motion-safe:transform-gpu motion-safe:transition-all motion-reduce:transition-none
       group-hover:-translate-y-1 group-active:translate-y-0">
-      <div class="flex gap-2 items-center mb-1">
-        <img src={iconPath} alt={`${maturity} icon`} class="w-5 h-5" />
-        <H3 class="flex items-center my-0">{title}</H3>
-      </div>
+      <H3 class="flex items-center my-0">{title}</H3>
       <p className='text-sm'>{description}</p>
+      <div class="flex flex-row my-2 items-center gap-1 text-stone-500">
+            <img src={iconPath} alt={`${maturity} icon`} class="w-4 h-4" />
+            <p class="text-xs capitalize mb-0">{maturity}</p>
+          </div>
       <div class="flex flex-row gap-4 flex-wrap text-sm items-start text-gray-500">
-        <div>Last Updated<FormattedDate date={date} /></div>
-        <Type>Notes</Type>
-      </div>
+          <div>Last Updated<FormattedDate date={date} /></div>
+          <Type>Essay</Type>
+        </div>
     </div>
   </a>
 </div>
