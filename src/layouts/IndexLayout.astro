@@ -107,9 +107,9 @@ const sortedTags = ['all', ...tags.filter(tag => tag !== 'all').sort()];
           )}
         </div>
 
-        <div class="masonry-grid columns-1  md:columns-2 lg:columns-3 xl:columns-4 gap-5 md:gap-7 lg:gap-10">
+        <div class="masonry-grid columns-1 md:columns-2 lg:columns-3 xl:columns-4 gap-5 md:gap-7 lg:gap-10">
           {posts.map((post) => (
-            <div class="break-inside-avoid mb-4 post-item" data-tags={post.data.tags?.join(' ')} data-collection={post.collection}>
+            <div class="break-inside-avoid mb-4 post-item opacity-0 translate-y-4 transition-all duration-700" data-tags={post.data.tags?.join(' ')} data-collection={post.collection}>
               {post.collection === 'books' ? (
                 <BookCard
                   title={post.data.title}
@@ -183,18 +183,42 @@ const sortedTags = ['all', ...tags.filter(tag => tag !== 'all').sort()];
             });
           });
 
+          // Intersection Observer for fade-in animation
+          const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '50px'
+          };
+
+          const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+              if (entry.isIntersecting) {
+                entry.target.classList.remove('opacity-0', 'translate-y-4');
+                observer.unobserve(entry.target);
+              }
+            });
+          }, observerOptions);
+
+          // Observe all post items
+          document.querySelectorAll('.post-item').forEach(item => {
+            observer.observe(item);
+          });
+
+          // Re-observe items when filtering
           function filterPosts() {
             posts.forEach(post => {
               const postTags = post.dataset.tags?.split(' ') || [];
               const postCollection = post.dataset.collection;
 
-              // Debug logging
-              console.log('Filtering:', { currentTag, currentCollection, postCollection, postTags });
-
               const matchesTag = currentTag === 'all' || postTags.includes(currentTag);
               const matchesCollection = currentCollection === 'all' || postCollection === currentCollection;
 
-              post.style.display = (matchesTag && matchesCollection) ? 'block' : 'none';
+              if (matchesTag && matchesCollection) {
+                post.style.display = 'block';
+                post.classList.add('opacity-0', 'translate-y-4');
+                observer.observe(post);
+              } else {
+                post.style.display = 'none';
+              }
             });
           }
         </script>
