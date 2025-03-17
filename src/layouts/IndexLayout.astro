@@ -57,18 +57,37 @@ const sortedTags = ['all', ...tags.filter(tag => tag !== 'all').sort()];
         <div class="flex flex-wrap justify-between content-start gap-4 mb-4 items-center">
           {showTags && (
             <div class="flex flex-wrap justify-start gap-4 mb-8">
-              {sortedTags.map(tag => (
+              {sortedTags.map((tag, index) => (
                 <a
-                  class={`filter-btn px-4 py-2 text-sm border border-gray-200 hover:bg-yellow-50 ${
+                  class={`filter-btn px-4 py-2 text-sm border border-gray-200 hover:bg-yellow-50 animate-slide-in ${
                     tag === currentTag ? 'bg-yellow-300 text-black active' : 'text-gray-500'
                   }`}
                   data-tag={tag}
+                  style={`animation-delay: ${index * 100}ms`}
                 >
                   {tag.charAt(0).toUpperCase() + tag.slice(1)}
                 </a>
               ))}
             </div>
           )}
+
+<style>
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  .animate-slide-in {
+    animation: slideIn 0.5s ease-out forwards;
+    opacity: 0;
+  }
+</style>
 
           {showCollections && collections.length > 1 && (
             <div class="relative inline-block self-start">
