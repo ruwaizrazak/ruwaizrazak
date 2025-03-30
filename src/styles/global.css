@@ -8,13 +8,19 @@
 @config "./tailwind.config.js";
 
 @theme {
-  --font-sans: "Lato",serif;
-  --font-serif: "Libre Caslon Text",serif;
-  --font-mono: "JetBrains Mono", serif;
+  --font-sans: "Noto Sans",sans-serif;
+  --font-serif: "Saira Extra Condensed",sans-serif;
+  --font-mono: "Roboto Mono",monospace;
 
   --marker-color: chartreuese;
   --accent: #ffff00;
   --breakpoint-3xl: 120rem;
+  --color-royalgray:#1E1E1E;
+  --color-royalnavy:#324084;
+  --text-10xl: 10rem;
+  --text-10xl--line-height: 1;
+  --text-11xl: 12rem;
+  --text-11xl--line-height: 1;
 }
 
 h1,h2,h3,h4,h5,h6 {
