@@ -17,6 +17,7 @@ import WorkCard from '../components/workCard.astro';
 import EssayCard from '../components/EssayCard.astro';
 import UL from '../components/mdxComponents/UL.astro';
 import H2 from '../components/mdxComponents/H2.astro';
+import GardenLink from '../components/GardenLink.astro';
 
 
 // Get 10 featured posts from each collection
@@ -50,217 +51,46 @@ const books = (await getCollection('books', ({ data }) => data.publish === true)
 	</head>
 	<body>
 		<Header />
-		<Main>
-      <div class="content-grid gap-5">
-        <div class="hero-section fade-in-element opacity-0 translate-y-4">
-          <H1 className='mb-3 max-w-5xl lg:mt-20 mt-10 md:mt-15'>Ruwaiz is an <mark>user experience designer</mark>, who loves to build.</H1>
-          <p class='w-full cursor typewriter-animation text-sm md:text-base lg:text-xl'>Designer, Reader who loves to build on weekends.</p>
-        </div>
+		<main>
+      <div class="w-[90%] mx-auto justify-between">
+        <div class="sm:w-full md:w-2xl">
+          <h1 class="mb-3 lg:mt-20 mt-10 md:mt-15 text-7xl md:text-8xl lg:text-10xl font-bold uppercase bg-clip-text text-transparent" style="background-image: linear-gradient(101.09deg, #1E1E1E 5.49%, #324084 65.78%)">A Cacophony of Thoughts</h1>
+          <p class="w-[80%] text-xl">Personal Website and Portfolio of Ruwaiz Razak, a Designer.</p>
 
-        {works.length > 0 && (
-          <div class="career-section mt-10 fade-in-element opacity-0 translate-y-4">
-            <H2 className='mb-5 prose-stone'>Career</H2>
-            <P className='prose max-w-4xl prose-stone mt-0 mb-0 text-lg md:text-xl lg:text-xl'>
-              I work currently as a Senior UX Designer at<Link href="https://www.nordeus.com">Nordeus.</Link>My expertise is in building experience for video games through research heavy and optimized design pipeline. <br> <br>Following are the selected works from my career and if you are interested in my experiences, take a look at my<Link href="/about">about section</Link>.
-            </P>
-            <ul class="mt-10 ps-0 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-10">
-              {works.map((post) => (
-                <li class="fade-in-element opacity-0 translate-y-4">
-                  <WorkCard
-                    title={post.data.title}
-                    company={post.data.company}
-                    url={`/works/${post.id}/`}
-                    heroImage={post.data.heroImage || '/placeholder-work.jpg'}
-                  />
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
+          <h4 class="text-xl uppercase text-gray-500 mt-10">Garden</h4>
+          <ul>
+            <li><GardenLink
+              href="/essays"
+              title="Essays"
+              description="Very much under NDA, but I can show you my process."
+            /></li>
+            <li><GardenLink
+              href="/notes"
+              title="Notes"
+              description="Not refined, incomplete, but a starting point."
+            /></li>
+            <li><GardenLink
+              href="/books"
+              title="Books"
+              description="I've read, Currently Reading and my notes on them."
+            /></li>
+            <li>---</li>
+            <li><GardenLink
+              href="/about"
+              title="About"
+              description="What am I?"
+            /></li>
+            <li><GardenLink
+              href="/live"
+              title="Live"
+              description="Shares a glimpse of whats happening."
+            /></li>
 
-        <div class="featured-grid gap-4 mt-20">
-          {essays.length > 0 && (
-            <div class="col-span-1 md:col-span-2 fade-in-element opacity-0 translate-y-4">
-              <H2>Featured Essays</H2>
-              <ul class="grid grid-cols-1 lg:grid-cols-2 3xl:grid-cols-3 gap-10 p-0">
-                {essays.map((post) => (
-                  <li>
-                    <EssayCard
-                      title={post.data.title}
-                      description={post.data.description || 'No description available'}
-                      date={post.data.pubDate}
-                      url={`/essays/${post.id}/`}
-                      heroImage={post.data.heroImage}
-                      maturity={post.data.maturity}
-                    />
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {notes.length > 0 && (
-            <div class="col-span-1 mt-20 md:mt-0 fade-in-element opacity-0 translate-y-4">
-              <H2>Featured Notes</H2>
-              <ul class="flex flex-col gap-4">
-                {notes.map((post) => (
-                  <li>
-                    <NoteCard
-                      title={post.data.title}
-                      description={post.data.description}
-                      date={post.data.pubDate}
-                      url={`/notes/${post.id}/`}
-                      maturity={post.data.maturity}
-                    />
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {books.length > 0 && (
-            <div class="col-span-1 md:col-span-3 my-20 fade-in-element opacity-0 translate-y-4">
-              <H2>Featured Books</H2>
-              <ul class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 3xl:grid-cols-4 gap-5">
-                {books.map((post) => (
-                  <li>
-                    <BookCard
-                      title={post.data.title}
-                      description={post.data.description || 'No description available'}
-                      date={post.data.pubDate}
-                      url={`/books/${post.id}/`}
-                      heroImage={post.data.heroImage || '/placeholder-book.jpg'}
-                      author={post.data.author || 'Unknown Author'}
-                      readStatus={post.data.readStatus || 'to-read'}
-                      maturity={post.data.maturity}
-                    />
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+          </ul>
         </div>
       </div>
-      <script>
-        const observerOptions = {
-          threshold: 0.1,
-          rootMargin: '50px'
-        };
-      
-        const observer = new IntersectionObserver((entries) => {
-          entries.forEach(entry => {
-            if (entry.isIntersecting) {
-              entry.target.classList.remove('opacity-0', 'translate-y-4');
-              observer.unobserve(entry.target);
-            }
-          });
-        }, observerOptions);
-      
-        document.querySelectorAll('.fade-in-element').forEach((element, index) => {
-          setTimeout(() => {
-            observer.observe(element);
-          }, index * 100);
-        });
-      </script>
-      <style>
-        .fade-in-element {
-          transition: all 0.8s ease-out;
-        }
-      </style>
-		</Main>
+		</main>
 		<Footer />
 	</body>
 </html>
 
-<style>
-    /* Cursor */
-.cursor {
-    position: relative;
-    width: 24em;
-    margin: 0;
-    border-right: 2px solid rgba(0,0,0,.75);
-    text-align: left;
-    white-space: nowrap;
-    overflow: hidden;
-    transform: none;
-}
-
-/* Animation */
-.typewriter-animation {
-  animation:
-    typewriter 4s steps(40) 1s 1 normal both,
-    blinkingCursor 500ms steps(40) infinite normal;
-  max-width: 100%;
-}
-
-@keyframes typewriter {
-  from { width: 0; }
-  to { width: 22em; }
-}
-
-@keyframes blinkingCursor {
-  from { border-right-color: rgba(0,0,0,.75); }
-  to { border-right-color: transparent; }
-}
-  .content-grid {
-    display: grid;
-    grid-auto-flow: row;
-    gap: 1.25rem; /* equivalent to gap-5 in Tailwind */
-    width: 100%;
-    -webkit-box-orient: vertical;
-    -webkit-box-direction: normal;
-  }
-
-  .featured-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-template-areas:
-      "essays essays notes"
-      "books books  books";
-    gap: 1rem;
-  }
-
-  .essays-section {
-    grid-area: essays;
-  }
-
-  .notes-section {
-    grid-area: notes;
-  }
-
-  .books-section {
-    grid-area: books;
-  }
-
-  @media (max-width: 768px) {
-    .featured-grid {
-      grid-template-columns: 1fr;
-      grid-template-areas:
-        "essays"
-        "notes"
-        "books";
-      gap: var(--space-l);
-    }
-  }
-
-  ul {
-    margin-block-start: 0em !important;
-  }
-</style>
-
-<style>
-  .essay-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1.25rem;
-    padding: 0;
-  }
-
-  @media (min-width: 768px) {
-    .essay-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
-  /* Remove the masonry-grid class styles as they're not well supported in Safari */
-</style>
