@@ -21,6 +21,7 @@
   --text-10xl--line-height: 1;
   --text-11xl: 12rem;
   --text-11xl--line-height: 1;
+  --color-text-primary: #FFF1F1;
 }
 
 h1,h2,h3,h4,h5,h6 {

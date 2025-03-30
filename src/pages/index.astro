@@ -50,6 +50,7 @@ const books = (await getCollection('books', ({ data }) => data.publish === true)
 	<body>
 		<Header />
 		<main>
+      <!--Hero Section -->
       <div class="w-[90%] mx-auto justify-between grid grid-cols-1 md:grid-cols-2 gap-10">
         <div class="sm:w-full md:w-2xl">
           <h1 class="mb-3 lg:mt-20 mt-10 md:mt-15 text-7xl md:text-8xl lg:text-10xl font-bold uppercase bg-clip-text text-transparent" style="background-image: linear-gradient(101.09deg, #1E1E1E 5.49%, #324084 65.78%)">A Cacophony of Thoughts</h1>
@@ -86,13 +87,38 @@ const books = (await getCollection('books', ({ data }) => data.publish === true)
 
           </ul>
         </div>
-        <div class="max-lg:invisible flex justify-end">
+        <div class="hidden xl:flex justify-end">
           <HeroSvgs />
         </div>
         </div>
-      </div>
+        <!--What am I Section -->
+        <div class="w-full md:w-[96%] mx-auto p-5 mt-10 xl:mt-0" style="background: linear-gradient(26.18deg, #1E1E1E 40.52%, #324084 116.37%);">
+          <div class="mx-auto border-1 border-gray-50 border-dashed p-5">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+              <div class="w-full px-2 md:px-0">
+                <h1 class="text-5xl md:text-6xl lg:text-7xl uppercase font-medium text-white opacity-100"> What am I?</h1>
+                <div class="text-white w-full py-5">
+                  <br>
+                  <p class="text-lg md:text-xl">Senior User Experience Designer with 7 years of experience currently working at Nordeus. Previously at Zynga and Glu Mobile.</p>
+                  <br>
+                  <p class="text-lg md:text-xl">I worked on multiple mobile games across multiple genres, building features, onboarding experiences and lots and lots of researches.</p>
+                  <br>
+                  <p class="text-lg md:text-xl">Read more about what I'm currently into Here.</p>
+                  <br>
 
-      </div>
+                  <h4 class="text-xl uppercase text-gray-100"> Contact</h4>
+                  <p class="text-lg md:text-xl">I'm available via hello@ruwaizrazak.com, you can also checkout my resume if you want to.</p>
+                </div>
+              </div>
+              <div class="hidden md:flex justify-center md:justify-end">
+                <img src="/graphics/designGeneralist.svg" class="w-[200px] md:w-[300px] lg:w-[400px]"/>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+
 		</main>
 		<Footer />
 	</body>
