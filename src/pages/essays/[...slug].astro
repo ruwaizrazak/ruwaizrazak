@@ -6,10 +6,14 @@ import ExternalLink from "../../components/mdxComponents/ExternalLink.astro"
 
 export async function getStaticPaths() {
 	const posts = await getCollection('essays');
-	return posts.map((post) => ({
-		params: { slug: post.id },
-		props: post,
-	}));
+	return posts.map((post) => {
+		// Extract the filename without extension as slug
+		const filename = post.id.split('/').pop().replace(/\.[^.]+$/, '');
+		return {
+			params: { slug: filename.toLowerCase() },  // Use lowercase filename as slug
+			props: post,
+		};
+	});
 }
 type Props = CollectionEntry<'essays'>;
 
