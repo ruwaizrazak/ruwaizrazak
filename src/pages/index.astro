@@ -4,57 +4,50 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 import Link  from '../components/mdxComponents/Link.astro';
-import FormattedDate from '../components/FormattedDate.astro';
-import Main from '../components/Main.astro';
 import { getCollection } from 'astro:content';
 import GardenLink from '../components/GardenLink.astro';
 import HeroSvgs from '../components/svgs/HeroSvgs.astro';
 import GradientHeading from '../components/mdxComponents/gradientHeading.astro';
 import GradientLine from '../components/mdxComponents/gradientLine.astro';
+import EssayCard from '../components/EssayCard.astro';
+import NoteCard from '../components/NoteCard.astro';
 
 
 // Get 10 featured posts from each collection
+// Helper function to standardize slug creation across collections
+function createStandardSlug(post) {
+  const filename = post.id.split('/').pop().replace(/\.[^.]+$/, '');
+  return filename.toLowerCase();
+}
+
+// Helper function to sort by date
+function sortByDateDesc(a, b) {
+  const dateA = new Date(a.data.pubDate);
+  const dateB = new Date(b.data.pubDate);
+  return dateB.valueOf() - dateA.valueOf();
+}
+
 // Get featured and published posts from each collection
 const notes = (await getCollection('notes', ({ data }) => data.publish === true))
   .filter(post => post.data.featured === true && post.data.pubDate)
-  .map(post => {
-    // Extract the filename without extension as slug
-    const filename = post.id.split('/').pop().replace(/\.[^.]+$/, '');
-    return {
-      ...post,
-      slug: filename.toLowerCase() // Use lowercase filename as slug
-    };
-  })
-  .sort((a, b) => {
-    const dateA = new Date(a.data.pubDate);
-    const dateB = new Date(b.data.pubDate);
-    return dateB.valueOf() - dateA.valueOf();
-  })
+  .map(post => ({
+    ...post,
+    slug: createStandardSlug(post)
+  }))
+  .sort(sortByDateDesc)
   .slice(0, 4);
 
 const essays = (await getCollection('essays'))
-  .filter(post => {
-    // Only include posts that are published and featured
-    return (
-      post.data.publish === true &&
-      post.data.featured === true &&
-      post.data.pubDate
-    );
-  })
-  .map(post => {
-    // Use the original slug from the collection entry if it exists
-    // This should match what getStaticPaths() in [...slug].astro is using
-    return {
-      ...post,
-      // Ensure we're using the same slug format as in [...slug].astro
-      slug: post.slug || post.id.split('/').pop().replace(/\.[^.]+$/, '')
-    };
-  })
-  .sort((a, b) => {
-    const dateA = new Date(a.data.pubDate);
-    const dateB = new Date(b.data.pubDate);
-    return dateB.valueOf() - dateA.valueOf();
-  })
+  .filter(post => (
+    post.data.publish === true &&
+    post.data.featured === true &&
+    post.data.pubDate
+  ))
+  .map(post => ({
+    ...post,
+    slug: createStandardSlug(post)
+  }))
+  .sort(sortByDateDesc)
   .slice(0, 10);
 
 // Log the final filtered essays
@@ -62,20 +55,20 @@ console.log('Filtered essays count:', essays.length);
 
 const works = (await getCollection('works', ({ data }) => data.publish === true))
   .filter(post => post.data.featured === true && post.data.pubDate)
-  .sort((a, b) => {
-    const dateA = new Date(a.data.pubDate);
-    const dateB = new Date(b.data.pubDate);
-    return dateB.valueOf() - dateA.valueOf();
-  })
+  .map(post => ({
+    ...post,
+    slug: createStandardSlug(post)
+  }))
+  .sort(sortByDateDesc)
   .slice(0, 10);
 
 const books = (await getCollection('books', ({ data }) => data.publish === true))
   .filter(post => post.data.featured === true && post.data.pubDate)
-  .sort((a, b) => {
-    const dateA = new Date(a.data.pubDate);
-    const dateB = new Date(b.data.pubDate);
-    return dateB.valueOf() - dateA.valueOf();
-  })
+  .map(post => ({
+    ...post,
+    slug: createStandardSlug(post)
+  }))
+  .sort(sortByDateDesc)
   .slice(0, 10);
 
 ---
@@ -209,7 +202,7 @@ const books = (await getCollection('books', ({ data }) => data.publish === true)
 
           </div>
           <!--surface all the contents from essays here -->
-          <div class="flex gap-10" id="garden">
+          <div class="flex gap-10 mt-10" id="garden">
             <div id="essays" class="w-[70%]">
               <a class="flex items-center gap-2 hover:text-blue-600 transition-colors" href="/essays">
                 <img src="/icons/tree.svg" alt="Essays icon" width="20px">
@@ -217,27 +210,17 @@ const books = (await getCollection('books', ({ data }) => data.publish === true)
                 <img src="/icons/rightarrow.svg" alt="Right arrow" width="10px">
               </a>
               <p class="text-xl">Essays are more refined, long written documents which are opinionated and have a message to deliver.</p>
-              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-10">
+              <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 mt-10">
                 {essays.map((essay) => (
                   <div class="group rounded-lg overflow-hidden hover:shadow-lg transition-all">
-                    <a href={`/essays/${essay.slug || essay.id}`} class="block p-5 bg-stone-50 rounded-xl border-1 border-stone-100 hover:bg-yellow-50">
-                      {essay.data.heroImage && (
-                        <img
-                          src={essay.data.heroImage}
-                          alt={essay.data.title}
-                          class="w-full h-48 object-cover rounded-lg mb-4"
-                        />
-                      )}
-                      <h3 class="text-lg font-medium text-gray-900">{essay.data.title || 'Untitled'}</h3>
-                      <p class="text-sm text-gray-600 mt-2">{essay.data.description || ''}</p>
-                      <div class="text-xs text-gray-500 mt-4">
-                        {new Date(essay.data.pubDate).toLocaleDateString('en-US', {
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric'
-                        })}
-                      </div>
-                    </a>
+                    <EssayCard
+                    title={essay.data.title || 'Untitled'}
+                    description={essay.data.description || ''}
+                    pubDate={essay.data.pubDate}
+                    heroImage={essay.data.heroImage}
+                     url={`/essays/${essay.slug}`}
+                    imageHeight="h-32"
+                    />
                   </div>
                 ))}
               </div>
@@ -249,23 +232,16 @@ const books = (await getCollection('books', ({ data }) => data.publish === true)
                 <h3 class="text-3xl uppercase font-medium">Notes</h3>
                 <img src="/icons/rightarrow.svg" alt="Right arrow" width="10px">
               </a>
-              <p class="text-xl">Essays are more refined, long written documents which are opinionated and have a message to deliver.</p>
+              <p class="text-xl">Short, Unrefined, Vague documents.</p>
               </div>
 <div class="grid grid-cols-1 gap-4 mt-10">
   {notes.filter(note => note.data.pubDate).map((note) => (
-    <div class="group hover:shadow-md transition-all">
-      <a href={`/notes/${note.slug}`} class="block p-4 bg-stone-50 rounded-lg border-1 border-stone-100 hover:bg-yellow-50">
-        <h3 class="text-base font-medium text-gray-900">{note.data.title || 'Untitled'}</h3>
-        <p class="text-sm text-gray-600 mt-1">{note.data.description || ''}</p>
-        <div class="text-xs text-gray-500 mt-2">
-          {new Date(note.data.pubDate).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-          })}
-        </div>
-      </a>
-    </div>
+    <NoteCard
+      title={note.data.title || 'Untitled'}
+      description={note.data.description || ''}
+      pubDate={note.data.pubDate}
+      url={`/notes/${note.slug}`}
+    />
   ))}
 </div>
             </div>

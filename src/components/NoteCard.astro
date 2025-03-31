@@ -1,0 +1,32 @@
+---
+// NoteCard.astro - Reusable card component for notes
+export interface Props {
+  title: string;
+  description?: string;
+  pubDate: Date;
+  url: string;
+}
+
+const { 
+  title = 'Untitled', 
+  description = '', 
+  pubDate,
+  url
+} = Astro.props;
+
+const formattedDate = new Date(pubDate).toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric'
+});
+---
+
+<div class="group hover:shadow-md transition-all">
+  <a href={url} class="block p-4 bg-stone-50 rounded-lg border-1 border-stone-100 hover:bg-yellow-50">
+    <h3 class="text-base font-medium text-gray-900">{title}</h3>
+    {description && <p class="text-sm text-gray-600 mt-1">{description}</p>}
+    <div class="text-xs text-gray-500 mt-2">
+      {formattedDate}
+    </div>
+  </a>
+</div>

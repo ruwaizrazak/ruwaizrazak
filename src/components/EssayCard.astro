@@ -1,0 +1,54 @@
+---
+// ContentCard.astro - Reusable card component for content items
+export interface Props {
+  title: string;
+  description?: string;
+  pubDate: Date;
+  heroImage?: string;
+  url: string;
+  imageHeight?: string;
+}
+
+const {
+  title = 'Untitled',
+  description = '',
+  pubDate,
+  heroImage,
+  url,
+  imageHeight = 'h-48'
+} = Astro.props;
+
+const formattedDate = new Date(pubDate).toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric'
+});
+---
+
+<div class="group rounded-lg overflow-hidden hover:shadow-lg transition-all">
+  <a href={url} class="block p-5 bg-stone-50 rounded-xl border-1 border-stone-100 hover:bg-yellow-50">
+    {heroImage && (
+      <img
+        src={heroImage}
+        alt={title}
+        class={`w-full ${imageHeight} object-cover rounded-lg mb-4`}
+      />
+    )}
+    <h3 class="text-lg font-medium text-gray-900">{title}</h3>
+    {description && <p class="text-sm text-gray-600 mt-2">{description}</p>}
+    <div class="text-xs text-gray-500 mt-4">
+      {formattedDate}
+    </div>
+  </a>
+</div>
+
+<!--Usage Example
+<ContentCard
+      title={note.data.title || 'Untitled'}
+      description={note.data.description || ''}
+      pubDate={note.data.pubDate}
+      heroImage={note.data.heroImage}
+      url={`/notes/${note.slug}`}
+      imageHeight="h-32"
+    />
+-->
