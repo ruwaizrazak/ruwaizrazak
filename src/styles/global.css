@@ -11,17 +11,19 @@
   --font-sans: "Noto Sans",sans-serif;
   --font-serif: "Saira Extra Condensed",sans-serif;
   --font-mono: "Roboto Mono",monospace;
+  --font-handwriting: "Caveat",cursive;
 
   --marker-color: chartreuese;
-  --accent: #ffff00;
+  --accent: #004A8F;
   --breakpoint-3xl: 120rem;
-  --color-royalgray:#1E1E1E;
-  --color-royalnavy:#324084;
+
   --text-10xl: 10rem;
   --text-10xl--line-height: 1;
   --text-11xl: 12rem;
   --text-11xl--line-height: 1;
   --color-text-primary: #FFF1F1;
+  --color-syoro:#003535;
+  --color-konpeki:#004A8F;
 }
 
 h1,h2,h3,h4,h5,h6 {
@@ -34,7 +36,7 @@ p, a {
 }
 
 p {
-  color: inherit;
+  color: var(--color-syoro);
 }
 
 .prose p {
