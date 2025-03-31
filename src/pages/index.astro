@@ -50,8 +50,7 @@ const essays = (await getCollection('essays'))
   .sort(sortByDateDesc)
   .slice(0, 10);
 
-// Log the final filtered essays
-console.log('Filtered essays count:', essays.length);
+// Removed debug console.log statement
 
 const works = (await getCollection('works', ({ data }) => data.publish === true))
   .filter(post => post.data.featured === true && post.data.pubDate)
