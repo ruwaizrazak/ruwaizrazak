@@ -20,7 +20,8 @@ const isActive = href === pathname || href === '/' + (subpath?.[0] || '');
   a {
     color:inherit;
     text-decoration: underline;
-    text-decoration-color:var(--color-yellow-500);
+    text-decoration-style: wavy;
+    text-decoration-color:var(--color-konpeki);
     text-underline-offset: .4em;
   }
   @keyframes linkAnimation {
@@ -35,11 +36,9 @@ const isActive = href === pathname || href === '/' + (subpath?.[0] || '');
   }
 }
   a:hover {
-    background-color: yellow;
-    color:var(--black);
     text-decoration: line-through;
     text-decoration-style: wavy;
-    text-decoration-color: var(--black) !important;
+    text-decoration-color:var(--color-konpeki);
     text-decoration-thickness: .1em;
     animation: .5s 1 forwards linkAnimation;
     transition: all .5s ease;
