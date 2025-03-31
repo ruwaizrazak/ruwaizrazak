@@ -3,41 +3,79 @@ import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
-import H1 from '../components/mdxComponents/H1.astro';
-import P from '../components/mdxComponents/P.astro';
-import H3 from '../components/mdxComponents/H3.astro';
 import Link  from '../components/mdxComponents/Link.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import Main from '../components/Main.astro';
 import { getCollection } from 'astro:content';
-import Image from '../components/mdxComponents/Image.astro';
-import NoteCard from '../components/NoteCard.astro';
-import BookCard from '../components/BookCard.astro';
-import WorkCard from '../components/workCard.astro';
-import EssayCard from '../components/EssayCard.astro';
 import GardenLink from '../components/GardenLink.astro';
 import HeroSvgs from '../components/svgs/HeroSvgs.astro';
+import GradientHeading from '../components/mdxComponents/gradientHeading.astro';
+import GradientLine from '../components/mdxComponents/gradientLine.astro';
+
 
 // Get 10 featured posts from each collection
 // Get featured and published posts from each collection
 const notes = (await getCollection('notes', ({ data }) => data.publish === true))
-  .filter(post => post.data.featured === true)
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .filter(post => post.data.featured === true && post.data.pubDate)
+  .map(post => {
+    // Extract the filename without extension as slug
+    const filename = post.id.split('/').pop().replace(/\.[^.]+$/, '');
+    return {
+      ...post,
+      slug: filename.toLowerCase() // Use lowercase filename as slug
+    };
+  })
+  .sort((a, b) => {
+    const dateA = new Date(a.data.pubDate);
+    const dateB = new Date(b.data.pubDate);
+    return dateB.valueOf() - dateA.valueOf();
+  })
   .slice(0, 4);
 
-const essays = (await getCollection('essays', ({ data }) => data.publish === true))
-  .filter(post => post.data.featured === true)
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+const essays = (await getCollection('essays'))
+  .filter(post => {
+    // Only include posts that are published and featured
+    return (
+      post.data.publish === true &&
+      post.data.featured === true &&
+      post.data.pubDate
+    );
+  })
+  .map(post => {
+    // Use the original slug from the collection entry if it exists
+    // This should match what getStaticPaths() in [...slug].astro is using
+    return {
+      ...post,
+      // Ensure we're using the same slug format as in [...slug].astro
+      slug: post.slug || post.id.split('/').pop().replace(/\.[^.]+$/, '')
+    };
+  })
+  .sort((a, b) => {
+    const dateA = new Date(a.data.pubDate);
+    const dateB = new Date(b.data.pubDate);
+    return dateB.valueOf() - dateA.valueOf();
+  })
   .slice(0, 10);
 
+// Log the final filtered essays
+console.log('Filtered essays count:', essays.length);
+
 const works = (await getCollection('works', ({ data }) => data.publish === true))
-  .filter(post => post.data.featured === true)
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .filter(post => post.data.featured === true && post.data.pubDate)
+  .sort((a, b) => {
+    const dateA = new Date(a.data.pubDate);
+    const dateB = new Date(b.data.pubDate);
+    return dateB.valueOf() - dateA.valueOf();
+  })
   .slice(0, 10);
 
 const books = (await getCollection('books', ({ data }) => data.publish === true))
-  .filter(post => post.data.featured === true)
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .filter(post => post.data.featured === true && post.data.pubDate)
+  .sort((a, b) => {
+    const dateA = new Date(a.data.pubDate);
+    const dateB = new Date(b.data.pubDate);
+    return dateB.valueOf() - dateA.valueOf();
+  })
   .slice(0, 10);
 
 ---
@@ -52,8 +90,8 @@ const books = (await getCollection('books', ({ data }) => data.publish === true)
 		<main>
       <!--Hero Section -->
       <div class="w-[90%] mx-auto justify-between grid grid-cols-1 md:grid-cols-2 gap-10">
-        <div class="sm:w-full md:w-2xl">
-          <h1 class="mb-3 lg:mt-20 mt-10 md:mt-15 text-7xl md:text-8xl lg:text-10xl font-bold uppercase bg-clip-text text-transparent" style="background-image: linear-gradient(101.09deg, #1E1E1E 5.49%, #324084 65.78%)">A Cacophony of Thoughts</h1>
+        <div class="sm:w-full md:w-2xl mt-20">
+          <GradientHeading size="xl">A Cacophony of Thoughts</GradientHeading>
           <p class="w-[80%] text-xl">Personal Website and Portfolio of Ruwaiz Razak, a Designer.</p>
 
           <h4 class="text-xl uppercase text-gray-500 mt-10">Garden</h4>
@@ -92,32 +130,146 @@ const books = (await getCollection('books', ({ data }) => data.publish === true)
         </div>
         </div>
         <!--What am I Section -->
-        <div class="w-full md:w-[96%] mx-auto p-5 mt-10 xl:mt-0" style="background: linear-gradient(26.18deg, #1E1E1E 40.52%, #324084 116.37%);">
+        <div class="w-full md:w-[96%] mx-auto p-5 mt-10 xl:mt-0" style="background: linear-gradient(26.18deg, #1E1E1E 40.52%, #324084 116.37%)">
           <div class="mx-auto border-1 border-gray-50 border-dashed p-5">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
               <div class="w-full px-2 md:px-0">
-                <h1 class="text-5xl md:text-6xl lg:text-7xl uppercase font-medium text-white opacity-100"> What am I?</h1>
+                <GradientHeading size="lg" className='text-white font-medium'> What am I?</GradientHeading>
                 <div class="text-white w-full py-5">
+                  <p class="text-lg md:text-xl text-white">Senior User Experience Designer with 7 years of experience currently working at Nordeus. Previously at <Link href="http://www.zynga.com">Zynga</Link> and <Link href="http://www.glumobile.com">Glu Mobile</Link>.</p>
                   <br>
-                  <p class="text-lg md:text-xl">Senior User Experience Designer with 7 years of experience currently working at Nordeus. Previously at Zynga and Glu Mobile.</p>
+                  <p class="text-lg md:text-xl text-white">I worked on multiple mobile games across multiple genres, building features, onboarding experiences and lots and lots of researches.</p>
                   <br>
-                  <p class="text-lg md:text-xl">I worked on multiple mobile games across multiple genres, building features, onboarding experiences and lots and lots of researches.</p>
-                  <br>
-                  <p class="text-lg md:text-xl">Read more about what I'm currently into Here.</p>
+                  <p class="text-lg md:text-xl text-white">Read more about what I'm currently into <Link href="/live">Here</Link></p>
                   <br>
 
-                  <h4 class="text-xl uppercase text-gray-100"> Contact</h4>
-                  <p class="text-lg md:text-xl">I'm available via hello@ruwaizrazak.com, you can also checkout my resume if you want to.</p>
+                  <h4 class="text-xl uppercase text-gray-100 text-white"> Contact</h4>
+                  <p class="text-lg md:text-xl">I'm available via <Link src="mailto:hello@ruwaizrazak.com">hello@ruwaizrazak.com</Link>, you can also checkout my resume if you want to.</p>
                 </div>
               </div>
               <div class="hidden md:flex justify-center md:justify-end">
-                <img src="/graphics/designGeneralist.svg" class="w-[200px] md:w-[300px] lg:w-[400px]"/>
+                <img src="/graphics/designGeneralist.svg" class="w-[200px] md:w-[300px] lg:w-[400px]" alt="design generalist"/>
               </div>
             </div>
           </div>
-
         </div>
+        <!-- Selected Works -->
+        <div class="w-[98%] md:w-[91%] mx-auto mt-20">
+          <div class="flex items-center gap-4">
+            <GradientHeading size="lg" className='font-medium sm:whitespace-nowrap'>Selected Works</GradientHeading>
+            <GradientLine angle={45} startPercentage={20} endPercentage={80} className="h-[60px] w-[80%]" />
+          </div>
+          <div class="lg:flex gap-20 text-lg md:text-xl mt-10 w-full justify-between text-syoro">
+            <p class="w-full lg:w-[50%] text-syoro"> While I can’t share what I did at my previous companies, I can give a glimpse on my process and the project I worked on. <br> <br>Check out my resume if you are interested to know more about my career experience.</p>
+              <div class="flex gap-20 mt-10 lg:mt-0 justify-center">
+                <div class="group">
+                  <a href="/works/zynga" class="block overflow-hidden rounded-xl bg-stone-50 p-6 shadow-sm transition-all duration-300
+                    hover:bg-yellow-50 hover:shadow-lg">
+                    <div class="transform-gpu transition-all duration-300 ease-out group-hover:-translate-y-1">
+                      <div class="overflow-hidden rounded-lg">
+                        <img
+                          src="/index/zynga.png"
+                          alt="At Zynga"
+                          class="w-full h-48 object-cover rounded-lg mb-4"
+                        />
+                      </div>
+                      <div class="mt-6 space-y-3">
+                        <h3 class="text-xl font-semibold text-gray-900">At Zynga</h3>
+                        <p class="text-sm text-gray-400">2019-2024</p>
+                      </div>
+                    </div>
+                  </a>
+                </div>
 
+                <div class="group">
+                  <a href="/works/deerhunter2018" class="block overflow-hidden rounded-xl bg-stone-50 p-6 shadow-sm transition-all duration-300
+                    hover:bg-yellow-50 hover:shadow-lg">
+                    <div class="transform-gpu transition-all duration-300 ease-out group-hover:-translate-y-1">
+                      <div class="overflow-hidden rounded-lg">
+                        <img
+                          src="/index/glu.png"
+                          alt="At Glu"
+                          class="w-full h-48 object-cover rounded-lg mb-4"
+                        />
+                      </div>
+                      <div class="mt-6 space-y-3">
+                        <h3 class="text-xl font-semibold text-gray-900">At Glu</h3>
+                        <p class="text-sm text-gray-400">2018-2019</p>
+                      </div>
+                    </div>
+                  </a>
+                </div>
+              </div>
+          </div>
+        </div>
+        <div class="w-[98%] md:w-[91%] mx-auto mt-20">
+          <div class="flex items-center gap-4">
+            <GradientLine angle={45} startPercentage={20} endPercentage={80} className="h-[60px] w-[80%]" />
+            <GradientHeading size="lg" className='font-medium sm:whitespace-nowrap text-right'>Snippets From Garden</GradientHeading>
+
+          </div>
+          <!--surface all the contents from essays here -->
+          <div class="flex gap-10" id="garden">
+            <div id="essays" class="w-[70%]">
+              <a class="flex items-center gap-2 hover:text-blue-600 transition-colors" href="/essays">
+                <img src="/icons/tree.svg" alt="Essays icon" width="20px">
+                <h3 class="text-3xl uppercase font-medium">Essays</h3>
+                <img src="/icons/rightarrow.svg" alt="Right arrow" width="10px">
+              </a>
+              <p class="text-xl">Essays are more refined, long written documents which are opinionated and have a message to deliver.</p>
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-10">
+                {essays.map((essay) => (
+                  <div class="group rounded-lg overflow-hidden hover:shadow-lg transition-all">
+                    <a href={`/essays/${essay.slug || essay.id}`} class="block p-5 bg-stone-50 rounded-xl border-1 border-stone-100 hover:bg-yellow-50">
+                      {essay.data.heroImage && (
+                        <img
+                          src={essay.data.heroImage}
+                          alt={essay.data.title}
+                          class="w-full h-48 object-cover rounded-lg mb-4"
+                        />
+                      )}
+                      <h3 class="text-lg font-medium text-gray-900">{essay.data.title || 'Untitled'}</h3>
+                      <p class="text-sm text-gray-600 mt-2">{essay.data.description || ''}</p>
+                      <div class="text-xs text-gray-500 mt-4">
+                        {new Date(essay.data.pubDate).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric'
+                        })}
+                      </div>
+                    </a>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div id="notes" class="w-[30%]">
+              <div>
+                <a class="flex items-center gap-2 hover:text-blue-600 transition-colors" href="/notes">
+                <img src="/icons/seed.svg" alt="Notes icon" width="20px">
+                <h3 class="text-3xl uppercase font-medium">Notes</h3>
+                <img src="/icons/rightarrow.svg" alt="Right arrow" width="10px">
+              </a>
+              <p class="text-xl">Essays are more refined, long written documents which are opinionated and have a message to deliver.</p>
+              </div>
+<div class="grid grid-cols-1 gap-4 mt-10">
+  {notes.filter(note => note.data.pubDate).map((note) => (
+    <div class="group hover:shadow-md transition-all">
+      <a href={`/notes/${note.slug}`} class="block p-4 bg-stone-50 rounded-lg border-1 border-stone-100 hover:bg-yellow-50">
+        <h3 class="text-base font-medium text-gray-900">{note.data.title || 'Untitled'}</h3>
+        <p class="text-sm text-gray-600 mt-1">{note.data.description || ''}</p>
+        <div class="text-xs text-gray-500 mt-2">
+          {new Date(note.data.pubDate).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          })}
+        </div>
+      </a>
+    </div>
+  ))}
+</div>
+            </div>
+          </div>
 
 		</main>
 		<Footer />
