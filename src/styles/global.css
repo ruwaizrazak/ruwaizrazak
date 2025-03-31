@@ -36,7 +36,7 @@ p, a {
 }
 
 p {
-  color: var(--color-syoro);
+  color: inherit;
 }
 
 .prose p {
