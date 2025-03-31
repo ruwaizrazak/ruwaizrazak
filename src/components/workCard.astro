@@ -1,17 +1,14 @@
 ---
 import FormattedDate from './FormattedDate.astro';
-import Image from './mdxComponents/Image.astro';
-
 import SmallText from './mdxComponents/SmallText.astro';
-import H3 from './mdxComponents/H3.astro';
-
 
 interface Props {
   title: string;
   url: string;
   heroImage: string;
-  company: string;
+  company?: string;
   role?: string;
+  year?: string;
 }
 
 const {
@@ -20,36 +17,22 @@ const {
   heroImage,
   company,
   role,
+  year
 } = Astro.props;
 ---
 
-<div class="case-study-card group rounded-lg motion-safe:hover:scale-[1.02] motion-safe:active:scale-95
-  motion-safe:transform-gpu motion-safe:transition-transform" style={`--random-rotation: ${Math.random() * 6 - 3}deg`}>
+<div>
   <a href={url} class="block rounded-lg overflow-hidden mt-5 bg-stone-50 p-5 border-1 border-stone-100 hover:bg-yellow-50">
-    <div class="motion-safe:transform-gpu motion-safe:transition-all motion-reduce:transition-none
-      group-hover:-translate-y-1 group-active:translate-y-0">
-      <img src={heroImage} alt={title} class="h-48 aspect-video transition-opacity case-study-image" />
-      <div class="p-0 mt-5">
-        <h3 class="text-xl">{title}</h3>
-        <SmallText className="text-gray-600 text-sm block">
-          {company} {role && `• ${role}`}
-        </SmallText>
+    <div>
+      <img src={heroImage} alt={title} class="h-48 object-contain transition-opacity case-study-image" />
+      <div class="mt-5">
+        <h3 class="font-medium text-syoro">{title}</h3>
+        <div class="flex flex-col gap-1 mt-2">
+          {company && <h3 class="text-3xl">{company}</h3>}
+          {role && <p class="text-base">{role}</p>}
+          {year && <p class="text-base">{year}</p>}
+        </div>
       </div>
     </div>
   </a>
 </div>
-
-<style>
-  .case-study-card {
-    transition: transform 0.2s ease;
-  }
-  .case-study-image {
-    transform: rotate(var(--random-rotation));
-    transition: all 0.2s ease;
-  }
-  .case-study-card:hover .case-study-image {
-    opacity: 0.8;
-    transform: rotate(0deg);
-    transition: all 0.5s;
-  }
-</style>
