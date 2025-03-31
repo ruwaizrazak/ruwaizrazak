@@ -7,13 +7,15 @@ const { href, class: className, ...props } = Astro.props;
 const pathname = Astro.url.pathname.replace(import.meta.env.BASE_URL, '');
 const subpath = pathname.match(/[^\/]+/g);
 const isActive = href === pathname || href === '/' + (subpath?.[0] || '');
+const isExternal = href?.startsWith('http');
 ---
 
-<a href={href}
-  class:list={[
-    className,
-  ]}
-  {...props}>
+<a 
+  href={href}
+  class:list={[className]}
+  {...isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {}}
+  {...props}
+>
   <slot />
 </a>
 <style>
