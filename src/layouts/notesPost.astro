@@ -3,7 +3,6 @@ import type { CollectionEntry } from 'astro:content';
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import FormattedDate from '../components/FormattedDate.astro';
 import Main from '../components/Main.astro';
 import NoteMain from '../components/NoteMain.astro';
 import P from '../components/mdxComponents/P.astro';
@@ -34,16 +33,38 @@ const maturityIcon = getMaturityIcon(maturity);
           {collection !== 'works' && <TableOfContents collection={collection} />}
           <NoteMain class="xl:-ml-6">
             <div class="md:max-lg:mx-auto">
-              <PostMeta
-                tags={tags}
-                pubDate={pubDate}
-                updatedDate={updatedDate}
-                collection={collection}
-                maturity={maturity}
-                title={title}
-                description={description}
-              />
-
+              <div class="flex flex-col gap-4">
+                <div class="flex items-center gap-2">
+                  <span class="text-sm text-gray-500">
+                    {new Date(pubDate).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                    })}
+                  </span>
+                  {updatedDate && (
+                    <>
+                      <span class="text-gray-500">•</span>
+                      <span class="text-sm text-gray-500">
+                        Updated: {new Date(updatedDate).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric'
+                        })}
+                      </span>
+                    </>
+                  )}
+                </div>
+                <h1 class="text-4xl font-bold">{title}</h1>
+                <p class="text-xl text-gray-600">{description}</p>
+                {tags.length > 0 && (
+                  <div class="flex gap-2">
+                    {tags.map(tag => (
+                      <span class="px-2 py-1 bg-gray-100 rounded-full text-sm">{tag}</span>
+                    ))}
+                  </div>
+                )}
+              </div>
               <div class="hero-image w-full mt-8">
                 {heroImage && (
                   <Image
