@@ -43,7 +43,7 @@ const iconPath = getMaturityIcon(maturity);
             <p class="text-xs capitalize mb-0">{maturity}</p>
           </div>
         <div class="flex flex-row gap-4 flex-wrap text-sm items-start text-gray-500">
-          <div>Last Updated<FormattedDate date={date} /></div>
+          <div>Last Updated {date && <FormattedDate date={date} />}</div>
           <Type>Essay</Type>
         </div>
       </div>
