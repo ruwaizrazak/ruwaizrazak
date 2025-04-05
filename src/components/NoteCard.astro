@@ -7,9 +7,9 @@ export interface Props {
   url: string;
 }
 
-const { 
-  title = 'Untitled', 
-  description = '', 
+const {
+  title = 'Untitled',
+  description = '',
   pubDate,
   url
 } = Astro.props;
@@ -22,10 +22,14 @@ const formattedDate = new Date(pubDate).toLocaleDateString('en-US', {
 ---
 
 <div class="group hover:shadow-md transition-all">
-  <a href={url} class="block p-4 bg-stone-50 rounded-lg border-1 border-stone-100 hover:bg-yellow-50">
-    <h3 class="text-base font-medium text-gray-900">{title}</h3>
-    {description && <p class="text-sm text-gray-600 mt-1">{description}</p>}
-    <div class="text-xs text-gray-500 mt-2">
+  <a href={url} class="block p-4 border-b-1 border-syoro border-opacity-10 border-dashed hover:bg-yellow-50">
+    <div class="flex gap-2">
+      <img src="/icons/seed.svg" alt="seed icon" class="w-6 h-auto">
+      <h3 class="uppercase sm:capitalize text-2xl lg:text-3xl font-medium text-syoro">{title}</h3>
+    </div>
+
+    {description && <p class="text-base sm:text-lg text-syoro mt-1">{description}</p>}
+    <div class="text-sm text-gray-500 mt-2 uppercase">
       {formattedDate}
     </div>
   </a>

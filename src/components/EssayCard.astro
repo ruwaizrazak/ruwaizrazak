@@ -27,16 +27,20 @@ const formattedDate = new Date(pubDate).toLocaleDateString('en-US', {
 
 <div class="group rounded-lg overflow-hidden hover:shadow-lg transition-all">
   <a href={url} class="block p-5 bg-stone-50 rounded-xl border-1 border-stone-100 hover:bg-yellow-50">
+    <div class="flex gap-2 mb-2 items-center">
+      <img src="/icons/tree.svg" alt="tree icon" class="w-5">
+      <h5 class="text-base text-syoro font-medium opacity-80 uppercase">Essays</h5>
+    </div>
     {heroImage && (
       <img
         src={heroImage}
         alt={title}
-        class={`w-full ${imageHeight} object-cover rounded-lg mb-4`}
+        class={`w-full ${imageHeight} aspect-square object-cover rounded-lg mb-4`}
       />
     )}
-    <h3 class="text-lg font-medium text-gray-900">{title}</h3>
-    {description && <p class="text-sm text-gray-600 mt-2">{description}</p>}
-    <div class="text-xs text-gray-500 mt-4">
+    <h3 class="uppercase sm:capitalize text-2xl lg:text-3xl font-medium text-syoro">{title}</h3>
+    {description && <p class="text-base sm:text-lg text-syoro mt-2">{description}</p>}
+    <div class="text-xs text-gray-500 mt-4 uppercase">
       {formattedDate}
     </div>
   </a>
