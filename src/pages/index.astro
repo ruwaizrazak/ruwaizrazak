@@ -11,6 +11,7 @@ import GradientHeading from '../components/mdxComponents/gradientHeading.astro';
 import GradientLine from '../components/mdxComponents/gradientLine.astro';
 import EssayCard from '../components/EssayCard.astro';
 import NoteCard from '../components/NoteCard.astro';
+import WorkCard from '../components/WorkCard.astro';
 
 
 // Get 10 featured posts from each collection
@@ -154,43 +155,19 @@ const books = (await getCollection('books', ({ data }) => data.publish === true)
           <div class="lg:flex gap-20 text-lg md:text-xl mt-10 w-full justify-between text-syoro">
             <p class="w-full lg:w-[50%] text-syoro"> While I can’t share what I did at my previous companies, I can give a glimpse on my process and the project I worked on. <br> <br>Check out my resume if you are interested to know more about my career experience.</p>
               <div class="flex gap-20 mt-10 lg:mt-0 justify-center">
-                <div class="group">
-                  <a href="/works/zynga" class="block overflow-hidden rounded-xl bg-stone-50 p-6 shadow-sm transition-all duration-300
-                    hover:bg-yellow-50 hover:shadow-lg">
-                    <div class="transform-gpu transition-all duration-300 ease-out group-hover:-translate-y-1">
-                      <div class="overflow-hidden rounded-lg">
-                        <img
-                          src="/index/zynga.png"
-                          alt="At Zynga"
-                          class="w-full h-48 object-cover rounded-lg mb-4"
-                        />
-                      </div>
-                      <div class="mt-6 space-y-3">
-                        <h3 class="text-xl font-semibold text-gray-900">At Zynga</h3>
-                        <p class="text-sm text-gray-400">2019-2024</p>
-                      </div>
-                    </div>
-                  </a>
-                </div>
+                <WorkCard
+                  title="At Zynga"
+                  period="2019-2024"
+                  imageSrc="/index/zynga.png"
+                  url="/works/zynga"
+                />
 
-                <div class="group">
-                  <a href="/works/deerhunter2018" class="block overflow-hidden rounded-xl bg-stone-50 p-6 shadow-sm transition-all duration-300
-                    hover:bg-yellow-50 hover:shadow-lg">
-                    <div class="transform-gpu transition-all duration-300 ease-out group-hover:-translate-y-1">
-                      <div class="overflow-hidden rounded-lg">
-                        <img
-                          src="/index/glu.png"
-                          alt="At Glu"
-                          class="w-full h-48 object-cover rounded-lg mb-4"
-                        />
-                      </div>
-                      <div class="mt-6 space-y-3">
-                        <h3 class="text-xl font-semibold text-gray-900">At Glu</h3>
-                        <p class="text-sm text-gray-400">2018-2019</p>
-                      </div>
-                    </div>
-                  </a>
-                </div>
+                <WorkCard
+                  title="At Glu"
+                  period="2018-2019"
+                  imageSrc="/index/glu.png"
+                  url="/works/deerhunter2018"
+                />
               </div>
           </div>
         </div>
