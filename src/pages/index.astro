@@ -201,15 +201,15 @@ const books = (await getCollection('books', ({ data }) => data.publish === true)
 
           </div>
           <!--surface all the contents from essays here -->
-          <div class="flex gap-10 mt-10" id="garden">
-            <div id="essays" class="w-[70%]">
-              <a class="flex items-center gap-2 hover:text-blue-600 transition-colors" href="/essays">
-                <img src="/icons/tree.svg" alt="Essays icon" width="20px">
+          <div class="block sm:flex gap-10 mt-10" id="garden">
+            <div id="essays" class="sm:w-[70%]">
+              <a class="justify-center sm:justify-start flex items-center gap-2 hover:text-blue-600 transition-colors" href="/essays">
+                <img src="/icons/tree.svg" alt="Essays icon" class="w-6 h-auto">
                 <h3 class="text-3xl uppercase font-medium">Essays</h3>
-                <img src="/icons/rightarrow.svg" alt="Right arrow" width="10px">
+                <img src="/icons/rightarrow.svg" alt="Right arrow" width="10px" class="rotate-90 sm:rotate-0">
               </a>
-              <p class="text-xl">Essays are more refined, long written documents which are opinionated and have a message to deliver.</p>
-              <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 mt-10">
+              <p class="text-center sm:text-left text-lg sm:text-xl">Essays are more refined, long written documents which are opinionated and have a message to deliver.</p>
+              <div class="grid grid-cols-1 md:grid-cols-2 3xl:grid-cols-3 gap-8 mt-10">
                 {essays.map((essay) => (
                   <div class="group rounded-lg overflow-hidden hover:shadow-lg transition-all">
                     <EssayCard
@@ -224,14 +224,14 @@ const books = (await getCollection('books', ({ data }) => data.publish === true)
                 ))}
               </div>
             </div>
-            <div id="notes" class="w-[30%]">
+            <div id="notes" class="w-full sm:w-[30%] mt-5 sm:mt-0">
               <div>
-                <a class="flex items-center gap-2 hover:text-blue-600 transition-colors" href="/notes">
-                <img src="/icons/seed.svg" alt="Notes icon" width="20px">
-                <h3 class="text-3xl uppercase font-medium">Notes</h3>
-                <img src="/icons/rightarrow.svg" alt="Right arrow" width="10px">
+                <a class="justify-center sm:justify-start flex items-center gap-2 hover:text-blue-600 transition-colors" href="/notes">
+                  <img src="/icons/seed.svg" alt="Notes icon" class="w-8 h-auto">
+                  <h3 class="text-3xl uppercase font-medium">Notes</h3>
+                  <img src="/icons/rightarrow.svg" alt="Right arrow" width="10px" class="rotate-90 sm:rotate-0">
               </a>
-              <p class="text-xl">Short, Unrefined, Vague documents.</p>
+              <p class="text-center sm:text-left text-lg sm:text-xl">Short, Unrefined, Vague documents.</p>
               </div>
 <div class="grid grid-cols-1 gap-4 mt-10">
   {notes.filter(note => note.data.pubDate).map((note) => (
