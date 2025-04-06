@@ -6,7 +6,7 @@ heroImage: 'https://upload.wikimedia.org/wikipedia/en/5/54/Francis_Itty_Cora.jpg
 tags: ['featured']
 author: 'Author Name'
 readStatus: 'to-read'
-publish: true
+publish: false
 featured: true
 ---
 
