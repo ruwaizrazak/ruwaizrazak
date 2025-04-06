@@ -12,6 +12,7 @@ import GradientLine from '../components/mdxComponents/gradientLine.astro';
 import EssayCard from '../components/EssayCard.astro';
 import NoteCard from '../components/NoteCard.astro';
 import WorkCard from '../components/WorkCard.astro';
+import BookCard from '../components/BookCard.astro';
 
 
 // Get 10 featured posts from each collection
@@ -80,7 +81,7 @@ const books = (await getCollection('books', ({ data }) => data.publish === true)
 	</head>
 	<body>
 		<Header />
-		<main>
+		<main class="bg-white">
       <!--Hero Section -->
       <div class="w-[90%] mx-auto justify-between grid grid-cols-1 md:grid-cols-2 gap-10">
         <div class="sm:w-full md:w-2xl mt-20">
@@ -220,8 +221,28 @@ const books = (await getCollection('books', ({ data }) => data.publish === true)
     />
   ))}
 </div>
-            </div>
+</div>
+
           </div>
+          <div id="books" class="w-full mt-10">
+  <a class="justify-center sm:justify-start flex items-center gap-2 hover:text-blue-600 transition-colors" href="/books">
+    <img src="/icons/book.svg" alt="Books icon" class="w-6 h-auto">
+    <h3 class="text-3xl uppercase font-medium">Library</h3>
+    <img src="/icons/rightarrow.svg" alt="Right arrow" width="10px" class="rotate-90 sm:rotate-0">
+  </a>
+  <p class="text-center sm:text-left text-lg sm:text-xl">Books I've read and my notes on them.</p>
+  <div class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-4 mt-10">
+    {books.filter(book => book.data.pubDate).map((book) => (
+      <BookCard
+        title={book.data.title}
+        author={book.data.author}
+        readStatus={book.data.readStatus}
+        heroImage={book.data.heroImage}
+        url={`/books/${book.slug}`}
+      />
+    ))}
+  </div>
+</div>
 
 		</main>
 		<Footer />
