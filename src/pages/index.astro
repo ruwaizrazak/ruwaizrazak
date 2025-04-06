@@ -90,6 +90,7 @@ const books = (await getCollection('books', ({ data }) => data.publish === true)
 
           <h4 class="text-xl uppercase text-gray-500 mt-10">Garden</h4>
           <ul>
+
             <li><GardenLink
               href="/essays"
               title="Essays"
@@ -105,7 +106,12 @@ const books = (await getCollection('books', ({ data }) => data.publish === true)
               title="Books"
               description="I've read, Currently Reading and my notes on them."
             /></li>
-            <li>---</li>
+            <li><GardenLink
+              href="/garden"
+              title="Everything"
+              description="Contains everything I've written."
+            /></li>
+            <li class="mt-5">---</li>
             <li><GardenLink
               href="/about"
               title="About"
@@ -186,7 +192,7 @@ const books = (await getCollection('books', ({ data }) => data.publish === true)
                 <h3 class="text-3xl uppercase font-medium">Essays</h3>
                 <img src="/icons/rightarrow.svg" alt="Right arrow" width="10px" class="rotate-90 sm:rotate-0">
               </a>
-              <p class="text-center sm:text-left text-lg sm:text-xl">Essays are more refined, long written documents which are opinionated and have a message to deliver.</p>
+              <p class="text-center sm:text-left text-lg md:text-xl">Essays are more refined, long written documents which are opinionated and have a message to deliver.</p>
               <div class="grid grid-cols-1 md:grid-cols-2 3xl:grid-cols-3 gap-8 mt-10">
                 {essays.map((essay) => (
                   <div class="group rounded-lg overflow-hidden transition-all">
