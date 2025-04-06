@@ -1,0 +1,75 @@
+---
+// BookCard.astro - Reusable card component for books
+export interface Props {
+  title: string;
+  author: string;
+  readStatus: string;
+  heroImage: string;
+  url?: string;
+}
+
+const {
+  title,
+  author,
+  readStatus,
+  heroImage,
+  url
+} = Astro.props;
+---
+
+<div class="group transition-all">
+  {url ? (
+    <a href={url} class="block">
+      <div class="relative book-cover shadow-md transition-transform group-hover:scale-98">
+
+        <!-- Book pages - simplified -->
+        <div class="book-pages absolute right-0 top-[5%] bottom-[5%] w-[5px] bg-white z-20"></div>
+
+        <img
+          src={heroImage}
+          alt={title}
+          class="w-full aspect-[4/5] object-cover rounded-sm relative z-0"
+        >
+
+        <!-- Simplified hardcover effect -->
+        <div class="absolute inset-0 border border-gray-400 rounded-sm"></div>
+      </div>
+      <h4 class="uppercase sm:capitalize text-2xl lg:text-3xl text-center font-medium mt-2 text-konpeki">
+        {title}
+      </h4>
+      <p class="sm:text-base text-lg text-center text-gray-700">{author}</p>
+      <p class="sm:text-xs text-sm text-center uppercase tracking-wider text-gray-500 mt-1">{readStatus}</p>
+    </a>
+  ) : (
+    <!-- Make the same changes to the non-link version -->
+    <div>
+      <div class="relative book-cover shadow-md transition-transform group-hover:scale-[1.02]">
+        <!-- Book spine - simplified -->
+        <div class="book-spine absolute left-0 top-0 bottom-0 w-[8px] bg-gray-800 rounded-l-sm z-10"></div>
+
+        <!-- Book pages - simplified -->
+        <div class="book-pages absolute right-0 top-[5%] bottom-[5%] w-[5px] bg-white z-20"></div>
+
+        <img
+          src={heroImage}
+          alt={title}
+          class="w-full aspect-[4/5] object-cover rounded-sm relative z-0"
+        >
+
+        <!-- Simplified hardcover effect -->
+        <div class="absolute inset-0 border border-gray-400 rounded-sm"></div>
+      </div>
+      <h4 class="sm:text-xl md:text-2xl text-center mt-3 font-medium">
+        {title}
+      </h4>
+      <p class="sm:text-base text-lg text-center text-gray-700">{author}</p>
+      <p class="sm:text-xs text-sm text-center uppercase tracking-wider text-gray-500 mt-1">{readStatus}</p>
+    </div>
+  )}
+</div>
+
+<style>
+  .book-cover {
+    transition: all 0.3s ease;
+  }
+</style>
