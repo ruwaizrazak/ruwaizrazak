@@ -10,6 +10,8 @@ import NoteCard from '../components/NoteCard.astro';
 import BookCard from '../components/BookCard.astro';
 import WorkCard from '../components/WorkCard.astro';
 import EssayCard from '../components/EssayCard.astro';
+import GradientHeading from '../components/mdxComponents/gradientHeading.astro';
+import Tag from '../components/Tag.astro';
 
 
 interface Props {
@@ -45,29 +47,30 @@ const sortedTags = ['all', ...tags.filter(tag => tag !== 'all').sort()];
   </head>
   <body>
     <Header />
-    <Main>
-      <div class="prose lg:max-w max-w-none lg:mt-20 mt-10 md:mt-15">
-    <Link
-    href={Astro.url.pathname.includes('/garden') ? '/' : '/garden'}>
-    ← Back to {Astro.url.pathname.includes('/garden') ? 'Index' : 'Garden'}
-    </Link>
-        <H1 className="mt-5">{title}</H1>
-        <P className='leading-8 w-full lg:w-3/4'>{description}</P>
+    <main class="w-[90%] mx-auto">
+      <div class="mt-8">
+
+        <div class="flex flex-col mt-20">
+          <a href={Astro.url.pathname.includes('/garden') ? '/' : '/garden'} class="inline-block z-1">
+          <div class="flex items-center gap-2 group">
+            <img src="/icons/backArrow.svg" class="w-8 h-auto group-hover:rotate-20 transition-all" alt="Back" />
+            <span class="uppercase font-sans font-medium">Back to {Astro.url.pathname.includes('/garden') ? 'Index' : 'Garden'}</span>
+          </div>
+        </a>
+          <GradientHeading size="xl">{title}</GradientHeading>
+          <p class="w-full md:w-[80%] text-center sm:text-left text-lg sm:text-xl mt-4">{description}</p>
+        </div>
       </div>
-      <div>
+      <div class="mt-10">
         <div class="flex flex-wrap justify-between content-start gap-4 mb-4 items-center">
           {showTags && (
             <div class="flex flex-wrap justify-start gap-4 mb-8">
               {sortedTags.map((tag, index) => (
-                <a
-                  class={`filter-btn px-4 py-2 text-sm border border-gray-200 hover:bg-yellow-50 animate-slide-in ${
-                    tag === currentTag ? 'bg-yellow-300 text-black active' : 'text-gray-500'
-                  }`}
-                  data-tag={tag}
-                  style={`animation-delay: ${index * 100}ms`}
-                >
-                  {tag.charAt(0).toUpperCase() + tag.slice(1)}
-                </a>
+                <Tag
+                  tag={tag}
+                  isActive={tag === currentTag}
+                  index={index}
+                />
               ))}
             </div>
           )}
@@ -173,17 +176,20 @@ const sortedTags = ['all', ...tags.filter(tag => tag !== 'all').sort()];
             button.addEventListener('click', () => {
               currentTag = button.dataset.tag || 'all';
               filterButtons.forEach(btn => {
-                btn.classList.remove('bg-yellow-300', 'text-black','active');
-                btn.classList.add('text-gray-500');
+                // Updated class handling for new design
+                btn.classList.remove('gradientbg', 'text-white', 'border-gray-900', 'shadow-md','-skew-x-3');
+                btn.classList.add('bg-white', 'text-gray-600', 'border-gray-300');
               });
-              // the code above removes the classes
-              button.classList.remove('text-gray-500');
-              button.classList.add('bg-yellow-300', 'text-black','active');
-              // the code above adds the classes to the specific button
+
+              // Updated class handling for active tag
+              button.classList.remove('bg-white', 'text-gray-600', 'border-gray-300');
+              button.classList.add('gradientbg', 'text-white', 'border-gray-900', 'shadow-md','-skew-x-3');
+
               filterPosts();
             });
           });
 
+          // Rest of the script remains unchanged
           // Intersection Observer for fade-in animation
           const observerOptions = {
             threshold: 0.1,
@@ -224,7 +230,7 @@ const sortedTags = ['all', ...tags.filter(tag => tag !== 'all').sort()];
           }
         </script>
       </div>
-    </Main>
+    </main>
     <Footer />
   </body>
 </html>

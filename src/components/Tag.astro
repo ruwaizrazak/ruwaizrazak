@@ -1,0 +1,21 @@
+---
+interface Props {
+  tag: string;
+  isActive?: boolean;
+  index?: number;
+}
+
+const { tag, isActive = false, index = 0 } = Astro.props;
+---
+
+<a
+  class={`filter-btn px-4 py-2 text-sm border transition-all duration-200 animate-slide-in transform uppercase hover:-skew-x-3 hover:border-r-2 hover:border-b-2 ${
+    isActive
+      ? 'gradientbg text-white border-gray-900 shadow-md'
+      : 'bg-white text-gray-600 border-gray-300 hover:border-gray-400'
+  }`}
+  data-tag={tag}
+  style={`animation-delay: ${index * 100}ms`}
+>
+  {tag.charAt(0).toUpperCase() + tag.slice(1)}
+</a>
