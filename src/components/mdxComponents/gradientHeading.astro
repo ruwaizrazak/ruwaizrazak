@@ -1,0 +1,17 @@
+---
+interface Props {
+  size?: 'sm' | 'md' | 'lg' | 'xl';
+  className?: string;
+}
+
+const { size = 'lg', className = '' } = Astro.props;
+
+const sizeClasses = {
+  sm: 'text-3xl md:text-5xl lg:text-6xl',
+  md: 'text-4xl md:text-6xl lg:text-7xl',
+  lg: 'text-5xl md:text-8xl lg:text-9xl',
+  xl: 'text-7xl md:text-9xl lg:text-10xl'
+};
+---
+
+<h1 class={`${sizeClasses[size]} font-bold leading-[0.9] tracking-tight m-0 p-0 uppercase bg-gradient-to-r from-[#1E1E1E] via-[#324084] to-[#324084] bg-clip-text text-transparent z-[0] relative ${className}`}><slot /></h1>

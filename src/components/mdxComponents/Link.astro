@@ -7,25 +7,24 @@ const { href, class: className, ...props } = Astro.props;
 const pathname = Astro.url.pathname.replace(import.meta.env.BASE_URL, '');
 const subpath = pathname.match(/[^\/]+/g);
 const isActive = href === pathname || href === '/' + (subpath?.[0] || '');
+const isExternal = href?.startsWith('http');
 ---
 
-<a href={href}
-  class:list={[
-    className,
-    "motion-safe:hover:scale-[1.02] motion-safe:active:scale-95",
-    "motion-safe:transform-gpu motion-safe:transition-transform"
-  ]}
-  {...props}>
+<a 
+  href={href}
+  class:list={[className]}
+  {...isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {}}
+  {...props}
+>
   <slot />
 </a>
 <style>
   a {
     color:inherit;
     text-decoration: underline;
-    text-decoration-color:var(--color-yellow-500);
+    text-decoration-style: wavy;
+    text-decoration-color:var(--color-konpeki);
     text-underline-offset: .4em;
-    font-weight: 600;
-    font-style:italic;
   }
   @keyframes linkAnimation {
   from {
@@ -39,11 +38,9 @@ const isActive = href === pathname || href === '/' + (subpath?.[0] || '');
   }
 }
   a:hover {
-    background-color: yellow;
-    color:var(--black);
     text-decoration: line-through;
     text-decoration-style: wavy;
-    text-decoration-color: var(--black) !important;
+    text-decoration-color:var(--color-konpeki);
     text-decoration-thickness: .1em;
     animation: .5s 1 forwards linkAnimation;
     transition: all .5s ease;

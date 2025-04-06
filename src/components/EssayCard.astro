@@ -1,67 +1,58 @@
 ---
-import FormattedDate from './FormattedDate.astro';
-import Image from './mdxComponents/Image.astro';
-import Type from './type.astro';
-import H3 from './mdxComponents/H3.astro';
-import P from './mdxComponents/P.astro';
-import { getMaturityIcon } from '../utils/maturityIcons';
-
-interface Props {
+// ContentCard.astro - Reusable card component for content items
+export interface Props {
   title: string;
-  description: string;
-  date: Date;
-  url: string;
+  description?: string;
+  pubDate: Date;
   heroImage?: string;
-  imageClass?: string;
-  maturity?: 'seed' | 'plant' | 'tree';
+  url: string;
+  imageHeight?: string;
 }
 
-const { title, description, date, url, heroImage, imageClass = '',maturity = 'seed'} = Astro.props;
-const iconPath = getMaturityIcon(maturity);
+const {
+  title = 'Untitled',
+  description = '',
+  pubDate,
+  heroImage,
+  url,
+  imageHeight = 'h-48'
+} = Astro.props;
+
+const formattedDate = new Date(pubDate).toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric'
+});
 ---
 
-<div class="essay-card group" style={`--random-rotation: ${Math.random() * 10 - 5}deg`}>
-  <a href={url} class="block rounded-lg overflow-hidden hover:shadow-lg transition-all
-    motion-safe:hover:scale-[1.01] motion-safe:active:scale-95
-    motion-safe:transform-gpu motion-safe:transition-transform p-5 bg-gray-50 rounded-2xl border-1 border-gray-100 hover:bg-yellow-50 text-gray-900">
-    <div class="flex flex-row lg:flex-col md:flex-row gap-4">
-      {heroImage && (
-        <div class="motion-safe:transform-gpu motion-safe:transition-all motion-reduce:transition-none
-          group-hover:-translate-y-1 group-active:translate-y-0 md:w-1/2 sm:w-2/5 lg:w-full self-center">
-          <Image
-            src={heroImage}
-            alt={title}
-            class={`xl:w-full h-auto lg:h-96 md:h-40 sm:h-32 h-32 aspect-square object-cover essay-image motion-safe:transition-opacity ${imageClass}`}
-          />
-        </div>
-      )}
-      <div class="pt-5 lg:pt-5 md:pt-0 sm:pt-0 md:w-1/2 sm:w-3/5 lg:w-full">
-        <h3 class="text-base md:text-lg font-semibold text-slate-700">{title}</h3>
-        <p className='text-sm md:text-kg'>{description}</p>
-        <div class="flex flex-row my-2 items-center gap-1 text-stone-500">
-            <img src={iconPath} alt={`${maturity} icon`} class="w-4 h-4" />
-            <p class="text-xs capitalize mb-0">{maturity}</p>
-          </div>
-        <div class="flex flex-row gap-4 flex-wrap text-sm items-start text-gray-500">
-          <div>Last Updated<FormattedDate date={date} /></div>
-          <Type>Essay</Type>
-        </div>
-      </div>
+<div class="group rounded-lg overflow-hidden hover:scale-98 transition-all">
+  <a href={url} class="block p-5 bg-cardbg rounded-xl border-1 border-stone-100 hover:bg-yellow-50">
+    <div class="flex gap-2 mb-2 items-center">
+      <img src="/icons/tree.svg" alt="tree icon" class="w-5">
+      <h5 class="text-base text-syoro font-medium opacity-80 uppercase">Essays</h5>
+    </div>
+    {heroImage && (
+      <img
+        src={heroImage}
+        alt={title}
+        class={`w-full ${imageHeight} aspect-square object-cover rounded-lg mb-4`}
+      />
+    )}
+    <h3 class="uppercase sm:capitalize text-2xl lg:text-3xl font-medium text-konpeki">{title}</h3>
+    {description && <p class="text-base sm:text-lg text-syoro mt-2">{description}</p>}
+    <div class="text-xs text-gray-500 mt-4 uppercase">
+      {formattedDate}
     </div>
   </a>
 </div>
 
-<style>
-  .essay-card {
-    transition: transform 0.2s ease;
-  }
-  .essay-image {
-    transition: opacity 0.2s ease;
-    transform: rotate(var(--random-rotation));
-  }
-  .essay-card:hover .essay-image {
-    opacity: 0.8;
-    transform: rotate(0deg);
-    transition: all 0.5s ease;
-  }
-</style>
+<!--Usage Example
+<ContentCard
+      title={note.data.title || 'Untitled'}
+      description={note.data.description || ''}
+      pubDate={note.data.pubDate}
+      heroImage={note.data.heroImage}
+      url={`/notes/${note.slug}`}
+      imageHeight="h-32"
+    />
+-->

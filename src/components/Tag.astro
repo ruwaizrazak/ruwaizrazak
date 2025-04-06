@@ -1,0 +1,11 @@
+---
+const { tag, isActive } = Astro.props;
+---
+
+<a
+  href={`/tags/${tag}`}
+  data-tag={tag}
+  class={`px-4 py-2 text-sm border transition-all duration-200 hover:-skew-x-6 ${isActive ? 'active' : ''}`}
+>
+  {tag}
+</a>

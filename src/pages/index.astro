@@ -3,42 +3,72 @@ import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
-import H1 from '../components/mdxComponents/H1.astro';
-import P from '../components/mdxComponents/P.astro';
-import H3 from '../components/mdxComponents/H3.astro';
 import Link  from '../components/mdxComponents/Link.astro';
-import FormattedDate from '../components/FormattedDate.astro';
-import Main from '../components/Main.astro';
 import { getCollection } from 'astro:content';
-import Image from '../components/mdxComponents/Image.astro';
-import NoteCard from '../components/NoteCard.astro';
-import BookCard from '../components/BookCard.astro';
-import WorkCard from '../components/workCard.astro';
+import GardenLink from '../components/GardenLink.astro';
+import GradientHeading from '../components/mdxComponents/gradientHeading.astro';
+import GradientLine from '../components/mdxComponents/gradientLine.astro';
 import EssayCard from '../components/EssayCard.astro';
-import UL from '../components/mdxComponents/UL.astro';
-import H2 from '../components/mdxComponents/H2.astro';
+import NoteCard from '../components/NoteCard.astro';
+import WorkCard from '../components/WorkCard.astro';
+import BookCard from '../components/BookCard.astro';
 
 
 // Get 10 featured posts from each collection
+// Helper function to standardize slug creation across collections
+function createStandardSlug(post) {
+  const filename = post.id.split('/').pop().replace(/\.[^.]+$/, '');
+  return filename.toLowerCase();
+}
+
+// Helper function to sort by date
+function sortByDateDesc(a, b) {
+  const dateA = new Date(a.data.pubDate);
+  const dateB = new Date(b.data.pubDate);
+  return dateB.valueOf() - dateA.valueOf();
+}
+
 // Get featured and published posts from each collection
 const notes = (await getCollection('notes', ({ data }) => data.publish === true))
-  .filter(post => post.data.featured === true)
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .filter(post => post.data.featured === true && post.data.pubDate)
+  .map(post => ({
+    ...post,
+    slug: createStandardSlug(post)
+  }))
+  .sort(sortByDateDesc)
   .slice(0, 4);
 
-const essays = (await getCollection('essays', ({ data }) => data.publish === true))
-  .filter(post => post.data.featured === true)
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+const essays = (await getCollection('essays'))
+  .filter(post => (
+    post.data.publish === true &&
+    post.data.featured === true &&
+    post.data.pubDate
+  ))
+  .map(post => ({
+    ...post,
+    slug: createStandardSlug(post)
+  }))
+  .sort(sortByDateDesc)
   .slice(0, 10);
 
+// Removed debug console.log statement
+
 const works = (await getCollection('works', ({ data }) => data.publish === true))
-  .filter(post => post.data.featured === true)
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .filter(post => post.data.featured === true && post.data.pubDate)
+  .map(post => ({
+    ...post,
+    slug: createStandardSlug(post)
+  }))
+  .sort(sortByDateDesc)
   .slice(0, 10);
 
 const books = (await getCollection('books', ({ data }) => data.publish === true))
-  .filter(post => post.data.featured === true)
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .filter(post => post.data.featured === true && post.data.pubDate)
+  .map(post => ({
+    ...post,
+    slug: createStandardSlug(post)
+  }))
+  .sort(sortByDateDesc)
   .slice(0, 10);
 
 ---
@@ -50,217 +80,186 @@ const books = (await getCollection('books', ({ data }) => data.publish === true)
 	</head>
 	<body>
 		<Header />
-		<Main>
-      <div class="content-grid gap-5">
-        <div class="hero-section fade-in-element opacity-0 translate-y-4">
-          <H1 className='mb-3 max-w-5xl lg:mt-20 mt-10 md:mt-15'>Ruwaiz is an <mark>user experience designer</mark>, who loves to build.</H1>
-          <p class='w-full cursor typewriter-animation text-sm md:text-base lg:text-xl'>Designer, Reader who loves to build on weekends.</p>
-        </div>
+		<main class="bg-white">
+      <!--Hero Section -->
+      <div class="w-[90%] mx-auto justify-between grid grid-cols-1 md:grid-cols-2 gap-10">
+        <div class="sm:w-full md:w-2xl mt-20">
+          <GradientHeading size="xl">A Cacophony of Thoughts</GradientHeading>
+          <p class="w-[80%] text-xl">Personal Website and Portfolio of Ruwaiz Razak, a Designer.</p>
 
-        {works.length > 0 && (
-          <div class="career-section mt-10 fade-in-element opacity-0 translate-y-4">
-            <H2 className='mb-5 prose-stone'>Career</H2>
-            <P className='prose max-w-4xl prose-stone mt-0 mb-0 text-lg md:text-xl lg:text-xl'>
-              I work currently as a Senior UX Designer at<Link href="https://www.nordeus.com">Nordeus.</Link>My expertise is in building experience for video games through research heavy and optimized design pipeline. <br> <br>Following are the selected works from my career and if you are interested in my experiences, take a look at my<Link href="/about">about section</Link>.
-            </P>
-            <ul class="mt-10 ps-0 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-10">
-              {works.map((post) => (
-                <li class="fade-in-element opacity-0 translate-y-4">
-                  <WorkCard
-                    title={post.data.title}
-                    company={post.data.company}
-                    url={`/works/${post.id}/`}
-                    heroImage={post.data.heroImage || '/placeholder-work.jpg'}
-                  />
-                </li>
-              ))}
-            </ul>
+          <h4 class="text-xl uppercase text-gray-500 mt-10">Garden</h4>
+          <ul>
+
+            <li><GardenLink
+              href="/essays"
+              title="Essays"
+              description="Very much under NDA, but I can show you my process."
+            /></li>
+            <li><GardenLink
+              href="/notes"
+              title="Notes"
+              description="Not refined, incomplete, but a starting point."
+            /></li>
+            <li><GardenLink
+              href="/books"
+              title="Books"
+              description="I've read, Currently Reading and my notes on them."
+            /></li>
+            <li><GardenLink
+              href="/garden"
+              title="Everything"
+              description="Contains everything I've written."
+            /></li>
+            <li class="mt-5">---</li>
+            <li><GardenLink
+              href="/about"
+              title="About"
+              description="What am I?"
+            /></li>
+            <li><GardenLink
+              href="/live"
+              title="Live"
+              description="Shares a glimpse of whats happening."
+            /></li>
+
+          </ul>
+        </div>
+        <div class="hidden xl:flex justify-end">
+          <!--svg goes here -->
+          <svg width="582" height="1021" viewBox="0 0 582 1021" fill="none" xmlns="http://www.w3.org/2000/svg" class="opacity-90">
+            <path d="M299.481 0V329.5C300.647 348.333 288.9 369.58 270.48 388C262.48 396 116.642 337 139.481 285C162.32 233 270.48 298.3 270.48 449.5C276.5 530.5 190.981 489.5 139.481 492C50.4804 496.321 4.97693 619.5 152.479 663C233.5 686.894 328.477 596 313.979 492C299.481 388 378.81 358.468 477.479 367C570 375 585.479 449.2 545.479 492C510.312 517.333 431.579 548.8 397.979 472C395.979 451.5 406.779 414.4 465.979 430C539.979 449.5 505.979 582.5 489.479 590C472.979 597.5 395.64 632.865 381.979 553C368.979 477 307.979 308 139.481 472C87.9788 522.127 137.479 556.7 241.479 559.5C320.979 553 331.979 600 344.479 631.5C371.479 667.5 419.479 730.5 489.479 675.5C559.479 620.5 467.479 522.5 330.479 553C248.479 510.5 259.979 402.973 102.979 405C-19 406.575 17.0001 487 38.9787 530.5C51.2959 576 183.313 616.052 214.5 641.5C263.521 681.5 216 737.5 136 740.5C56 743.5 47.8099 699.239 87.9788 648.5C114.5 615 139.481 604.465 198.979 600.5C266.5 596 299.481 614.708 299.481 671C299.481 729.5 299.481 926 299.481 1021" stroke="url(#paint0_linear_203_524)" stroke-width="31" class="path-animation"/>
+            <defs>
+              <linearGradient id="paint0_linear_203_524" x1="293.018" y1="0" x2="293.018" y2="1021" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#1E1E1E"/>
+                <stop offset="1" stop-color="#324084"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        </div>
+        <!--What am I Section -->
+        <div class="w-full md:w-[96%] mx-auto p-5 mt-10 xl:mt-0" style="background: linear-gradient(26.18deg, #1E1E1E 40.52%, #324084 116.37%)">
+          <div class="mx-auto border-1 border-gray-50 border-dashed p-5">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+              <div class="w-full px-2 md:px-0">
+                <GradientHeading size="lg" className='text-white font-medium'> What am I?</GradientHeading>
+                <div class="text-white w-full py-5">
+                  <p class="text-lg md:text-xl text-white">Senior User Experience Designer with 7 years of experience currently working at Nordeus. Previously at <Link href="http://www.zynga.com">Zynga</Link> and <Link href="http://www.glumobile.com">Glu Mobile</Link>.</p>
+                  <br>
+                  <p class="text-lg md:text-xl text-white">I worked on multiple mobile games across multiple genres, building features, onboarding experiences and lots and lots of researches.</p>
+                  <br>
+                  <p class="text-lg md:text-xl text-white">Read more about what I'm currently into <Link href="/live">Here</Link></p>
+                  <br>
+
+                  <h4 class="text-xl uppercase text-gray-100 text-white"> Contact</h4>
+                  <p class="text-lg md:text-xl">I'm available via <Link src="mailto:hello@ruwaizrazak.com">hello@ruwaizrazak.com</Link>, you can also checkout my resume if you want to.</p>
+                </div>
+              </div>
+              <div class="hidden md:flex justify-center md:justify-end">
+                <img src="/graphics/designGeneralist.svg" class="w-[200px] md:w-[300px] lg:w-[400px]" alt="design generalist"/>
+              </div>
+            </div>
           </div>
-        )}
-
-        <div class="featured-grid gap-4 mt-20">
-          {essays.length > 0 && (
-            <div class="col-span-1 md:col-span-2 fade-in-element opacity-0 translate-y-4">
-              <H2>Featured Essays</H2>
-              <ul class="grid grid-cols-1 lg:grid-cols-2 3xl:grid-cols-3 gap-10 p-0">
-                {essays.map((post) => (
-                  <li>
-                    <EssayCard
-                      title={post.data.title}
-                      description={post.data.description || 'No description available'}
-                      date={post.data.pubDate}
-                      url={`/essays/${post.id}/`}
-                      heroImage={post.data.heroImage}
-                      maturity={post.data.maturity}
-                    />
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {notes.length > 0 && (
-            <div class="col-span-1 mt-20 md:mt-0 fade-in-element opacity-0 translate-y-4">
-              <H2>Featured Notes</H2>
-              <ul class="flex flex-col gap-4">
-                {notes.map((post) => (
-                  <li>
-                    <NoteCard
-                      title={post.data.title}
-                      description={post.data.description}
-                      date={post.data.pubDate}
-                      url={`/notes/${post.id}/`}
-                      maturity={post.data.maturity}
-                    />
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {books.length > 0 && (
-            <div class="col-span-1 md:col-span-3 my-20 fade-in-element opacity-0 translate-y-4">
-              <H2>Featured Books</H2>
-              <ul class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 3xl:grid-cols-4 gap-5">
-                {books.map((post) => (
-                  <li>
-                    <BookCard
-                      title={post.data.title}
-                      description={post.data.description || 'No description available'}
-                      date={post.data.pubDate}
-                      url={`/books/${post.id}/`}
-                      heroImage={post.data.heroImage || '/placeholder-book.jpg'}
-                      author={post.data.author || 'Unknown Author'}
-                      readStatus={post.data.readStatus || 'to-read'}
-                      maturity={post.data.maturity}
-                    />
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
         </div>
-      </div>
-      <script>
-        const observerOptions = {
-          threshold: 0.1,
-          rootMargin: '50px'
-        };
-      
-        const observer = new IntersectionObserver((entries) => {
-          entries.forEach(entry => {
-            if (entry.isIntersecting) {
-              entry.target.classList.remove('opacity-0', 'translate-y-4');
-              observer.unobserve(entry.target);
-            }
-          });
-        }, observerOptions);
-      
-        document.querySelectorAll('.fade-in-element').forEach((element, index) => {
-          setTimeout(() => {
-            observer.observe(element);
-          }, index * 100);
-        });
-      </script>
-      <style>
-        .fade-in-element {
-          transition: all 0.8s ease-out;
-        }
-      </style>
-		</Main>
+        <!-- Selected Works -->
+        <div class="w-[98%] md:w-[91%] mx-auto mt-20">
+          <div class="flex items-center gap-4">
+            <GradientHeading size="lg" className='font-medium sm:whitespace-nowrap'>Selected Works</GradientHeading>
+            <GradientLine angle={45} startPercentage={20} endPercentage={80} className="h-[60px] w-[80%]" />
+          </div>
+          <div class="lg:flex gap-20 text-lg md:text-xl mt-10 w-full justify-between text-syoro">
+            <p class="w-full lg:w-[50%] text-syoro"> While I can’t share what I did at my previous companies, I can give a glimpse on my process and the project I worked on. <br> <br>Check out my resume if you are interested to know more about my career experience.</p>
+              <div class="flex gap-20 mt-10 lg:mt-0 justify-center">
+                <WorkCard
+                  title="At Zynga"
+                  period="2019-2024"
+                  imageSrc="/index/zynga.png"
+                  url="/works/zynga"
+                />
+
+                <WorkCard
+                  title="At Glu"
+                  period="2018-2019"
+                  imageSrc="/index/glu.png"
+                  url="/works/deerhunter2018"
+                />
+              </div>
+          </div>
+        </div>
+        <div class="w-[98%] md:w-[91%] mx-auto mt-20">
+          <div class="flex items-center gap-4">
+            <GradientLine angle={45} startPercentage={20} endPercentage={80} className="h-[60px] w-[80%]" />
+            <GradientHeading size="lg" className='font-medium sm:whitespace-nowrap text-right'>Snippets From Garden</GradientHeading>
+
+          </div>
+          <!--surface all the contents from essays here -->
+          <div class="block sm:flex gap-10 mt-10" id="garden">
+            <div id="essays" class="sm:w-[70%]">
+              <a class="justify-center sm:justify-start flex items-center gap-2 hover:text-blue-600 transition-colors" href="/essays">
+                <img src="/icons/tree.svg" alt="Essays icon" class="w-6 h-auto">
+                <h3 class="text-3xl uppercase font-medium">Essays</h3>
+                <img src="/icons/rightarrow.svg" alt="Right arrow" width="10px" class="rotate-90 sm:rotate-0">
+              </a>
+              <p class="text-center sm:text-left text-lg md:text-xl">Essays are more refined, long written documents which are opinionated and have a message to deliver.</p>
+              <div class="grid grid-cols-1 md:grid-cols-2 3xl:grid-cols-3 gap-8 mt-10">
+                {essays.map((essay) => (
+                  <div class="group rounded-lg overflow-hidden transition-all">
+                    <EssayCard
+                    title={essay.data.title || 'Untitled'}
+                    description={essay.data.description || ''}
+                    pubDate={essay.data.pubDate}
+                    heroImage={essay.data.heroImage}
+                     url={`/essays/${essay.slug}`}
+                    imageHeight="h-32"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div id="notes" class="w-full sm:w-[30%] mt-5 sm:mt-0">
+              <div>
+                <a class="justify-center sm:justify-start flex items-center gap-2 hover:text-blue-600 transition-colors" href="/notes">
+                  <img src="/icons/seed.svg" alt="Notes icon" class="w-8 h-auto">
+                  <h3 class="text-3xl uppercase font-medium">Notes</h3>
+                  <img src="/icons/rightarrow.svg" alt="Right arrow" width="10px" class="rotate-90 sm:rotate-0">
+              </a>
+              <p class="text-center sm:text-left text-lg sm:text-xl">Short, Unrefined, Vague documents.</p>
+              </div>
+<div class="grid grid-cols-1 gap-4 mt-10">
+  {notes.filter(note => note.data.pubDate).map((note) => (
+    <NoteCard
+      title={note.data.title || 'Untitled'}
+      description={note.data.description || ''}
+      pubDate={note.data.pubDate}
+      url={`/notes/${note.slug}`}
+    />
+  ))}
+</div>
+</div>
+
+          </div>
+          <div id="books" class="w-full mt-10">
+  <a class="justify-center sm:justify-start flex items-center gap-2 hover:text-blue-600 transition-colors" href="/books">
+    <img src="/icons/book.svg" alt="Books icon" class="w-6 h-auto">
+    <h3 class="text-3xl uppercase font-medium">Library</h3>
+    <img src="/icons/rightarrow.svg" alt="Right arrow" width="10px" class="rotate-90 sm:rotate-0">
+  </a>
+  <p class="text-center sm:text-left text-lg sm:text-xl">Books I've read and my notes on them.</p>
+  <div class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-4 mt-10">
+    {books.filter(book => book.data.pubDate).map((book) => (
+      <BookCard
+        title={book.data.title}
+        author={book.data.author}
+        readStatus={book.data.readStatus}
+        heroImage={book.data.heroImage}
+        url={`/books/${book.slug}`}
+      />
+    ))}
+  </div>
+</div>
+
+		</main>
 		<Footer />
 	</body>
 </html>
 
-<style>
-    /* Cursor */
-.cursor {
-    position: relative;
-    width: 24em;
-    margin: 0;
-    border-right: 2px solid rgba(0,0,0,.75);
-    text-align: left;
-    white-space: nowrap;
-    overflow: hidden;
-    transform: none;
-}
-
-/* Animation */
-.typewriter-animation {
-  animation:
-    typewriter 4s steps(40) 1s 1 normal both,
-    blinkingCursor 500ms steps(40) infinite normal;
-  max-width: 100%;
-}
-
-@keyframes typewriter {
-  from { width: 0; }
-  to { width: 22em; }
-}
-
-@keyframes blinkingCursor {
-  from { border-right-color: rgba(0,0,0,.75); }
-  to { border-right-color: transparent; }
-}
-  .content-grid {
-    display: grid;
-    grid-auto-flow: row;
-    gap: 1.25rem; /* equivalent to gap-5 in Tailwind */
-    width: 100%;
-    -webkit-box-orient: vertical;
-    -webkit-box-direction: normal;
-  }
-
-  .featured-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-template-areas:
-      "essays essays notes"
-      "books books  books";
-    gap: 1rem;
-  }
-
-  .essays-section {
-    grid-area: essays;
-  }
-
-  .notes-section {
-    grid-area: notes;
-  }
-
-  .books-section {
-    grid-area: books;
-  }
-
-  @media (max-width: 768px) {
-    .featured-grid {
-      grid-template-columns: 1fr;
-      grid-template-areas:
-        "essays"
-        "notes"
-        "books";
-      gap: var(--space-l);
-    }
-  }
-
-  ul {
-    margin-block-start: 0em !important;
-  }
-</style>
-
-<style>
-  .essay-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1.25rem;
-    padding: 0;
-  }
-
-  @media (min-width: 768px) {
-    .essay-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
-  /* Remove the masonry-grid class styles as they're not well supported in Safari */
-</style>
