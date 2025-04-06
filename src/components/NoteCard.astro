@@ -25,11 +25,11 @@ const formattedDate = new Date(pubDate).toLocaleDateString('en-US', {
   <a href={url} class="block p-4 border-b-1 border-syoro border-opacity-10 border-dashed hover:bg-yellow-50">
     <div class="flex gap-2">
       <img src="/icons/seed.svg" alt="seed icon" class="w-6 h-auto">
-      <h3 class="uppercase sm:capitalize text-2xl lg:text-3xl font-medium text-syoro">{title}</h3>
+      <h3 class="uppercase sm:capitalize text-2xl lg:text-3xl font-medium text-konpeki">{title}</h3>
     </div>
 
     {description && <p class="text-base sm:text-lg text-syoro mt-1">{description}</p>}
-    <div class="text-sm text-gray-500 mt-2 uppercase">
+    <div class="text-sm text-syoro mt-2 uppercase">
       {formattedDate}
     </div>
   </a>
