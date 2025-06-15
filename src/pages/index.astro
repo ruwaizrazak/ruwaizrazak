@@ -12,6 +12,7 @@ import EssayCard from '../components/EssayCard.astro';
 import NoteCard from '../components/NoteCard.astro';
 import WorkCard from '../components/WorkCard.astro';
 import BookCard from '../components/BookCard.astro';
+import { ClientRouter } from "astro:transitions";
 
 
 // Get 10 featured posts from each collection
@@ -77,6 +78,7 @@ const books = (await getCollection('books', ({ data }) => data.publish === true)
 <html lang="en">
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+    <ClientRouter />
 	</head>
 	<body>
 		<Header />
@@ -93,7 +95,7 @@ const books = (await getCollection('books', ({ data }) => data.publish === true)
             <li><GardenLink
               href="/essays"
               title="Essays"
-              description="Essays are more refined, long written documents."
+              description="Refined, long written opiniated documents."
             /></li>
             <li><GardenLink
               href="/notes"
