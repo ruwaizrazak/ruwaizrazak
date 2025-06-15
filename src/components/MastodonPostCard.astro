@@ -1,16 +1,77 @@
 ---
-const {post} = Astro.props;
-const date = new Date(post.created_at).toLocaleDateString();
----
+interface Props {
+  title: string;
+  description: string;
+  pubDate: Date;
+  url: string;
+  profileImage?: string;
+  tags?: string[];
+  media?: {
+    url: string;
+    type: string;
+  } | null;
+}
 
-<article class="bg-white p-4 rounded-lg shadow-sm mb-4 break-inside-avoid">
-  <div class="text-sm text-gray-500 mb-2">{date}</div>
-  <div class="prose" set:html={post.content} />
-  {post.media_attachments.map(media => (
-    <img 
-      src={media.url} 
-      alt={media.description || ''}
-      class="mt-2 rounded-lg"
-    />
-  ))}
-</article>
+const { title, description, pubDate, url, tags, media, profileImage} = Astro.props;
+---
+<a href={url} target="_blank" rel="noopener noreferrer" class="hover:scale-75 transition-colors" onclick="event.stopPropagation()">
+<div class="bg-white border border-gray-200 rounded-xl p-4 hover:bg-blue-50 hover:scale-105 transition-all duration-200">
+  <div class="flex items-start gap-3">
+    <div class="flex-shrink-0">
+      <div class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center">
+        <img src={profileImage} alt="Profile" class="w-8 h-8" />
+      </div>
+    </div>
+    <div class="flex-grow min-w-0">
+      <div class="flex items-center gap-1 mb-1">
+        <span class="font-bold text-gray-900 truncate">Ruwaiz Razak</span>
+        <span class="text-gray-500">·</span>
+        <time datetime={pubDate.toISOString()} class="text-gray-500 text-sm">
+          {pubDate.toLocaleDateString('en-us', {
+            month: 'short',
+            day: 'numeric'
+          })}
+        </time>
+      </div>
+      <p class="text-gray-800 whitespace-pre-wrap break-words">{description}</p>
+
+      {media && (
+        <div class="mt-3 rounded-xl overflow-hidden">
+          {media.type.startsWith('image/') ? (
+            <img src={media.url} alt="Post media" class="w-full h-auto" />
+          ) : media.type.startsWith('video/') ? (
+            <video src={media.url} controls class="w-full h-auto">Your browser does not support video playback.</video>
+          ) : null}
+        </div>
+      )}
+
+      {tags && tags.length > 0 && (
+        <div class="flex flex-wrap gap-1 mt-2">
+          {tags.map(tag => (
+            <a
+              href={`https://mastodon.social/tags/${tag}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-blue-500 text-sm hover:underline"
+              onclick="event.stopPropagation()"
+            >
+              #{tag}
+            </a>
+          ))}
+        </div>
+      )}
+
+      <div class="flex items-center gap-16 mt-3 text-gray-500">
+        <a href={url} target="_blank" rel="noopener noreferrer" class="hover:text-blue-500 transition-colors" onclick="event.stopPropagation()">
+          <div class="flex items-center gap-2 text-sm">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            </svg>
+            <span>Open original</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+</a>
