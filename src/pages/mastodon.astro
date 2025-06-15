@@ -1,0 +1,34 @@
+---
+import IndexLayout from '../layouts/IndexLayout.astro';
+import { XMLParser } from 'fast-xml-parser';
+
+// Fetch and parse RSS feed
+const response = await fetch('https://mastodon.social/@ruwaizrazak.rss');
+const xmlData = await response.text();
+const parser = new XMLParser();
+const feed = parser.parse(xmlData);
+
+// Transform RSS items into post format
+const posts = feed.rss.channel.item.map(item => ({
+  collection: 'mastodon',
+  id: item.guid.split('/').pop(),
+  data: {
+    title: new Date(item.pubDate).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    }),
+    description: item.description.replace(/<[^>]*>/g, ''),
+    pubDate: new Date(item.pubDate),
+    tags: item.category ? (Array.isArray(item.category) ? item.category : [item.category]) : []
+  }
+}));
+---
+
+<IndexLayout
+  title="Mastodon Posts"
+  description="My thoughts and updates from the Fediverse"
+  posts={posts}
+  showCollections={false}
+  showTags={false}
+/>

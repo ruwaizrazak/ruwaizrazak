@@ -1,0 +1,16 @@
+---
+const {post} = Astro.props;
+const date = new Date(post.created_at).toLocaleDateString();
+---
+
+<article class="bg-white p-4 rounded-lg shadow-sm mb-4 break-inside-avoid">
+  <div class="text-sm text-gray-500 mb-2">{date}</div>
+  <div class="prose" set:html={post.content} />
+  {post.media_attachments.map(media => (
+    <img 
+      src={media.url} 
+      alt={media.description || ''}
+      class="mt-2 rounded-lg"
+    />
+  ))}
+</article>
