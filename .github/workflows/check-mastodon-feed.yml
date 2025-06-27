@@ -10,39 +10,53 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Restore last GUID from cache
+      - name: Restore last post ID from cache
         uses: actions/cache@v4
         with:
-          path: .last_masto_guid
-          key: masto-guid-cache
+          path: .last_masto_id
+          key: masto-id-cache
 
-      - name: Check Mastodon Feed and Trigger Deploy
+      - name: Check Mastodon API and Trigger Deploy
         run: |
-          FEED_URL="https://mastodon.social/@ruwaizrazak.rss"  # Replace this
-          GUID_FILE=".last_masto_guid"
+          INSTANCE="mastodon.social"
+          USERNAME="ruwaizrazak"
+          ID_FILE=".last_masto_id"
 
-          # Get latest post GUID from RSS
-          LATEST_GUID=$(curl -s "$FEED_URL" | grep -m 1 "<guid>" | sed -E 's|.*<guid>(.*)</guid>.*|\1|')
-          echo "Latest GUID: $LATEST_GUID"
+          # Get account ID first
+          ACCOUNT_RESPONSE=$(curl -s "https://$INSTANCE/api/v1/accounts/lookup?acct=$USERNAME")
+          ACCOUNT_ID=$(echo "$ACCOUNT_RESPONSE" | jq -r '.id')
 
-          # Compare with previous GUID
-          if [ -f "$GUID_FILE" ]; then
-            LAST_GUID=$(cat "$GUID_FILE")
-            echo "Last GUID: $LAST_GUID"
+          if [ "$ACCOUNT_ID" = "null" ] || [ -z "$ACCOUNT_ID" ]; then
+            echo "Failed to get account ID"
+            exit 1
+          fi
 
-            if [ "$LATEST_GUID" != "$LAST_GUID" ]; then
+          # Get latest post ID from API
+          LATEST_POST_RESPONSE=$(curl -s "https://$INSTANCE/api/v1/accounts/$ACCOUNT_ID/statuses?limit=1&exclude_replies=true&exclude_reblogs=true")
+          LATEST_ID=$(echo "$LATEST_POST_RESPONSE" | jq -r '.[0].id')
+
+          echo "Latest post ID: $LATEST_ID"
+
+          # Compare with previous ID
+          if [ -f "$ID_FILE" ]; then
+            LAST_ID=$(cat "$ID_FILE")
+            echo "Last post ID: $LAST_ID"
+
+            if [ "$LATEST_ID" != "$LAST_ID" ] && [ "$LATEST_ID" != "null" ]; then
               echo "New post detected — triggering deploy"
               curl -X POST "$VERCEL_DEPLOY_HOOK_URL"
             else
               echo "No change — skipping deploy"
             fi
           else
-            echo "No previous GUID — triggering deploy"
+            echo "No previous ID — triggering deploy"
             curl -X POST "$VERCEL_DEPLOY_HOOK_URL"
           fi
 
-          # Save current GUID for next run
-          echo "$LATEST_GUID" > "$GUID_FILE"
+          # Save current ID for next run
+          if [ "$LATEST_ID" != "null" ]; then
+            echo "$LATEST_ID" > "$ID_FILE"
+          fi
 
     env:
       VERCEL_DEPLOY_HOOK_URL: ${{ secrets.VERCEL_DEPLOY_HOOK_URL }}

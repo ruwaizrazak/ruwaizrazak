@@ -6,6 +6,7 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
 import { getCollection } from 'astro:content';
 import IndexLayout from '../../layouts/IndexLayout.astro';
 import { XMLParser } from 'fast-xml-parser';
+import { fetchMastodonPosts } from '../../utils/mastodonApi';
 
 // Initialize XML parser for feeds
 const parser = new XMLParser({
@@ -16,39 +17,12 @@ const parser = new XMLParser({
   parseTagValue: true
 });
 
-// Fetch Mastodon RSS feed
-let mastodonPosts = [];
+// Fetch Mastodon posts using API
+let mastodonPosts: any[] = [];
 try {
-  const response = await fetch('https://mastodon.social/@ruwaizrazak.rss');
-  if (response.ok) {
-    const xmlData = await response.text();
-    const feed = parser.parse(xmlData);
-
-    if (feed?.rss?.channel?.item) {
-      mastodonPosts = feed.rss.channel.item.map((item: any) => ({
-        collection: 'mastodon',
-        id: item.guid,
-        data: {
-          title: new Date(item.pubDate).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-          }),
-          profileImage: feed.rss.channel.image?.url || '',
-          description: item.description.replace(/<[^>]*>/g, ''),
-          pubDate: new Date(item.pubDate),
-          url: item.link,
-          media: item['media:content'] ? {
-            url: item['media:content']['@_url'],
-            type: item['media:content']['@_type']
-          } : null,
-          tags: item.category ? (Array.isArray(item.category) ? item.category : [item.category]) : []
-        }
-      }));
-    }
-  }
+  mastodonPosts = await fetchMastodonPosts('ruwaizrazak', 'mastodon.social', 20);
 } catch (error) {
-  console.warn('Failed to fetch Mastodon RSS feed:', error);
+  console.warn('Failed to fetch Mastodon posts:', error);
 }
 
 // Fetch Pixelfed Atom feed

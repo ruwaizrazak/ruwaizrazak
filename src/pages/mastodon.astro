@@ -1,38 +1,9 @@
 ---
 import IndexLayout from '../layouts/IndexLayout.astro';
-import { XMLParser } from 'fast-xml-parser';
+import { fetchMastodonPosts } from '../utils/mastodonApi';
 
-// Fetch and parse RSS feed
-const response = await fetch('https://mastodon.social/@ruwaizrazak.rss');
-const xmlData = await response.text();
-const parser = new XMLParser({
-  ignoreAttributes: false,
-  attributeNamePrefix: "@_"
-});
-const feed = parser.parse(xmlData);
-const profilepicture = feed.rss.channel.image.url;
-
-// Transform RSS items into post format
-const posts = feed.rss.channel.item.map(item => ({
-  collection: 'mastodon',
-  id: item.guid,
-  data: {
-    title: new Date(item.pubDate).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    }),
-    profileImage: feed.rss.channel.image.url,  // Use the channel's image URL directly
-    description: item.description.replace(/<[^>]*>/g, ''),
-    pubDate: new Date(item.pubDate),
-    url: item.link,
-    media: item['media:content'] ? {
-      url: item['media:content']['@_url'],
-      type: item['media:content']['@_type']
-    } : null,
-    tags: item.category ? (Array.isArray(item.category) ? item.category : [item.category]) : []
-  }
-}));
+// Fetch posts using Mastodon API
+const posts = await fetchMastodonPosts('ruwaizrazak', 'mastodon.social', 20);
 ---
 
 <IndexLayout
