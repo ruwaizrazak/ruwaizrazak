@@ -7,36 +7,113 @@ import { getCollection } from 'astro:content';
 import IndexLayout from '../../layouts/IndexLayout.astro';
 import { XMLParser } from 'fast-xml-parser';
 
-// Fetch Mastodon RSS feed
-const response = await fetch('https://mastodon.social/@ruwaizrazak.rss');
-const xmlData = await response.text();
+// Initialize XML parser for feeds
 const parser = new XMLParser({
   ignoreAttributes: false,
-  attributeNamePrefix: "@_"
+  attributeNamePrefix: "@_",
+  textNodeName: "_text",
+  parseAttributeValue: true,
+  parseTagValue: true
 });
-const feed = parser.parse(xmlData);
 
-// Transform Mastodon RSS items into post format
-const mastodonPosts = feed.rss.channel.item.map(item => ({
-  collection: 'mastodon',
-  id: item.guid,
-  data: {
-    title: new Date(item.pubDate).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    }),
-    profileImage: feed.rss.channel.image.url,
-    description: item.description.replace(/<[^>]*>/g, ''),
-    pubDate: new Date(item.pubDate),
-    url: item.link,
-    media: item['media:content'] ? {
-      url: item['media:content']['@_url'],
-      type: item['media:content']['@_type']
-    } : null,
-    tags: item.category ? (Array.isArray(item.category) ? item.category : [item.category]) : []
+// Fetch Mastodon RSS feed
+let mastodonPosts = [];
+try {
+  const response = await fetch('https://mastodon.social/@ruwaizrazak.rss');
+  if (response.ok) {
+    const xmlData = await response.text();
+    const feed = parser.parse(xmlData);
+
+    if (feed?.rss?.channel?.item) {
+      mastodonPosts = feed.rss.channel.item.map((item: any) => ({
+        collection: 'mastodon',
+        id: item.guid,
+        data: {
+          title: new Date(item.pubDate).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          }),
+          profileImage: feed.rss.channel.image?.url || '',
+          description: item.description.replace(/<[^>]*>/g, ''),
+          pubDate: new Date(item.pubDate),
+          url: item.link,
+          media: item['media:content'] ? {
+            url: item['media:content']['@_url'],
+            type: item['media:content']['@_type']
+          } : null,
+          tags: item.category ? (Array.isArray(item.category) ? item.category : [item.category]) : []
+        }
+      }));
+    }
   }
-}));
+} catch (error) {
+  console.warn('Failed to fetch Mastodon RSS feed:', error);
+}
+
+// Fetch Pixelfed Atom feed
+let pixelfedPosts = [];
+try {
+  const pixelfedResponse = await fetch('https://pixelfed.social/users/ruwaiz.atom');
+  if (pixelfedResponse.ok) {
+    const pixelfedXmlData = await pixelfedResponse.text();
+    const pixelfedFeed = parser.parse(pixelfedXmlData);
+
+    if (pixelfedFeed?.feed?.entry) {
+      // Handle both single entry and array of entries
+      const entries = Array.isArray(pixelfedFeed.feed.entry)
+        ? pixelfedFeed.feed.entry
+        : [pixelfedFeed.feed.entry];
+
+      pixelfedPosts = entries.map((entry: any) => {
+        // Extract content from CDATA or regular content
+        let description = '';
+        if (entry.content) {
+          if (entry.content._text) {
+            description = entry.content._text.replace(/<[^>]*>/g, '');
+          } else if (typeof entry.content === 'string') {
+            description = entry.content.replace(/<[^>]*>/g, '');
+          }
+        } else if (entry.summary) {
+          if (entry.summary._text) {
+            description = entry.summary._text.replace(/<[^>]*>/g, '');
+          } else if (typeof entry.summary === 'string') {
+            description = entry.summary.replace(/<[^>]*>/g, '');
+          }
+        }
+
+        // Extract media content
+        let media = null;
+        if (entry['media:content']) {
+          media = {
+            url: entry['media:content']['@_url'],
+            type: entry['media:content']['@_type']
+          };
+        }
+
+        return {
+          collection: 'pixelfed',
+          id: entry.id,
+          data: {
+            title: entry.title || new Date(entry.updated).toLocaleDateString('en-US', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric'
+            }),
+            profileImage: pixelfedFeed.feed.icon || '',
+            description: description,
+            pubDate: new Date(entry.updated),
+            url: entry.link?.['@_href'] || entry.id,
+            media: media,
+            tags: entry.category ? (Array.isArray(entry.category) ? entry.category.map((cat: any) => cat.term) : [entry.category.term]) : []
+          }
+        };
+      });
+    }
+  }
+} catch (error) {
+  console.warn('Failed to fetch Pixelfed Atom feed:', error);
+}
 
 // Fetch all collections
 const [notes, essays, works, books] = await Promise.all([
@@ -46,18 +123,19 @@ const [notes, essays, works, books] = await Promise.all([
   getCollection('books', ({ data }) => data.publish === true)
 ]);
 
-// Combine and sort all posts including Mastodon posts
+// Combine and sort all posts including Fediverse posts
 const allPosts = [
   ...notes.map(post => ({ ...post, collection: 'notes' })),
   ...essays.map(post => ({ ...post, collection: 'essays' })),
   ...works.map(post => ({ ...post, collection: 'works' })),
   ...books.map(post => ({ ...post, collection: 'books' })),
-  ...mastodonPosts
+  ...mastodonPosts,
+  ...pixelfedPosts
 ].sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
 // Get unique tags from all posts
 const allTags = ['all', ...new Set(allPosts.flatMap(post => post.data.tags || []))].sort();
-const collections = ['all', 'notes', 'essays', 'works', 'books', 'mastodon'];
+const collections = ['all', 'notes', 'essays', 'works', 'books', 'mastodon', 'pixelfed'];
 ---
 
 <IndexLayout
