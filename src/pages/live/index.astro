@@ -8,6 +8,9 @@ import Main from '../../components/Main.astro';
 import H1 from '../../components/mdxComponents/H1.astro';
 import H2 from '../../components/mdxComponents/H2.astro';
 import P from '../../components/mdxComponents/P.astro';
+import NoteMain from '../../components/NoteMain.astro';
+import GradientHeading from '../../components/mdxComponents/gradientHeading.astro';
+import Link from '../../components/mdxComponents/Link.astro';
 import { render } from 'astro:content';
 
 const livePosts = await getCollection('live', ({ data }) => data.publish === true);
@@ -17,14 +20,9 @@ const sortedPosts = livePosts.sort((a, b) => {
   return dateB.getTime() - dateA.getTime();
 });
 
-// Get the most recent post for "Now"
 const nowPost = sortedPosts[0];
-// Get all other posts for "Then"
 const thenPosts = sortedPosts.slice(1);
-
-// Render content for now post
 const nowContent = nowPost ? await render(nowPost) : null;
-// Render content for then posts
 const thenContents = await Promise.all(thenPosts.map(post => render(post)));
 ---
 
@@ -35,34 +33,73 @@ const thenContents = await Promise.all(thenPosts.map(post => render(post)));
 	</head>
 	<body>
 		<Header />
-		<Main>
-      <div class="prose lg:max-w max-w-none">
-        <H1 className='mb-0'>Now</H1>
-        <P className='mt-5'>Whats happening to me currently or rather what am I doing currently</P>
-        {nowPost && (
-          <div class="mb-8 border-b-2 border-stone-100">
-            <H2>{nowPost.data.Month}</H2>
-            <P>{nowPost.data.OneLiner}</P>
-            <div class="mt-4 prose">
-              <nowContent.Content />
-            </div>
-          </div>
-        )}
-
-        <H2 class="mt-16">Then</H2>
-        <div class="space-y-8">
-          {thenPosts.map((post, index) => (
-            <div class="border-b-2 border-stone-100">
-              <H2>{post.data.Month}</H2>
-              <P>{post.data.OneLiner}</P>
-              <div class="mt-4 prose">
-                <thenContents[index].Content />
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-		</Main>
+		<main class="w-full sm:w-[90%] mx-auto">
+			<div class="mt-20">
+				<div class="flex flex-col gap-4">
+					<a href="/" class="inline-block z-1">
+						<div class="flex items-center gap-2 group not-prose">
+							<img src="/icons/backArrow.svg" class="w-8 h-auto group-hover:rotate-20 transition-all" alt="Back" />
+							<span class="uppercase font-sans font-medium text-lg">Back to Index</span>
+						</div>
+					</a>
+				</div>
+				<GradientHeading size="xl">Now</GradientHeading>
+				<p class="text-lg sm:text-xl mt-4">Whats happening to me currently or rather what am I doing currently</p>
+        <hr class="w-full my-8 border-stone-100">
+				{nowPost && nowContent && (
+					<div class="mb-8 border-b-2 border-stone-100">
+						<div class="flex flex-col gap-4">
+							<div class="flex items-center gap-4">
+								<span class="shrink-0">
+									<svg width="35" height="35" viewBox="0 0 45 45" fill="none" xmlns="http://www.w3.org/2000/svg">
+										<path d="M22.5 0C34.9264 0 45 10.0736 45 22.5C45 34.9264 34.9264 45 22.5 45C10.0736 45 0 34.9264 0 22.5C0 10.0736 10.0736 0 22.5 0ZM22.5 2C11.1782 2 2 11.1782 2 22.5C2 33.8218 11.1782 43 22.5 43C33.8218 43 43 33.8218 43 22.5C43 11.1782 33.8218 2 22.5 2ZM23 8C31.2843 8 38 14.7157 38 23C38 31.2843 31.2843 38 23 38C14.7157 38 8 31.2843 8 23C8 14.7157 14.7157 8 23 8Z" fill="url(#paint0_radial_236_524)"/>
+										<defs>
+											<radialGradient id="paint0_radial_236_524" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(23 23) rotate(90) scale(52.5)"><stop stop-color="#004A8F"/><stop offset="1" stop-color="#004A8F" stop-opacity="0"/></radialGradient>
+										</defs>
+									</svg>
+								</span>
+								<h2 class="text-5xl">{nowPost.data.Month}</h2>
+							</div>
+						</div>
+						<p class="mx-12 font-3xl text-lg mb-10 mt-0">{nowPost.data.OneLiner}</p>
+						<div class="w-[90%] prose-headings:w-[60%] prose-p:w-[60%] prose-blockquote:w-[60%] prose-figure:w-[60%] prose-a:w-[60%] mx-12 mt-4 prose max-w-none text-left prose-h1:text-4xl prose-h2:text-3xl prose-h3:text-2xl prose-h4:text-xl prose-h5:text-lg  prose-p:text-lg prose-headings:font-normal prose-h1:my-0 prose-h2:my-0 prose-h3:my-0 prose-h4:my-0 prose-h5:my-0 prose-p:my-0">
+							<nowContent.Content />
+						</div>
+					</div>
+				)}
+				{thenPosts.length > 0 && (
+					<>
+						<GradientHeading size="xl" className="mt-16">Then</GradientHeading>
+						<p class="text-lg sm:text-xl mt-4">In hindsight...</p>
+						<hr class="w-full my-8 border-stone-100">
+						<div class="space-y-8">
+							{thenPosts.map((post, index) => {
+								const Content = thenContents[index]?.Content;
+								return (
+									<div class="border-b-2 border-stone-100">
+										<div class="flex items-center gap-4">
+											<span class="shrink-0">
+												<svg width="35" height="35" viewBox="0 0 45 45" fill="none" xmlns="http://www.w3.org/2000/svg">
+													<path d="M22.5 0C34.9264 0 45 10.0736 45 22.5C45 34.9264 34.9264 45 22.5 45C10.0736 45 0 34.9264 0 22.5C0 10.0736 10.0736 0 22.5 0ZM22.5 2C11.1782 2 2 11.1782 2 22.5C2 33.8218 11.1782 43 22.5 43C33.8218 43 43 33.8218 43 22.5C43 11.1782 33.8218 2 22.5 2ZM23 8C31.2843 8 38 14.7157 38 23C38 31.2843 31.2843 38 23 38C14.7157 38 8 31.2843 8 23C8 14.7157 14.7157 8 23 8Z" fill="url(#paint0_radial_236_524)"/>
+													<defs>
+														<radialGradient id="paint0_radial_236_524" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(23 23) rotate(90) scale(52.5)"><stop stop-color="#004A8F"/><stop offset="1" stop-color="#004A8F" stop-opacity="0"/></radialGradient>
+													</defs>
+												</svg>
+											</span>
+											<h2 class="text-5xl">{post.data.Month}</h2>
+										</div>
+										<p class="mx-12 font-3xl text-lg mb-10 mt-0">{post.data.OneLiner}</p>
+										<div class="w-[90%] prose-headings:w-[60%] prose-p:w-[60%] prose-blockquote:w-[60%] prose-figure:w-[60%] prose-a:w-[60%] mx-12 mt-4 prose max-w-none text-left prose-h1:text-4xl prose-h2:text-3xl prose-h3:text-2xl prose-h4:text-xl prose-h5:text-lg  prose-p:text-lg prose-headings:font-normal prose-h1:my-0 prose-h2:my-0 prose-h3:my-0 prose-h4:my-0 prose-h5:my-0 prose-p:my-0">
+											{Content && <Content />}
+										</div>
+									</div>
+								);
+							})}
+						</div>
+					</>
+				)}
+			</div>
+		</main>
 		<Footer />
 	</body>
 </html>
