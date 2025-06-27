@@ -10,6 +10,7 @@ import GradientHeading from '../components/mdxComponents/gradientHeading.astro';
 import Tag from '../components/Tag.astro';
 import { ClientRouter } from "astro:transitions";
 import MastodonPostCard from '../components/MastodonPostCard.astro';
+import PixelfedCard from '../components/PixelfedCard.astro';
 
 
 interface Props {
@@ -147,6 +148,16 @@ const sortedTags = [...tags.filter(tag => tag !== 'all').sort()];
                   description={post.data.description || 'No description available'}
                   pubDate={post.data.pubDate}
                   url={`${post.data.url}/`}
+                  tags={post.data.tags}
+                  profileImage={post.data.profileImage}
+                  media={post.data.media}
+                />
+              ) : post.collection === 'pixelfed' ? (
+                <PixelfedCard
+                  title={post.data.title}
+                  description={post.data.description || 'No description available'}
+                  pubDate={post.data.pubDate}
+                  url={post.data.url}
                   tags={post.data.tags}
                   profileImage={post.data.profileImage}
                   media={post.data.media}
