@@ -182,10 +182,15 @@ const sortedTags = [...tags.filter(tag => tag !== 'all').sort()];
             let currentCollection = 'all';
 
             // Make all posts visible initially
-            posts.forEach(post => post.style.display = 'block');
+            posts.forEach(post => {
+              post.style.display = 'block';
+            });
 
-            // Initialize collection filter only
+            // Initialize collection filter
             if (collectionFilter) {
+              // Set initial value
+              collectionFilter.value = 'all';
+
               collectionFilter.addEventListener('change', (e) => {
                 currentCollection = e.target.value;
                 filterPosts();
@@ -196,14 +201,25 @@ const sortedTags = [...tags.filter(tag => tag !== 'all').sort()];
               posts.forEach(post => {
                 const postCollection = post.dataset.collection;
                 const matchesCollection = currentCollection === 'all' || postCollection === currentCollection;
-                post.style.display = matchesCollection ? 'block' : 'none';
+
+                if (matchesCollection) {
+                  post.style.display = 'block';
+                } else {
+                  post.style.display = 'none';
+                }
               });
             }
+
+            // Initial filter
+            filterPosts();
           }
 
           // Initialize on load and navigation
           document.addEventListener('DOMContentLoaded', initializeFilters);
           window.addEventListener('pageshow', initializeFilters);
+
+          // Also initialize when Astro transitions complete
+          document.addEventListener('astro:page-load', initializeFilters);
         </script>
       </div>
     </main>
