@@ -1,0 +1,48 @@
+name: Trigger Vercel Deploy on New Mastodon Post
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'  # Every 10 minutes
+  workflow_dispatch:        # Manual trigger
+
+jobs:
+  check-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Restore last GUID from cache
+        uses: actions/cache@v4
+        with:
+          path: .last_masto_guid
+          key: masto-guid-cache
+
+      - name: Check Mastodon Feed and Trigger Deploy
+        run: |
+          FEED_URL="https://mastodon.social/@ruwaizrazak.rss"  # Replace this
+          GUID_FILE=".last_masto_guid"
+
+          # Get latest post GUID from RSS
+          LATEST_GUID=$(curl -s "$FEED_URL" | grep -m 1 "<guid>" | sed -E 's|.*<guid>(.*)</guid>.*|\1|')
+          echo "Latest GUID: $LATEST_GUID"
+
+          # Compare with previous GUID
+          if [ -f "$GUID_FILE" ]; then
+            LAST_GUID=$(cat "$GUID_FILE")
+            echo "Last GUID: $LAST_GUID"
+
+            if [ "$LATEST_GUID" != "$LAST_GUID" ]; then
+              echo "New post detected — triggering deploy"
+              curl -X POST "$VERCEL_DEPLOY_HOOK_URL"
+            else
+              echo "No change — skipping deploy"
+            fi
+          else
+            echo "No previous GUID — triggering deploy"
+            curl -X POST "$VERCEL_DEPLOY_HOOK_URL"
+          fi
+
+          # Save current GUID for next run
+          echo "$LATEST_GUID" > "$GUID_FILE"
+
+    env:
+      VERCEL_DEPLOY_HOOK_URL: ${{ secrets.VERCEL_DEPLOY_HOOK_URL }}
