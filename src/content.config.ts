@@ -72,7 +72,8 @@ const live = defineCollection({
   schema: z.object({
     Month: z.string(),
     OneLiner: z.string(),
-    date: z.string(), // Changed to string to match the format in MD files
+    date: z.string(),
+    publish: z.boolean().default(false), // Changed to string to match the format in MD files
   }),
 });
 
