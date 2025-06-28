@@ -1,0 +1,73 @@
+---
+// GoodreadsBookCard.astro - Card component for Goodreads books
+export interface Props {
+  title: string;
+  author: string;
+  heroImage: string;
+  url: string;
+  description?: string;
+  averageRating?: string;
+}
+
+const {
+  title,
+  author,
+  heroImage,
+  url,
+  description,
+  averageRating
+} = Astro.props;
+---
+
+<div class="group transition-all">
+  <a href={url} target="_blank" rel="noopener noreferrer" class="block">
+    <div class="relative book-cover shadow-md transition-transform group-hover:scale-98">
+      <!-- Book pages - simplified -->
+      <div class="book-pages absolute right-0 top-[5%] bottom-[5%] w-[5px] bg-white z-20"></div>
+
+      <img
+        src={heroImage}
+        alt={title}
+        class="w-full aspect-[4/5] object-cover rounded-sm relative z-0"
+      >
+
+      <!-- Simplified hardcover effect -->
+      <div class="absolute inset-0 border border-gray-400 rounded-sm"></div>
+
+      <!-- Goodreads indicator -->
+      <div class="absolute top-2 right-2 bg-orange-500 text-white text-xs px-2 py-1 rounded-full">
+        Goodreads
+      </div>
+
+      <!-- Average rating badge -->
+      {averageRating && (
+        <div class="absolute top-2 left-2 bg-yellow-400 text-black text-xs px-2 py-1 rounded-full font-semibold">
+          ⭐ {averageRating}
+        </div>
+      )}
+    </div>
+    <h4 class="uppercase sm:capitalize text-xl lg:text-2xl text-center font-medium mt-2 text-konpeki">
+      {title}
+    </h4>
+    <p class="sm:text-sm text-base text-center text-gray-700">{author}</p>
+    {description && (
+      <p class="sm:text-xs text-sm text-center text-gray-600 mt-1 line-clamp-2">
+        {description.length > 100 ? description.substring(0, 100) + '...' : description}
+      </p>
+    )}
+    <p class="sm:text-xs text-sm text-center uppercase tracking-wider text-gray-500 mt-1">to-read</p>
+    <p class="sm:text-xs text-sm text-center text-blue-600 mt-1">View on Goodreads →</p>
+  </a>
+</div>
+
+<style>
+  .book-cover {
+    transition: all 0.3s ease;
+  }
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>

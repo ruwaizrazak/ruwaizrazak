@@ -1,4 +1,3 @@
-
 ---
 import BaseHead from '../../components/BaseHead.astro';
 import Header from '../../components/Header.astro';
@@ -6,15 +5,24 @@ import Footer from '../../components/Footer.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
 import { getCollection } from 'astro:content';
 import IndexLayout from '../../layouts/IndexLayout.astro';
+import GoodreadsBookCard from '../../components/GoodreadsBookCard.astro';
+import { fetchGoodreadsWantToRead } from '../../utils/goodreadsRss';
+import GradientHeading from '../../components/mdxComponents/gradientHeading.astro';
 
-// Fetch all collections
-const [books] = await Promise.all([
-  getCollection('books', ({ data }) => data.publish === true)
-]);
+// Fetch local books
+const localBooks = await getCollection('books', ({ data }) => data.publish === true);
 
-// Combine and sort all posts
+// Fetch Goodreads "Want to Read" books
+let goodreadsBooks: any[] = [];
+try {
+  goodreadsBooks = await fetchGoodreadsWantToRead('50949105-ruwaiz-razak', 12);
+} catch (error) {
+  console.warn('Failed to fetch Goodreads books:', error);
+}
+
+// Combine and sort all books for the main layout
 const allBooks = [
-  ...books.map(post => ({ ...post, collection: 'books' }))
+  ...localBooks.map(post => ({ ...post, collection: 'books' }))
 ].sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
 // Get unique tags from all posts
@@ -22,19 +30,106 @@ const allTags = ['all', ...new Set(allBooks.flatMap(post => post.data.tags || []
 const collections = ['all', 'notes', 'essays', 'casestudies', 'books'];
 ---
 
-<IndexLayout
-  title="Books"
-  description="A list of books I've read, Currently Reading and my notes on them."
-  posts={allBooks}
-  tags={allTags}
-  collections={collections}
-/>
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead title="Books" description="A list of books I've read, Currently Reading, Want to Read, and my notes on them." />
+  </head>
+  <body>
+    <Header />
+    <main class="w-[90%] mx-auto">
+      <div class="mt-8">
+        <div class="flex flex-col mt-20">
+          <a href="/garden" class="inline-block z-1">
+            <div class="flex items-center gap-2 group">
+              <img src="/icons/backArrow.svg" class="w-8 h-auto group-hover:rotate-20 transition-all" alt="Back" />
+              <span class="uppercase font-sans font-medium">Back to Garden</span>
+            </div>
+          </a>
+          <GradientHeading size="xl">Books</GradientHeading>
+          <p class="w-full md:w-[80%] text-center sm:text-left text-lg sm:text-xl mt-4">A list of books I've read, Currently Reading, Want to Read, and my notes on them.</p>
+        </div>
+      </div>
+
+      <!-- Single Column Layout -->
+      <div class="mt-10">
+
+        <!-- Local Books Section -->
+        <div class="mb-16">
+          <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
+            <img src="/icons/book.svg" alt="Books icon" class="w-6 h-auto">
+            My Library
+          </h2>
+          <p class="text-gray-600 mb-6">Books I've read and my notes on them.</p>
+
+          {localBooks.length > 0 ? (
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {localBooks.map((book) => (
+                <div class="group transition-all">
+                  <a href={`/books/${book.id}/`} class="block">
+                    <div class="relative book-cover shadow-md transition-transform group-hover:scale-98">
+                      <div class="book-pages absolute right-0 top-[5%] bottom-[5%] w-[5px] bg-white z-20"></div>
+                      <img
+                        src={book.data.heroImage || '/placeholder-book.jpg'}
+                        alt={book.data.title}
+                        class="w-full aspect-[4/5] object-cover rounded-sm relative z-0"
+                      >
+                      <div class="absolute inset-0 border border-gray-400 rounded-sm"></div>
+                    </div>
+                    <h4 class="uppercase sm:capitalize text-xl lg:text-2xl text-center font-medium mt-2 text-konpeki">
+                      {book.data.title}
+                    </h4>
+                    <p class="sm:text-sm text-base text-center text-gray-700">{book.data.author}</p>
+                    <p class="sm:text-xs text-sm text-center uppercase tracking-wider text-gray-500 mt-1">
+                      {book.data.readStatus}
+                    </p>
+                  </a>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div class="text-center py-8 text-gray-500">
+              <p>No books in your library yet.</p>
+            </div>
+          )}
+        </div>
+
+        <!-- Want to Read Section -->
+        <div>
+          <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
+            <img src="/icons/book.svg" alt="Books icon" class="w-6 h-auto">
+            Want to Read
+          </h2>
+          <p class="text-gray-600 mb-6">Books from my Goodreads "Want to Read" shelf.</p>
+
+          {goodreadsBooks.length > 0 ? (
+            <div class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-10">
+              {goodreadsBooks.map((book) => (
+                <GoodreadsBookCard
+                  title={book.title}
+                  author={book.author}
+                  heroImage={book.heroImage}
+                  url={book.url}
+                  description={book.description}
+                  averageRating={book.averageRating}
+                />
+              ))}
+            </div>
+          ) : (
+            <div class="text-center py-8 text-gray-500">
+              <p>No books in your "Want to Read" shelf.</p>
+              <p class="text-sm mt-2">Make sure your Goodreads profile is public.</p>
+            </div>
+          )}
+        </div>
+      </div>
+    </main>
+    <Footer />
+  </body>
+</html>
 
 <style>
-	.masonry-grid {
-		column-gap: 1rem;
-	}
-	.break-inside-avoid {
-		break-inside: avoid;
-	}
+  .book-cover {
+    transition: all 0.3s ease;
+  }
 </style>
