@@ -37,7 +37,7 @@ const {
       <img
         src={heroImage}
         alt={title}
-        class="w-full aspect-[4/5] object-cover rounded-sm relative z-0 group-hover:blur-xs"
+        class="w-full aspect-[4/5] object-cover rounded-sm relative z-0 "
       >
 
       <!-- Simplified hardcover effect -->
@@ -50,7 +50,7 @@ const {
 
       <!-- Average rating badge -->
       {averageRating && (
-        <div class="absolute top-2 left-2 bg-yellow-400 text-black text-xs px-2 py-1 rounded-full font-semibold">
+        <div class="absolute top-2 left-2 bg-yellow-400 text-black text-xs px-2 py-1 rounded-full font-semibold z-10">
           ⭐ {averageRating}
         </div>
       )}
