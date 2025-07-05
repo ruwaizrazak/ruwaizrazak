@@ -13,6 +13,7 @@ import NoteCard from '../components/NoteCard.astro';
 import WorkCard from '../components/WorkCard.astro';
 import BookCard from '../components/BookCard.astro';
 import { ClientRouter } from "astro:transitions";
+import Button from '../components/Button.astro';
 
 
 // Get 10 featured posts from each collection
@@ -141,20 +142,41 @@ const books = (await getCollection('books', ({ data }) => data.publish === true)
         </div>
         <!--What am I Section -->
         <div class="w-full md:w-[96%] mx-auto p-5 mt-10 xl:mt-0" style="background: linear-gradient(26.18deg, #1E1E1E 40.52%, #324084 116.37%)">
-          <div class="mx-auto border-1 border-gray-50 border-dashed p-5">
+          <div class="mx-auto p-5">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
               <div class="w-full px-2 md:px-0">
                 <GradientHeading size="lg" className='text-white font-medium'> What am I?</GradientHeading>
                 <div class="text-white w-full py-5">
-                  <p class="text-lg md:text-xl text-white">Senior User Experience Designer with 7 years of experience currently working at Nordeus. Previously at <Link href="http://www.zynga.com">Zynga</Link> and <Link href="http://www.glumobile.com">Glu Mobile</Link>.</p>
+                  <p class="text-lg md:text-xl text-white"><span class="font-bold text-yellow-300">Senior User Experience Designer</span> with <span class="font-bold text-yellow-300">7 years</span> of experience. Currently working at <span class="font-bold text-yellow-300"><Link href="https://www.nordeus.com">Nordeus</Link></span>. Previously at <span class="font-bold text-yellow-300"><Link href="http://www.zynga.com">Zynga</Link></span> and <span class="font-bold text-yellow-300"><Link href="http://www.glumobile.com">Glu Mobile</Link></span>.</p>
                   <br>
-                  <p class="text-lg md:text-xl text-white">I worked on multiple mobile games across multiple genres, building features, onboarding experiences and lots and lots of researches.</p>
-                  <br>
-                  <p class="text-lg md:text-xl text-white">Read more about what I'm currently into <Link href="/live">Here</Link></p>
-                  <br>
-
-                  <h4 class="text-xl uppercase text-gray-100 text-white"> Contact</h4>
-                  <p class="text-lg md:text-xl">I'm available via <Link src="mailto:hello@ruwaizrazak.com">hello@ruwaizrazak.com</Link>, you can also checkout my resume if you want to.</p>
+                  <p class="text-lg md:text-xl text-white">If you are interested to know more read more about me <Link href="/about">here</Link></p>
+                  <br> <br>
+                  <Button href="mailto:hello@ruwaizrazak.com">
+                    <span class="inline-flex items-center gap-2">
+                      <span>Contact Me</span>
+                      <svg
+                        class="w-6 h-6 stroke-current transition-all duration-100"
+                        fill="none"
+                        viewBox="0 0 64 64"
+                        stroke="currentColor"
+                        stroke-width="3"
+                      >
+                        <!-- Static path, always visible -->
+                        <path
+                          d="M4 12L60 32L4 52L12 32L4 12ZM12 32L60 32M12 32L26 44L28 36"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                        <!-- Animated path, traces on hover -->
+                        <path
+                          class="plane-path pointer-events-none"
+                          d="M4 12L60 32L4 52L12 32L4 12ZM12 32L60 32M12 32L26 44L28 36"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                    </span>
+                  </Button>
                 </div>
               </div>
               <div class="hidden md:flex justify-center md:justify-end">
@@ -170,7 +192,7 @@ const books = (await getCollection('books', ({ data }) => data.publish === true)
             <GradientLine angle={45} startPercentage={20} endPercentage={80} className="h-[60px] w-[80%]" />
           </div>
           <div class="lg:flex gap-20 text-lg md:text-xl mt-10 w-full justify-between text-syoro">
-            <p class="w-full lg:w-[50%] text-syoro"> While I can’t share what I did at my previous companies, I can give a glimpse on my process and the project I worked on. <br> <br>Check out my resume if you are interested to know more about my career experience.</p>
+            <p class="w-full lg:w-[50%] text-syoro"> While I can't share what I did at my previous companies, I can give a glimpse on my process and the project I worked on. <br> <br>Check out my resume if you are interested to know more about my career experience.</p>
               <div class="flex gap-20 mt-10 lg:mt-0 justify-center">
                 <WorkCard
                   title="At Zynga"
@@ -264,4 +286,15 @@ const books = (await getCollection('books', ({ data }) => data.publish === true)
 		<Footer />
 	</body>
 </html>
+
+<style>
+.plane-path {
+  stroke-dasharray: 180;
+  stroke-dashoffset: 180;
+  transition: stroke-dashoffset 0.7s cubic-bezier(0.4,0,0.2,1);
+}
+.group:hover .plane-path {
+  stroke-dashoffset: 0;
+}
+</style>
 
