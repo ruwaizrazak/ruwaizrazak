@@ -9,27 +9,29 @@ const subpath = pathname.match(/[^\/]+/g);
 const isActive = href === pathname || href === '/' + (subpath?.[0] || '');
 ---
 
-<a href={href} class:list={[className, { active: isActive }]} {...props} type="button" class="btn btn-outline-dark">
+<a
+  href={href}
+  class:list={[
+    className,
+    { active: isActive },
+    "group",
+    "bg-white",
+    "hover:bg-konpeki",
+    "text-konpeki",
+    "hover:text-white",
+    "border-1",
+    "font-bold",
+    "py-4",
+    "px-6",
+    "text-lg",
+    "transform",
+    "hover:-skew-x-10",
+    "skew-x-6",
+    "uppercase"
+  ]}
+  {...props}
+  type="button"
+>
 	<slot />
 </a>
-<style>
-	.btn{
-  border-radius: 40px;
-  border-style: solid;
-  border-width: 1px;
-  border-color: var(--primary-color);
-  color: var(--primary-color) !important;
-  font-family: $font-family-base;
-  padding: 15px 30px 15px 30px;
-  translate: 0px -10px;
-  margin-top: -5px;
-  margin-bottom: 10px;
-  margin-left: -10px;
-  background: linear-gradient(to top, yellow 50%, white 50%);
-  background-size: 100% 200%;
-  transition: all .2s ease-out;
-}
-.btn:hover {
-  background-position: bottom right;
-}
-</style>
+
