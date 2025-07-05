@@ -19,16 +19,25 @@ const {
 } = Astro.props;
 ---
 
-<div class="group transition-all">
+<div class="group transition-all relative">
   <a href={url} target="_blank" rel="noopener noreferrer" class="block">
+
     <div class="relative book-cover shadow-md transition-transform group-hover:scale-98">
       <!-- Book pages - simplified -->
       <div class="book-pages absolute right-0 top-[5%] bottom-[5%] w-[5px] bg-white z-20"></div>
-
+      <!-- Overlay on hover -->
+    <span class="absolute inset-0 flex flex-col items-center justify-center bg-white bg-opacity-80 opacity-0 group-hover:opacity-80 transition-opacity pointer-events-none z-30 absolute top-0 left-0 hover:blur-2xl">
+      <span class="text-xl font-bold text-konpeki text-center uppercase px-10">
+        View in goodreads.com
+      </span>
+      <svg class="mt-3 w-8 h-8 text-black" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M18 13V19a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6m0 0v6m0-6L10 14"/>
+      </svg>
+    </span>
       <img
         src={heroImage}
         alt={title}
-        class="w-full aspect-[4/5] object-cover rounded-sm relative z-0"
+        class="w-full aspect-[4/5] object-cover rounded-sm relative z-0 group-hover:blur-xs"
       >
 
       <!-- Simplified hardcover effect -->
