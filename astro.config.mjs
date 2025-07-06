@@ -5,23 +5,31 @@ import sitemap from '@astrojs/sitemap';
 import react from '@astrojs/react';
 import tailwindcss from '@tailwindcss/vite';
 import remarkWikiLink from '@portaljs/remark-wiki-link';
-
+import lottie from 'astro-integration-lottie';
 export default defineConfig({
   output: 'static',
   site: 'https://example.com',
   integrations: [
     mdx({
-      remarkPlugins: [[remarkWikiLink, {
-        hrefTemplate: (permalink) => `/${permalink}`,
-        pageResolver: (name) => [name.replace(/\s+/g, '-').toLowerCase()],
-        aliasDivider: '|'
-      }]],
+      remarkPlugins: [
+        [
+          remarkWikiLink,
+          {
+            hrefTemplate: (permalink) => `/${permalink}`,
+            pageResolver: (name) => [
+              name.replace(/\s+/g, '-').toLowerCase(),
+            ],
+            aliasDivider: '|',
+          },
+        ],
+      ],
       extendMarkdownConfig: true,
       smartypants: true,
       gfm: true,
     }),
     sitemap(),
     react(),
+    lottie(),
   ],
 
   vite: {

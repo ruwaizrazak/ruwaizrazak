@@ -14,17 +14,18 @@ import WorkCard from '../components/WorkCard.astro';
 import BookCard from '../components/BookCard.astro';
 import { ClientRouter } from "astro:transitions";
 import Button from '../components/Button.astro';
+import LottieAnimation from 'astro-integration-lottie/Lottie.astro';
 
 
 // Get 10 featured posts from each collection
 // Helper function to standardize slug creation across collections
-function createStandardSlug(post) {
+function createStandardSlug(post: any) {
   const filename = post.id.split('/').pop().replace(/\.[^.]+$/, '');
   return filename.toLowerCase();
 }
 
 // Helper function to sort by date
-function sortByDateDesc(a, b) {
+function sortByDateDesc(a: any, b: any) {
   const dateA = new Date(a.data.pubDate);
   const dateB = new Date(b.data.pubDate);
   return dateB.valueOf() - dateA.valueOf();
@@ -53,7 +54,7 @@ const essays = (await getCollection('essays'))
   .sort(sortByDateDesc)
   .slice(0, 10);
 
-// Removed debug console.log statement
+
 
 const works = (await getCollection('works', ({ data }) => data.publish === true))
   .filter(post => post.data.featured === true && post.data.pubDate)
@@ -73,13 +74,52 @@ const books = (await getCollection('books', ({ data }) => data.publish === true)
   .sort(sortByDateDesc)
   .slice(0, 10);
 
+
+
 ---
 
 <!doctype html>
 <html lang="en">
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-    <ClientRouter />
+        <ClientRouter />
+            <script>
+      import { create } from '@lottiefiles/lottie-interactivity';
+      import lottie from 'lottie-web';
+
+      document.addEventListener('astro:page-load', () => {
+        const container = document.querySelector('#explosion');
+        if (container) {
+          // Load the Lottie animation
+          const animation = lottie.loadAnimation({
+            container: container,
+            renderer: 'svg',
+            loop: false,
+            autoplay: false,
+            path: '/animation/explosion.json'
+          });
+
+          // Set up scroll interactivity
+          create({
+            player: animation,
+            mode: "scroll",
+            container: "#aboutsection",
+            actions: [
+              {
+                visibility: [0, 1.1],
+                type: 'seek',
+                frames: [0, 69],
+              },
+              {
+                visibility: [1.1, 1.5],
+                type: 'seek',
+                frames: [68, 69],
+              },
+            ]
+          });
+        }
+      });
+    </script>
 	</head>
 	<body>
 		<Header />
@@ -141,7 +181,7 @@ const books = (await getCollection('books', ({ data }) => data.publish === true)
         </div>
         </div>
         <!--What am I Section -->
-        <div class="w-full md:w-[96%] mx-auto p-5 mt-10 xl:mt-0" style="background: linear-gradient(26.18deg, #1E1E1E 40.52%, #324084 116.37%)">
+        <div class="w-full md:w-[96%] mx-auto p-5 mt-10 xl:mt-0" style="background: linear-gradient(26.18deg, #1E1E1E 40.52%, #324084 116.37%)" id="aboutsection">
           <div class="mx-auto p-5">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
               <div class="w-full px-2 md:px-0">
@@ -179,8 +219,9 @@ const books = (await getCollection('books', ({ data }) => data.publish === true)
                   </Button>
                 </div>
               </div>
-              <div class="hidden md:flex justify-center md:justify-end">
-                <img src="/graphics/designGeneralist.svg" class="w-[200px] md:w-[300px] lg:w-[400px]" alt="design generalist"/>
+
+              <div class="md:flex justify-center md:justify-end">
+                <div id="explosion" class="w-[200px] md:w-[300px] lg:w-[400px]"></div>
               </div>
             </div>
           </div>
@@ -275,7 +316,7 @@ const books = (await getCollection('books', ({ data }) => data.publish === true)
         title={book.data.title}
         author={book.data.author}
         readStatus={book.data.readStatus}
-        heroImage={book.data.heroImage}
+        heroImage={book.data.heroImage || ''}
         url={`/books/${book.slug}`}
       />
     ))}
