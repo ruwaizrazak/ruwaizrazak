@@ -14,6 +14,7 @@
     "@astrojs/react": "^4.2.0",
     "@astrojs/rss": "^4.0.11",
     "@astrojs/sitemap": "^3.2.1",
+    "@lottiefiles/lottie-interactivity": "^1.6.2",
     "@portaljs/remark-wiki-link": "^1.2.0",
     "@tailwindcss/vite": "^4.0.7",
     "@types/react": "^19.0.10",
