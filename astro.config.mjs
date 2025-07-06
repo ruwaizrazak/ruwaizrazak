@@ -5,8 +5,7 @@ import sitemap from '@astrojs/sitemap';
 import react from '@astrojs/react';
 import tailwindcss from '@tailwindcss/vite';
 import remarkWikiLink from '@portaljs/remark-wiki-link';
-import LottieAnimation from 'astro-integration-lottie/Lottie.astro';
-
+import lottie from 'astro-integration-lottie';
 export default defineConfig({
   output: 'static',
   site: 'https://example.com',

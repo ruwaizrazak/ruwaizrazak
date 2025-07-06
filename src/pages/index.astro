@@ -14,6 +14,7 @@ import WorkCard from '../components/WorkCard.astro';
 import BookCard from '../components/BookCard.astro';
 import { ClientRouter } from "astro:transitions";
 import Button from '../components/Button.astro';
+import LottieAnimation from 'astro-integration-lottie/Lottie.astro';
 
 
 // Get 10 featured posts from each collection
@@ -53,7 +54,7 @@ const essays = (await getCollection('essays'))
   .sort(sortByDateDesc)
   .slice(0, 10);
 
-// Removed debug console.log statement
+
 
 const works = (await getCollection('works', ({ data }) => data.publish === true))
   .filter(post => post.data.featured === true && post.data.pubDate)
@@ -179,8 +180,9 @@ const books = (await getCollection('books', ({ data }) => data.publish === true)
                   </Button>
                 </div>
               </div>
-              <div class="hidden md:flex justify-center md:justify-end">
-                <img src="/graphics/designGeneralist.svg" class="w-[200px] md:w-[300px] lg:w-[400px]" alt="design generalist"/>
+
+              <div class="md:flex justify-center md:justify-end">
+                <LottieAnimation src="/animation/explosion.json" autoplay="visible" loop="false" class="w-[200px] md:w-[300px] lg:w-[400px]"/>
               </div>
             </div>
           </div>
