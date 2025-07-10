@@ -10,7 +10,7 @@ const isActive = href === pathname || href === '/' + (subpath?.[0] || '');
 const isExternal = href?.startsWith('http');
 ---
 
-<a 
+<a
   href={href}
   class:list={[className]}
   {...isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {}}
@@ -23,7 +23,7 @@ const isExternal = href?.startsWith('http');
     color:inherit;
     text-decoration: underline;
     text-decoration-style: wavy;
-    text-decoration-color:var(--color-konpeki);
+    text-decoration-color:var(--color-konpeki) !important;
     text-underline-offset: .4em;
   }
   @keyframes linkAnimation {
@@ -34,7 +34,7 @@ const isExternal = href?.startsWith('http');
   to {
     text-decoration: line-through;
     text-decoration-style: wavy;
-    text-decoration-color: var(--black) !important;
+    text-decoration-color: var(--color-konpeki) !important;
   }
 }
   a:hover {
