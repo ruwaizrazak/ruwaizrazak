@@ -4,19 +4,49 @@ interface Props {
   startPercentage?: number;
   endPercentage?: number;
   className?: string;
+  direction?: 'ltr' | 'rtl'; // New prop for direction
 }
 
-const { 
+const {
   angle = 279.44,
   startPercentage = 7.13,
   endPercentage = 91.88,
-  className = 'h-[40px] flex-1'
+  className = 'h-[40px] flex-1',
+  direction = 'ltr', // Default to left-to-right
 } = Astro.props;
 ---
 
-<div 
-  class={className}
-  style={`background: linear-gradient(${angle}deg, #1E1E1E ${startPercentage}%, #324084 ${endPercentage}%)`}
->
-  <slot />
+<div class={className + ' overflow-hidden relative'} style="position: relative;">
+  <div
+    class="gradient-clip-line h-full w-full"
+    style={`background: linear-gradient(${angle}deg, #1E1E1E ${startPercentage}%, #324084 ${endPercentage}%); transform-origin: ${direction === 'rtl' ? 'right' : 'left'}; clip-path: inset(0 0 0 0); transition: clip-path 1s ease;`}
+    data-direction={direction}
+  >
+    <slot />
+  </div>
 </div>
+
+<script client:load>
+  function animateAllLines() {
+    const lines = document.querySelectorAll('.gradient-clip-line');
+    lines.forEach(line => {
+      const direction = line.getAttribute('data-direction');
+      const rect = line.getBoundingClientRect();
+      const windowHeight = window.innerHeight || document.documentElement.clientHeight;
+      // Calculate how much of the element is visible
+      const visible = Math.max(0, Math.min(rect.bottom, windowHeight) - Math.max(rect.top, 0));
+      const progress = Math.max(0, Math.min(1, visible / rect.height));
+      // Animate width or clip-path based on direction
+      if (direction === 'rtl') {
+        line.style.clipPath = `inset(0 ${100 - progress * 100}% 0 0)`;
+      } else {
+        line.style.clipPath = `inset(0 0 0 ${100 - progress * 100}%)`;
+      }
+    });
+  }
+  setTimeout(() => {
+    window.addEventListener('scroll', animateAllLines, { passive: true });
+    window.addEventListener('resize', animateAllLines);
+    animateAllLines();
+  }, 500);
+</script>
