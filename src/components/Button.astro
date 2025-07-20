@@ -1,9 +1,10 @@
 ---
 import type { HTMLAttributes } from 'astro/types';
 
-type Props = HTMLAttributes<'a'>;
+// Add variant prop
+type Props = HTMLAttributes<'a'> & { variant?: 'primary' | 'secondary' };
 
-const { href, class: className, ...props } = Astro.props;
+const { href, class: className, variant = 'secondary', ...props } = Astro.props;
 const pathname = Astro.url.pathname.replace(import.meta.env.BASE_URL, '');
 const subpath = pathname.match(/[^\/]+/g);
 const isActive = href === pathname || href === '/' + (subpath?.[0] || '');
@@ -14,20 +15,19 @@ const isActive = href === pathname || href === '/' + (subpath?.[0] || '');
   class:list={[
     className,
     { active: isActive },
-    "group",
-    "bg-white",
-    "hover:bg-konpeki",
-    "text-konpeki",
-    "hover:text-white",
-    "border-1",
-    "font-bold",
-    "py-4",
-    "px-6",
-    "text-lg",
-    "transform",
-    "hover:-skew-x-10",
-    "skew-x-6",
-    "uppercase"
+    'group',
+    variant === 'primary'
+      ? 'bg-konpeki text-white outline-dashed outline-3 outline-offset-4 hover:outline-konpeki'
+      : 'bg-white text-konpeki hover:bg-konpeki hover:text-white',
+    'border-1',
+    'font-bold',
+    'py-4',
+    'px-6',
+    'text-lg',
+    'transform',
+    'hover:-skew-x-10',
+    'skew-x-6',
+    'uppercase',
   ]}
   {...props}
   type="button"
