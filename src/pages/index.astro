@@ -14,7 +14,8 @@ import WorkCard from '../components/WorkCard.astro';
 import BookCard from '../components/BookCard.astro';
 import { ClientRouter } from "astro:transitions";
 import Button from '../components/Button.astro';
-import LottieAnimation from 'astro-integration-lottie/Lottie.astro';
+
+import ProfileCard from '../components/ProfileCard/ProfileCard.tsx';
 
 
 // Get 10 featured posts from each collection
@@ -220,8 +221,23 @@ const books = (await getCollection('books', ({ data }) => data.publish === true)
                 </div>
               </div>
 
-              <div class="md:flex justify-center md:justify-end">
-                <div id="explosion" class="w-[200px] md:w-[300px] lg:w-[400px]"></div>
+              <div class="md:flex justify-center md:justify-end px-20">
+                <ProfileCard
+                  client:load
+                  client:visible
+                  name="Ruwaiz Razak"
+                  title="Senior UX Designer"
+                  handle="@ruwaizrazak"
+                  status=""
+                  contactText="Contact Me"
+                  avatarUrl="/about/ruwaiz.png"
+                  showUserInfo={false}
+                  enableTilt={true}
+                  enableMobileTilt={false}
+                  showBehindGradient={true}
+                  iconUrl='/about/iconpattern.png'
+                  onContactClick={() => console.log('Contact clicked')}
+        />
               </div>
             </div>
           </div>
