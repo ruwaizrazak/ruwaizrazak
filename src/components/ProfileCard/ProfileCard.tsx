@@ -341,6 +341,8 @@ const ProfileCardComponent: React.FC<ProfileCardProps> = ({
   );
 
   const handleContactClick = useCallback(() => {
+    // Open mailto link
+    window.location.href = 'mailto:ruwaizrazak@gmail.com';
     onContactClick?.();
   }, [onContactClick]);
 
