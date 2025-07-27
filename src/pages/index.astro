@@ -192,32 +192,14 @@ const books = (await getCollection('books', ({ data }) => data.publish === true)
                   <br>
                   <p class="text-lg md:text-xl text-white">If you are interested to know more read more about me <Link href="/about">here</Link></p>
                   <br> <br>
-                  <Button href="mailto:hello@ruwaizrazak.com">
-                    <span class="inline-flex items-center gap-2">
-                      <span>Contact Me</span>
-                      <svg
-                        class="w-6 h-6 stroke-current transition-all duration-100"
-                        fill="none"
-                        viewBox="0 0 64 64"
-                        stroke="currentColor"
-                        stroke-width="3"
-                      >
-                        <!-- Static path, always visible -->
-                        <path
-                          d="M4 12L60 32L4 52L12 32L4 12ZM12 32L60 32M12 32L26 44L28 36"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        />
-                        <!-- Animated path, traces on hover -->
-                        <path
-                          class="plane-path pointer-events-none"
-                          d="M4 12L60 32L4 52L12 32L4 12ZM12 32L60 32M12 32L26 44L28 36"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        />
-                      </svg>
-                    </span>
-                  </Button>
+                  <div class="flex-col my-10 space-x-5">
+            <Button href="mailto:hello@ruwaizrazak.com" variant='primary'>
+              Mail Me
+            </Button>
+            <Button href="/ruwaizcv.pdf" target={'_blank'}>
+              Download CV
+            </Button>
+          </div>
                 </div>
               </div>
 
@@ -227,7 +209,7 @@ const books = (await getCollection('books', ({ data }) => data.publish === true)
                   client:visible
                   name="Ruwaiz Razak"
                   title="Senior UX Designer"
-                  handle="@ruwaizrazak"
+                  handle="ruwaizrazak"
                   status=""
                   contactText="Contact Me"
                   avatarUrl="/about/ruwaiz.png"
