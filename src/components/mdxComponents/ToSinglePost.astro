@@ -9,26 +9,19 @@ interface Props {
 }
 
 const { title, subtitle, company, imageSrc, url, description = "Here is a case study, if you are interested in understanding how my process would look like in a nutshell." } = Astro.props;
-import H3 from '../mdxComponents/H3.astro';
-import H2 from "../mdxComponents/H2.astro";
+
 ---
 
-<div class="mb-12">
-  <div class="mb-8">
-    <p class="font-bold text-lg">{description}</p>
-  </div>
-
-  <div class="flex flex-col md:flex-row items-center gap-8 bg-stone-50 p-8 rounded-lg hover:bg-stone-100 transition-colors">
-    <div class="md:w-1/2 space-y-4">
-      <H3>{subtitle}</H3>
-      <div>
-        <a href={url} class="group">
-          <H2>{title}</H2>
-        </a>
-        <p class="text-lg text-stone-600">{company}</p>
-      </div>
+<div>
+  <div class="flex flex-col md:flex-row items-center bg-stone-50  hover:bg-stone-100 hover:rounded-lg transition-all">
+    <div class="w-1/2 px-5 mt-0 items-start">
+      <a href={url} class="group no-underline">
+        <h2 class="!text-lg uppercase !mb-0 font-normal">{subtitle} at {company}</h2>
+        <h2 class="!text-2xl !mt-0 text-konpeki uppercase font-medium">{title}</h2>
+        <p class="!text-lg !font-sans text-syoro font-normal leading-6">{description}</p>
+      </a>
     </div>
-    <div class="md:w-1/2">
+    <div class="w-1/2 object-contain">
       <img src={imageSrc} alt={title} class="w-full">
     </div>
   </div>
