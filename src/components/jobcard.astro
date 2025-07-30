@@ -20,8 +20,8 @@ const {
     <img class="sm:w-24 md:w-36 lg:w-48" src={logo} alt="company logo">
     <div class="item-start">
       <h2 class="text-3xl text-konpeki uppercase">{role} at {company}</h2>
-      <p class="font-bold text-sm text-konpeki">{period}</p>
-      <div class="mt-5 text-lg">
+      <p class="font-bold text-sm text-konpeki uppercase">{period}</p>
+      <div class="mt-5 text-lg text-syoro">
         {Astro.slots.default? <slot /> //checks whether the default slot content was passed or not
           : description}
       </div>
