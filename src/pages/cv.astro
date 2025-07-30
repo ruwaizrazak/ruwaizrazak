@@ -8,6 +8,7 @@ import GradientHeading from '../components/mdxComponents/gradientHeading.astro';
 import ProfileCard from '../components/ProfileCard/ProfileCard.tsx';
 import Jobcard from '../components/jobcard.astro';
 import GradientLine from '../components/mdxComponents/gradientLine.astro';
+import ToSinglePost from '../components/mdxComponents/ToSinglePost.astro';
 ---
 <!doctype html>
 <html lang="en">
@@ -59,7 +60,7 @@ import GradientLine from '../components/mdxComponents/gradientLine.astro';
 
         </div>
       </div>
-          <div class="mx-auto bg-gray-200 horizontal-section py-20 relative">
+          <div class="mx-auto bg-gray-200 horizontal-section py-20 relative overflow-hidden lg:min-h-[100vh] min-h-0">
             <div class="flex items-center gap-4 w-[90%] mx-auto mb-20">
             <GradientHeading size="lg" className='font-medium sm:whitespace-nowrap'>Career So Far</GradientHeading>
             <GradientLine angle={45} startPercentage={20} endPercentage={80} className="h-[60px] w-[80%]" direction='rtl'/>
@@ -126,28 +127,62 @@ import GradientLine from '../components/mdxComponents/gradientLine.astro';
             </div>
           </div>
           </div>
+          <ToSinglePost
+  title="Deer Hunter 2018"
+  subtitle="ASSOCIATE USER EXPERIENCE DESIGNER"
+  company="GLU"
+  imageSrc="/images/DHDeviceMockup.png"
+  url="/works/deerhunter2018"
+/>
 
     </main>
     <Footer />
   </body>
   <script>
   document.addEventListener("DOMContentLoaded", () => {
-    gsap.registerPlugin(ScrollTrigger);
-
     if (window.matchMedia("(min-width: 1024px)").matches) {
-      const content = document.querySelector(".h-scroll-content");
+      gsap.registerPlugin(ScrollTrigger);
 
+      const content = document.querySelector(".h-scroll-content");
+      const section = document.querySelector(".horizontal-section");
+
+      if (!content || !section) return;
+
+      const scrollDistance = content.scrollWidth - window.innerWidth + 140;
+
+      // Horizontal scroll
       gsap.to(content, {
-        x: () => -(content.scrollWidth - window.innerWidth +140),
+        x: -scrollDistance,
         ease: "none",
         scrollTrigger: {
-          trigger: ".horizontal-section",
-          pin: true,
+          id: "scrollJobcards",
+          trigger: section,
+          start: "top top",
+          end: `+=${scrollDistance}`,
           scrub: 1,
-          end: () => "+=" + content.scrollWidth,
+          pin: true,
+          anticipatePin: 1,
         },
       });
+
+      // Animate each jobcard
+      gsap.from(".jobcard", {
+        opacity: 0,
+        y: 50,
+        stagger: 0.2,
+        scrollTrigger: {
+          trigger: ".jobcard-row", // Or your actual row container
+          start: "left center",
+          horizontal: true,
+          containerAnimation: ScrollTrigger.getById("scrollJobcards"),
+        },
+      });
+
+      ScrollTrigger.addEventListener("refreshInit", () => window.scrollTo(0, 0));
+      ScrollTrigger.refresh();
     }
   });
 </script>
+
+
 </html>
