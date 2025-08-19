@@ -166,7 +166,6 @@ export async function fetchGoodreadsWantToRead(
       });
     }
 
-    console.log('Parsed Goodreads books:', books.length, books);
     return books;
   } catch (error) {
     console.error('Error fetching Goodreads books:', error);
