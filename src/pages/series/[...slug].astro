@@ -1,0 +1,28 @@
+---
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const series = await getCollection('series');
+  return series.map((series) => ({
+    params: { slug: series.id },
+    props: { series },
+  }));
+}
+
+const { series } = Astro.props;
+
+// Get all posts for this series
+const seriesPosts = await getCollection('seriesPosts', ({ data }) => 
+  data.seriesSlug === series.id && data.publish
+);
+
+// Sort posts by seriesOrder or pubDate
+const sortedPosts = seriesPosts.sort((a, b) => {
+  if (a.data.seriesOrder && b.data.seriesOrder) {
+    return a.data.seriesOrder - b.data.seriesOrder;
+  }
+  return new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime();
+});
+---
+
+<!-- Series header and posts list here -->
