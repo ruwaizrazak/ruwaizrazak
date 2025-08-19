@@ -8,7 +8,7 @@ const baseSchema = z.object({
   updatedDate: z.coerce
     .date()
     .optional()
-    .default(function () {
+    .default(function (this: { pubDate: Date }) {
       return this.pubDate;
     }),
   heroImage: z.string().optional(),
@@ -43,8 +43,8 @@ const works = defineCollection({
     pattern: '**/*.{md,mdx}',
   }),
   schema: baseSchema.extend({
-    company: z.string(), // Made required
-    duration: z.string(), // Made required
+    company: z.string(),
+    duration: z.string(),
     role: z.string().optional(),
     location: z.string().optional(),
   }),
@@ -64,6 +64,37 @@ const books = defineCollection({
   }),
 });
 
+// UPDATED: Series collection for series metadata only
+const series = defineCollection({
+  loader: glob({
+    base: './src/content/series',
+    pattern: '**/*.{md,mdx}',
+  }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    featuredImage: z.string(), // Using your heroImage equivalent
+    startedDate: z.coerce.date(), // When the series began
+    lastUpdated: z.coerce.date(), // When last post was added/updated
+    publish: z.boolean().default(false),
+    tags: z.array(z.string()).default([]),
+    order: z.number().optional(), // For manual ordering on series index page
+  }),
+});
+
+// NEW: Series posts collection for individual posts within series
+const seriesPosts = defineCollection({
+  loader: glob({
+    base: './src/content/series-posts',
+    pattern: '**/*.{md,mdx}',
+  }),
+  schema: baseSchema.extend({
+    seriesSlug: z.string(), // References the series folder/slug
+    seriesOrder: z.number(), // Order within the series
+    excerpt: z.string().optional(), // Short description for series page
+  }),
+});
+
 const live = defineCollection({
   loader: glob({
     base: './src/content/live',
@@ -73,14 +104,16 @@ const live = defineCollection({
     Month: z.string(),
     OneLiner: z.string(),
     date: z.string(),
-    publish: z.boolean().default(false), // Changed to string to match the format in MD files
+    publish: z.boolean().default(false),
   }),
 });
 
 export const collections = {
   essays,
   notes,
-  works, // Changed from casestudies to works
+  works,
   books,
   live,
+  series,
+  seriesPosts, // New collection for series posts
 };
