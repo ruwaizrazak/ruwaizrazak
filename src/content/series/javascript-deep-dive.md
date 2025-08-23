@@ -1,12 +1,12 @@
 ---
-title: "javascript-deep-dive"
-description: "learn js"
-featuredImage: "/images/series/web-dev-fundamentals.jpg"
+title: "Building This site"
+description: "A series on how I built this site."
+featuredImage: "https://i.imgur.com/MfoYUsj.jpeg"
 startedDate: 2024-01-15
 lastUpdated: 2024-08-15
 publish: true
 tags: ["web-development", "beginner", "html", "css", "javascript"]
-order: 1
+order: 2
 ---
 
 This series is designed for complete beginners who want to learn web development from scratch. We'll start with HTML structure, move through CSS styling, and finish with JavaScript interactivity.
