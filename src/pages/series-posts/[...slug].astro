@@ -1,0 +1,162 @@
+---
+import { type CollectionEntry, getCollection } from 'astro:content';
+import { render } from 'astro:content';
+import NotesPost from '../../layouts/notesPost.astro';
+import ExternalLink from "../../components/mdxComponents/ExternalLink.astro";
+
+export async function getStaticPaths() {
+  const seriesPosts = await getCollection('seriesPosts', ({ data }) => data.publish);
+  return seriesPosts.map((post) => ({
+    params: { slug: post.id },
+    props: post,
+  }));
+}
+
+type Props = CollectionEntry<'seriesPosts'>;
+const post = Astro.props;
+
+// Get the series this post belongs to
+const series = await getCollection('series', ({ data }) => data.publish);
+const currentSeries = series.find(s => s.id === post.data.seriesSlug);
+
+// Get all posts in this series for navigation
+const allSeriesPosts = await getCollection('seriesPosts', ({ data }) => 
+  data.seriesSlug === post.data.seriesSlug && data.publish
+);
+const sortedSeriesPosts = allSeriesPosts.sort((a, b) => a.data.seriesOrder - b.data.seriesOrder);
+
+// Find current post index and get prev/next posts
+const currentIndex = sortedSeriesPosts.findIndex(p => p.id === post.id);
+const prevPost = currentIndex > 0 ? sortedSeriesPosts[currentIndex - 1] : null;
+const nextPost = currentIndex < sortedSeriesPosts.length - 1 ? sortedSeriesPosts[currentIndex + 1] : null;
+
+// Render the post content
+const { Content } = await render(post);
+---
+
+<NotesPost 
+	title={post.data.title}
+	description={post.data.description}
+	pubDate={post.data.pubDate}
+	updatedDate={post.data.updatedDate}
+	heroImage={post.data.heroImage}
+	tags={post.data.tags}
+	maturity={post.data.maturity}
+	featured={post.data.featured}
+	publish={post.data.publish}
+>
+	{/* Custom header content */}
+	<div class="mb-8">
+		{/* Back navigation */}
+		<div class="flex flex-col gap-4 mb-8">
+			<a href="/series" class="inline-block z-1">
+				<div class="flex items-center gap-2 group not-prose">
+					<img src="/icons/backArrow.svg" class="w-8 h-auto group-hover:rotate-20 transition-all" alt="Back" />
+					<span class="uppercase font-sans font-medium text-lg">Back to Series</span>
+				</div>
+			</a>
+		</div>
+
+		{/* Series info header */}
+		{currentSeries && (
+			<div class="mb-8 p-4 bg-stone-50 rounded-lg border border-stone-200">
+				<div class="flex items-center gap-3 mb-2">
+					{currentSeries.data.order && (
+						<span class="px-3 py-1 bg-blue-100 text-blue-700 text-sm font-semibold rounded-full">
+							#{currentSeries.data.order}
+						</span>
+					)}
+					<span class="text-sm text-stone-500">Series</span>
+				</div>
+				<h2 class="text-xl font-bold text-stone-800 mb-2">
+					<a href="/series" class="hover:text-blue-600 transition-colors">
+						{currentSeries.data.title}
+					</a>
+				</h2>
+				<p class="text-stone-600 text-sm">{currentSeries.data.description}</p>
+			</div>
+		)}
+
+		{/* Post header */}
+		<div class="mb-8">
+			<div class="flex items-center gap-3 mb-4">
+				<span class="px-3 py-1 bg-blue-100 text-blue-700 text-sm font-semibold rounded-full">
+					Part {post.data.seriesOrder}
+				</span>
+				<span class="text-sm text-stone-500">{post.data.pubDate.toLocaleDateString()}</span>
+			</div>
+			
+			<h1 class="text-4xl font-bold text-stone-800 mb-4">{post.data.title}</h1>
+			<p class="text-xl text-stone-600 mb-4 max-w-3xl">{post.data.description}</p>
+			
+			{/* Tags */}
+			{post.data.tags.length > 0 && (
+				<div class="flex flex-wrap items-center gap-2">
+					{post.data.tags.map((tag: string) => (
+						<span class="px-3 py-1 bg-stone-100 text-stone-600 text-sm rounded-full">
+							{tag}
+						</span>
+					))}
+				</div>
+			)}
+		</div>
+	</div>
+
+	{/* Post content using NotesPost layout */}
+	<Content components={{ a: ExternalLink }} />
+
+	{/* Custom footer content */}
+	<div class="mt-12">
+		{/* Series navigation */}
+		<div class="border-t border-stone-200 pt-8">
+			<div class="flex items-center justify-between">
+				{prevPost ? (
+					<a href={`/series-posts/${prevPost.id}`} class="flex items-center gap-2 text-konpeki hover:overline transition-colors">
+						<span>←</span>
+						<div>
+							<div class="text-sm text-stone-500">Previous</div>
+							<div class="font-medium">Part {prevPost.data.seriesOrder}: {prevPost.data.title}</div>
+						</div>
+					</a>
+				) : (
+					<div></div>
+				)}
+				
+				{nextPost ? (
+					<a href={`/series-posts/${nextPost.id}`} class="flex items-center gap-2 text-konpeki hover:text-blue-800 transition-colors text-right">
+						<div>
+							<div class="text-sm text-stone-500">Next</div>
+							<div class="font-medium">Part {nextPost.data.seriesOrder}: {nextPost.data.title}</div>
+						</div>
+						<span>→</span>
+					</a>
+				) : (
+					<div></div>
+				)}
+			</div>
+		</div>
+
+		{/* Series overview */}
+		{currentSeries && (
+			<div class="mt-12 p-6 bg-stone-50 rounded-lg border border-stone-200">
+				<h3 class="text-lg font-semibold text-stone-800 mb-4">All posts in this series</h3>
+				<div class="space-y-2">
+					{sortedSeriesPosts.map((seriesPost) => (
+						<div class={`flex items-center gap-3 p-2 rounded ${seriesPost.id === post.id ? 'bg-blue-100' : ''}`}>
+							<span class="text-sm font-medium text-stone-500">Part {seriesPost.data.seriesOrder}</span>
+							<a 
+								href={`/series-posts/${seriesPost.id}`} 
+								class={`text-sm ${seriesPost.id === post.id ? 'text-blue-700 font-semibold' : 'text-stone-700 hover:text-blue-600'}`}
+							>
+								{seriesPost.data.title}
+							</a>
+							{seriesPost.id === post.id && (
+								<span class="text-xs text-blue-600 font-medium">(Current)</span>
+							)}
+						</div>
+					))}
+				</div>
+			</div>
+		)}
+	</div>
+</NotesPost>
