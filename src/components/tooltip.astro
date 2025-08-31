@@ -1,0 +1,132 @@
+---
+// TippyTooltip.astro
+export interface Props {
+  description: string;
+  placement?: 'top' | 'bottom' | 'left' | 'right' | 'auto';
+  class?: string;
+  link?: string;
+  linkText?: string;
+  image?: string;
+  imageAlt?: string;
+  theme?: 'dark' | 'light' | 'translucent';
+  interactive?: boolean;
+  delay?: number | [number, number];
+  maxWidth?: string;
+}
+
+const { 
+  description, 
+  placement = 'top',
+  class: className = '', 
+  link,
+  linkText = 'Learn more',
+  image,
+  imageAlt = '',
+  theme = 'translucent',
+  interactive = true,
+  delay = [400, 100],
+  maxWidth = '320px'
+} = Astro.props;
+
+// Generate unique ID for this tooltip instance
+const tooltipId = `tooltip-${Math.random().toString(36).substr(2, 9)}`;
+
+// Build tooltip content HTML
+let tooltipContent = '';
+
+if (image) {
+  tooltipContent += `<div class="tooltip-image"><img src="${image}" alt="${imageAlt}" style="width: 100%; height: auto; max-height: 150px; object-fit: cover; border-radius: 6px 6px 0 0; display: block;" /></div>`;
+}
+
+tooltipContent += `<div class="tooltip-description" style="padding: ${image ? '12px 15px' : '12px 15px'};">${description}</div>`;
+
+if (link) {
+  tooltipContent += `<div class="tooltip-link" style="padding: 8px 15px; border-top: 1px solid rgba(255,255,255,0.1); background-color: rgba(0,0,0,0.2);"><a href="${link}" target="_blank" rel="noopener noreferrer" style="color: #87ceeb; text-decoration: none; font-weight: 500;">${linkText}</a></div>`;
+}
+---
+
+<span class={`tippy-trigger ${className}`} data-tippy-content={tooltipContent} data-tooltip-id={tooltipId}>
+  <slot />
+</span>
+
+<!-- Tippy.js CSS and JS -->
+<link rel="stylesheet" href="https://unpkg.com/tippy.js@6/dist/tippy.css" />
+<link rel="stylesheet" href="https://unpkg.com/tippy.js@6/themes/light.css" />
+<link rel="stylesheet" href="https://unpkg.com/tippy.js@6/themes/translucent.css" />
+
+<script define:vars={{ tooltipId, placement, theme, interactive, delay, maxWidth }}>
+  // Load Tippy.js if not already loaded
+  if (typeof tippy === 'undefined') {
+    const script = document.createElement('script');
+    script.src = 'https://unpkg.com/@popperjs/core@2';
+    script.onload = () => {
+      const tippyScript = document.createElement('script');
+      tippyScript.src = 'https://unpkg.com/tippy.js@6';
+      tippyScript.onload = () => initTooltip();
+      document.head.appendChild(tippyScript);
+    };
+    document.head.appendChild(script);
+  } else {
+    initTooltip();
+  }
+
+  function initTooltip() {
+    const element = document.querySelector(`[data-tooltip-id="${tooltipId}"]`);
+    if (element) {
+      tippy(element, {
+        content: element.getAttribute('data-tippy-content'),
+        placement: placement,
+        theme: theme,
+        interactive: interactive,
+        delay: delay,
+        maxWidth: maxWidth,
+        allowHTML: true,
+        appendTo: document.body,
+        animation: 'shift-away',
+        arrow: true,
+        hideOnClick: false,
+        
+        trigger: 'mouseenter focus'
+      });
+    }
+  }
+
+  // Initialize on DOM content loaded
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => initTooltip(), 100);
+    });
+  } else {
+    setTimeout(() => initTooltip(), 100);
+  }
+</script>
+
+<style>
+  .tippy-trigger {
+    cursor: help;
+  }
+
+  /* Custom styles for tooltip content */
+  :global(.tippy-box[data-theme~='dark'] .tooltip-image) {
+    margin: 0;
+    padding: 0;
+  }
+
+  :global(.tippy-box[data-theme~='dark'] .tooltip-description) {
+    line-height: 1.4;
+  }
+
+  :global(.tippy-box[data-theme~='dark'] .tooltip-description a) {
+    color: #87ceeb !important;
+    text-decoration: underline;
+  }
+
+  :global(.tippy-box[data-theme~='dark'] .tooltip-description a:hover) {
+    color: #add8e6 !important;
+  }
+
+  :global(.tippy-box[data-theme~='dark'] .tooltip-link a:hover) {
+    color: #add8e6 !important;
+    text-decoration: underline;
+  }
+</style>
