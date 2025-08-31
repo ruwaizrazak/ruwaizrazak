@@ -14,6 +14,7 @@ import WorkCard from '../components/WorkCard.astro';
 import BookCard from '../components/BookCard.astro';
 import { ClientRouter } from "astro:transitions";
 import Button from '../components/Button.astro';
+import Tooltip from '../components/tooltip.astro';
 
 import ProfileCard from '../components/ProfileCard/ProfileCard.tsx';
 
@@ -121,7 +122,18 @@ const books = (await getCollection('books', ({ data }) => data.publish === true)
       <!--Hero Section -->
       <div class="w-[90%] mx-auto justify-between grid grid-cols-1 md:grid-cols-2 gap-10">
         <div class="sm:w-full md:w-2xl mt-10">
-          <p class="w-full text-xl font-serif"><span id="greetingSpan" class="text-3xl uppercase text-konpeki">ഹലോ</span>,<br><br> I'm <strong>Ruwaiz</strong>. A Designer who learns and writes on weekends.<br><br>I'm an User Experience Design with 7+ years experience in building games with <Link href="https://nordeus.com">Nordeus</Link>, <Link href="https://www.zynga.com">Zynga</Link>, and Glu Mobile (now acquired by EA ).<Link href="/cv">Get a glimpse of that career here.</Link><br><br>I'm also an advocate for fedeverse, data literacy, programming and knowledge sharing.</p>
+          <p class="w-full text-xl font-serif">
+            
+            <span id="greetingSpan" class="text-3xl uppercase text-konpeki">
+                ഹലോ
+            </span>,
+          
+
+            <br><br> I'm <strong>Ruwaiz</strong>. A Designer who learns and writes on weekends.
+            
+            <br><br>I'm an User Experience Design with 7+ years experience in building games with <Link href="https://nordeus.com">Nordeus</Link>, <Link href="https://www.zynga.com">Zynga</Link>, and Glu Mobile (now acquired by EA ).<Link href="/cv">Get a glimpse of that career here.</Link>
+            
+            <br><br>I'm also an advocate for fedeverse, data literacy, programming and knowledge sharing.</p>
 
           <h4 class="text-xl uppercase text-gray-500 mt-10">Garden</h4>
           <ul>
