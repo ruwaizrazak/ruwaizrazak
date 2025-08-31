@@ -11,7 +11,7 @@ const { href, title, description } = Astro.props;
 ---
 
 <li class="flex gap-2 items-baseline text-xl group mt-1">
-  <Link href={href}>{title}</Link>
+  <Link className="uppercase" href={href}>{title}</Link>
   {description && <span class="pl-2 pr-5 text-konpeki lg:text-3xl md:text-xl group-hover:bg-konpeki group-hover:text-white duration-150 font-handwriting">{description}</span>}
 </li>
 
