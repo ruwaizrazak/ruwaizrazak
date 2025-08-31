@@ -8,9 +8,9 @@
 @config "./tailwind.config.js";
 
 @theme {
-  --font-sans: "Noto Sans",sans-serif;
-  --font-serif: "Saira Extra Condensed",sans-serif;
-  --font-mono: "Roboto Mono",monospace;
+  --font-serif: "IBM Plex Serif",serif;
+  --font-sans: "Sofia Sans Condensed",sans-serif;
+  --font-mono: "IBM Plex Mono",monospace;
   --font-handwriting: "Caveat",cursive;
 
   --marker-color: chartreuese;
@@ -26,12 +26,12 @@
 }
 
 h1,h2,h3,h4,h5,h6 {
-  font-family: var(--font-serif);
+  font-family: var(--font-sans);
 }
 
 
 p, a {
-  font-family: var(--font-sans);
+  font-family: var(--font-serif);
 }
 
 p {
