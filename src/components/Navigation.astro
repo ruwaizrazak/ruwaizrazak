@@ -12,13 +12,23 @@ export interface Props {
   logoText?: string;
   logoHref?: string;
   class?: string;
+  additionalLinks?: Array<{
+    name: string;
+    href: string;
+    icon?: string;
+    description?:string;
+  }>;
 }
 
 const { 
   menuItems = [],
   logoText = "Cacophony of Thoughts",
   logoHref = "/",
-  class: className = ""
+  class: className = "",
+  additionalLinks = [
+    { name: "About", href: "/about", icon: "ℹ️" },
+    { name: "Contact", href: "/contact", icon: "📧" }
+  ]
 } = Astro.props;
 ---
 
@@ -34,23 +44,38 @@ const {
         </a>
       </div>
 
-      <!-- Desktop Menu Button (md and up) -->
-      <div class="hidden md:block">
-        <a 
+      <!-- Desktop Menu Buttons (md and up) -->
+      <div class="hidden md:flex items-center space-x-6">
+        <!-- Garden Dropdown Button -->
+        <button 
           id="desktop-menu-button"
-          class="inline-flex items-center px-4 py-2 text-md font-medium text-konpeki rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-konpeki transition-colors uppercase">
+          class="inline-flex items-center px-4 py-2 text-xl font-medium text-konpeki rounded-md hover:bg-yellow-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-200 transition-all uppercase hover:scale-95">
           Garden
           <svg  class="ml-2 -mr-1 w-4 h-4 transition-transform duration-200" id="desktop-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
           </svg>
-        </a>
+        </button>
+        <!-- Additional Links -->
+        {additionalLinks.map((link) => (
+          <a 
+            href={link.href}
+            class="inline-flex items-center px-3 py-2 text-konpeki rounded-md hover:bg-yellow-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-100 uppercase hover:scale-95 transition-all">
+            <h3 class="font-sans font-medium text-xl">
+            {link.icon && <span class="mr-2 text-sm">{link.icon}</span>}
+            {link.name}
+          </h3>
+            
+          </a>
+        ))}
+        
+        
       </div>
 
       <!-- Mobile Menu Button (less than md) -->
       <div class="md:hidden">
         <button 
           id="mobile-menu-button"
-          class="inline-flex items-center justify-center p-2 rounded-md text-gray-konpeki hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-konpeki transition-colors"
+          class="inline-flex items-center justify-center p-2 rounded-md text-konpeki hover:text-gray-500 hover:bg-yellow-50 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-yellow-100 transition-colors"
         >
           <svg class="h-6 w-6" id="mobile-menu-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
@@ -66,14 +91,14 @@ const {
   <!-- Desktop Dropdown Menu (md and up) -->
   <div 
     id="desktop-dropdown" 
-    class="hidden md:block absolute my-2 top-5 top-full md:w-[60%] lg:w-[50%] right-10 bg-white shadow-lg transform opacity-5 scale-95 transition-all duration-200 ease-out border border-gray-200 backdrop-blur-md"
+    class="hidden md:block absolute my-2 top-5 top-full md:w-[60%] lg:w-[50%] right-10 bg-white shadow-lg transform opacity-0 scale-95 transition-all duration-200 ease-out border border-gray-200 backdrop-blur-md"
   >
     <div class="w-[90%] mx-auto py-6">
       <div class="grid grid-cols-2 lg:gap-2 xl:gap-4">
         {menuItems.map((item) => (
           <a 
             href={item.href}
-            class="group p-4 rounded-lg  hover:bg-yellow-50 hover:scale-95 ease-in-out transition-all block"
+            class="group p-4 rounded-lg hover:bg-yellow-50 hover:scale-95 ease-in-out transition-all block"
           >
             <div class="flex items-center space-x-4">
               {item.icon && (
@@ -110,10 +135,9 @@ const {
     class="md:hidden fixed top-0 right-0 h-full w-80 bg-white shadow-xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out"
   >
     <div class="flex items-end justify-end p-4 border-b">
-
       <button 
         id="mobile-close-button"
-        class="p-2 rounded-md text-konpeki hover:text-gray-500 hover:bg-gray-100 transition-colors"
+        class="p-2 rounded-md text-konpeki hover:text-gray-500 hover:bg-yellow-50 transition-colors"
       >
         <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -122,10 +146,33 @@ const {
     </div>
     
     <div class="py-4">
+      <!-- Additional Links in Mobile -->
+      {additionalLinks.map((link) => (
+        <a 
+          href={link.href}
+          class="flex items-center px-4 py-3 text-konpeki hover:bg-yellow-50 hover:text-indigo-600 transition-colors duration-200 border-b border-gray-100"
+        >
+          {link.icon && (
+            <span class="mr-3 text-lg text-indigo-600">{link.icon}</span>
+          )}
+          <div class="flex-1">
+            <div class="font-medium font-serif">{link.name}</div>
+            <div class="text-sm text-gray-500">{link.description}</div>
+          </div>
+        </a>
+      ))}
+      
+      <!-- Separator -->
+      <div class="border-t border-gray-200 my-2"></div>
+      
+      <!-- Garden Menu Items -->
+      <div class="px-4 py-2">
+        <h3 class="text-md font-semibold text-gray-400 uppercase tracking-wider">Garden</h3>
+      </div>
       {menuItems.map((item) => (
         <a 
           href={item.href}
-          class="flex items-center px-4 py-3 text-konpeki hover:bg-gray-50 hover:text-indigo-600 transition-colors duration-200"
+          class="flex items-center px-4 py-3 text-konpeki hover:bg-yellow-50 hover:text-indigo-600 transition-colors duration-200"
         >
           {item.icon && (
             <span class="mr-3 text-lg text-indigo-600">{item.icon}</span>

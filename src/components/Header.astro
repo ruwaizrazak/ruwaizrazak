@@ -3,16 +3,10 @@ import HeaderLink from './HeaderLink.astro';
 import Navigation from './Navigation.astro';
 const menuItems = [
   {
-    name: "Home",
-    href: "/",
-    icon: "🏠",
-    description: "Go to homepage"
-  },
-  {
     name: "Garden",
     href: "/garden",
-    icon: "ℹ️",
-    description: "If you are interested about my career"
+    icon: "🏠",
+    description: "Everything in Garden"
   },
   {
     name: "Essays",
@@ -27,28 +21,32 @@ const menuItems = [
     description: "short, raw, impulsive thoughts"
   },
   {
-    name: "CV",
-    href: "/cv",
-    icon: "📧",
-    description: "If you are interested about my work"
+    name: "Books",
+    href: "/books",
+    icon: "📝",
+    description: "Books I've read and want to read"
   },
   {
-    name: "Portfolio",
-    href: "/portfolio",
+    name: "Series",
+    href: "/series",
     icon: "💼",
-    description: "Our work"
+    description: "Writings, episodal"
   }
+];
+const additionalLinks = [
+  { name: "About", href: "/about", icon: "ℹ️",description:"More in terms of what I'm" },
+  { name: "Live", href: "/live", icon: "📧",description:"What am i indulged in currently?" },
+  { name: "CV", href: "/cv", icon: "📧",description:"If you are interested in my career" }
 ];
 ---
 
 <header class="w-full mx-auto border-b-1 border-gray-100 mt-5">
 	<nav>
-
-			<Navigation 
-  menuItems={menuItems}
-  logoText="CACOPHONY OF THOUGHTS"
-  logoHref="/"
-/>
-
+		<Navigation 
+  			menuItems={menuItems}
+  			additionalLinks={additionalLinks}
+  			logoText="CACOPHONY OF THOUGHTS"
+  			logoHref="/"
+		/>
 	</nav>
 </header>
