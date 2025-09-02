@@ -88,32 +88,6 @@ const books = (await getCollection('books', ({ data }) => data.publish === true)
             <script>
       import { create } from '@lottiefiles/lottie-interactivity';
       import lottie from 'lottie-web';
-
-      document.addEventListener('astro:page-load', () => {
-        const container = document.querySelector('#explosion');
-        if (container) {
-          // Load the Lottie animation
-
-          // Set up scroll interactivity
-          create({
-            player: animation,
-            mode: "scroll",
-            container: "#aboutsection",
-            actions: [
-              {
-                visibility: [0, 1.1],
-                type: 'seek',
-                frames: [0, 69],
-              },
-              {
-                visibility: [1.1, 1.5],
-                type: 'seek',
-                frames: [68, 69],
-              },
-            ]
-          });
-        }
-      });
     </script>
 	</head>
 	<body>
