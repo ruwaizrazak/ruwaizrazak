@@ -1,0 +1,289 @@
+---
+// Navigation.astro
+export interface MenuItem {
+  name: string;
+  href: string;
+  icon?: string;
+  description?: string;
+}
+
+export interface Props {
+  menuItems: MenuItem[];
+  logoText?: string;
+  logoHref?: string;
+  class?: string;
+  additionalLinks?: Array<{
+    name: string;
+    href: string;
+    icon?: string;
+    description?:string;
+  }>;
+}
+
+const { 
+  menuItems = [],
+  logoText = "Cacophony of Thoughts",
+  logoHref = "/",
+  class: className = "",
+  additionalLinks = [
+    { name: "About", href: "/about", icon: "ℹ️" },
+    { name: "Contact", href: "/contact", icon: "📧" }
+  ]
+} = Astro.props;
+---
+
+<nav class={`relative z-50 ${className}`}>
+  <div class="max-w-[95%] mx-auto px-4 sm:px-6 lg:px-10">
+    <div class="flex justify-between items-center h-16">
+      
+      <!-- Logo -->
+      <div class="flex-shrink-0">
+        <a href={logoHref}>
+            <h4 class="text-xl text-gray-400">{logoText}</h4>
+          
+        </a>
+      </div>
+
+      <!-- Desktop Menu Buttons (md and up) -->
+      <div class="hidden md:flex items-center space-x-6">
+        <!-- Garden Dropdown Button -->
+        <button 
+          id="desktop-menu-button"
+          class="inline-flex items-center px-4 py-2 text-xl font-medium text-konpeki rounded-md hover:bg-yellow-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-200 transition-all uppercase hover:scale-95">
+          Garden
+          <svg  class="ml-2 -mr-1 w-4 h-4 transition-transform duration-200" id="desktop-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          </svg>
+        </button>
+        <!-- Additional Links -->
+        {additionalLinks.map((link) => (
+          <a 
+            href={link.href}
+            class="inline-flex items-center px-3 py-2 text-konpeki rounded-md hover:bg-yellow-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-100 uppercase hover:scale-95 transition-all">
+            <h3 class="font-sans font-medium text-xl">
+            {link.icon && <span class="mr-2 text-sm">{link.icon}</span>}
+            {link.name}
+          </h3>
+            
+          </a>
+        ))}
+        
+        
+      </div>
+
+      <!-- Mobile Menu Button (less than md) -->
+      <div class="md:hidden">
+        <button 
+          id="mobile-menu-button"
+          class="inline-flex items-center justify-center p-2 rounded-md text-konpeki hover:text-gray-500 hover:bg-yellow-50 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-yellow-100 transition-colors"
+        >
+          <svg class="h-6 w-6" id="mobile-menu-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+          <svg class="h-6 w-6 hidden" id="mobile-close-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Desktop Dropdown Menu (md and up) -->
+  <div 
+    id="desktop-dropdown" 
+    class="hidden md:block absolute my-2 top-5 top-full md:w-[60%] lg:w-[50%] right-10 bg-white shadow-lg transform opacity-0 scale-95 transition-all duration-200 ease-out border border-gray-200 backdrop-blur-md"
+  >
+    <div class="w-[90%] mx-auto py-6">
+      <div class="grid grid-cols-2 lg:gap-2 xl:gap-4">
+        {menuItems.map((item) => (
+          <a 
+            href={item.href}
+            class="group p-4 rounded-lg hover:bg-yellow-50 hover:scale-95 ease-in-out transition-all block"
+          >
+            <div class="flex items-center space-x-4">
+              {item.icon && (
+                <div class="flex-shrink-0 text-indigo-600">
+                  <span class="text-4xl">{item.icon}</span>
+                </div>
+              )}
+              <div class="flex-1">
+                <h3 class="text-lg font-medium font-sans uppercase text-konpeki group-hover:text-indigo-600 transition-colors">
+                  {item.name}
+                </h3>
+                {item.description && (
+                  <p class="text-sm text-konpeki">
+                    {item.description}
+                  </p>
+                )}
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Sidebar Overlay -->
+  <div 
+    id="mobile-overlay" 
+    class="md:hidden fixed inset-0 backdrop-blur-xs transition-all z-40 hidden duration-300"
+  ></div>
+
+  <!-- Mobile Sidebar -->
+  <div 
+    id="mobile-sidebar" 
+    class="md:hidden fixed top-0 right-0 h-full w-80 bg-white shadow-xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out"
+  >
+    <div class="flex items-end justify-end p-4 border-b">
+      <button 
+        id="mobile-close-button"
+        class="p-2 rounded-md text-konpeki hover:text-gray-500 hover:bg-yellow-50 transition-colors"
+      >
+        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+    
+    <div class="py-4">
+      <!-- Additional Links in Mobile -->
+      {additionalLinks.map((link) => (
+        <a 
+          href={link.href}
+          class="flex items-center px-4 py-3 text-konpeki hover:bg-yellow-50 hover:text-indigo-600 transition-colors duration-200 border-b border-gray-100"
+        >
+          {link.icon && (
+            <span class="mr-3 text-lg text-indigo-600">{link.icon}</span>
+          )}
+          <div class="flex-1">
+            <div class="font-medium font-serif">{link.name}</div>
+            <div class="text-sm text-gray-500">{link.description}</div>
+          </div>
+        </a>
+      ))}
+      
+      <!-- Separator -->
+      <div class="border-t border-gray-200 my-2"></div>
+      
+      <!-- Garden Menu Items -->
+      <div class="px-4 py-2">
+        <h3 class="text-md font-semibold text-gray-400 uppercase tracking-wider">Garden</h3>
+      </div>
+      {menuItems.map((item) => (
+        <a 
+          href={item.href}
+          class="flex items-center px-4 py-3 text-konpeki hover:bg-yellow-50 hover:text-indigo-600 transition-colors duration-200"
+        >
+          {item.icon && (
+            <span class="mr-3 text-lg text-indigo-600">{item.icon}</span>
+          )}
+          <div class="flex-1">
+            <div class="font-medium">{item.name}</div>
+            {item.description && (
+              <div class="text-sm text-gray-500">{item.description}</div>
+            )}
+          </div>
+        </a>
+      ))}
+    </div>
+  </div>
+</nav>
+
+<script>
+  // Desktop dropdown functionality
+  const desktopButton = document.getElementById('desktop-menu-button');
+  const desktopDropdown = document.getElementById('desktop-dropdown');
+  const desktopChevron = document.getElementById('desktop-chevron');
+  
+  let isDesktopOpen = false;
+
+  function toggleDesktopDropdown() {
+    isDesktopOpen = !isDesktopOpen;
+    
+    if (isDesktopOpen) {
+      desktopDropdown?.classList.remove('hidden', 'opacity-0', 'scale-95');
+      desktopDropdown?.classList.add('opacity-100', 'scale-100');
+      desktopChevron?.classList.add('rotate-180');
+    } else {
+      desktopDropdown?.classList.add('opacity-0', 'scale-95');
+      desktopDropdown?.classList.remove('opacity-100', 'scale-100');
+      desktopChevron?.classList.remove('rotate-180');
+      setTimeout(() => {
+        if (!isDesktopOpen) {
+          desktopDropdown?.classList.add('hidden');
+        }
+      }, 200);
+    }
+  }
+
+  function closeDesktopDropdown() {
+    if (isDesktopOpen) {
+      toggleDesktopDropdown();
+    }
+  }
+
+  desktopButton?.addEventListener('click', toggleDesktopDropdown);
+  
+  // Close dropdown when clicking outside
+  document.addEventListener('click', (event) => {
+    if (!desktopButton?.contains(event.target as Node) && 
+        !desktopDropdown?.contains(event.target as Node)) {
+      closeDesktopDropdown();
+    }
+  });
+
+  // Mobile sidebar functionality
+  const mobileButton = document.getElementById('mobile-menu-button');
+  const mobileOverlay = document.getElementById('mobile-overlay');
+  const mobileSidebar = document.getElementById('mobile-sidebar');
+  const mobileCloseButton = document.getElementById('mobile-close-button');
+  const mobileMenuIcon = document.getElementById('mobile-menu-icon');
+  const mobileCloseIcon = document.getElementById('mobile-close-icon');
+  
+  let isMobileOpen = false;
+
+  function toggleMobileSidebar() {
+    isMobileOpen = !isMobileOpen;
+    
+    if (isMobileOpen) {
+      // Show overlay and sidebar
+      mobileOverlay?.classList.remove('hidden');
+      mobileSidebar?.classList.remove('translate-x-full');
+      mobileMenuIcon?.classList.add('hidden');
+      mobileCloseIcon?.classList.remove('hidden');
+      document.body.style.overflow = 'hidden'; // Prevent scrolling
+    } else {
+      // Hide overlay and sidebar
+      mobileOverlay?.classList.add('hidden');
+      mobileSidebar?.classList.add('translate-x-full');
+      mobileMenuIcon?.classList.remove('hidden');
+      mobileCloseIcon?.classList.add('hidden');
+      document.body.style.overflow = ''; // Restore scrolling
+    }
+  }
+
+  function closeMobileSidebar() {
+    if (isMobileOpen) {
+      toggleMobileSidebar();
+    }
+  }
+
+  mobileButton?.addEventListener('click', toggleMobileSidebar);
+  mobileCloseButton?.addEventListener('click', closeMobileSidebar);
+  mobileOverlay?.addEventListener('click', closeMobileSidebar);
+
+  // Close sidebar when clicking on a link
+  const mobileLinks = mobileSidebar?.querySelectorAll('a');
+  mobileLinks?.forEach(link => {
+    link.addEventListener('click', closeMobileSidebar);
+  });
+
+  // Handle window resize
+  window.addEventListener('resize', () => {
+    if (window.innerWidth >= 768) { // md breakpoint
+      closeMobileSidebar();
+    } else {
+      closeDesktopDropdown();
+    }
+  });
+</script>
