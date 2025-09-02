@@ -16,11 +16,11 @@ const {
   description
 } = Astro.props;
 ---
-<div class="panel items-start p-7 flex flex-row gap-5 bg-white w-full sm:w-[500px] lg:w-[700px] rounded-2xl">
-    <img class="sm:w-24 md:w-36 lg:w-48" src={logo} alt="company logo">
+<div class="panel items-start p-7 flex flex-col sm:flex-row gap-5 bg-white w-full lg:w-[700px] rounded-2xl">
+    <img class="w-24 md:w-36 lg:w-48" src={logo} alt="company logo">
     <div class="item-start">
-      <h2 class="text-3xl text-konpeki uppercase">{role} at {company}</h2>
-      <p class="font-bold text-sm text-konpeki uppercase">{period}</p>
+      <h2 class="text-2xl sm:text-3xl text-konpeki uppercase">{role} at {company}</h2>
+      <p class="font-bold text-sm text-konpeki uppercase font-sans">{period}</p>
       <div class="mt-5 text-lg text-syoro">
         {Astro.slots.default? <slot /> //checks whether the default slot content was passed or not
           : description}
