@@ -40,11 +40,11 @@ const maturityIcon = maturity ? getMaturityIcon(maturity) : null;
     <div class="text-sm text-syoro mt-2 uppercase flex items-center gap-2">
       {formattedDate}
       {maturity && (
-        <div class="absolute right-3 flex gap-2">
+        <div class="absolute right-3 flex gap-2 items-center">
           {maturityIcon && (
-            <img src={maturityIcon} alt={`${maturity} maturity`} class="w-4 h-4" />
+            <img src={maturityIcon} alt={`${maturity} maturity`} class="w-4 h-auto" />
           )}
-          <span class="text-sm font-sans uppercase text-syoro">{maturity}</span>
+          <span class="text-md font-sans uppercase text-syoro">{maturity}</span>
         </div>
       )}
     </div>
