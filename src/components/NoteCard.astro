@@ -5,13 +5,17 @@ export interface Props {
   description?: string;
   pubDate: Date;
   url: string;
+  maturity?: 'seed' | 'plant' | 'tree';
 }
+
+import { getMaturityIcon } from '../utils/maturityIcons';
 
 const {
   title = 'Untitled',
   description = '',
   pubDate,
-  url
+  url,
+  maturity
 } = Astro.props;
 
 const formattedDate = new Date(pubDate).toLocaleDateString('en-US', {
@@ -19,18 +23,30 @@ const formattedDate = new Date(pubDate).toLocaleDateString('en-US', {
   month: 'long',
   day: 'numeric'
 });
+
+const maturityIcon = maturity ? getMaturityIcon(maturity) : null;
 ---
 
 <div class="group hover:scale-98 transition-all">
-  <a href={url} class="block p-4 border-b-1 border-syoro border-opacity-10 border-dashed hover:bg-yellow-50">
+  <a href={url} class="block p-4 border-b-1 border-syoro border-opacity-10 border-dashed hover:bg-yellow-50 relative">
+    
     <div class="flex gap-2">
-      <img src="/icons/seed.svg" alt="seed icon" class="w-6 h-auto">
+      <img src="/icons/notes.svg" alt="seed icon" class="w-6 h-auto">
       <h5 class="text-base text-syoro font-medium opacity-80 uppercase">Notes</h5>
     </div>
+    
     <h3 class="uppercase sm:capitalize text-2xl lg:text-3xl font-medium text-konpeki">{title}</h3>
     {description && <p class="text-base sm:text-lg text-syoro mt-1">{description}</p>}
-    <div class="text-sm text-syoro mt-2 uppercase">
+    <div class="text-sm text-syoro mt-2 uppercase flex items-center gap-2">
       {formattedDate}
+      {maturity && (
+        <div class="absolute right-3 flex gap-2 items-center">
+          {maturityIcon && (
+            <img src={maturityIcon} alt={`${maturity} maturity`} class="w-4 h-auto" />
+          )}
+          <span class="text-md font-sans uppercase text-syoro">{maturity}</span>
+        </div>
+      )}
     </div>
   </a>
 </div>

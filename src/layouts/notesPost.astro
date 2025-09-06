@@ -18,10 +18,18 @@ import GradientHeading from '../components/mdxComponents/gradientHeading.astro';
 import Tag from '../components/Tag.astro';
 
 
-type Props = CollectionEntry<'notes'>['data'];
+type LayoutProps = CollectionEntry<'notes'>['data'] & {
+  icon?: string;
+  collection?: string;
+};
 
-const { title, description, pubDate, updatedDate, heroImage, tags = [],maturity,collection } = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage, tags = [], maturity, icon } = Astro.props as LayoutProps;
 const maturityIcon = getMaturityIcon(maturity);
+const currentCollection = Astro.url.pathname.includes('/essays')
+  ? 'essays'
+  : Astro.url.pathname.includes('/notes')
+  ? 'notes'
+  : 'garden';
 ---
 
 <html lang="en" class="scroll-smooth">
@@ -32,34 +40,35 @@ const maturityIcon = getMaturityIcon(maturity);
     <Header />
     <main class="w-full sm:w-[90%] mx-auto">
       <div>
-        <div class={`${collection !== 'works' ? 'block' : ''}`}>
+        <div class="block">
           <main>
             <div class="mt-20">
               <div class="flex flex-col gap-4">
-                <a href={Astro.url.pathname.includes('/garden') ? '/' : '/garden'} class="inline-block z-1">
+                <a href={Astro.url.pathname.includes('/essays') ? '/essays' : Astro.url.pathname.includes('/notes') ? '/notes' : Astro.url.pathname.includes('/garden') ? '/' : '/garden'} class="inline-block z-1">
                   <div class="flex items-center gap-2 group not-prose">
                     <img src="/icons/backArrow.svg" class="w-8 h-auto group-hover:rotate-20 transition-all" alt="Back" />
-                    <span class="uppercase font-sans font-medium">Back to {Astro.url.pathname.includes('/garden') ? 'Index' : 'Garden'}</span>
+                    <span class="uppercase font-sans font-medium">Back to {Astro.url.pathname.includes('/essays') ? 'Essays' : Astro.url.pathname.includes('/notes') ? 'Notes' : Astro.url.pathname.includes('/garden') ? 'Index' : 'Garden'}</span>
                   </div>
                 </a>
                 <div class="flex items-center gap-2 mt-10 sm:mt-0">
-                  {collection && (
+                  {currentCollection && (
                     <div class="flex items-center mx-auto my-0 gap-1">
                       {maturityIcon && (
                         <span class="text-xl" aria-label={`Maturity level: ${maturity}`}>
                           <img src={maturityIcon} class="w-5">
                         </span>
                       )}
-                      <span class="text-gray-600 capitalize">{collection}</span>
+                      <span class="text-gray-600 uppercase font-sans">{maturity}</span>
 
                     </div>
                   )}
                 </div>
-                <div class="md:w-3/4 w-full mx-auto">
+                <div class="md:w-3/4 items-center gap-2 flex w-full mx-auto">
+                  
                   <GradientHeading size="lg" className="text-center my-0 w-[80%] md:mx-auto">{title}</GradientHeading>
                   </div>
                 
-                <p class="text-syoro w-full md:w-[80%] md:mx-auto text-center my-10 text-lg md:text-xl">{description}</p>
+                <p class="text-syoro w-full md:w-[80%] md:mx-auto text-center text-lg md:text-xl italic">{description}</p>
                 <div class="flex items-center gap-2 text-sm text-syoro mx-auto mb-4">
                       <time datetime={pubDate.toISOString()}>
                         Published: {pubDate.toLocaleDateString('en-us', {

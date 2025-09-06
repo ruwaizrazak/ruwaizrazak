@@ -7,10 +7,11 @@ import ExternalLink from "../../components/mdxComponents/ExternalLink.astro"
 export async function getStaticPaths() {
 	const posts = await getCollection('essays');
 	return posts.map((post) => {
-		// Extract the filename without extension as slug
-		const filename = post.id.split('/').pop().replace(/\.[^.]+$/, '');
+		const parts = post.id.split('/');
+		const last = parts.length > 0 ? parts[parts.length - 1] : '';
+		const filename = typeof last === 'string' ? last.replace(/\.[^.]+$/, '') : '';
 		return {
-			params: { slug: filename.toLowerCase() },  // Use lowercase filename as slug
+			params: { slug: filename.toLowerCase() },
 			props: post,
 		};
 	});
@@ -21,6 +22,6 @@ const post = Astro.props;
 const { Content } = await render(post);
 ---
 
-<NotesPost {...post.data} collection="essays">
+<NotesPost {...post.data} collection="essays" icon="/icons/essays.svg">
 	<Content components={{ a: ExternalLink }} />
 </NotesPost>

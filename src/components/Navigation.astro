@@ -3,7 +3,7 @@
 export interface MenuItem {
   name: string;
   href: string;
-  icon?: string;
+  icon?: string | URL;
   description?: string;
 }
 
@@ -15,7 +15,7 @@ export interface Props {
   additionalLinks?: Array<{
     name: string;
     href: string;
-    icon?: string;
+    icon?: string | URL;
     description?:string;
   }>;
 }
@@ -26,8 +26,8 @@ const {
   logoHref = "/",
   class: className = "",
   additionalLinks = [
-    { name: "About", href: "/about", icon: "ℹ️" },
-    { name: "Contact", href: "/contact", icon: "📧" }
+    { name: "About", href: "/about"},
+    { name: "Contact", href: "/contact"}
   ]
 } = Astro.props;
 ---
@@ -61,7 +61,7 @@ const {
             href={link.href}
             class="inline-flex items-center px-3 py-2 text-konpeki rounded-md hover:bg-yellow-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-100 uppercase hover:scale-95 transition-all">
             <h3 class="font-sans font-medium text-xl">
-            {link.icon && <span class="mr-2 text-sm">{link.icon}</span>}
+            {link.icon && <img src={typeof link.icon === 'string' ? link.icon : link.icon.href} alt={link.name} class="w-6 h-6" />}
             {link.name}
           </h3>
             
@@ -91,7 +91,7 @@ const {
   <!-- Desktop Dropdown Menu (md and up) -->
   <div 
     id="desktop-dropdown" 
-    class="hidden md:block absolute my-2 top-5 top-full md:w-[60%] lg:w-[50%] right-10 bg-white shadow-lg transform opacity-0 scale-95 transition-all duration-200 ease-out border border-gray-200 backdrop-blur-md"
+    class="hidden md:block absolute my-2 top-full md:w-[60%] lg:w-[50%] right-10 bg-white shadow-lg transform opacity-0 scale-95 transition-all duration-200 ease-out border border-gray-200 backdrop-blur-md"
   >
     <div class="w-[90%] mx-auto py-6">
       <div class="grid grid-cols-2 lg:gap-2 xl:gap-4">
@@ -102,8 +102,8 @@ const {
           >
             <div class="flex items-center space-x-4">
               {item.icon && (
-                <div class="flex-shrink-0 text-indigo-600">
-                  <span class="text-4xl">{item.icon}</span>
+                <div class="flex-shrink-0">
+                  <img src={typeof item.icon === 'string' ? item.icon : item.icon.href} alt={item.name} class="w-8 h-8" />
                 </div>
               )}
               <div class="flex-1">
@@ -153,7 +153,7 @@ const {
           class="flex items-center px-4 py-3 text-konpeki hover:bg-yellow-50 hover:text-indigo-600 transition-colors duration-200 border-b border-gray-100"
         >
           {link.icon && (
-            <span class="mr-3 text-lg text-indigo-600">{link.icon}</span>
+            <img src={typeof link.icon === 'string' ? link.icon : link.icon.href} alt={link.name} class="w-6 h-6 mr-3" />
           )}
           <div class="flex-1">
             <div class="font-medium font-serif">{link.name}</div>
@@ -175,7 +175,7 @@ const {
           class="flex items-center px-4 py-3 text-konpeki hover:bg-yellow-50 hover:text-indigo-600 transition-colors duration-200"
         >
           {item.icon && (
-            <span class="mr-3 text-lg text-indigo-600">{item.icon}</span>
+            <img src={typeof item.icon === 'string' ? item.icon : item.icon.href} alt={item.name} class="w-6 h-6 mr-3" />
           )}
           <div class="flex-1">
             <div class="font-medium">{item.name}</div>
@@ -190,100 +190,121 @@ const {
 </nav>
 
 <script>
-  // Desktop dropdown functionality
-  const desktopButton = document.getElementById('desktop-menu-button');
-  const desktopDropdown = document.getElementById('desktop-dropdown');
-  const desktopChevron = document.getElementById('desktop-chevron');
-  
-  let isDesktopOpen = false;
+  function initializeNavigation() {
+    // Desktop dropdown functionality
+    const desktopButton = document.getElementById('desktop-menu-button');
+    const desktopDropdown = document.getElementById('desktop-dropdown');
+    const desktopChevron = document.getElementById('desktop-chevron');
 
-  function toggleDesktopDropdown() {
-    isDesktopOpen = !isDesktopOpen;
-    
-    if (isDesktopOpen) {
-      desktopDropdown?.classList.remove('hidden', 'opacity-0', 'scale-95');
-      desktopDropdown?.classList.add('opacity-100', 'scale-100');
-      desktopChevron?.classList.add('rotate-180');
-    } else {
-      desktopDropdown?.classList.add('opacity-0', 'scale-95');
-      desktopDropdown?.classList.remove('opacity-100', 'scale-100');
-      desktopChevron?.classList.remove('rotate-180');
-      setTimeout(() => {
-        if (!isDesktopOpen) {
-          desktopDropdown?.classList.add('hidden');
-        }
-      }, 200);
+    // Prevent double-initialization
+    if (desktopButton && (desktopButton as any).dataset?.initialized === 'true') {
+      return;
     }
+    if (desktopButton) {
+      (desktopButton as any).dataset.initialized = 'true';
+    }
+
+    let isDesktopOpen = false;
+
+    function toggleDesktopDropdown() {
+      isDesktopOpen = !isDesktopOpen;
+
+      if (isDesktopOpen) {
+        desktopDropdown?.classList.remove('hidden', 'opacity-0', 'scale-95');
+        desktopDropdown?.classList.add('opacity-100', 'scale-100');
+        desktopChevron?.classList.add('rotate-180');
+      } else {
+        desktopDropdown?.classList.add('opacity-0', 'scale-95');
+        desktopDropdown?.classList.remove('opacity-100', 'scale-100');
+        desktopChevron?.classList.remove('rotate-180');
+        setTimeout(() => {
+          if (!isDesktopOpen) {
+            desktopDropdown?.classList.add('hidden');
+          }
+        }, 200);
+      }
+    }
+
+    function closeDesktopDropdown() {
+      if (isDesktopOpen) {
+        toggleDesktopDropdown();
+      }
+    }
+
+    desktopButton?.addEventListener('click', toggleDesktopDropdown);
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (event) => {
+      const target = event.target;
+      if (
+        target instanceof Node &&
+        desktopButton &&
+        desktopDropdown &&
+        !desktopButton.contains(target) &&
+        !desktopDropdown.contains(target)
+      ) {
+        closeDesktopDropdown();
+      }
+    });
+
+    // Mobile sidebar functionality
+    const mobileButton = document.getElementById('mobile-menu-button');
+    const mobileOverlay = document.getElementById('mobile-overlay');
+    const mobileSidebar = document.getElementById('mobile-sidebar');
+    const mobileCloseButton = document.getElementById('mobile-close-button');
+    const mobileMenuIcon = document.getElementById('mobile-menu-icon');
+    const mobileCloseIcon = document.getElementById('mobile-close-icon');
+
+    let isMobileOpen = false;
+
+    function toggleMobileSidebar() {
+      isMobileOpen = !isMobileOpen;
+
+      if (isMobileOpen) {
+        // Show overlay and sidebar
+        mobileOverlay?.classList.remove('hidden');
+        mobileSidebar?.classList.remove('translate-x-full');
+        mobileMenuIcon?.classList.add('hidden');
+        mobileCloseIcon?.classList.remove('hidden');
+        document.body.style.overflow = 'hidden'; // Prevent scrolling
+      } else {
+        // Hide overlay and sidebar
+        mobileOverlay?.classList.add('hidden');
+        mobileSidebar?.classList.add('translate-x-full');
+        mobileMenuIcon?.classList.remove('hidden');
+        mobileCloseIcon?.classList.add('hidden');
+        document.body.style.overflow = ''; // Restore scrolling
+      }
+    }
+
+    function closeMobileSidebar() {
+      if (isMobileOpen) {
+        toggleMobileSidebar();
+      }
+    }
+
+    mobileButton?.addEventListener('click', toggleMobileSidebar);
+    mobileCloseButton?.addEventListener('click', closeMobileSidebar);
+    mobileOverlay?.addEventListener('click', closeMobileSidebar);
+
+    // Close sidebar when clicking on a link
+    const mobileLinks = mobileSidebar?.querySelectorAll('a');
+    mobileLinks?.forEach(link => {
+      link.addEventListener('click', closeMobileSidebar);
+    });
+
+    // Handle window resize
+    window.addEventListener('resize', () => {
+      if (window.innerWidth >= 768) { // md breakpoint
+        closeMobileSidebar();
+      } else {
+        closeDesktopDropdown();
+      }
+    });
   }
 
-  function closeDesktopDropdown() {
-    if (isDesktopOpen) {
-      toggleDesktopDropdown();
-    }
-  }
-
-  desktopButton?.addEventListener('click', toggleDesktopDropdown);
-  
-  // Close dropdown when clicking outside
-  document.addEventListener('click', (event) => {
-    if (!desktopButton?.contains(event.target as Node) && 
-        !desktopDropdown?.contains(event.target as Node)) {
-      closeDesktopDropdown();
-    }
-  });
-
-  // Mobile sidebar functionality
-  const mobileButton = document.getElementById('mobile-menu-button');
-  const mobileOverlay = document.getElementById('mobile-overlay');
-  const mobileSidebar = document.getElementById('mobile-sidebar');
-  const mobileCloseButton = document.getElementById('mobile-close-button');
-  const mobileMenuIcon = document.getElementById('mobile-menu-icon');
-  const mobileCloseIcon = document.getElementById('mobile-close-icon');
-  
-  let isMobileOpen = false;
-
-  function toggleMobileSidebar() {
-    isMobileOpen = !isMobileOpen;
-    
-    if (isMobileOpen) {
-      // Show overlay and sidebar
-      mobileOverlay?.classList.remove('hidden');
-      mobileSidebar?.classList.remove('translate-x-full');
-      mobileMenuIcon?.classList.add('hidden');
-      mobileCloseIcon?.classList.remove('hidden');
-      document.body.style.overflow = 'hidden'; // Prevent scrolling
-    } else {
-      // Hide overlay and sidebar
-      mobileOverlay?.classList.add('hidden');
-      mobileSidebar?.classList.add('translate-x-full');
-      mobileMenuIcon?.classList.remove('hidden');
-      mobileCloseIcon?.classList.add('hidden');
-      document.body.style.overflow = ''; // Restore scrolling
-    }
-  }
-
-  function closeMobileSidebar() {
-    if (isMobileOpen) {
-      toggleMobileSidebar();
-    }
-  }
-
-  mobileButton?.addEventListener('click', toggleMobileSidebar);
-  mobileCloseButton?.addEventListener('click', closeMobileSidebar);
-  mobileOverlay?.addEventListener('click', closeMobileSidebar);
-
-  // Close sidebar when clicking on a link
-  const mobileLinks = mobileSidebar?.querySelectorAll('a');
-  mobileLinks?.forEach(link => {
-    link.addEventListener('click', closeMobileSidebar);
-  });
-
-  // Handle window resize
-  window.addEventListener('resize', () => {
-    if (window.innerWidth >= 768) { // md breakpoint
-      closeMobileSidebar();
-    } else {
-      closeDesktopDropdown();
-    }
-  });
+  // Initialize on traditional and Astro transitions
+  document.addEventListener('DOMContentLoaded', initializeNavigation);
+  document.addEventListener('astro:page-load', initializeNavigation);
+  window.addEventListener('pageshow', initializeNavigation);
 </script>

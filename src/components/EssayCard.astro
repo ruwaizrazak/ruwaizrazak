@@ -7,7 +7,10 @@ export interface Props {
   heroImage?: string;
   url: string;
   imageHeight?: string;
+  maturity?: 'seed' | 'plant' | 'tree';
 }
+
+import { getMaturityIcon } from '../utils/maturityIcons';
 
 const {
   title = 'Untitled',
@@ -15,7 +18,8 @@ const {
   pubDate,
   heroImage,
   url,
-  imageHeight = 'h-48'
+  imageHeight = 'h-48',
+  maturity
 } = Astro.props;
 
 const formattedDate = new Date(pubDate).toLocaleDateString('en-US', {
@@ -23,12 +27,15 @@ const formattedDate = new Date(pubDate).toLocaleDateString('en-US', {
   month: 'long',
   day: 'numeric'
 });
+
+const maturityIcon = maturity ? getMaturityIcon(maturity) : null;
 ---
 
 <div class="group rounded-lg overflow-hidden hover:scale-98 transition-all">
-  <a href={url} class="block p-5 bg-cardbg rounded-xl border-1 border-stone-100 hover:bg-yellow-50">
+  <a href={url} class="block p-5 bg-cardbg rounded-xl border-1 border-stone-100 hover:bg-yellow-50 relative">
+    
     <div class="flex gap-2 mb-2 items-center">
-      <img src="/icons/tree.svg" alt="tree icon" class="w-5">
+      <img src="/icons/essays.svg" alt="tree icon" class="w-5">
       <h5 class="text-base text-syoro font-medium opacity-80 uppercase">Essays</h5>
     </div>
     {heroImage && (
@@ -40,8 +47,16 @@ const formattedDate = new Date(pubDate).toLocaleDateString('en-US', {
     )}
     <h3 class="uppercase sm:capitalize text-2xl lg:text-3xl font-medium text-konpeki">{title}</h3>
     {description && <p class="text-base sm:text-lg text-syoro mt-2">{description}</p>}
-    <div class="text-xs text-gray-500 mt-4 uppercase">
+    <div class="text-sm text-gray-500 mt-4 uppercase flex items-center gap-2">
       {formattedDate}
+      {maturity && (
+        <div class="absolute right-3 flex items-center gap-2 px-2 py-1">
+          {maturityIcon && (
+            <img src={maturityIcon} alt={`${maturity} maturity`} class="w-4 h-4" />
+          )}
+          <span class="text-sm uppercase text-syoro font-sans">{maturity}</span>
+        </div>
+      )}
     </div>
   </a>
 </div>
