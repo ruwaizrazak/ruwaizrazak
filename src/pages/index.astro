@@ -196,7 +196,7 @@ const books = (await getCollection('books', ({ data }) => data.publish === true)
           <div class="block sm:flex gap-10 mt-10" id="garden">
             <div id="essays" class="sm:w-[70%]">
               <a class="justify-center sm:justify-start flex items-center gap-2 hover:text-blue-600 transition-colors" href="/essays">
-                <img src="/icons/tree.svg" alt="Essays icon" class="w-6 h-auto">
+                <img src="/icons/essays.svg" alt="Essays icon" class="w-6 h-auto">
                 <h3 class="text-3xl uppercase font-medium">Essays</h3>
                 <img src="/icons/rightarrow.svg" alt="Right arrow" width="10px" class="rotate-90 sm:rotate-0">
               </a>
@@ -211,6 +211,7 @@ const books = (await getCollection('books', ({ data }) => data.publish === true)
                     heroImage={essay.data.heroImage}
                      url={`/essays/${essay.slug}`}
                     imageHeight="h-32"
+                    maturity={essay.data.maturity}
                     />
                   </div>
                 ))}
@@ -219,7 +220,7 @@ const books = (await getCollection('books', ({ data }) => data.publish === true)
             <div id="notes" class="w-full sm:w-[30%] mt-5 sm:mt-0">
               <div>
                 <a class="justify-center sm:justify-start flex items-center gap-2 hover:text-blue-600 transition-colors" href="/notes">
-                  <img src="/icons/seed.svg" alt="Notes icon" class="w-8 h-auto">
+                  <img src="/icons/notes.svg" alt="Notes icon" class="w-8 h-auto">
                   <h3 class="text-3xl uppercase font-medium">Notes</h3>
                   <img src="/icons/rightarrow.svg" alt="Right arrow" width="10px" class="rotate-90 sm:rotate-0">
               </a>
@@ -232,6 +233,7 @@ const books = (await getCollection('books', ({ data }) => data.publish === true)
       description={note.data.description || ''}
       pubDate={note.data.pubDate}
       url={`/notes/${note.slug}`}
+      maturity={note.data.maturity}
     />
   ))}
 </div>
@@ -267,7 +269,9 @@ const books = (await getCollection('books', ({ data }) => data.publish === true)
 
       function cycleGreeting() {
           currentIndex = (currentIndex + 1) % greetings.length;
-          span.textContent = greetings[currentIndex];
+          if (span) {
+            span.textContent = greetings[currentIndex];
+          }
       }
 
       // Change greeting every 1.5 seconds
