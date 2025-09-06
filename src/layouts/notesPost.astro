@@ -18,9 +18,12 @@ import GradientHeading from '../components/mdxComponents/gradientHeading.astro';
 import Tag from '../components/Tag.astro';
 
 
-type Props = CollectionEntry<'notes'>['data'];
+type LayoutProps = CollectionEntry<'notes'>['data'] & {
+  icon?: string;
+  collection?: string;
+};
 
-const { title, description, pubDate, updatedDate, heroImage, tags = [], maturity } = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage, tags = [], maturity, icon } = Astro.props as LayoutProps;
 const maturityIcon = getMaturityIcon(maturity);
 const currentCollection = Astro.url.pathname.includes('/essays')
   ? 'essays'
@@ -55,16 +58,17 @@ const currentCollection = Astro.url.pathname.includes('/essays')
                           <img src={maturityIcon} class="w-5">
                         </span>
                       )}
-                      <span class="text-gray-600 capitalize">{currentCollection}</span>
+                      <span class="text-gray-600 uppercase font-sans">{maturity}</span>
 
                     </div>
                   )}
                 </div>
-                <div class="md:w-3/4 w-full mx-auto">
+                <div class="md:w-3/4 items-center gap-2 flex w-full mx-auto">
+                  
                   <GradientHeading size="lg" className="text-center my-0 w-[80%] md:mx-auto">{title}</GradientHeading>
                   </div>
                 
-                <p class="text-syoro w-full md:w-[80%] md:mx-auto text-center my-10 text-lg md:text-xl">{description}</p>
+                <p class="text-syoro w-full md:w-[80%] md:mx-auto text-center text-lg md:text-xl italic">{description}</p>
                 <div class="flex items-center gap-2 text-sm text-syoro mx-auto mb-4">
                       <time datetime={pubDate.toISOString()}>
                         Published: {pubDate.toLocaleDateString('en-us', {
