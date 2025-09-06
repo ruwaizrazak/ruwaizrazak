@@ -20,8 +20,13 @@ import Tag from '../components/Tag.astro';
 
 type Props = CollectionEntry<'notes'>['data'];
 
-const { title, description, pubDate, updatedDate, heroImage, tags = [],maturity,collection } = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage, tags = [], maturity } = Astro.props;
 const maturityIcon = getMaturityIcon(maturity);
+const currentCollection = Astro.url.pathname.includes('/essays')
+  ? 'essays'
+  : Astro.url.pathname.includes('/notes')
+  ? 'notes'
+  : 'garden';
 ---
 
 <html lang="en" class="scroll-smooth">
@@ -32,25 +37,25 @@ const maturityIcon = getMaturityIcon(maturity);
     <Header />
     <main class="w-full sm:w-[90%] mx-auto">
       <div>
-        <div class={`${collection !== 'works' ? 'block' : ''}`}>
+        <div class="block">
           <main>
             <div class="mt-20">
               <div class="flex flex-col gap-4">
-                <a href={Astro.url.pathname.includes('/garden') ? '/' : '/garden'} class="inline-block z-1">
+                <a href={Astro.url.pathname.includes('/essays') ? '/essays' : Astro.url.pathname.includes('/notes') ? '/notes' : Astro.url.pathname.includes('/garden') ? '/' : '/garden'} class="inline-block z-1">
                   <div class="flex items-center gap-2 group not-prose">
                     <img src="/icons/backArrow.svg" class="w-8 h-auto group-hover:rotate-20 transition-all" alt="Back" />
-                    <span class="uppercase font-sans font-medium">Back to {Astro.url.pathname.includes('/garden') ? 'Index' : 'Garden'}</span>
+                    <span class="uppercase font-sans font-medium">Back to {Astro.url.pathname.includes('/essays') ? 'Essays' : Astro.url.pathname.includes('/notes') ? 'Notes' : Astro.url.pathname.includes('/garden') ? 'Index' : 'Garden'}</span>
                   </div>
                 </a>
                 <div class="flex items-center gap-2 mt-10 sm:mt-0">
-                  {collection && (
+                  {currentCollection && (
                     <div class="flex items-center mx-auto my-0 gap-1">
                       {maturityIcon && (
                         <span class="text-xl" aria-label={`Maturity level: ${maturity}`}>
                           <img src={maturityIcon} class="w-5">
                         </span>
                       )}
-                      <span class="text-gray-600 capitalize">{collection}</span>
+                      <span class="text-gray-600 capitalize">{currentCollection}</span>
 
                     </div>
                   )}
