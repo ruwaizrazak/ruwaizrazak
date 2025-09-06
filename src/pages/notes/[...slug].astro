@@ -17,6 +17,6 @@ const post = Astro.props;
 const { Content } = await render(post);
 ---
 
-<NotesPost {...post.data} collection="notes">
+<NotesPost {...post.data} collection="notes" icon="/icons/notes.svg">
 	<Content components={{ a: ExternalLink }}/>
 </NotesPost>
