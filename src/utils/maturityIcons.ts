@@ -3,7 +3,7 @@ export const getMaturityIcon = (
 ): string => {
   const iconMap = {
     seed: '/icons/seed.svg',
-    plant: '/icons/plant.gif',
+    plant: '/icons/plant.svg',
     tree: '/icons/tree.svg',
   };
 
