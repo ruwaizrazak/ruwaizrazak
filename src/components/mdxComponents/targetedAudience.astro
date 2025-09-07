@@ -10,13 +10,13 @@ const {
 } = Astro.props;
 ---
 
-<div class="flex items-center justify-center w-full bg-stone-50 p-6 rounded-lg">
-  <div class="flex flex-col md:flex-row w-full max-w-4xl gap-4 md:gap-8">
-    <div class="md:w-1/3">
-      <p class="text-blue-600 font-bold text-lg">{label}</p>
+<div class="flex items-center justify-center w-full bg-cardbg border-1 border-stone-100 shadow-sm p-6 rounded-lg">
+  <div class="flex flex-col md:flex-row w-ful items-start md:items-center">
+    <div class="md:w-1/4">
+      <h4 class="font-sans uppercase not-prose text-konpeki !important text-lg">{label}</h4>
     </div>
-    <div class="md:w-2/3">
-      <p class="text-stone-700 text-lg">{description}</p>
+    <div class="md:w-3/4">
+      <p class="text-syoro text-lg">{description}</p>
     </div>
   </div>
 </div>

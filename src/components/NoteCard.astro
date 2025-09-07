@@ -35,8 +35,8 @@ const maturityIcon = maturity ? getMaturityIcon(maturity) : null;
       <h5 class="text-base text-syoro font-medium opacity-80 uppercase">Notes</h5>
     </div>
     
-    <h3 class="uppercase sm:capitalize text-2xl lg:text-3xl font-medium text-konpeki">{title}</h3>
-    {description && <p class="text-base sm:text-lg text-syoro mt-1">{description}</p>}
+    <h3 class="uppercase sm:capitalize text-xl md:text-2xl lg:text-3xl font-medium text-konpeki">{title}</h3>
+    {description && <p class="text-base md:text-lg text-syoro mt-1">{description}</p>}
     <div class="text-sm text-syoro mt-2 uppercase flex items-center gap-2">
       {formattedDate}
       {maturity && (
