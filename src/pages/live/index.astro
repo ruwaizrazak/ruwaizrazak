@@ -31,7 +31,7 @@ const thenContents = await Promise.all(thenPosts.map(post => render(post)));
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
 	</head>
-	<body>
+	<body class="bg-backgroundcolor">
 		<Header />
 		<main class="w-full sm:w-[90%] mx-auto">
 			<div class="mt-20">
@@ -44,10 +44,10 @@ const thenContents = await Promise.all(thenPosts.map(post => render(post)));
 					</a>
 				</div>
 				<GradientHeading size="xl">Now</GradientHeading>
-				<p class="text-lg sm:text-xl mt-4">Whats happening to me currently or rather what am I doing currently</p>
+				<p class="text-lg sm:text-xl mt-4 font-serif">Whats happening to me currently or rather what am I doing currently</p>
         <hr class="w-full my-8 border-stone-100">
 				{nowPost && nowContent && (
-					<div class="mb-8 border-b-2 border-stone-100">
+					<div class="pb-20">
 						<div class="flex flex-col gap-4">
 							<div class="flex items-center gap-4">
 								<span class="shrink-0">
@@ -61,8 +61,8 @@ const thenContents = await Promise.all(thenPosts.map(post => render(post)));
 								<h2 class="text-5xl">{nowPost.data.Month}</h2>
 							</div>
 						</div>
-						<p class="mx-12 font-3xl text-lg mb-10 mt-0">{nowPost.data.OneLiner}</p>
-						<div class="w-[90%] prose-headings:w-[60%] prose-p:w-[60%] prose-blockquote:w-[60%] prose-figure:w-[60%] prose-a:w-[60%] mx-12 mt-4 prose max-w-none text-left prose-h1:text-4xl prose-h2:text-3xl prose-h3:text-2xl prose-h4:text-xl prose-h5:text-lg  prose-p:text-lg prose-headings:font-normal prose-h1:my-0 prose-h2:my-0 prose-h3:my-0 prose-h4:my-0 prose-h5:my-0 prose-p:my-0">
+						<p class="mx-12 font-3xl text-lg mt-0 font-serif">{nowPost.data.OneLiner}</p>
+						<div class="mx-12 prose-neutral prose-lg max-w-3xl prose-headings:font-sans prose-p:font-serif prose-p:text-syoro prose-img:w-[95%] prose-img:aspect-auto prose-headings:text-konpeki prose-h4:uppercase prose-h3:uppercase prose-strong:text-pink-500 prose-h5:uppercase prose-h4:font-bold prose-h5:font-bold prose-blockquote:font-handwriting prose-blockquote:leading-auto prose-ul:font-serif prose-li:font-serif prose-ul:list-disc prose-ol:list-decimal prose-blockquote:text-yellow-600 prose-blockquote:italic text-base md:text-lg prose-h1:mt-10 md:prose-h1:mt-20 prose-h2:mt-8 md:prose-h2:mt-16 prose-h3:mt-6 md:prose-h3:mt-12 prose-h4:mt-3 md:prose-h4:mt-6 prose-headings:mb-5">
 							<nowContent.Content />
 						</div>
 					</div>
@@ -89,7 +89,7 @@ const thenContents = await Promise.all(thenPosts.map(post => render(post)));
 											<h2 class="text-5xl">{post.data.Month}</h2>
 										</div>
 										<p class="mx-12 font-3xl text-lg mb-10 mt-0">{post.data.OneLiner}</p>
-										<div class="w-[90%] prose-headings:w-[60%] prose-p:w-[60%] prose-blockquote:w-[60%] prose-figure:w-[60%] prose-a:w-[60%] mx-12 mt-4 prose max-w-none text-left prose-h1:text-4xl prose-h2:text-3xl prose-h3:text-2xl prose-h4:text-xl prose-h5:text-lg  prose-p:text-lg prose-headings:font-normal prose-h1:my-0 prose-h2:my-0 prose-h3:my-0 prose-h4:my-0 prose-h5:my-0 prose-p:my-0">
+										<div class="mx-12 prose-neutral prose-lg max-w-3xl prose-headings:font-sans prose-p:font-serif prose-p:text-syoro prose-img:w-[95%] prose-img:aspect-auto prose-headings:text-konpeki prose-h4:uppercase prose-h3:uppercase prose-strong:text-pink-500 prose-h5:uppercase prose-h4:font-bold prose-h5:font-bold prose-blockquote:font-handwriting prose-blockquote:leading-auto prose-ul:font-serif prose-li:font-serif prose-ul:list-disc prose-ol:list-decimal prose-blockquote:text-yellow-600 prose-blockquote:italic text-base md:text-lg prose-h1:mt-10 md:prose-h1:mt-20 prose-h2:mt-8 md:prose-h2:mt-16 prose-h3:mt-6 md:prose-h3:mt-12 prose-h4:mt-3 md:prose-h4:mt-6 prose-headings:mb-5">
 											{Content && <Content />}
 										</div>
 									</div>

@@ -91,14 +91,14 @@ const {
   <!-- Desktop Dropdown Menu (md and up) -->
   <div 
     id="desktop-dropdown" 
-    class="hidden md:block absolute my-2 top-full md:w-[60%] lg:w-[50%] right-10 bg-white shadow-lg transform opacity-0 scale-95 transition-all duration-200 ease-out border border-gray-200 backdrop-blur-md"
+    class="hidden md:block absolute my-2 top-full md:w-[60%] lg:w-[50%] right-10 bg-backgroundcolor shadow-lg transform opacity-0 scale-95 transition-all duration-200 ease-out border border-card-border backdrop-blur-md"
   >
     <div class="w-[90%] mx-auto py-6">
       <div class="grid grid-cols-2 lg:gap-2 xl:gap-4">
         {menuItems.map((item) => (
           <a 
             href={item.href}
-            class="group p-4 rounded-lg hover:bg-yellow-50 hover:scale-95 ease-in-out transition-all block"
+            class="group p-4 rounded-lg hover:scale-95 hover:border border-card-border ease-in-out transition-all block duration-200"
           >
             <div class="flex items-center space-x-4">
               {item.icon && (
@@ -132,7 +132,7 @@ const {
   <!-- Mobile Sidebar -->
   <div 
     id="mobile-sidebar" 
-    class="md:hidden fixed top-0 right-0 h-full w-80 bg-white shadow-xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out overflow-y-auto scroll-auto"
+    class="md:hidden fixed top-0 right-0 h-full w-80 bg-backgroundcolor border border-card-border shadow-xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out overflow-y-auto scroll-auto"
   >
     <div class="flex items-end justify-end p-4 border-b">
       <button 
@@ -150,7 +150,7 @@ const {
       {additionalLinks.map((link) => (
         <a 
           href={link.href}
-          class="flex items-center px-4 py-3 text-konpeki hover:bg-yellow-50 hover:text-indigo-600 transition-colors duration-200 border-b border-gray-100"
+          class="flex items-center px-4 py-3 text-konpeki hover:scale-95 hover:text-indigo-600 transition-colors duration-200 border-b border-gray-100"
         >
           {link.icon && (
             <img src={typeof link.icon === 'string' ? link.icon : link.icon.href} alt={link.name} class="w-6 h-6 mr-3" />

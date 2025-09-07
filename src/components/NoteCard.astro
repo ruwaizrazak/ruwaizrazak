@@ -27,16 +27,16 @@ const formattedDate = new Date(pubDate).toLocaleDateString('en-US', {
 const maturityIcon = maturity ? getMaturityIcon(maturity) : null;
 ---
 
-<div class="group hover:scale-98 transition-all">
-  <a href={url} class="block p-4 border-b-1 border-syoro border-opacity-10 border-dashed hover:bg-yellow-50 relative">
+<div class="group hover:scale-95 transition-all duration-200">
+  <a href={url} class="block p-4 border-b-1 border-card-border border-opacity-10 border-dashed relative">
     
     <div class="flex gap-2">
       <img src="/icons/notes.svg" alt="seed icon" class="w-6 h-auto">
       <h5 class="text-base text-syoro font-medium opacity-80 uppercase">Notes</h5>
     </div>
     
-    <h3 class="uppercase sm:capitalize text-xl md:text-2xl lg:text-3xl font-medium text-konpeki">{title}</h3>
-    {description && <p class="text-base md:text-lg text-syoro mt-1">{description}</p>}
+    <h3 class="uppercase sm:capitalize text-lg md:text-xl lg:text-2xl text-konpeki group-hover:text-indigo-600 font-serif font-medium mb-5">{title}</h3>
+    {description && <p class="text-base md:text-lg text-syoro mt-1 font-serif opacity-70">{description}</p>}
     <div class="text-sm text-syoro mt-2 uppercase flex items-center gap-2">
       {formattedDate}
       {maturity && (

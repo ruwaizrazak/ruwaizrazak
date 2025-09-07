@@ -31,12 +31,12 @@ const formattedDate = new Date(pubDate).toLocaleDateString('en-US', {
 const maturityIcon = maturity ? getMaturityIcon(maturity) : null;
 ---
 
-<div class="group rounded-lg overflow-hidden hover:scale-98 transition-all">
-  <a href={url} class="block p-5 bg-cardbg rounded-xl border-1 border-stone-100 hover:bg-yellow-50 relative">
+<div class="group rounded-lg overflow-hidden hover:scale-95 transition-all duration-200">
+  <a href={url} class="block p-5 bg-cardbg rounded-xl border-1 border-card-border  relative">
     
     <div class="flex gap-2 mb-2 items-center">
       <img src="/icons/essays.svg" alt="tree icon" class="w-5">
-      <h5 class="text-base text-syoro font-medium opacity-80 uppercase">Essays</h5>
+      <h5 class="text-base text-syoro opacity-80 uppercase ">Essays</h5>
     </div>
     {heroImage && (
       <img
@@ -45,8 +45,8 @@ const maturityIcon = maturity ? getMaturityIcon(maturity) : null;
         class={`w-full ${imageHeight} aspect-square object-cover rounded-lg mb-4`}
       />
     )}
-    <h3 class="uppercase sm:capitalize text-xl mb-0md:text-2xl lg:text-3xl font-medium text-konpeki">{title}</h3>
-    {description && <p class="text-base md:text-lg text-syoro mt-1">{description}</p>}
+    <h3 class="uppercase sm:capitalize text-lg mb-5 md:text-xl font-medium lg:text-2xl text-konpeki group-hover:text-indigo-600 font-serif">{title}</h3>
+    {description && <p class="text-base md:text-lg text-syoro mt-1 font-serif opacity-70">{description}</p>}
     <div class="text-sm text-gray-500 mt-4 uppercase flex items-center gap-2">
       {formattedDate}
       {maturity && (

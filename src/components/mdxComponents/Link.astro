@@ -12,7 +12,7 @@ const isExternal = href?.startsWith('http');
 
 <a
   href={href}
-  class:list={[className]}
+  class:list={["group-hover:text-indigo-600,!important", className]}
   {...isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {}}
   {...props}
 >

@@ -20,17 +20,19 @@
   --text-10xl: 10rem;
   --text-11xl: 12rem;
   --color-text-primary: #FFF1F1;
-  --color-cardbg:#fafafa;
+  --color-cardbg:#FFFDFA;
+  --color-card-border:#E0EDE8;
   --color-syoro:#003535;
   --color-konpeki:#004A8F;
-}
-
-h1,h2,h3,h4,h5,h6 {
-  font-family: var(--font-sans);
+  --color-backgroundcolor:#f6f5f1;
 }
 
 
 
+.first-letter-large::first-letter {
+  font-size: 3em; /* Adjust as needed */
+  font-weight: bold; /* Optional */
+}
 
 p {
   color: inherit;
