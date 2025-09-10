@@ -96,7 +96,7 @@ const displayText = spoilerText || description;
         </div>
       )}
 
-      <p class="text-base md:text-lg font-serif first-letter:text-3xl first-letter:font-medium first-letter:text-konpeki group-hover:text-indigo-600 text-syoro whitespace-pre-wrap break-words {spoilerText ? 'hidden' : ''}">{displayText}</p>
+      <p class="text-base md:text-lg font-serif first-letter:text-3xl first-letter:font-handwriting last-letter:text-3xl first-letter:font-medium first-letter:mr-1 group-hover:text-indigo-600 text-syoro whitespace-pre-wrap break-words {spoilerText ? 'hidden' : ''}">"{displayText}"</p>
 
       {media && media.length > 0 && (
         <div class="mt-3 space-y-2">
