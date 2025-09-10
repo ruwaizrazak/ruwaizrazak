@@ -28,12 +28,6 @@
 }
 
 
-
-.first-letter-large::first-letter {
-  font-size: 3em; /* Adjust as needed */
-  font-weight: bold; /* Optional */
-}
-
 p {
   color: inherit;
 }
