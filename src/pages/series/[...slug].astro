@@ -1,28 +1,167 @@
 ---
-import { getCollection } from 'astro:content';
+import { getCollection, render } from 'astro:content';
+import BaseHead from '../../components/BaseHead.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import GradientHeading from '../../components/mdxComponents/gradientHeading.astro';
+import Image from '../../components/mdxComponents/Image.astro';
+import Tag from '../../components/Tag.astro';
+import NoteMain from '../../components/NoteMain.astro';
 
 export async function getStaticPaths() {
-  const series = await getCollection('series');
-  return series.map((series) => ({
-    params: { slug: series.id },
-    props: { series },
+  const seriesIndexes = await getCollection('series', ({ data }) => data.publish);
+  const seriesParts = (await getCollection('seriesPosts', ({ data }) => data.publish))
+    .filter((post) => !post.id.endsWith('/index'));
+
+  // Series index pages: drop the trailing /index from the URL
+  const indexPaths = seriesIndexes.map((entry) => ({
+    params: { slug: entry.id.replace(/\/index$/, '') },
+    props: { kind: 'series', slug: entry.id.replace(/\/index$/, '') },
   }));
+
+  // Series part pages: keep the full slug (e.g., series-slug/part-slug)
+  const partPaths = seriesParts.map((entry) => ({
+    params: { slug: entry.id },
+    props: { kind: 'part', slug: entry.id },
+  }));
+
+  return [...indexPaths, ...partPaths];
 }
 
-const { series } = Astro.props;
+const { kind, slug } = Astro.props as { kind: 'series' | 'part'; slug: string };
 
-// Get all posts for this series
-const seriesPosts = await getCollection('seriesPosts', ({ data }) => 
-  data.seriesSlug === series.id && data.publish
-);
+const seriesSlug = kind === 'series' ? slug : slug.split('/')[0];
+const ParentSeriesSlug = seriesSlug;
+const ParentSeriesSlugPretty = ParentSeriesSlug.replace(/-/g, ' ');
+const ParentSeriesTitlePretty = ParentSeriesSlugPretty.replace(/\b\w/g, (c) => c.toUpperCase());
 
-// Sort posts by seriesOrder or pubDate
-const sortedPosts = seriesPosts.sort((a, b) => {
-  if (a.data.seriesOrder && b.data.seriesOrder) {
-    return a.data.seriesOrder - b.data.seriesOrder;
-  }
-  return new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime();
-});
+// Load the series index document
+const matchingSeries = await getCollection('series', ({ id }) => id === `${seriesSlug}/index`);
+const seriesDoc = matchingSeries[0];
+
+// Load all parts under this series
+const allParts = (await getCollection('seriesPosts', ({ data }) => data.publish))
+  .filter((p) => p.id.startsWith(seriesSlug + '/') && !p.id.endsWith('/index'))
+  .sort((a, b) => {
+    const ao = a.data.seriesOrder ?? Number.POSITIVE_INFINITY;
+    const bo = b.data.seriesOrder ?? Number.POSITIVE_INFINITY;
+    if (ao !== bo) return ao - bo;
+    return new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime();
+  });
+
+// If this is a part page, find the specific part
+const activePart = kind === 'part' ? allParts.find((p) => p.id === slug) : undefined;
+
+const seoTitle = activePart ? `${activePart.data.title} · ${seriesDoc?.data.title ?? ''}` : seriesDoc?.data.title ?? 'Series';
 ---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead title={seoTitle} description={seriesDoc?.data.description ?? ''} />
+  </head>
+  <body class="bg-backgroundcolor">
+    <Header />
+    <main class="w-full sm:w-[90%] mx-auto">
+      <div class="mt-20">
+        <a href="/series" class="inline-block z-1">
+          <div class="flex items-center gap-2 group not-prose">
+            <img src="/icons/backArrow.svg" class="w-8 h-auto group-hover:rotate-20 transition-all" alt="Back" />
+            <span class="uppercase font-sans font-medium text-lg">Back to Series</span>
+          </div>
+        </a>
+
+        {kind === 'series' && seriesDoc && (
+          <section class="mt-8">
+            <GradientHeading size="xl">{seriesDoc.data.title}</GradientHeading>
+            <p class="text-lg sm:text-xl mt-0 font-serif italic">{seriesDoc.data.description}</p>
+            <hr class="w-full my-8 border-stone-100" />
+
+            {allParts.length > 0 ? (
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {allParts.map((post) => (
+                  <a href={`/series/${post.id}`} class="block p-5 bg-cardbg rounded-xl border-1 border-stone-100 hover:bg-yellow-50 transition-all duration-200 hover:shadow-md hover:scale-[1.02] cursor-pointer">
+                    <div class="flex items-center gap-3 mb-3">
+                      {post.data.seriesOrder && (
+                        <span class="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full uppercase">Part {post.data.seriesOrder}</span>
+                      )}
+                      <span class="text-xs text-stone-400">•</span>
+                      <span class="text-xs text-stone-500">{post.data.pubDate.toLocaleDateString()}</span>
+                    </div>
+                    <h2 class="font-semibold mb-0 text-3xl uppercase text-konpeki">{post.data.title}</h2>
+                    <p class="text-lg text-syoro mb-3 font-sans">{post.data.description}</p>
+                  </a>
+                ))}
+              </div>
+            ) : (
+              <div class="text-center py-8 text-stone-500"><p>No posts in this series yet.</p></div>
+            )}
+          </section>
+        )}
+
+        {kind === 'part' && activePart && (
+          await (async () => {
+            const { Content } = await render(activePart);
+            const data = activePart.data;
+            return (
+              <section class="w-full sm:w-[90%] mx-auto pb-20">
+                <div class="flex flex-col gap-4 mt-2">
+                  <div class="flex items-center gap-3 mx-auto my-0 text-sm text-stone-600">
+                    <span class="px-2 py-1 bg-stone-100 text-stone-700 rounded-full uppercase">{seriesDoc?.data.title ?? ParentSeriesTitlePretty}</span>
+                    {typeof data.seriesOrder === 'number' && (
+                      <span class="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full uppercase">Part {data.seriesOrder}</span>
+                    )}
+                    
+                  </div>
+
+                  <div class="md:w-3/4 items-center gap-2 flex w-full mx-auto">
+                    <GradientHeading size="lg" className="text-center my-0 w-[80%] md:mx-auto">{data.title}</GradientHeading>
+                  </div>
+
+                  <p class="text-syoro w-full md:w-[80%] md:mx-auto text-center text-lg md:text-xl italic font-serif">{data.description}</p>
+
+                  <div class="flex items-center gap-2 text-syoro mx-auto mb-4 uppercase font-sans text-lg">
+                    <time datetime={data.pubDate.toISOString()}>
+                      Published: {data.pubDate.toLocaleDateString('en-us', { year: 'numeric', month: 'short', day: 'numeric' })}
+                    </time>
+                    {data.updatedDate && (
+                      <>
+                        <span>•</span>
+                        <time datetime={data.updatedDate.toISOString()}>
+                          Updated: {data.updatedDate.toLocaleDateString('en-us', { year: 'numeric', month: 'short', day: 'numeric' })}
+                        </time>
+                      </>
+                    )}
+                  </div>
+
+                  {data.tags && data.tags.length > 0 && (
+                    <div class="flex flex-wrap gap-2 items-center mx-auto">
+                      {data.tags.map((tag: string) => (
+                        <Tag tag={tag.toLowerCase()} />
+                      ))}
+                    </div>
+                  )}
+
+                  <div class="w-[40%] mx-auto h-px bg-gray-300 my-6"></div>
+                </div>
+
+                {data.heroImage && (
+                  <div class="hero-image w-full mt-8">
+                    <Image src={data.heroImage} alt="" class="w-full h-auto object-cover rounded-lg" loading="eager" />
+                  </div>
+                )}
+
+                <NoteMain>
+                  <Content />
+                </NoteMain>
+              </section>
+            );
+          })()
+        )}
+      </div>
+    </main>
+    <Footer />
+  </body>
+</html>
 
 <!-- Series header and posts list here -->
