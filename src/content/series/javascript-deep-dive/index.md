@@ -19,3 +19,5 @@ This series is designed for complete beginners who want to learn web development
 
 ## Prerequisites
 No prior experience required! Just bring your curiosity and willingness to learn.
+
+
