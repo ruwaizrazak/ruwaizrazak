@@ -11,6 +11,7 @@ import P from '../../components/mdxComponents/P.astro';
 import NoteMain from '../../components/NoteMain.astro';
 import GradientHeading from '../../components/mdxComponents/gradientHeading.astro';
 import Link from '../../components/mdxComponents/Link.astro';
+import Tag from '../../components/Tag.astro';
 import { render } from 'astro:content';
 
 // Get all published series, sorted by order or lastUpdated
@@ -106,7 +107,7 @@ const seriesWithPosts = sortedSeries.map(series => {
 											</div>
 											
 											{/* Post title and description */}
-											<h2 class="font-semibold mb-0 text-3xl uppercase text-konpeki">
+											<h2 class="font-semibold mb-0 text-2xl md:text-2xl lg:text-3xl uppercase text-konpeki">
 												{post.data.title}
 											</h4>
 											<p class="text-lg text-syoro mb-3 font-sans">{post.data.description}</p>
@@ -120,7 +121,7 @@ const seriesWithPosts = sortedSeries.map(series => {
 											{post.data.tags.length > 0 && (
 												<div class="flex flex-wrap items-center gap-2 mb-">
 													{post.data.tags.map((tag: string) => (
-														<span class="px-2 py-1 bg-stone-100 text-stone-600 text-xs rounded-full">
+														<span class="px-2 py-1 text-syoro text-xs border border-card-border">
 															{tag}
 														</span>
 													))}
