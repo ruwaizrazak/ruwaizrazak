@@ -64,34 +64,36 @@ const books = defineCollection({
   }),
 });
 
-// UPDATED: Series collection for series metadata only
+// UPDATED: Series collection for nested structure using index files
+// Structure: src/content/series/<series-slug>/index.(md|mdx)
 const series = defineCollection({
   loader: glob({
     base: './src/content/series',
-    pattern: '**/*.{md,mdx}',
+    pattern: '**/index.{md,mdx}',
   }),
   schema: z.object({
     title: z.string(),
     description: z.string(),
-    featuredImage: z.string(), // Using your heroImage equivalent
-    startedDate: z.coerce.date(), // When the series began
-    lastUpdated: z.coerce.date(), // When last post was added/updated
+    featuredImage: z.string(),
+    startedDate: z.coerce.date(),
+    lastUpdated: z.coerce.date(),
     publish: z.boolean().default(false),
     tags: z.array(z.string()).default([]),
-    order: z.number().optional(), // For manual ordering on series index page
+    order: z.number().optional(),
   }),
 });
 
-// NEW: Series posts collection for individual posts within series
+// NEW: Series posts live alongside index files inside each series folder
+// Structure: src/content/series/<series-slug>/<part-slug>.{md,mdx}
 const seriesPosts = defineCollection({
   loader: glob({
-    base: './src/content/series-posts',
-    pattern: '**/*.{md,mdx}',
+    base: './src/content/series',
+    pattern: ['**/*.{md,mdx}', '!**/index.{md,mdx}'],
   }),
   schema: baseSchema.extend({
-    seriesSlug: z.string(), // References the series folder/slug
-    seriesOrder: z.number(), // Order within the series
-    excerpt: z.string().optional(), // Short description for series page
+    // Optional ordering and short description for listing pages
+    seriesOrder: z.number().optional(),
+    excerpt: z.string().optional(),
   }),
 });
 
@@ -115,5 +117,5 @@ export const collections = {
   books,
   live,
   series,
-  seriesPosts, // New collection for series posts
+  seriesPosts, // Posts inside each series folder (filters will exclude index files in pages)
 };
