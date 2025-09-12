@@ -1,0 +1,42 @@
+---
+import Link from './mdxComponents/Link.astro';
+
+// A reusable career timeline component
+// Props:
+// - items: Array<{ role: string; company: string; period: string; description: string; colorClass?: string }>
+interface TimelineItem {
+  role: string;
+  company: string;
+  period: string;
+  description: string;
+  present?: boolean;
+  url?:string
+}
+
+interface Props {
+  items?: TimelineItem[];
+}
+
+const { items = [] } = Astro.props as Props;
+---
+
+<div class="timeline-container relative">
+  <div class="relative">
+    <div class="absolute left-8 top-0 bottom-0 w-0.5 bg-syoro"></div>
+    <div class="space-y-8">
+      {items.map((item) => (
+        <div class="relative flex items-start">
+          <div class={`absolute left-3 w-10 h-10 rounded-full border-4 shadow-lg z-10 ${item.present ? 'bg-konpeki border-indigo-200' : 'bg-white border-konpeki'}`}></div>
+          <div class="ml-16 transition-shadow">
+            <h3 class="text-3xl font-bold text-konpeki font-sans mb-2 mt-1">{item.role} at <Link href={item.url}>{item.company}</a></h3>
+            <p class="text-syoro font-semibold font-sans text-xl mb-2 -mt-2 uppercase"> {item.period}</p>
+            <p class="text-syoro font-serif text-lg md:w-full lg:w-2/3">{item.description}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+  
+</div>
+
+
