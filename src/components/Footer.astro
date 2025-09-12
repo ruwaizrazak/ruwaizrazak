@@ -1,32 +1,59 @@
 ---
 import Link from './mdxComponents/Link.astro';
+import GradientHeading from './mdxComponents/gradientHeading.astro';
 
 const today = new Date();
 const navLinks = [
   { title: 'Home', path: '/' },
   { title: 'Garden', path: '/garden' },
   { title: 'About', path: '/about' },
+  { title: 'Essays', path: '/essays' },
+  { title: 'Notes', path: '/notes' },
+  { title: 'Series', path: '/series' },
+  { title: 'Books', path: '/books' },
+  { title: 'Live', path: '/live' },
 ];
 ---
 
-<footer class="bg-backgroundcolor py-10 border-t-1  border-slate-200">
-  <nav>
-    <ul class="flex gap-6 px-10">
-      {navLinks.map(link => (
-        <li>
-          <Link href={link.path} class="text-sm hover:text-yellow-600 transition-colors">{link.title}</Link>
-          {link.title === 'About' && (
-            <Link rel="me" href="https://mastodon.social/@ruwaizrazak" class="text-sm hover:text-yellow-600 transition-colors ml-6">Mastodon</Link>
-            <Link rel="me" href="https://github.com/ruwaizrazak" class="text-sm hover:text-yellow-600 transition-colors ml-6">Github</Link>
-          )}
+<footer class="bg-backgroundcolor px-10 py-30 mt-10 border-t-2  border-stone-300">
+  <nav class="mx-auto">
+    <div class="flex flex-row w-full justify-between">
+      <div class="flex flex-col w-1/3">
+        <GradientHeading size="md">Cacophony Of Thoughts</GradientHeading>
+        <div class="flex flex-row py-5 gap-5 items-center">
+          <a href="https://mastodon.social/@ruwaizrazak">
+          <img src="/public/icons/mastodon.png" class="w-8 grayscale h-auto object-contain hover:filter-none hover:scale-[95%] transition-all duration-200" />
+          </a>
+          <a href="https://github.com/ruwaizrazak">
+            <img src="/public/icons/github.png" class="w-9 grayscale h-auto object-contain hover:filter-none hover:scale-[95%] transition-all duration-200" />
+            </a>
+            <a href="https://bsky.app/profile/ruwaizrazak.bsky.social">
+              <img src="/public/icons/bluesky.svg" class="w-9 grayscale h-auto object-contain hover:filter-none hover:scale-[95%] transition-all duration-200" />
+              </a>
 
-        </li>
+        </div>
+      </div>
+      <div class="w-1/3 px-10">
+        <div class="grid grid-cols-3 gap-3">
+          {navLinks.slice(0, 3).map(link => (
+            <Link href={link.path} class="text-xl hover:text-yellow-600 transition-colors">{link.title}</Link>
+          ))}
+          {navLinks.slice(3, 6).map(link => (
+            <Link href={link.path} class="text-xl hover:text-yellow-600 transition-colors">{link.title}</Link>
+          ))}
+          {navLinks.slice(6, 8).map(link => (
+            <Link href={link.path} class="text-xl hover:text-yellow-600 transition-colors">{link.title}</Link>
+          ))}
+        </div>
         
-      ))}
-    </ul>
+      </div>
+      
+    </div>
+    <div class="text-sm text-center px-10 mt-5">
+      &copy; {today.getFullYear()} Ruwaiz Razak. All rights reserved.
+    </div>
+    
   </nav>
-  <div class="text-sm mt-5 px-10 m">
-    &copy; {today.getFullYear()} Ruwaiz Razak. All rights reserved.
-  </div>
+ 
 
 </footer>
