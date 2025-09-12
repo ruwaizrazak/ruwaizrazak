@@ -59,7 +59,7 @@ const {
         {additionalLinks.map((link) => (
           <a 
             href={link.href}
-            class="inline-flex items-center px-3 py-2 text-konpeki rounded-md hover:bg-yellow-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-100 uppercase hover:scale-95 transition-all">
+            class="inline-flex items-center px-3 py-2 text-konpeki hover:text-link rounded-md uppercase hover:scale-95 transition-all">
             <h3 class="font-sans font-medium text-xl">
             {link.icon && <img src={typeof link.icon === 'string' ? link.icon : link.icon.href} alt={link.name} class="w-6 h-6" />}
             {link.name}
@@ -107,7 +107,7 @@ const {
                 </div>
               )}
               <div class="flex-1">
-                <h3 class="text-lg font-medium font-sans uppercase text-konpeki group-hover:text-indigo-600 transition-colors">
+                <h3 class="text-lg font-medium font-sans uppercase text-konpeki group-hover:text-link transition-colors">
                   {item.name}
                 </h3>
                 {item.description && (

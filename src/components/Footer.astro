@@ -17,9 +17,11 @@ const navLinks = [
           <Link href={link.path} class="text-sm hover:text-yellow-600 transition-colors">{link.title}</Link>
           {link.title === 'About' && (
             <Link rel="me" href="https://mastodon.social/@ruwaizrazak" class="text-sm hover:text-yellow-600 transition-colors ml-6">Mastodon</Link>
+            <Link rel="me" href="https://github.com/ruwaizrazak" class="text-sm hover:text-yellow-600 transition-colors ml-6">Github</Link>
           )}
 
         </li>
+        
       ))}
     </ul>
   </nav>

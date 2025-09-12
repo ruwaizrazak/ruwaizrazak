@@ -1,5 +1,6 @@
 ---
 import type { HTMLAttributes } from 'astro/types';
+import ExternalLink from '../externallink.astro';
 
 type Props = HTMLAttributes<'a'>;
 
@@ -10,44 +11,162 @@ const isActive = href === pathname || href === '/' + (subpath?.[0] || '');
 const isExternal = href?.startsWith('http');
 ---
 
-<a
-  href={href}
-  class:list={["group-hover:text-indigo-600,!important", className]}
-  {...isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {}}
-  {...props}
->
-  <slot />
-</a>
+<span class="link-container">
+  <a
+    href={href}
+    class:list={[
+      "styled-link",
+      { "styled-link--active": isActive },
+      className
+    ]}
+    {...isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {}}
+    {...props}
+  >
+    <span class="link-text">
+      <slot />
+    </span>
+    {isExternal && <span class="external-icon w-3 h-auto items-baseline" aria-hidden="true">
+      <ExternalLink/>
+    </span>}
+  </a>
+</span>
+
 <style>
-  a {
-    color:var(--color-konpeki);
-    text-decoration: underline;
-    text-decoration-style: wavy;
-    text-decoration-color:var(--color-konpeki) !important;
-    text-underline-offset: .2em;
-  }
-  @keyframes linkAnimation {
-  from {
-    text-decoration: underline;
+  .link-container {
+    display: inline-block;
+    position: relative;
   }
 
-  to {
-    text-decoration: line-through;
-    text-decoration-style: wavy;
-    text-decoration-color: var(--color-konpeki) !important;
-  }
-}
-  a:hover {
-    text-decoration: line-through;
-    text-decoration-style: wavy;
-    text-decoration-color:var(--color-konpeki);
-    text-decoration-thickness: .1em;
-    animation: .5s 1 forwards linkAnimation;
-    transition: all .5s ease;
-  }
-
-  a {
+  .styled-link {
+    cursor: pointer;
+    position: relative;
+    white-space: nowrap;
+    text-decoration: none;
+    outline: none;
     font-family: var(--font-sans);
+    color: var(--color-link);
+    padding-bottom: 0.25rem;
   }
 
+  .styled-link:focus {
+    outline: 2px solid var(--focus-color, darkblue);
+    border-radius: 2px;
+    outline-offset: 2px;
+  }
+
+  .link-text {
+    display: inline-block;
+    transition: all 0.3s cubic-bezier(0.2, 1, 0.8, 1);
+  }
+
+  .external-icon {
+    display: inline-block;
+    margin-left: 0.25rem;
+    font-size: 0.8em;
+    transition: transform 0.2s ease;
+    line-height: 1;
+  }
+
+  .external-icon img {
+    width: 1em;
+    height: 1em;
+    vertical-align: baseline;
+    display: inline-block;
+  }
+
+  .styled-link:hover .external-icon {
+    transform: translate(1px, -1px);
+  }
+
+  /* Animated underline effect */
+  .styled-link::before {
+    content: "";
+    transform-origin: 50% 100%;
+    background: var(--color-link);
+    transition: 
+      clip-path 0.3s cubic-bezier(0.2, 1, 0.8, 1),
+      transform 0.3s cubic-bezier(0.2, 1, 0.8, 1),
+      background-color 0.3s ease;
+    position: absolute;
+    width: 100%;
+    height: 1px;
+    top: 95%;
+    left: 0;
+    pointer-events: none;
+    clip-path: polygon(
+      0% 0%,
+      0% 100%,
+      0 100%,
+      0 0,
+      100% 0,
+      100% 100%,
+      0 100%,
+      0 100%,
+      100% 100%,
+      100% 0%
+    );
+  }
+
+  .styled-link:hover::before {
+    transform: translate3d(0, 2px, 0) scale3d(1, 2, 1);
+    background: var(--color-konpeki);
+    clip-path: polygon(
+      0% 0%,
+      0% 100%,
+      100% 100%,
+      50% 0,
+      50% 0,
+      50% 100%,
+      50% 100%,
+      0 100%,
+      100% 100%,
+      100% 0%
+    );
+  }
+
+  .styled-link:hover .link-text {
+    transform: translate3d(0, -2px, 0);
+    color: var(--color-konpeki);
+  }
+
+  /* Active state styles */
+  .styled-link--active {
+    color: var(--color-konpeki);
+    font-weight: 600;
+  }
+
+  .styled-link--active::before {
+    background: var(--color-konpeki);
+    height: 2px;
+  }
+
+  /* Active state for links */
+  .styled-link:active .link-text {
+    transform: translate3d(0, 0, 0);
+    transition-duration: 0.1s;
+  }
+
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    .styled-link::before,
+    .link-text,
+    .external-icon {
+      transition: none !important;
+    }
+    
+    .styled-link:hover .link-text {
+      transform: none;
+    }
+
+    .styled-link:hover::before {
+      transform: none;
+    }
+  }
+
+  /* Dark mode adjustments */
+  @media (prefers-color-scheme: dark) {
+    .styled-link:focus {
+      outline-color: var(--focus-color-dark, lightblue);
+    }
+  }
 </style>
