@@ -45,7 +45,7 @@ const maturityIcon = maturity ? getMaturityIcon(maturity) : null;
         class={`w-full ${imageHeight} aspect-square object-cover rounded-lg mb-4`}
       />
     )}
-    <h3 class="uppercase sm:capitalize text-lg mb-5 md:text-xl font-medium lg:text-2xl text-konpeki group-hover:text-link font-serif">{title}</h3>
+    <h3 class="uppercase sm:capitalize text-lg mb-5 md:text-xl font-medium lg:text-2xl text-konpeki group-hover:text-link font-sans">{title}</h3>
     {description && <p class="text-base md:text-lg text-syoro mt-1 font-serif opacity-70">{description}</p>}
     <div class="text-sm text-gray-500 mt-4 uppercase flex items-center gap-2">
       {formattedDate}
