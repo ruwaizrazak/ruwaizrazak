@@ -55,7 +55,7 @@ const sortedTags = [...tags.filter(tag => tag !== 'all').sort()];
 
         <div class="flex flex-col mt-20">
           <a href={Astro.url.pathname.includes('/garden') ? '/' : '/garden'} class="inline-block z-1">
-          <div class="flex items-center gap-2 group">
+          <div class="flex items-center gap-2 group mb-5">
             <img src="/icons/backArrow.svg" class="w-8 h-auto group-hover:rotate-20 transition-all" alt="Back" />
             <span class="uppercase font-sans font-medium">Back to {Astro.url.pathname.includes('/garden') ? 'Index' : 'Garden'}</span>
           </div>
