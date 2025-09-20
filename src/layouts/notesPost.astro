@@ -65,10 +65,10 @@ const currentCollection = Astro.url.pathname.includes('/essays')
                 </div>
                 <div class="md:w-3/4 items-center gap-2 flex w-full mx-auto">
                   
-                  <GradientHeading size="lg" className="text-center my-0 w-[80%] md:mx-auto">{title}</GradientHeading>
+                  <GradientHeading size="lg" className="text-center my-0 w-[80%] mx-auto">{title}</GradientHeading>
                   </div>
                 
-                <p class="text-syoro w-full md:w-[80%] md:mx-auto text-center text-lg md:text-xl italic font-serif">{description}</p>
+                <p class="text-syoro w-full sm:w-[80%] lg:w-[60%] mx-auto text-center text-lg md:text-xl italic font-serif">{description}</p>
                 <div class="flex items-center gap-2 text-syoro mx-auto mb-4 uppercase font-sans text-lg">
                       <time datetime={pubDate.toISOString()}>
                         Published: {pubDate.toLocaleDateString('en-us', {
