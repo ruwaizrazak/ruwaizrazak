@@ -5,6 +5,9 @@ OneLiner: 'Finished Spiderman, and redesigning the portfolio'
 date: '2025-07-27'
 publish: true
 ---
+
+import Link from '../../components/mdxComponents/Link.astro';
+
 # Spiderman 2 - The end
 Even though I tried to keep myself engaged to the game until I complete, there were many instances where I wanted to move away from the game. 
 
@@ -25,7 +28,7 @@ It all started from a thought of having a decentralized content platform which w
 
 Previously, my site had two versions of documents, Long formatted and short formatted. I also tried to incorporate mastodon to scratch the need for micro blogging but then it didnt serve me quiet well. 
 
-I often have a requirement of writing contents in fragments and then keeping it arranged only for it to later be chopped down and refine further, and hence I thought of building... ["Series"](/series)
+I often have a requirement of writing contents in fragments and then keeping it arranged only for it to later be chopped down and refine further, and hence I thought of building... <Link href="/series">"Series"</Link>
 
 I would use this series to write more about how I built this site, and the games that Im currently playing so that it would act as a detailed repo and then we can formulate notes or essays from it to talk about specific instances. 
 
