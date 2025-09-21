@@ -5,6 +5,11 @@ import { glob } from 'glob';
 
 /**
  * Simple and reliable markdown link converter
+ * Usage:
+ * node scripts/convert-links-simple.js - Convert all files
+  node scripts/convert-links-simple.js --dry-run - Preview changes
+  node scripts/convert-links-simple.js src/content/notes/example.mdx - Convert specific file
+ * 
  */
 function convertMarkdownLinks(content) {
   // Convert markdown links [text](url) to <Link href="url">text</Link>
