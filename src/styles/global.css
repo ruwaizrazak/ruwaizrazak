@@ -14,18 +14,18 @@
   --font-handwriting: "Caveat",cursive;
 
   --marker-color: chartreuese;
-  --accent: #004A8F;
+  --accent: #295757;
   --breakpoint-3xl: 120rem;
 
   --text-10xl: 10rem;
   --text-11xl: 12rem;
   --color-text-primary: #FFF1F1;
-  --color-cardbg:#FFFDFA;
-  --color-card-border:#E0EDE8;
+  --color-cardbg:#fafafa;
+  --color-card-border:#d1d5d9;
   --color-syoro:#003535;
   --color-konpeki:#004A8F;
-  --color-backgroundcolor:#f6f5f1;
-  --color-link:#FF005E;
+  --color-backgroundcolor:#fafbfc;
+  --color-link:#1A86FF;
 }
 
 
