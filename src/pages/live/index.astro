@@ -51,17 +51,14 @@ const thenContents = await Promise.all(thenPosts.map(post => render(post)));
 						<div class="flex flex-col gap-4">
 							<div class="flex items-center gap-4">
 								<span class="shrink-0">
-									<svg width="35" height="35" viewBox="0 0 45 45" fill="none" xmlns="http://www.w3.org/2000/svg">
-										<path d="M22.5 0C34.9264 0 45 10.0736 45 22.5C45 34.9264 34.9264 45 22.5 45C10.0736 45 0 34.9264 0 22.5C0 10.0736 10.0736 0 22.5 0ZM22.5 2C11.1782 2 2 11.1782 2 22.5C2 33.8218 11.1782 43 22.5 43C33.8218 43 43 33.8218 43 22.5C43 11.1782 33.8218 2 22.5 2ZM23 8C31.2843 8 38 14.7157 38 23C38 31.2843 31.2843 38 23 38C14.7157 38 8 31.2843 8 23C8 14.7157 14.7157 8 23 8Z" fill="url(#paint0_radial_236_524)"/>
-										<defs>
-											<radialGradient id="paint0_radial_236_524" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(23 23) rotate(90) scale(52.5)"><stop stop-color="#004A8F"/><stop offset="1" stop-color="#004A8F" stop-opacity="0"/></radialGradient>
-										</defs>
-									</svg>
+									<div class="h-8 w-8 rounded-4xl border-2 border-konpeki p-1 ">
+										<div class="w-full h-full rounded-4xl bg-konpeki"></div>
+									</div>
 								</span>
 								<h2 class="text-5xl">{nowPost.data.Month}</h2>
 							</div>
 						</div>
-						<p class="mx-12 font-3xl text-lg my-5 font-serif">{nowPost.data.OneLiner}</p>
+						<p class="mx-12 text-xl mt-2 mb-5 font-sans">{nowPost.data.OneLiner}</p>
 						<div class="mx-12 prose-neutral prose-lg max-w-3xl prose-headings:font-sans prose-p:font-serif prose-p:text-syoro prose-img:w-[95%] prose-img:aspect-auto prose-headings:text-konpeki prose-h4:uppercase prose-h3:uppercase prose-strong:text-pink-500 prose-h5:uppercase prose-h4:font-bold prose-h5:font-bold prose-blockquote:font-handwriting prose-blockquote:leading-auto prose-ul:font-serif prose-li:font-serif prose-ul:list-disc prose-ol:list-decimal prose-blockquote:text-yellow-600 prose-blockquote:italic text-base md:text-lg prose-h1:mt-10 md:prose-h1:mt-14 prose-h2:mt-8 md:prose-h2:mt-10 prose-h3:mt-6 md:prose-h3:mt-8 prose-h4:mt-3 md:prose-h4:mt-3 prose-headings:mb-5 prose-a:text-link prose-a:underline prose-a:hover:line-through prose-a:underline-offset-8">
 							<nowContent.Content />
 						</div>
@@ -69,8 +66,8 @@ const thenContents = await Promise.all(thenPosts.map(post => render(post)));
 				)}
 				{thenPosts.length > 0 && (
 					<>
-						<GradientHeading size="xl" className="mt-16">Then</GradientHeading>
-						<p class="text-lg sm:text-xl mt-4">In hindsight...</p>
+						<GradientHeading size="xl" className="mt-0">Then ...</GradientHeading>
+						<p class="text-lg sm:text-xl mt-2">In hindsight...</p>
 						<hr class="w-full my-8 border-stone-100">
 						<div class="space-y-8">
 							{thenPosts.map((post, index) => {
@@ -78,17 +75,11 @@ const thenContents = await Promise.all(thenPosts.map(post => render(post)));
 								return (
 									<div class="border-b-2 border-stone-100">
 										<div class="flex items-center gap-4">
-											<span class="shrink-0">
-												<svg width="35" height="35" viewBox="0 0 45 45" fill="none" xmlns="http://www.w3.org/2000/svg">
-													<path d="M22.5 0C34.9264 0 45 10.0736 45 22.5C45 34.9264 34.9264 45 22.5 45C10.0736 45 0 34.9264 0 22.5C0 10.0736 10.0736 0 22.5 0ZM22.5 2C11.1782 2 2 11.1782 2 22.5C2 33.8218 11.1782 43 22.5 43C33.8218 43 43 33.8218 43 22.5C43 11.1782 33.8218 2 22.5 2ZM23 8C31.2843 8 38 14.7157 38 23C38 31.2843 31.2843 38 23 38C14.7157 38 8 31.2843 8 23C8 14.7157 14.7157 8 23 8Z" fill="url(#paint0_radial_236_524)"/>
-													<defs>
-														<radialGradient id="paint0_radial_236_524" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(23 23) rotate(90) scale(52.5)"><stop stop-color="#004A8F"/><stop offset="1" stop-color="#004A8F" stop-opacity="0"/></radialGradient>
-													</defs>
-												</svg>
+											<div class="h-8 w-8 rounded-4xl border-4 border-konpeki"></div>
 											</span>
 											<h2 class="text-5xl">{post.data.Month}</h2>
 										</div>
-										<p class="mx-12 font-3xl text-lg my-5 font-serif">{post.data.OneLiner}</p>
+										<p class="mx-12 text-xl mt-2 mb-5 font-sans">{post.data.OneLiner}</p>
 										<div class="mx-12 prose-neutral prose-lg max-w-3xl prose-headings:font-sans prose-p:font-serif prose-p:text-syoro prose-img:w-[95%] prose-img:aspect-auto prose-headings:text-konpeki prose-h4:uppercase prose-h3:uppercase prose-strong:text-pink-500 prose-h5:uppercase prose-h4:font-bold prose-h5:font-bold prose-blockquote:font-handwriting prose-blockquote:leading-auto prose-ul:font-serif prose-li:font-serif prose-ul:list-disc prose-ol:list-decimal prose-blockquote:text-yellow-600 prose-blockquote:italic text-base md:text-lg prose-h1:mt-10 md:prose-h1:mt-14 prose-h2:mt-8 md:prose-h2:mt-10 prose-h3:mt-6 md:prose-h3:mt-8 prose-h4:mt-3 md:prose-h4:mt-3 prose-headings:mb-5 prose-a:text-link prose-a:underline prose-a:hover:line-through prose-a:underline-offset-8">
 											{Content && <Content />}
 										</div>
