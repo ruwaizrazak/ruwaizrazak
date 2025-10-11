@@ -71,43 +71,86 @@ const sortedTags = [...tags.filter(tag => tag !== 'all').sort()];
         </div>
       </div>
       <div class="mt-10">
-        <div class="flex flex-wrap justify-between content-start gap-4 mb-4 items-center">
-          {showTags && (
-            <div class="flex flex-wrap justify-start gap-4 mb-8">
-              {sortedTags.map((tag, index) => (
-                <Tag
-                  tag={tag}
-                  isActive={tag === currentTag}
-                  index={index}
-                />
-              ))}
-            </div>
-          )}
+        <div class="flex flex-row gap-4 mb-4 justify-between items-center">
+          <div class="flex flex-row">
+            
+            {showTags && (
+              <>
+                {/* Desktop/Tablet: Tag system with show more */}
+                <div class="md:flex items-center h-9 hidden">
+                  <h4 class="text-lg uppercase border-l-2 pl-1 pr-5 border-konpeki ">Topics</h4>
+                </div>
+                
+                <div class="hidden md:block">
+                  <div class="flex flex-wrap justify-start gap-4 mr-10 mb-5">
+                    {sortedTags.slice(0, 10).map((tag, index) => (
+                      <Tag
+                        tag={tag}
+                        isActive={tag === currentTag}
+                        index={index}
+                      />
+                    ))}
+                    {sortedTags.length > 10 && (
+                      <button
+                        id="showMoreTags" 
+                        class="px-4 py-2 text-sm border border-gray-300 border-dashed transition-all duration-200 hover:-skew-x-6  hover:bg-gray-200"
+                      >
+                        +{sortedTags.length - 10} more
+                      </button>
+                    )}
+                  </div>
+                  {sortedTags.length > 10 && (
+                    <div id="additionalTags" class="flex-wrap justify-start gap-4 mb-5" style="display: none;">
+                      {sortedTags.slice(10).map((tag, index) => (
+                        <Tag
+                          tag={tag}
+                          isActive={tag === currentTag}
+                          index={index + 10}
+                        />
+                      ))}
+                      <button 
+                        id="showLessTags" 
+                        class="px-4 py-2 text-sm border border-gray-300 border-dashed transition-all duration-200 hover:-skew-x-6 bg-gray-100 hover:bg-gray-200"
+                      >
+                        show less
+                      </button>
+                    </div>
+                  )}
+                </div>
 
-<style>
-  @keyframes slideIn {
-    from {
-      opacity: 0;
-      transform: translateX(-20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(0);
-    }
-  }
+                {/* Mobile: Dropdown menu */}
+                <div class="md:hidden">
+                  <div class="relative inline-block">
+                    <select 
+                      id="tagDropdown" 
+                      class="px-4 py-2 text-sm border border-syoro hover:bg-yellow-50 text-syoro cursor-pointer bg-transparent appearance-none pr-10"
+                    >
+                      <option value="all">All Topics</option>
+                      {sortedTags.map(tag => (
+                        <option value={tag}>
+                          {tag.charAt(0).toUpperCase() + tag.slice(1)}
+                        </option>
+                      ))}
+                    </select>
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
+                      <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
 
-  .animate-slide-in {
-    animation: slideIn 0.5s ease-out forwards;
-    opacity: 0;
-  }
-</style>
+          </div>
+          
 
           {showCollections && collections.length > 1 && (
             <div class="relative inline-block self-start">
-              <select class="collection-filter px-4 py-2 text-sm border border-gray-200 hover:bg-yellow-50 text-gray-500 cursor-pointer bg-transparent appearance-none pr-10">
+              <select class="collection-filter px-4 py-2 text-sm border border-syoro hover:bg-yellow-50 text-syoro cursor-pointer bg-transparent appearance-none pr-10">
                 {collections.map(collection => (
                   <option value={collection}>
-                    {collection.charAt(0).toUpperCase() + collection.slice(1)}
+                    {collection === 'all' ? 'All Posts' : collection.charAt(0).toUpperCase() + collection.slice(1)}
                   </option>
                 ))}
               </select>
@@ -126,13 +169,10 @@ const sortedTags = [...tags.filter(tag => tag !== 'all').sort()];
               {post.collection === 'books' ? (
                 <BookCard
                   title={post.data.title}
-                  description={post.data.description || 'No description available'}
-                  pubDate={post.data.pubDate}
                   url={`/books/${post.id}/`}
                   heroImage={post.data.heroImage || '/placeholder-book.jpg'}
                   author={post.data.author || 'Unknown Author'}
                   readStatus={post.data.readStatus || 'to-read'}
-                  maturity={post.data.maturity}
                 />
               ) : post.collection === 'essays' ? (
                 <EssayCard
@@ -195,14 +235,44 @@ const sortedTags = [...tags.filter(tag => tag !== 'all').sort()];
 
         <script>
           function initializeFilters() {
-            const collectionFilter = document.querySelector('.collection-filter');
-            const posts = document.querySelectorAll('.post-item');
+            const collectionFilter = document.querySelector('.collection-filter') as HTMLSelectElement;
+            const tagDropdown = document.querySelector('#tagDropdown') as HTMLSelectElement;
+            const showMoreBtn = document.querySelector('#showMoreTags') as HTMLButtonElement;
+            const showLessBtn = document.querySelector('#showLessTags') as HTMLButtonElement;
+            const additionalTags = document.querySelector('#additionalTags') as HTMLElement;
+            const posts = document.querySelectorAll('.post-item') as NodeListOf<HTMLElement>;
             let currentCollection = 'all';
+            let currentTag = 'all';
 
             // Make all posts visible initially
             posts.forEach(post => {
               post.style.display = 'block';
             });
+
+            // Initialize tag show more/less functionality
+            if (showMoreBtn && additionalTags) {
+              showMoreBtn.addEventListener('click', () => {
+                additionalTags.style.display = 'flex';
+                showMoreBtn.style.display = 'none';
+              });
+            }
+
+            if (showLessBtn && additionalTags && showMoreBtn) {
+              showLessBtn.addEventListener('click', () => {
+                additionalTags.style.display = 'none';
+                showMoreBtn.style.display = 'inline-block';
+              });
+            }
+
+            // Initialize tag dropdown for mobile
+            if (tagDropdown) {
+              tagDropdown.value = 'all';
+              tagDropdown.addEventListener('change', (e) => {
+                const target = e.target as HTMLSelectElement;
+                currentTag = target.value;
+                filterPosts();
+              });
+            }
 
             // Initialize collection filter
             if (collectionFilter) {
@@ -210,17 +280,44 @@ const sortedTags = [...tags.filter(tag => tag !== 'all').sort()];
               collectionFilter.value = 'all';
 
               collectionFilter.addEventListener('change', (e) => {
-                currentCollection = e.target.value;
+                const target = e.target as HTMLSelectElement;
+                currentCollection = target.value;
                 filterPosts();
               });
             }
 
+            // Add click handlers for desktop tag links
+            const tagLinks = document.querySelectorAll('a[data-tag]') as NodeListOf<HTMLAnchorElement>;
+            tagLinks.forEach(link => {
+              link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const tag = link.dataset.tag;
+                
+                // Update active states
+                tagLinks.forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+                
+                // Update dropdown if it exists
+                if (tagDropdown && tag) {
+                  tagDropdown.value = tag;
+                }
+                
+                if (tag) {
+                  currentTag = tag;
+                  filterPosts();
+                }
+              });
+            });
+
             function filterPosts() {
               posts.forEach(post => {
                 const postCollection = post.dataset.collection;
+                const postTags = post.dataset.tags ? post.dataset.tags.split(' ') : [];
+                
                 const matchesCollection = currentCollection === 'all' || postCollection === currentCollection;
+                const matchesTag = currentTag === 'all' || postTags.includes(currentTag);
 
-                if (matchesCollection) {
+                if (matchesCollection && matchesTag) {
                   post.style.display = 'block';
                 } else {
                   post.style.display = 'none';
