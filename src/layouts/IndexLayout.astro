@@ -190,36 +190,6 @@ const sortedTags = [...tags.filter(tag => tag !== 'all').sort()];
                   url={`/works/${post.id}/`}
                   heroImage={post.data.heroImage}
                 />
-              ) : post.collection === 'mastodon' ? (
-                <MastodonPostCard
-                  title={post.data.title}
-                  description={post.data.description || 'No description available'}
-                  pubDate={post.data.pubDate}
-                  url={post.data.url}
-                  tags={post.data.tags}
-                  profileImage={post.data.profileImage}
-                  media={post.data.media}
-                  engagement={post.data.engagement}
-                  spoilerText={post.data.spoilerText}
-                  language={post.data.language}
-                  visibility={post.data.visibility}
-                  isReply={post.data.isReply}
-                  isReblog={post.data.isReblog}
-                  hasPoll={post.data.hasPoll}
-                  hasCard={post.data.hasCard}
-                  customEmojis={post.data.customEmojis}
-                  mentions={post.data.mentions}
-                />
-              ) : post.collection === 'pixelfed' ? (
-                <PixelfedCard
-                  title={post.data.title}
-                  description={post.data.description || 'No description available'}
-                  pubDate={post.data.pubDate}
-                  url={post.data.url}
-                  tags={post.data.tags}
-                  profileImage={post.data.profileImage}
-                  media={post.data.media}
-                />
               ) : (
                 <NoteCard
                   title={post.data.title}
