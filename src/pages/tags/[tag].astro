@@ -1,87 +1,9 @@
 ---
 import { getCollection } from 'astro:content';
 import IndexLayout from '../../layouts/IndexLayout.astro';
-import { XMLParser } from 'fast-xml-parser';
-import { fetchMastodonPosts } from '../../utils/mastodonApi';
+
 
 export async function getStaticPaths() {
-  // Initialize XML parser for feeds
-  const parser = new XMLParser({
-    ignoreAttributes: false,
-    attributeNamePrefix: "@_",
-    textNodeName: "_text",
-    parseAttributeValue: true,
-    parseTagValue: true
-  });
-
-  // Fetch Mastodon posts using API
-  let mastodonPosts: any[] = [];
-  try {
-    mastodonPosts = await fetchMastodonPosts('ruwaizrazak', 'mastodon.social', 20);
-  } catch (error) {
-    console.warn('Failed to fetch Mastodon posts:', error);
-  }
-
-  // Fetch Pixelfed Atom feed
-  let pixelfedPosts = [];
-  try {
-    const pixelfedResponse = await fetch('https://pixelfed.social/users/ruwaiz.atom');
-    if (pixelfedResponse.ok) {
-      const pixelfedXmlData = await pixelfedResponse.text();
-      const pixelfedFeed = parser.parse(pixelfedXmlData);
-
-      if (pixelfedFeed?.feed?.entry) {
-        const entries = Array.isArray(pixelfedFeed.feed.entry)
-          ? pixelfedFeed.feed.entry
-          : [pixelfedFeed.feed.entry];
-
-        pixelfedPosts = entries.map((entry: any) => {
-          let description = '';
-          if (entry.content) {
-            if (entry.content._text) {
-              description = entry.content._text.replace(/<[^>]*>/g, '');
-            } else if (typeof entry.content === 'string') {
-              description = entry.content.replace(/<[^>]*>/g, '');
-            }
-          } else if (entry.summary) {
-            if (entry.summary._text) {
-              description = entry.summary._text.replace(/<[^>]*>/g, '');
-            } else if (typeof entry.summary === 'string') {
-              description = entry.summary.replace(/<[^>]*>/g, '');
-            }
-          }
-
-          let media = null;
-          if (entry['media:content']) {
-            media = {
-              url: entry['media:content']['@_url'],
-              type: entry['media:content']['@_type']
-            };
-          }
-
-          return {
-            collection: 'pixelfed',
-            id: entry.id,
-            data: {
-              title: entry.title || new Date(entry.updated).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-              }),
-              profileImage: pixelfedFeed.feed.icon || '',
-              description: description,
-              pubDate: new Date(entry.updated),
-              url: entry.link?.['@_href'] || entry.id,
-              media: media,
-              tags: entry.category ? (Array.isArray(entry.category) ? entry.category.map((cat: any) => cat.term) : [entry.category.term]) : []
-            }
-          };
-        });
-      }
-    }
-  } catch (error) {
-    console.warn('Failed to fetch Pixelfed Atom feed:', error);
-  }
 
   const [notes, essays, works, books] = await Promise.all([
     getCollection('notes', ({ data }) => data.publish === true),
@@ -94,9 +16,7 @@ export async function getStaticPaths() {
     ...notes.map(post => ({ ...post, collection: 'notes' })),
     ...essays.map(post => ({ ...post, collection: 'essays' })),
     ...works.map(post => ({ ...post, collection: 'works' })),
-    ...books.map(post => ({ ...post, collection: 'books' })),
-    ...mastodonPosts,
-    ...pixelfedPosts
+    ...books.map(post => ({ ...post, collection: 'books' }))
   ];
 
   const uniqueTags = [...new Set(allPosts.flatMap(post => post.data.tags || []))];
@@ -106,7 +26,7 @@ export async function getStaticPaths() {
     props: {
       posts: allPosts.filter(post => post.data.tags?.includes(tag)),
       tag,
-      collections: ['all', 'notes', 'essays', 'works', 'books', 'mastodon', 'pixelfed']
+      collections: ['all', 'notes', 'essays', 'works', 'books']
     }
   }));
 }
