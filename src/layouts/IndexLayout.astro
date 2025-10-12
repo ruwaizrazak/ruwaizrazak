@@ -9,6 +9,7 @@ import EssayCard from '../components/EssayCard.astro';
 import GradientHeading from '../components/mdxComponents/gradientHeading.astro';
 import Tag from '../components/Tag.astro';
 import { ClientRouter } from "astro:transitions";
+import BreadcrumbCard from '../components/BreadcrumbCard.astro';
 
 
 interface Props {
@@ -187,6 +188,14 @@ const sortedTags = [...tags.filter(tag => tag !== 'all').sort()];
                   period={post.data.period || ''}
                   url={`/works/${post.id}/`}
                   heroImage={post.data.heroImage}
+                />
+              ) : post.collection === 'breadcrumbs' ? (
+              <BreadcrumbCard
+                  title={post.data.title}
+                  description={post.data.description || 'No description available'}
+                  pubDate={post.data.pubDate}
+                  url={`/${post.collection}/${post.id}/`}
+                  maturity={post.data.maturity}
                 />
               ) : (
                 <NoteCard

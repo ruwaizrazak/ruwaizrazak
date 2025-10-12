@@ -1,0 +1,52 @@
+---
+// NoteCard.astro - Reusable card component for notes
+export interface Props {
+  title: string;
+  description?: string;
+  pubDate: Date;
+  url: string;
+  maturity?: 'seed' | 'plant' | 'tree';
+}
+
+import { getMaturityIcon } from '../utils/maturityIcons';
+
+const {
+  title = 'Untitled',
+  description = '',
+  pubDate,
+  url,
+  maturity
+} = Astro.props;
+
+const formattedDate = new Date(pubDate).toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric'
+});
+
+const maturityIcon = maturity ? getMaturityIcon(maturity) : null;
+---
+
+<div class="group hover:scale-95 transition-all duration-200">
+  <a href={url} class="block p-5 border-b-1 border-syoro border-opacity-10 border-dashed relative">
+    
+    <div class="flex gap-2 py-2">
+      <img src="/icons/breadcrumbs.svg" alt="seed icon" class="w-6 h-auto">
+      <h5 class="text-base text-syoro font-medium opacity-80 uppercase">Breadcrumbs</h5>
+    </div>
+    
+    <h3 class="uppercase sm:capitalize text-lg md:text-xl lg:text-2xl text-konpeki group-hover:text-link font-sans font-medium mb-2">{title}</h3>
+    {description && <p class="text-base md:text-lg text-syoro mb-4 font-serif">{description}</p>}
+    <div class="text-base text-syoro opacity-50 mt-2 uppercase flex items-center gap-2">
+      {formattedDate}
+      {maturity && (
+        <div class="absolute right-3 flex gap-2 items-center px-2 py-1">
+          {maturityIcon && (
+            <img src={maturityIcon} alt={`${maturity} maturity`} class="w-4 h-auto" />
+          )}
+          <span class="text-base font-sans uppercase text-syoro">{maturity}</span>
+        </div>
+      )}
+    </div>
+  </a>
+</div>

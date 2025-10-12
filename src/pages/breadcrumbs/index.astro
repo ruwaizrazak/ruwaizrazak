@@ -1,0 +1,40 @@
+---
+import BaseHead from '../../components/BaseHead.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
+import { getCollection } from 'astro:content';
+import IndexLayout from '../../layouts/IndexLayout.astro';
+
+// Fetch all collections
+const [breadcrumbs] = await Promise.all([
+  getCollection('breadcrumbs', ({ data }) => data.publish === true)
+]);
+
+// Combine and sort all posts
+const allBreadcrumbs = [
+  ...breadcrumbs.map(post => ({ ...post, collection: 'breadcrumbs' }))
+].sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+// Get unique tags from all posts
+const allTags = ['all', ...new Set(allBreadcrumbs.flatMap(post => post.data.tags || []))].sort();
+const collections = ['all', 'notes', 'essays', 'casestudies', 'books','breadcrumbs'];
+---
+
+<IndexLayout
+  title="Breadcrumbs"
+  description="These are the breadcrumbs i picked from internet or the thoughts lingering in my brain"
+  posts={allBreadcrumbs}
+  tags={allTags}
+  collections={collections}
+  icon="/icons/breadcrumbs.svg"
+/>
+
+<style>
+	.masonry-grid {
+		column-gap: 1rem;
+	}
+	.break-inside-avoid {
+		break-inside: avoid;
+	}
+</style>

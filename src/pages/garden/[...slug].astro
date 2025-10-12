@@ -9,12 +9,14 @@ export async function getStaticPaths() {
   const essays = await getCollection('essays');
   const casestudies = await getCollection('casestudies');
   const books = await getCollection('books');
+  const breadcrumbs = await getCollection('breadcrumbs');
 
   const allCollections = [
     ...notes.map(post => ({ collection: 'notes', ...post })),
     ...essays.map(post => ({ collection: 'essays', ...post })),
     ...casestudies.map(post => ({ collection: 'casestudies', ...post })),
-    ...books.map(post => ({ collection: 'books', ...post }))
+    ...books.map(post => ({ collection: 'books', ...post })),
+    ...breadcrumbs.map(post => ({ collection: 'breadcrumbs', ...post }))
   ];
 
   return allCollections.map((post) => ({
@@ -22,7 +24,7 @@ export async function getStaticPaths() {
     props: post,
   }));
 }
-type Props = CollectionEntry<'notes' | 'essays' | 'casestudies' | 'books'>;
+type Props = CollectionEntry<'notes' | 'essays' | 'casestudies' | 'books' | 'breadcrumbs'>;
 
 const post = Astro.props;
 const { Content } = await render(post);

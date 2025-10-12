@@ -37,6 +37,14 @@ const notes = defineCollection({
   schema: baseSchema,
 });
 
+const breadcrumbs = defineCollection({
+  loader: glob({
+    base: './src/content/breadcrumbs',
+    pattern: '**/*.{md,mdx}',
+  }),
+  schema: baseSchema,
+});
+
 const works = defineCollection({
   loader: glob({
     base: './src/content/works',
@@ -117,5 +125,6 @@ export const collections = {
   books,
   live,
   series,
-  seriesPosts, // Posts inside each series folder (filters will exclude index files in pages)
+  seriesPosts,
+  breadcrumbs // Posts inside each series folder (filters will exclude index files in pages)
 };
