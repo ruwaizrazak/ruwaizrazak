@@ -9,6 +9,8 @@ tags: ["portfolio"]
 order: 1
 ---
 
+This series is designed for complete beginners who want to learn web development from scratch. We'll start with HTML structure, move through CSS styling, and finish with JavaScript interactivity.
+
 This series is a collection of notes tracing my evolving relationship with web. From the first time I published to building my current site with Astro. 
 
 Each phase marks a a set of jigsaws I have found yet in my life. The jigsaw of learning, design, code and expression. I might find new ones and they might end up here.
