@@ -13,12 +13,6 @@ import GradientHeading from '../../components/mdxComponents/gradientHeading.astr
 const localBooks = await getCollection('books', ({ data }) => data.publish === true);
 
 // Fetch Goodreads "Want to Read" books
-let goodreadsBooks: any[] = [];
-try {
-  goodreadsBooks = await fetchGoodreadsWantToRead('50949105-ruwaiz-razak', 12);
-} catch (error) {
-  console.warn('Failed to fetch Goodreads books:', error);
-}
 
 // Combine and sort all books for the main layout
 const allBooks = [
@@ -102,25 +96,7 @@ const collections = ['all', 'notes', 'essays', 'casestudies', 'books'];
           </h2>
           <p class="text-gray-600 text-xl  mb-6">Books from my Goodreads "Want to Read" shelf.</p>
 
-          {goodreadsBooks.length > 0 ? (
-            <div class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-10">
-              {goodreadsBooks.map((book) => (
-                <GoodreadsBookCard
-                  title={book.title}
-                  author={book.author}
-                  heroImage={book.heroImage}
-                  url={book.url}
-                  description={book.description}
-                  averageRating={book.averageRating}
-                />
-              ))}
-            </div>
-          ) : (
-            <div class="text-center py-8 text-gray-500">
-              <p>No books in your "Want to Read" shelf.</p>
-              <p class="text-sm mt-2">Make sure your Goodreads profile is public.</p>
-            </div>
-          )}
+          
         </div>
       </div>
     </main>
