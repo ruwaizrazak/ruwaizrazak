@@ -50,20 +50,6 @@ const works = defineCollection({
   }),
 });
 
-const books = defineCollection({
-  loader: glob({
-    base: './src/content/books',
-    pattern: '**/*.{md,mdx}',
-  }),
-  schema: baseSchema.extend({
-    author: z.string(),
-    rating: z.number().min(1).max(5).optional(),
-    readStatus: z
-      .enum(['reading', 'completed', 'to-read'])
-      .default('to-read'),
-  }),
-});
-
 // UPDATED: Series collection for nested structure using index files
 // Structure: src/content/series/<series-slug>/index.(md|mdx)
 const series = defineCollection({
