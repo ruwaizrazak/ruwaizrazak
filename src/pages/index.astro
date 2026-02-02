@@ -67,14 +67,6 @@ const works = (await getCollection('works', ({ data }) => data.publish === true)
   .sort(sortByDateDesc)
   .slice(0, 10);
 
-const books = (await getCollection('books', ({ data }) => data.publish === true))
-  .filter(post => post.data.featured === true && post.data.pubDate)
-  .map(post => ({
-    ...post,
-    slug: createStandardSlug(post)
-  }))
-  .sort(sortByDateDesc)
-  .slice(0, 10);
 
 
 
@@ -126,11 +118,6 @@ const books = (await getCollection('books', ({ data }) => data.publish === true)
               href="/series"
               title="Series"
               description="Episodal writings, less refined, more detailed"
-            /></li>
-            <li><GardenLink
-              href="/books"
-              title="Books"
-              description="I've read, Currently Reading and my notes on them."
             /></li>
             <li><GardenLink
               href="/garden"

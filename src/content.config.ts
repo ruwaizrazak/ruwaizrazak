@@ -100,7 +100,6 @@ export const collections = {
   essays,
   notes,
   works,
-  books,
   live,
   series,
   seriesPosts, // Posts inside each series folder (filters will exclude index files in pages)
