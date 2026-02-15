@@ -19,28 +19,42 @@ import { ClientRouter } from "astro:transitions";
 		<Header />
 		<main class="w-full sm:w-[90%] lg:w-[90%] xl:w-[80%] 2xl:w-[70%] mx-auto">
       <!--Hero Section -->
-      <div class="text-center py-20">
-        <h1 class="text-4xl font-medium">Hi, I'm Ruwaiz</h1>
-        <p class="text-xl font-serif w-3/5 mx-auto pt-5">Interdisciplinary product designer at an intersection of strategy, data, motion, interaction design and amateur development.</p>
-      </div>
-      <div class="grid grid-cols-4 gap-4">
-        <div class="col-span-1">
-          <DataCard
-            header="Works"
-            description="Glimpse at my previous works"
-            icon="/icons/Work.svg"
-          />
+      <section class="align-center">
+        <div class="text-center py-20 mx-auto">
+          <h1 class="text-4xl font-medium">Hi, I'm Ruwaiz</h1>
+          <p class="text-xl font-serif w-3/5 mx-auto pt-5">Interdisciplinary product designer at an intersection of strategy, data, motion, interaction design and amateur development.</p>
         </div>
-        <div class="col-span-1">
-          <p>I'm a product designer at an intersection of strategy, data, motion, interaction design and amateur development.</p>
+        <div class="cards-spread flex justify-center gap-10 w-[80%] mx-auto" id="cards-spread-container">
+          <div class="card-spread-item">
+            <DataCard
+              header="Works"
+              description="Glimpse at my previous works"
+              icon="/icons/Work.svg"
+            />
+          </div>
+          <div class="card-spread-item">
+            <DataCard
+              header="Works"
+              description="Glimpse at my previous works"
+              icon="/icons/Work.svg"
+            />
+          </div>
+          <div class="card-spread-item">
+            <DataCard
+              header="Works"
+              description="Glimpse at my previous works"
+              icon="/icons/Work.svg"
+            />
+          </div>
+          <div class="card-spread-item">
+            <DataCard
+              header="Works"
+              description="Glimpse at my previous works"
+              icon="/icons/Work.svg"
+            />
+          </div>
         </div>
-        <div class="col-span-1">
-          <p>I'm a product designer at an intersection of strategy, data, motion, interaction design and amateur development.</p>
-        </div>
-        <div class="col-span-1">
-          <p>I'm a product designer at an intersection of strategy, data, motion, interaction design and amateur development.</p>
-        </div>
-      </div>
+      </section>
 </div>
 
 
@@ -48,3 +62,64 @@ import { ClientRouter } from "astro:transitions";
 		<Footer />
 	</body>
 </html>
+
+<script>
+  import gsap from 'gsap';
+
+  function runCardSpread() {
+    const container = document.getElementById('cards-spread-container');
+    if (!container) return;
+
+    const cards = container.querySelectorAll('.card-spread-item');
+    if (cards.length === 0) return;
+
+    // Respect reduced motion
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      return;
+    }
+
+    // Wait for layout to be ready before measuring
+    requestAnimationFrame(() => {
+      const positions = Array.from(cards).map((el) => el.getBoundingClientRect());
+      const firstLeft = positions[0].left;
+
+      // Start: stack all cards at the first card position (spread-from-first reference)
+      gsap.set(cards, {
+        x: (i) => firstLeft - positions[i].left,
+        opacity: 0,
+        scale: 0.92,
+      });
+
+      // Animate to final positions with stagger for fan-out effect
+      gsap.to(cards, {
+        x: 0,
+        opacity: 1,
+        scale: 1,
+        duration: 0.6,
+        stagger: 0.1,
+        ease: 'power2.out',
+        overwrite: true,
+      });
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', runCardSpread);
+  } else {
+    runCardSpread();
+  }
+
+  document.addEventListener('astro:page-load', runCardSpread);
+</script>
+
+<style>
+  .card-spread-item {
+    /* Initial state set by GSAP; no CSS animation so GSAP controls the spread */
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .card-spread-item {
+      opacity: 1;
+    }
+  }
+</style>
