@@ -1,0 +1,37 @@
+---
+export interface Props {
+  text: string;
+  icon: string;
+  iconAlt?: string;
+  href?: string;
+}
+
+const { text, icon, iconAlt = 'Avatar', href } = Astro.props;
+---
+
+{href ? (
+  <a href={href} class="inline-block mb-4 group">
+    <div class="flex justify-end">
+      <div class="chat-bubble-bg flex items-center gap-3 px-5 py-3 min-h-[3.5rem] group-hover:opacity-95 transition-opacity">
+        <img src={icon} alt={iconAlt} class="w-10 h-10 rounded-full shrink-0" />
+        <p class="text-xl m-0">{text}</p>
+      </div>
+    </div>
+  </a>
+) : (
+  <div class="flex justify-end mb-4">
+    <div class="chat-bubble-bg flex items-center gap-3 px-5 py-3 min-h-[3.5rem]">
+      <img src={icon} alt={iconAlt} class="w-10 h-10 rounded-full shrink-0" />
+      <p class="text-xl m-0">{text}</p>
+    </div>
+  </div>
+)}
+
+<style>
+  .chat-bubble-bg {
+    background-image: url('/icons/iosbubble.svg');
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    background-position: center;
+  }
+</style>

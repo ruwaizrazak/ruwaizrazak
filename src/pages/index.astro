@@ -7,6 +7,7 @@ import Link from '../components/mdxComponents/Link.astro';
 import DataCard from '../components/DataCard.astro';
 import { getCollection } from 'astro:content';
 import { ClientRouter } from "astro:transitions";
+import ChatBubble from '../components/chatBubble.astro';
 ---
 
 <!doctype html>
@@ -21,37 +22,45 @@ import { ClientRouter } from "astro:transitions";
       <!--Hero Section -->
       <section class="align-center">
         <div class="text-center py-20 mx-auto">
-          <h1 class="text-4xl font-medium">Hi, I'm Ruwaiz</h1>
+          <h1 class="text-4xl font-medium">Hi, I'm Ruwaiz <span><ChatBubble text="Lets Connect?" icon="/icons/mail.svg" href="mailto:ruwaizrazak@gmail.com"/></span></h1>
           <p class="text-xl font-serif w-3/5 mx-auto pt-5">Interdisciplinary product designer at an intersection of strategy, data, motion, interaction design and amateur development.</p>
         </div>
-        <div class="cards-spread flex justify-center gap-10 w-[80%] mx-auto" id="cards-spread-container">
+        <div class="cards-spread flex justify-center gap-5 mx-auto" id="cards-spread-container">
           <div class="card-spread-item">
-            <DataCard
-              header="Works"
-              description="Glimpse at my previous works"
-              icon="/icons/Work.svg"
-            />
+            <div class="card-spread-inner">
+              <DataCard
+                header="Works"
+                description="Glimpse at my previous works"
+                icon="/icons/Work.svg"
+              />
+            </div>
           </div>
           <div class="card-spread-item">
-            <DataCard
-              header="Works"
-              description="Glimpse at my previous works"
-              icon="/icons/Work.svg"
-            />
+            <div class="card-spread-inner">
+              <DataCard
+                header="Resume"
+                description="Glimpse at my previous works"
+                icon="/icons/Work.svg"
+              />
+            </div>
           </div>
           <div class="card-spread-item">
-            <DataCard
-              header="Works"
-              description="Glimpse at my previous works"
-              icon="/icons/Work.svg"
-            />
+            <div class="card-spread-inner">
+              <DataCard
+                header="Garden"
+                description="Glimpse at my previous works"
+                icon="/icons/Work.svg"
+              />
+            </div>
           </div>
           <div class="card-spread-item">
-            <DataCard
-              header="Works"
-              description="Glimpse at my previous works"
-              icon="/icons/Work.svg"
-            />
+            <div class="card-spread-inner">
+              <DataCard
+                header="Live"
+                description="Glimpse at my previous works"
+                icon="/icons/Work.svg"
+              />
+            </div>
           </div>
         </div>
       </section>
@@ -70,54 +79,82 @@ import { ClientRouter } from "astro:transitions";
     const container = document.getElementById('cards-spread-container');
     if (!container) return;
 
-    const cards = container.querySelectorAll('.card-spread-item');
+    const cards = container.querySelectorAll('.card-spread-inner');
     if (cards.length === 0) return;
 
-    // Respect reduced motion
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       return;
     }
 
-    // Wait for layout to be ready before measuring
     requestAnimationFrame(() => {
-      const positions = Array.from(cards).map((el) => el.getBoundingClientRect());
-      const firstLeft = positions[0].left;
+      requestAnimationFrame(() => {
+        const containerRect = container.getBoundingClientRect();
+        const items = container.querySelectorAll('.card-spread-item');
+        const positions = Array.from(items).map((el) => el.getBoundingClientRect());
+        const centerX = containerRect.left + containerRect.width / 2;
 
-      // Start: stack all cards at the first card position (spread-from-first reference)
-      gsap.set(cards, {
-        x: (i) => firstLeft - positions[i].left,
-        opacity: 0,
-        scale: 0.92,
-      });
+        if (containerRect.width === 0) return;
 
-      // Animate to final positions with stagger for fan-out effect
-      gsap.to(cards, {
-        x: 0,
-        opacity: 1,
-        scale: 1,
-        duration: 0.6,
-        stagger: 0.1,
-        ease: 'power2.out',
-        overwrite: true,
+        // Phase 1: all cards stacked at center (invisible, small)
+        // Animate .card-spread-inner so flex layout (.card-spread-item) is untouched
+        gsap.set(cards, {
+          x: (i) => centerX - (positions[i].left + positions[i].width / 2),
+          opacity: 0,
+          scale: 0.85,
+          transformOrigin: '50% 50%',
+          force3D: true,
+        });
+
+        requestAnimationFrame(() => {
+          const tl = gsap.timeline();
+
+          // Phase 1: appear at center (fade in + scale up, still stacked)
+          tl.to(cards, {
+            opacity: 1,
+            scale: 1,
+            duration: .5,
+            ease: 'power2.out',
+          });
+
+          // Phase 2: spread in both directions from center (stagger from center outward)
+          tl.to(cards, {
+            x: 0,
+            duration: 0.55,
+            stagger: { each: 0.08, from: 'center' },
+            ease: 'power2.out',
+            force3D: true,
+          }, '-=0.1');
+        });
       });
     });
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', runCardSpread);
-  } else {
-    runCardSpread();
+  function init() {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', () => setTimeout(runCardSpread, 80));
+    } else {
+      setTimeout(runCardSpread, 80);
+    }
   }
 
-  document.addEventListener('astro:page-load', runCardSpread);
+  init();
+  document.addEventListener('astro:page-load', () => setTimeout(runCardSpread, 80));
 </script>
 
 <style>
   .card-spread-item {
-    /* Initial state set by GSAP; no CSS animation so GSAP controls the spread */
+    /* Flex item; no transform here so layout is stable */
+  }
+
+  .card-spread-inner {
+    /* GSAP animates this (x, scale, opacity) so we avoid Tailwind/transform conflicts */
+    will-change: transform;
   }
 
   @media (prefers-reduced-motion: reduce) {
+    .card-spread-inner {
+      will-change: auto;
+    }
     .card-spread-item {
       opacity: 1;
     }

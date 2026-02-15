@@ -9,7 +9,7 @@ export interface Props {
 
 const { header, description, icon, iconAlt = header, href } = Astro.props;
 
-const cardClasses = "data-card bg-cardbg border border-card-border shadow-lg rounded-lg p-5 w-4/5 hover:scale-95 transition-all duration-300";
+const cardClasses = "data-card bg-cardbg border border-card-border shadow-lg rounded-lg p-5 w-full hover:scale-95 transition-all duration-300";
 ---
 
 {href ? (
