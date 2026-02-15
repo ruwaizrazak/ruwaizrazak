@@ -22,7 +22,7 @@ import ChatBubble from '../components/chatBubble.astro';
       <!--Hero Section -->
       <section class="align-center">
         <div class="text-center py-20 mx-auto">
-          <h1 class="text-4xl font-medium">Hi, I'm Ruwaiz <span><ChatBubble text="Lets Connect?" icon="/icons/mail.svg" href="mailto:ruwaizrazak@gmail.com"/></span></h1>
+          <h1 class="text-4xl font-medium translate-x-5">Hi, I'm Ruwaiz <span id="hero-connect-bubble" class="hero-connect-bubble inline-block -translate-y-5!"><ChatBubble text="Lets Connect?" icon="/icons/mail.svg" href="mailto:ruwaizrazak@gmail.com"/></span></h1>
           <p class="text-xl font-serif w-3/5 mx-auto pt-5">Interdisciplinary product designer at an intersection of strategy, data, motion, interaction design and amateur development.</p>
         </div>
         <div class="cards-spread flex justify-center gap-5 mx-auto" id="cards-spread-container">
@@ -40,7 +40,7 @@ import ChatBubble from '../components/chatBubble.astro';
               <DataCard
                 header="Resume"
                 description="Glimpse at my previous works"
-                icon="/icons/Work.svg"
+                icon="/icons/About.svg"
               />
             </div>
           </div>
@@ -49,7 +49,7 @@ import ChatBubble from '../components/chatBubble.astro';
               <DataCard
                 header="Garden"
                 description="Glimpse at my previous works"
-                icon="/icons/Work.svg"
+                icon="/icons/garden.svg"
               />
             </div>
           </div>
@@ -58,7 +58,7 @@ import ChatBubble from '../components/chatBubble.astro';
               <DataCard
                 header="Live"
                 description="Glimpse at my previous works"
-                icon="/icons/Work.svg"
+                icon="/icons/Live.svg"
               />
             </div>
           </div>
@@ -95,8 +95,9 @@ import ChatBubble from '../components/chatBubble.astro';
 
         if (containerRect.width === 0) return;
 
-        // Phase 1: all cards stacked at center (invisible, small)
-        // Animate .card-spread-inner so flex layout (.card-spread-item) is untouched
+        const connectBubble = document.getElementById('hero-connect-bubble');
+
+        // Phase 1: all cards stacked at center (invisible, small); hide connect bubble until after spread
         gsap.set(cards, {
           x: (i) => centerX - (positions[i].left + positions[i].width / 2),
           opacity: 0,
@@ -104,7 +105,6 @@ import ChatBubble from '../components/chatBubble.astro';
           transformOrigin: '50% 50%',
           force3D: true,
         });
-
         requestAnimationFrame(() => {
           const tl = gsap.timeline();
 
@@ -112,7 +112,7 @@ import ChatBubble from '../components/chatBubble.astro';
           tl.to(cards, {
             opacity: 1,
             scale: 1,
-            duration: .5,
+            duration: 0.5,
             ease: 'power2.out',
           });
 
@@ -124,6 +124,20 @@ import ChatBubble from '../components/chatBubble.astro';
             ease: 'power2.out',
             force3D: true,
           }, '-=0.1');
+
+          // Phase 3: show "Lets Connect?" bubble after cards have spread
+          if (connectBubble) {
+            tl.fromTo(connectBubble, {
+              opacity: 0,
+              scale: 0.3,
+              transformOrigin: '50% 50%',
+            }, {
+              opacity: 1,
+              scale: 1,
+              duration: 0.5,
+              ease: 'elastic.out(1, 0.5)',
+            }, '-=0.05');
+          }
         });
       });
     });
@@ -151,11 +165,19 @@ import ChatBubble from '../components/chatBubble.astro';
     will-change: transform;
   }
 
+  /* Hidden until GSAP timeline shows it after card spread */
+  .hero-connect-bubble {
+    opacity: 0;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .card-spread-inner {
       will-change: auto;
     }
     .card-spread-item {
+      opacity: 1;
+    }
+    .hero-connect-bubble {
       opacity: 1;
     }
   }
