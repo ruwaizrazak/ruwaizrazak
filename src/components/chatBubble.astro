@@ -12,9 +12,9 @@ const { text, icon, iconAlt = 'Avatar', href } = Astro.props;
 {href ? (
   <a href={href} class="inline-block mb-4 group">
     <div class="flex justify-end">
-      <div class="chat-bubble-bg flex items-center gap-3 px-5 py-3 min-h-[3.5rem] group-hover:opacity-95 transition-opacity">
-        <img src={icon} alt={iconAlt} class="w-10 h-10 rounded-full shrink-0" />
-        <p class="text-xl m-0">{text}</p>
+      <div class="chat-bubble-bg flex items-center gap-3 px-5 py-3 min-h-[3.5rem] group-hover:opacity-95 transition-opacity text-white">
+        <img src={icon} alt={iconAlt} class="w-6 h-6 rounded-full shrink-0" />
+        <p class="text-lg m-0 ">{text}</p>
       </div>
     </div>
   </a>
