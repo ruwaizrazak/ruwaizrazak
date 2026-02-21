@@ -15,7 +15,7 @@ const isExternal = href?.startsWith('http');
   <a
     href={href}
     class:list={[
-      "styled-link",
+      "styled-link","font-medium","font-serif",
       { "styled-link--active": isActive },
       className
     ]}
@@ -43,7 +43,6 @@ const isExternal = href?.startsWith('http');
     white-space: nowrap;
     text-decoration: none;
     outline: none;
-    font-family: var(--font-sans);
     color: var(--color-link);
     padding-bottom: 0.25rem;
   }
