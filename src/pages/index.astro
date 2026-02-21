@@ -27,10 +27,11 @@ const renderedWorks = await Promise.all(
         <ClientRouter />
 	</head>
 	<body class="bg-backgroundcolor">
-		<Header />
+		
 		<main class="w-full px-20">
+      <Header />
     <section id="Intro-text">
-      <p class="text-syoro font-serif text-2xl w-1/2 mt-0.5 opacity-0" style="animation: HeroSectionIntro 0.7s ease-in-out 0.3s forwards;">I design and prototype systems that help people stay consistent over time. <span>Currently building something cool at <Link href="https://nordeus.com/" class="text-link">Nordeus.</Link></span></p>
+      <p class="text-syoro font-serif text-xl md:text-2xl w-full sm:w-2/3 md:w-1/2 mt-0.5 opacity-0" style="animation: HeroSectionIntro 0.7s ease-in-out 0.3s forwards;">I design and prototype systems that help people stay consistent over time. <span>Currently building something cool at <Link href="https://nordeus.com/" class="text-link">Nordeus.</Link></span></p>
     </section>
     <section
       class="rounded-xl bg-white p-5 mt-10 work-cards-container"
