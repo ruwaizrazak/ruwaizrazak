@@ -3,7 +3,6 @@ import { getCollection, render } from 'astro:content';
 import BaseHead from '../../components/BaseHead.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
-import GradientHeading from '../../components/mdxComponents/gradientHeading.astro';
 import Image from '../../components/mdxComponents/Image.astro';
 import Tag from '../../components/Tag.astro';
 import NoteMain from '../../components/NoteMain.astro';
@@ -78,7 +77,7 @@ const seoTitle = activePart ? `${activePart.data.title} · ${seriesDoc?.data.tit
 
         {kind === 'series' && seriesDoc && (
           <section class="mt-8">
-            <GradientHeading size="xl">{seriesDoc.data.title}</GradientHeading>
+            <h1>{seriesDoc.data.title}</h1>
             <p class="text-lg sm:text-xl mt-0 font-serif italic">{seriesDoc.data.description}</p>
             <hr class="w-full my-8 border-stone-100" />
 

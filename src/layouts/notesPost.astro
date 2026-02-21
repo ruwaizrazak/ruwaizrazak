@@ -5,16 +5,11 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import Main from '../components/Main.astro';
 import NoteMain from '../components/NoteMain.astro';
-import P from '../components/mdxComponents/P.astro';
-import H2 from '../components/mdxComponents/H2.astro';
-import H1 from '../components/mdxComponents/H1.astro';
-import H3 from '../components/mdxComponents/H3.astro';
 import Image from '../components/mdxComponents/Image.astro';
 import PostMeta from '../components/mdxComponents/PostMeta.astro';
 import { getMaturityIcon } from '../utils/maturityIcons';
 import Link from '../components/mdxComponents/Link.astro'
 // Removed TableOfContents import
-import GradientHeading from '../components/mdxComponents/gradientHeading.astro';
 import Tag from '../components/Tag.astro';
 
 
@@ -65,7 +60,7 @@ const currentCollection = Astro.url.pathname.includes('/essays')
                 </div>
                 <div class="md:w-3/4 items-center gap-2 flex w-full mx-auto">
                   
-                  <GradientHeading size="lg" className="text-center my-0 w-[80%] mx-auto">{title}</GradientHeading>
+                  <h1>{title}</h1>
                   </div>
                 
                 <p class="text-syoro w-full sm:w-[80%] lg:w-[60%] mx-auto text-center text-lg md:text-xl italic font-serif">{description}</p>

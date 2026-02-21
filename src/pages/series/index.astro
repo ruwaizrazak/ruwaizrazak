@@ -5,11 +5,8 @@ import Footer from '../../components/Footer.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
 import { getCollection } from 'astro:content';
 import Main from '../../components/Main.astro';
-import H1 from '../../components/mdxComponents/H1.astro';
-import H2 from '../../components/mdxComponents/H2.astro';
 import P from '../../components/mdxComponents/P.astro';
 import NoteMain from '../../components/NoteMain.astro';
-import GradientHeading from '../../components/mdxComponents/gradientHeading.astro';
 import Link from '../../components/mdxComponents/Link.astro';
 import Tag from '../../components/Tag.astro';
 import { render } from 'astro:content';
@@ -65,7 +62,7 @@ const seriesWithPosts = sortedSeries.map(series => {
 					</a>
 				</div>
 				
-				<GradientHeading size="xl">Series</GradientHeading>
+				<h1>Series</h1>
 				<p class="text-lg sm:text-xl mt-0 font-serif italic">Explore content organized by series and themes</p>
 				
 				<hr class="w-full my-8 border-stone-100">
@@ -76,7 +73,7 @@ const seriesWithPosts = sortedSeries.map(series => {
 						<div class="flex items-center gap-4 mb-6">
 							
 							<div>
-								<GradientHeading size="md">{series.data.title}</GradientHeading>
+								<h1>{series.data.title}</h1>
 								<p class="text-stone-600 mt-2 text-lg w-3/4">{series.data.description}</p>
 							</div>
 						</div>

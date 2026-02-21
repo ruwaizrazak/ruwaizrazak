@@ -2,14 +2,10 @@
 import Layout from '../layouts/AboutLayout.astro';
 
 import Image from '../components/mdxComponents/Image.astro';
-import P from '../components/mdxComponents/P.astro';
 import Link from '../components/mdxComponents/Link.astro';
-import H3 from '../components/mdxComponents/H3.astro';
-import GradientHeading from '../components/mdxComponents/gradientHeading.astro';
-import Button from '../components/Button.astro';
 import CareerTimeline from '../components/CareerTimeline.astro';
-import GradientLine from '../components/mdxComponents/gradientLine.astro';
 import ToSinglePost from '../components/mdxComponents/ToSinglePost.astro';
+import Button from '../components/Button.astro';
 ---
 
 <Layout
@@ -21,8 +17,7 @@ import ToSinglePost from '../components/mdxComponents/ToSinglePost.astro';
         <div>
           <div class="flex flex-row">
             <div class="flex flex-col">
-              <GradientHeading size='xl' className='w-full'>
-                Designer, Learner and Builder</GradientHeading>
+              <h3>Designer, Learner and Builder</h3>
                 <div class="flex flex-row -mt-10"></div>
               <p class="w-full md:w-[80%] mx-auto lg:mx-0 text-lg lg:text-left sm:text-xl mt-0 font-serif">
                 “At the intersection of UX, systems thinking, interactive development, and data analysis, I combine research, prototyping, and data-driven insights to craft purposeful, player-centered experiences.<br><br>
@@ -47,8 +42,6 @@ import ToSinglePost from '../components/mdxComponents/ToSinglePost.astro';
           <div>
             <div class="timeline-container relative mt-20">
               <div class="flex flex-row gap-8">
-                <GradientHeading size="lg" className="mb-8 sm:whitespace-nowrap">Career Timeline</GradientHeading>
-                <GradientLine angle={45} startPercentage={20} endPercentage={80} className="h-[60px] w-[80%]" direction='rtl'/>
               </div>
               {
                 // Define items inline for now; could be moved to a separate data file later
@@ -126,8 +119,7 @@ import ToSinglePost from '../components/mdxComponents/ToSinglePost.astro';
             </div>
             <div>
               <div class="flex flex-row gap-8 mt-20">
-                <GradientHeading size="lg" className="mb-8 sm:whitespace-nowrap">Case Studies</GradientHeading>
-                <GradientLine angle={45} startPercentage={20} endPercentage={80} className="h-[60px] w-[80%]" direction='rtl'/>
+                <h1>Case Studies</h1>
                 
                 </div>
                 <p class="text-xl font-serif w-2/3 mt-0">While I can’t share what I did at my previous companies, I can give a glimpse on my process and the project I worked on.</p>
