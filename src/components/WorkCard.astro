@@ -1,36 +1,86 @@
 ---
-// WorkCard.astro - Reusable card component for work items
-export interface Props {
-  title: string;
-  period: string;
-  heroImage?: string;
-  imageAlt?: string;
-  url: string;
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  entry: CollectionEntry<'works'>;
 }
 
-const {
-  title,
-  period,
-  heroImage,
-  imageAlt = title,
-  url
-} = Astro.props;
+const { entry } = Astro.props;
+if (!entry?.data) return null;
+const { data } = entry;
+const { company, role, duration, heroImage, title } = data;
+const slug = entry.id;
+const href = `/works/${slug}`;
+const bgImage = heroImage;
 ---
 
-<div class="group w-full">
-  <a href={url} class="block overflow-hidden transition-all duration-300 hover:scale-95 rounded-lg border border-card-border bg-cardbg">
-    <div class="transform-gpu transition-all duration-300 ease-out items-center justify-center">
-      <div class="items-center justify-between flex">
-        <img
-          src={heroImage}
-          alt={imageAlt}
-          class="w-full h-auto p-5 object-cover rounded-b-none transition-all duration-300"
-        />
-      </div>
-      <div class="mt-0 py-5 px-3 space-y-3 items-center justify-center text-center">
-        <h3 class="text-lg md:text-xl lg:text-2xl font-medium text-konpeki group-hover:text-link font-serif mb-0 -mt-5">{title}</h3>
-        <p class="text-base text-syoro uppercase mt-0">{period}</p>
+<a
+  href={href}
+  class="work-card-container group block relative w-full aspect-[4/3] min-h-[200px] rounded-xl overflow-visible"
+  style="perspective: 800px"
+>
+  {Array.from({ length: 25 }, (_, i) => (
+    <div class={`work-card-tracker tr-${i + 1}`} />
+  ))}
+  <div
+    class="work-card absolute inset-0 z-0 flex flex-col justify-end rounded-xl transition-transform duration-125 ease-[cubic-bezier(0.4,0,0.2,1)] [transform-style:preserve-3d]"
+    style={bgImage ? `background-image: url('${bgImage}'); background-size: cover; background-position: center;` : 'background: #374151;'}
+  >
+    <div class="absolute bottom-0 w-full flex flex-col justify-end bg-white/70 backdrop-blur-sm shadow-lg p-5">
+      <div class="flex flex-row items-center justify-between">
+        <div class="flex flex-col">
+          <h2 class="text-syoro font-serif text-xl">{title} | {company}</h2>
+          <h3 class="text-syoro font-sans text-lg">{role}</h3>
+        </div>
+        <div class="flex flex-row place-self-end">
+          {duration && (
+            <p class="text-syoro font-sans text-sm">
+              {duration}
+              <span class="hidden group-hover:inline text-xl ml-1">→</span>
+            </p>
+          )}
+        </div>
       </div>
     </div>
-  </a>
-</div>
+  </div>
+</a>
+
+<style>
+  .work-card-container {
+    cursor: pointer;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+  }
+
+  .work-card-tracker {
+    position: relative;
+    z-index: 10;
+  }
+
+  .tr-1:hover ~ .work-card { transform: rotateX(20deg) rotateY(-10deg); }
+  .tr-2:hover ~ .work-card { transform: rotateX(20deg) rotateY(-5deg); }
+  .tr-3:hover ~ .work-card { transform: rotateX(20deg) rotateY(0deg); }
+  .tr-4:hover ~ .work-card { transform: rotateX(20deg) rotateY(5deg); }
+  .tr-5:hover ~ .work-card { transform: rotateX(20deg) rotateY(10deg); }
+  .tr-6:hover ~ .work-card { transform: rotateX(10deg) rotateY(-10deg); }
+  .tr-7:hover ~ .work-card { transform: rotateX(10deg) rotateY(-5deg); }
+  .tr-8:hover ~ .work-card { transform: rotateX(10deg) rotateY(0deg); }
+  .tr-9:hover ~ .work-card { transform: rotateX(10deg) rotateY(5deg); }
+  .tr-10:hover ~ .work-card { transform: rotateX(10deg) rotateY(10deg); }
+  .tr-11:hover ~ .work-card { transform: rotateX(0deg) rotateY(-10deg); }
+  .tr-12:hover ~ .work-card { transform: rotateX(0deg) rotateY(-5deg); }
+  .tr-13:hover ~ .work-card { transform: rotateX(0deg) rotateY(0deg); }
+  .tr-14:hover ~ .work-card { transform: rotateX(0deg) rotateY(5deg); }
+  .tr-15:hover ~ .work-card { transform: rotateX(0deg) rotateY(10deg); }
+  .tr-16:hover ~ .work-card { transform: rotateX(-10deg) rotateY(-10deg); }
+  .tr-17:hover ~ .work-card { transform: rotateX(-10deg) rotateY(-5deg); }
+  .tr-18:hover ~ .work-card { transform: rotateX(-10deg) rotateY(0deg); }
+  .tr-19:hover ~ .work-card { transform: rotateX(-10deg) rotateY(5deg); }
+  .tr-20:hover ~ .work-card { transform: rotateX(-10deg) rotateY(10deg); }
+  .tr-21:hover ~ .work-card { transform: rotateX(-20deg) rotateY(-10deg); }
+  .tr-22:hover ~ .work-card { transform: rotateX(-20deg) rotateY(-5deg); }
+  .tr-23:hover ~ .work-card { transform: rotateX(-20deg) rotateY(0deg); }
+  .tr-24:hover ~ .work-card { transform: rotateX(-20deg) rotateY(5deg); }
+  .tr-25:hover ~ .work-card { transform: rotateX(-20deg) rotateY(10deg); }
+</style>
