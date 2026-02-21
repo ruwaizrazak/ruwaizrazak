@@ -3,7 +3,6 @@ import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import NoteCard from '../components/NoteCard.astro';
-import BookCard from '../components/BookCard.astro';
 import WorkCard from '../components/WorkCard.astro';
 import EssayCard from '../components/EssayCard.astro';
 import GradientHeading from '../components/mdxComponents/gradientHeading.astro';
@@ -182,12 +181,7 @@ const sortedTags = [...tags.filter(tag => tag !== 'all').sort()];
                   maturity={post.data.maturity}
                 />
               ) : post.collection === 'works' ? (
-                <WorkCard
-                  title={post.data.title}
-                  period={post.data.period || ''}
-                  url={`/works/${post.id}/`}
-                  heroImage={post.data.heroImage}
-                />
+                <WorkCard entry={post} />
               ) : (
                 <NoteCard
                   title={post.data.title}
