@@ -4,6 +4,7 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import Link from '../components/mdxComponents/Link.astro';
 import WorkCard from '../components/WorkCard.astro';
+import WorkModal from '../components/WorkModal.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 import { getCollection } from 'astro:content';
 import { ClientRouter } from "astro:transitions";
@@ -30,17 +31,30 @@ const works = await getCollection('works', ({ data }) => data.publish);
     >
       <h2 class="text-syoro opacity-50 font-sans text-lg uppercase">Selected works</h2>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-10 mt-5">
-        {works.map((entry, i) => (
-          <div
-            class="work-card-intro opacity-0"
-            style={`animation: workCardIntro 0.5s ease-out forwards; animation-delay: ${400 + i * 350}ms;`}
-          >
-            <WorkCard entry={entry} />
-          </div>
-        ))}
+        {works.map((entry, i) => {
+          const { data } = entry;
+          return (
+            <div
+              class="work-card-intro opacity-0 work-card-trigger cursor-pointer"
+              style={`animation: workCardIntro 0.5s ease-out forwards; animation-delay: ${400 + i * 350}ms;`}
+              data-work-slug={entry.id}
+              data-work-href={`/works/${entry.id}`}
+              data-work-title={data.title}
+              data-work-company={data.company}
+              data-work-role={data.role ?? ''}
+              data-work-duration={data.duration ?? ''}
+              data-work-description={data.description ?? ''}
+              data-work-hero={data.heroImage ?? ''}
+            >
+              <WorkCard entry={entry} />
+            </div>
+          );
+        })}
       </div>
     </section>
 		</main>
+
+    <WorkModal />
 		<Footer />
 	</body>
 </html>
@@ -79,4 +93,110 @@ const works = await getCollection('works', ({ data }) => data.publish);
     }
   }
 </style>
+
+<script>
+  import gsap from 'gsap';
+
+  function initWorkModal() {
+    const triggers = document.querySelectorAll('.work-card-trigger');
+    const modal = document.getElementById('work-modal');
+    const backdrop = document.getElementById('work-modal-backdrop');
+    const panel = document.getElementById('work-modal-panel');
+    const closeBtn = document.getElementById('work-modal-close');
+    const titleEl = document.getElementById('work-modal-title');
+    const iframeEl = document.getElementById('work-modal-iframe');
+
+    if (!modal || !panel || !triggers.length || !iframeEl) return;
+
+    let isOpen = false;
+    let activeTrigger = null;
+
+    function openModal(triggerEl) {
+      if (isOpen) return;
+      isOpen = true;
+
+      const rect = triggerEl.getBoundingClientRect();
+      const slug = triggerEl.dataset.workSlug;
+      const title = triggerEl.dataset.workTitle || '';
+      const company = triggerEl.dataset.workCompany || '';
+      const embedUrl = `/embed/works/${slug}`;
+
+      titleEl && (titleEl.textContent = `${title} | ${company}`);
+      iframeEl.src = embedUrl;
+
+      triggerEl.classList.add('work-card-trigger-hidden');
+      triggerEl.style.visibility = 'hidden';
+
+      modal.style.pointerEvents = 'auto';
+      modal.style.opacity = '1';
+
+      gsap.set(panel, {
+        top: rect.top,
+        left: rect.left,
+        width: rect.width,
+        height: rect.height,
+        opacity: 1,
+      });
+      gsap.set(backdrop, { opacity: 0 });
+
+      gsap.to(backdrop, { opacity: 1, duration: 0.3, ease: 'power2.out' });
+      gsap.to(panel, {
+        top: '50%',
+        left: '50%',
+        xPercent: -50,
+        yPercent: -50,
+        width: Math.min(900, window.innerWidth - 48),
+        height: Math.min(720, window.innerHeight - 96),
+        duration: 0.5,
+        ease: 'power3.out',
+        overwrite: true,
+      });
+      activeTrigger = triggerEl;
+    }
+
+    function closeModal() {
+      if (!isOpen) return;
+      const rect = activeTrigger?.getBoundingClientRect();
+
+      gsap.to(backdrop, { opacity: 0, duration: 0.2 });
+      gsap.to(panel, {
+        top: rect?.top ?? window.innerHeight / 2,
+        left: rect?.left ?? window.innerWidth / 2,
+        xPercent: rect ? 0 : -50,
+        yPercent: rect ? 0 : -50,
+        width: rect?.width ?? 0,
+        height: rect?.height ?? 0,
+        duration: 0.35,
+        ease: 'power2.in',
+        onComplete: () => {
+          iframeEl.src = 'about:blank';
+          activeTrigger?.classList.remove('work-card-trigger-hidden');
+          activeTrigger && (activeTrigger.style.visibility = '');
+          modal.style.pointerEvents = 'none';
+          modal.style.opacity = '0';
+          isOpen = false;
+          activeTrigger = null;
+        },
+      });
+    }
+
+    triggers.forEach((el) => {
+      el.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        openModal(el);
+      });
+    });
+
+    closeBtn?.addEventListener('click', (e) => {
+      e.preventDefault();
+      closeModal();
+    });
+    backdrop?.addEventListener('click', closeModal);
+    document.addEventListener('keydown', (e) => e.key === 'Escape' && closeModal());
+  }
+
+  document.addEventListener('DOMContentLoaded', initWorkModal);
+  document.addEventListener('astro:page-load', initWorkModal);
+</script>
 
