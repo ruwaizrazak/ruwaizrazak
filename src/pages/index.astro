@@ -22,12 +22,12 @@ const works = await getCollection('works', ({ data }) => data.publish);
 		<Header />
 		<main class="w-full px-20">
     <section id="Intro-text">
-      <p class="text-syoro font-serif text-2xl w-1/2 mt-0.5 opacity-0" style="animation: HeroSectionIntro 0.6s ease-out 0.2s forwards;">I design and prototype systems that help people stay consistent over time. <span>Currently building something cool at <Link href="https://nordeus.com/" class="text-link">Nordeus.</Link></span></p>
+      <p class="text-syoro font-serif text-2xl w-1/2 mt-0.5 opacity-0" style="animation: HeroSectionIntro 0.7s ease-in-out 0.3s forwards;">I design and prototype systems that help people stay consistent over time. <span>Currently building something cool at <Link href="https://nordeus.com/" class="text-link">Nordeus.</Link></span></p>
     </section>
     <section
       class="rounded-xl bg-white p-5 mt-10 work-cards-container"
       id="Works"
-      style="animation: selectedSectionIntro 0.6s ease-out 0.2s forwards;"
+      style="animation: selectedSectionIntro 0.7s ease-in-out 0.3s forwards;"
     >
       <h2 class="text-syoro opacity-50 font-sans text-lg uppercase">Selected works</h2>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-10 mt-5">
@@ -35,8 +35,7 @@ const works = await getCollection('works', ({ data }) => data.publish);
           const { data } = entry;
           return (
             <div
-              class="work-card-intro opacity-0 work-card-trigger cursor-pointer"
-              style={`animation: workCardIntro 0.5s ease-out forwards; animation-delay: ${400 + i * 350}ms;`}
+              class="work-card-intro work-card-trigger cursor-pointer"
               data-work-slug={entry.id}
               data-work-href={`/works/${entry.id}`}
               data-work-title={data.title}
@@ -51,6 +50,7 @@ const works = await getCollection('works', ({ data }) => data.publish);
           );
         })}
       </div>
+      <h2 class="text-syoro opacity-50 font-sans text-lg uppercase rotate-180">Selected works</h2>
     </section>
 		</main>
 
@@ -73,19 +73,8 @@ const works = await getCollection('works', ({ data }) => data.publish);
 
   @keyframes selectedSectionIntro {
     from {
-      opacity: 0;
-      transform: translateY(50px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @keyframes workCardIntro {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
+      opacity: 0.5;
+      transform: translateY(70px);
     }
     to {
       opacity: 1;
