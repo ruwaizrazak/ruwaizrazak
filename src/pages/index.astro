@@ -5,11 +5,19 @@ import Footer from '../components/Footer.astro';
 import Link from '../components/mdxComponents/Link.astro';
 import WorkCard from '../components/WorkCard.astro';
 import WorkModal from '../components/WorkModal.astro';
+import ExternalLink from '../components/mdxComponents/ExternalLink.astro';
+import Image from '../components/mdxComponents/Image.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
-import { getCollection } from 'astro:content';
+import { getCollection, render } from 'astro:content';
 import { ClientRouter } from "astro:transitions";
 
 const works = await getCollection('works', ({ data }) => data.publish);
+const renderedWorks = await Promise.all(
+  works.map(async (entry) => {
+    const { Content } = await render(entry);
+    return { entry, Content };
+  })
+);
 ---
 
 <!doctype html>
@@ -54,7 +62,29 @@ const works = await getCollection('works', ({ data }) => data.publish);
     </section>
 		</main>
 
-    <WorkModal />
+    <WorkModal>
+      {renderedWorks.map(({ entry, Content }) => {
+        const { data } = entry;
+        const { title, description, heroImage } = data;
+        return (
+          <div
+            id={`work-content-${entry.id}`}
+            class="work-modal-content hidden h-full min-h-0 overflow-y-auto p-6"
+          >
+            <article class="prose prose-neutral prose-lg max-w-3xl mx-auto prose-headings:font-sans prose-p:font-serif prose-p:text-syoro prose-img:w-[95%] prose-img:aspect-auto prose-headings:text-konpeki prose-h4:uppercase prose-h3:uppercase prose-strong:text-pink-500 prose-h5:uppercase prose-h4:font-bold prose-h5:font-bold prose-blockquote:font-handwriting prose-blockquote:leading-auto prose-ul:font-serif prose-li:font-serif prose-ul:list-disc prose-ol:list-decimal prose-blockquote:text-yellow-600 prose-blockquote:italic text-base md:text-lg prose-h1:mt-4 prose-h2:mt-6 prose-h3:mt-4 prose-h4:mt-3 prose-headings:mb-4">
+              <h1 class="text-konpeki font-serif text-2xl">{title}</h1>
+              <p class="text-syoro italic">{description}</p>
+              {heroImage && (
+                <div class="my-6">
+                  <Image src={heroImage} alt="" class="w-full h-auto object-cover rounded-lg" loading="eager" />
+                </div>
+              )}
+              <Content components={{ a: ExternalLink }} />
+            </article>
+          </div>
+        );
+      })}
+    </WorkModal>
 		<Footer />
 	</body>
 </html>
@@ -84,106 +114,7 @@ const works = await getCollection('works', ({ data }) => data.publish);
 </style>
 
 <script>
-  import gsap from 'gsap';
-
-  function initWorkModal() {
-    const triggers = document.querySelectorAll('.work-card-trigger');
-    const modal = document.getElementById('work-modal');
-    const backdrop = document.getElementById('work-modal-backdrop');
-    const panel = document.getElementById('work-modal-panel');
-    const closeBtn = document.getElementById('work-modal-close');
-    const titleEl = document.getElementById('work-modal-title');
-    const iframeEl = document.getElementById('work-modal-iframe');
-
-    if (!modal || !panel || !triggers.length || !iframeEl) return;
-
-    let isOpen = false;
-    let activeTrigger = null;
-
-    function openModal(triggerEl) {
-      if (isOpen) return;
-      isOpen = true;
-
-      const rect = triggerEl.getBoundingClientRect();
-      const slug = triggerEl.dataset.workSlug;
-      const title = triggerEl.dataset.workTitle || '';
-      const company = triggerEl.dataset.workCompany || '';
-      const embedUrl = `/embed/works/${slug}`;
-
-      titleEl && (titleEl.textContent = `${title} | ${company}`);
-      iframeEl.src = embedUrl;
-
-      triggerEl.classList.add('work-card-trigger-hidden');
-      triggerEl.style.visibility = 'hidden';
-
-      modal.style.pointerEvents = 'auto';
-      modal.style.opacity = '1';
-
-      gsap.set(panel, {
-        top: rect.top,
-        left: rect.left,
-        width: rect.width,
-        height: rect.height,
-        opacity: 1,
-      });
-      gsap.set(backdrop, { opacity: 0 });
-
-      gsap.to(backdrop, { opacity: 1, duration: 0.3, ease: 'power2.out' });
-      gsap.to(panel, {
-        top: '50%',
-        left: '50%',
-        xPercent: -50,
-        yPercent: -50,
-        width: Math.min(900, window.innerWidth - 48),
-        height: Math.min(720, window.innerHeight - 96),
-        duration: 0.5,
-        ease: 'power3.out',
-        overwrite: true,
-      });
-      activeTrigger = triggerEl;
-    }
-
-    function closeModal() {
-      if (!isOpen) return;
-      const rect = activeTrigger?.getBoundingClientRect();
-
-      gsap.to(backdrop, { opacity: 0, duration: 0.2 });
-      gsap.to(panel, {
-        top: rect?.top ?? window.innerHeight / 2,
-        left: rect?.left ?? window.innerWidth / 2,
-        xPercent: rect ? 0 : -50,
-        yPercent: rect ? 0 : -50,
-        width: rect?.width ?? 0,
-        height: rect?.height ?? 0,
-        duration: 0.35,
-        ease: 'power2.in',
-        onComplete: () => {
-          iframeEl.src = 'about:blank';
-          activeTrigger?.classList.remove('work-card-trigger-hidden');
-          activeTrigger && (activeTrigger.style.visibility = '');
-          modal.style.pointerEvents = 'none';
-          modal.style.opacity = '0';
-          isOpen = false;
-          activeTrigger = null;
-        },
-      });
-    }
-
-    triggers.forEach((el) => {
-      el.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        openModal(el);
-      });
-    });
-
-    closeBtn?.addEventListener('click', (e) => {
-      e.preventDefault();
-      closeModal();
-    });
-    backdrop?.addEventListener('click', closeModal);
-    document.addEventListener('keydown', (e) => e.key === 'Escape' && closeModal());
-  }
+  import { initWorkModal } from '../scripts/work-modal';
 
   document.addEventListener('DOMContentLoaded', initWorkModal);
   document.addEventListener('astro:page-load', initWorkModal);
