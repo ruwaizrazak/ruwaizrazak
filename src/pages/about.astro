@@ -12,133 +12,16 @@ import Button from '../components/Button.astro';
 	title="Curious, Multidisciplinary Designer"
 	description="Lorem ipsum dolor sit amet"
 >
-    <section class="mb-20 sm:mt-10 lg:mt-30">
-      <div class="flex flex-col md:flex-row gap-8">
-        <div>
-          <div class="flex flex-row">
-            <div class="flex flex-col">
-              <h3>Designer, Learner and Builder</h3>
-                <div class="flex flex-row -mt-10"></div>
-              <p class="w-full md:w-[80%] mx-auto lg:mx-0 text-lg lg:text-left sm:text-xl mt-0 font-serif">
-                “At the intersection of UX, systems thinking, interactive development, and data analysis, I combine research, prototyping, and data-driven insights to craft purposeful, player-centered experiences.<br><br>
-                Currently building something exciting at Nordeus, and previously shaping player experiences at Zynga and Glu Mobile.”
-              </p>
-              <div class="flex-col my-10 space-x-5">
-                <Button href="mailto:hello@ruwaizrazak.com" variant='primary'>
-                  Mail Me
-                </Button>
-                <Button href="/ruwaizcv.pdf" target={'_blank'}>
-                  Download CV
-                </Button>
-              </div>
-            </div>
-           
-              <img src="/about/ruwaiz1.jpg" alt="Profile picture" class="w-1/3 h-auto object-cover"></img>
-            
-          </div>
-          
-          
-          
-          <div>
-            <div class="timeline-container relative mt-20">
-              <div class="flex flex-row gap-8">
-              </div>
-              {
-                // Define items inline for now; could be moved to a separate data file later
-              }
-              <CareerTimeline
-                items={[
-                  {
-                    role: 'Senior UX Designer',
-                    company: 'Nordeus',
-                    period: '2024–Present',
-                    description: ['Building something cool with other Nordeans',
-                    'Collaborating with cross-functional teams and UX researchers to ensure accessibility, usability, and data-informed solutions at every stage of development.'
-                    ,'Maintaining cross-team design documentation to ensure seemless collaborations.'],
-                    present: true,
-                    url:'https://nordeus.com/',
-                  },
-                  {
-                    role: 'Senior UX Designer',
-                    company: 'Zynga',
-                    period: '2023–2024',
-                    description: [
-                    'Redesigned navigation and FTUE to improve new-user retention.',
-                    'Presented design strategies to stakeholders and collaborated across disciplines.',
-                    'Mentored interns and associates, fostering growth in UX craft and process.',
-                    'Defined and validated A/B tests with measurable KPIs.',
-                    'Enhanced the end-to-end player journey by uncovering and resolving friction points.'
-                     ],
-                    url:'https://www.zynga.com/',
-                  },
-                  {
-                    role: 'UX Designer',
-                    company: 'Zynga',
-                    period: '2021–2023',
-                    description:[
-                    'Contributed to Farmville 3’s UX transition from an external studio to Zynga.',
-                    'Revamped ad-watching flows to boost engagement and retention.',
-                    'Built Figma + Unity design systems to streamline workflows.',
-                    'Developed in-game survey systems to capture player insights at scale.',
-                    'Designed and implemented Unity prefabs for Farmville 3 and Empires & Allies.',
-                    'Shipped and scaled features on global titles (Farmville 3, Empires & Allies, Deer Hunter)', 
-                    'leading design initiatives across onboarding, engagement, monetization, and live-ops while bridging UX with development through design systems, survey tools, and prefabs.'
-                    ],
-                      url:'https://www.zynga.com/',
-                  },
-                  {
-                    role: 'Associate UX Designer',
-                    company: 'Zynga',
-                    period: '2019–2021',
-                    description:[
-                     'Designed features using competitive analysis, UX research, and iteration.',
-                     'Partnered with PMs and game designers to align UX with business goals.',
-                     'Built Unity prefabs and integrated Figma animations into Unity.',
-                     'Built a scalable feature resulting in improved engagement and retention of elder players',
-                     'Acted as Associate PM (Q1 2021), supporting revenue KPIs and roadmaps.',
-                     'Collaborates with community managers to make informed decisions about player painpoints and aspirations  '
-                    ],
-                      url:'https://www.zynga.com/',
-                  },
-                  {
-                    role: 'Associate UX Designer',
-                    company: 'Glu Mobile',
-                    period: '2018–2019',
-                    description:
-                    [  'Contributed to multiple live-ops games to optimize KPIs',
-                      'Conducted funnel analysis on onboarding, reducing churn and boosting retention.',
-                      'Designed and delivered features with wireframes, prototypes, and usability tests.',
-                      'Defined VFX/SFX specifications to improve feature polish and player delight.',
-                      'Facilitated multiple play tests using playtest cloud to analyze user inputes and formulated actionable reports',
-                      'Conducted both quantitative and qualitative surveys using data dashboards and survey monkey to make data informed decisions',
-                    ]
+    <section class="prose dark:prose-invert mx-auto prose-p:font-serif prose-p:text-syoro prose-p:text-xl">
+      <p>I started building before I knew what design was.</p>  
 
-                  },
-                ]}
-              />
-            </div>
-            <div>
-              <div class="flex flex-row gap-8 mt-20">
-                <h1>Case Studies</h1>
-                
-                </div>
-                <p class="text-xl font-serif w-2/3 mt-0">While I can’t share what I did at my previous companies, I can give a glimpse on my process and the project I worked on.</p>
-                <div class="p-5 mx-auto mt-10">
-                  <ToSinglePost
-                  title="Deer Hunter 2018"
-                  subtitle="ASSOCIATE USER EXPERIENCE DESIGNER"
-                  company="GLU"
-                  description="We built tournament systems to address the low engagement from elder users, after conducting multiple focus groups, market analysis, qualitative and quantitative surveys. Here is a sneak peek"
-                  imageSrc="/casestudies/DeerHunter2018.png"
-                  url="/works/deerhunter2018"
-                  />
-  
-              </div>
-            </div>
-              
-          </div>
-        </div>
-      </div>
-    </section>
+<p>In school, while others were memorizing formulas, I was opening up Blogspot templates and pulling them apart. I didn’t know the word “UX.” I didn’t know there were people whose careers revolved around interaction and systems. I only knew that if I changed a few lines of HTML, the page transformed. A sidebar disappeared. A header shifted. Colors obeyed. It felt close to magic — not mystical, but procedural. You typed something. The world responded.</p>
+
+<p>That early instinct wasn’t about aesthetics. It was about control and cause. If something felt off, I wanted to understand why. If something didn’t exist, I wanted to see if I could make it exist. Static sites, Jekyll experiments, broken layouts that took hours to debug — they were less about building websites and more about learning how systems behave. Looking back, that was design thinking before I had language for it.</p>
+
+<p>Years later, in large-scale mobile games, the same curiosity resurfaced — just at a different resolution. Instead of sidebars and headers, I was looking at retention curves and progression loops. Why does a player return on day seven but not day three? Why does a small feedback delay reduce completion rates? In environments where millions of interactions compound daily, weak assumptions surface quickly. I became less interested in isolated screens and more interested in incentives, clarity, and momentum. Design, to me, became the architecture of behavior over time.</p>
+
+<p>Building remained constant. I prototype not because I need to ship production code, but because thinking sharpens when it meets constraints. HTML, CSS, JavaScript, SwiftUI — they are tools to shorten the distance between idea and evidence. And now, AI sits alongside them. Not as a replacement for judgment, but as an accelerator of curiosity. It allows me to test more variants, simulate more systems, question more defaults. Software has always felt like a wand — something that turns intention into reality. The difference today is speed. The responsibility, however, remains the same: to build systems that are thoughtful, intentional, and worth interacting with.</p>
+          </section>
 
 </Layout>
