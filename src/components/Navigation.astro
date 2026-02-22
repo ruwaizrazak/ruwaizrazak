@@ -95,7 +95,7 @@ const {
   <!-- Desktop Dropdown Menu (md and up) -->
   <div 
     id="desktop-dropdown" 
-    class="hidden md:block absolute my-2 top-full md:w-[60%] lg:w-[50%] right-10 bg-white dark:bg-cardbg shadow-lg rounded-xl stransform opacity-0 scale-95 transition-all duration-200 ease-out border border-card-border backdrop-blur-md z-50"
+    class="hidden md:block absolute my-2 top-full md:w-[60%] lg:w-[50%] right-10 bg-white dark:bg-cardbg shadow-lg rounded-xl stransform opacity-0 scale-95 pointer-events-none transition-all duration-200 ease-out border border-card-border backdrop-blur-md z-50"
   >
     <div class="w-[90%] mx-auto py-6">
       <div class="grid grid-cols-2 lg:gap-2 xl:gap-4">
@@ -214,12 +214,12 @@ const {
       isDesktopOpen = !isDesktopOpen;
 
       if (isDesktopOpen) {
-        desktopDropdown?.classList.remove('hidden', 'opacity-0', 'scale-95');
-        desktopDropdown?.classList.add('opacity-100', 'scale-100');
+        desktopDropdown?.classList.remove('hidden', 'opacity-0', 'scale-95', 'pointer-events-none');
+        desktopDropdown?.classList.add('opacity-100', 'scale-100', 'pointer-events-auto');
         desktopChevron?.classList.add('rotate-180');
       } else {
-        desktopDropdown?.classList.add('opacity-0', 'scale-95');
-        desktopDropdown?.classList.remove('opacity-100', 'scale-100');
+        desktopDropdown?.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
+        desktopDropdown?.classList.remove('opacity-100', 'scale-100', 'pointer-events-auto');
         desktopChevron?.classList.remove('rotate-180');
         setTimeout(() => {
           if (!isDesktopOpen) {
