@@ -5,11 +5,8 @@ import Footer from '../../components/Footer.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
 import { getCollection } from 'astro:content';
 import Main from '../../components/Main.astro';
-import H1 from '../../components/mdxComponents/H1.astro';
-import H2 from '../../components/mdxComponents/H2.astro';
 import P from '../../components/mdxComponents/P.astro';
 import NoteMain from '../../components/NoteMain.astro';
-import GradientHeading from '../../components/mdxComponents/gradientHeading.astro';
 import Link from '../../components/mdxComponents/Link.astro';
 import { render } from 'astro:content';
 
@@ -43,7 +40,7 @@ const thenContents = await Promise.all(thenPosts.map(post => render(post)));
 						</div>
 					</a>
 				</div>
-				<GradientHeading size="xl">Now</GradientHeading>
+				<h1>Now</h1>
 				<p class="text-lg sm:text-xl mt-2 font-serif italic">Whats happening or rather what am I doing currently?</p>
         <hr class="w-full my-8 border-stone-100">
 				{nowPost && nowContent && (
@@ -59,14 +56,14 @@ const thenContents = await Promise.all(thenPosts.map(post => render(post)));
 							</div>
 						</div>
 						<p class="mx-12 text-xl mt-2 mb-5 font-sans">{nowPost.data.OneLiner}</p>
-						<div class="mx-12 prose-neutral prose-lg max-w-3xl prose-headings:font-sans prose-p:font-serif prose-p:text-syoro prose-img:w-[95%] prose-img:aspect-auto prose-headings:text-konpeki prose-h4:uppercase prose-h3:uppercase prose-strong:text-pink-500 prose-h5:uppercase prose-h4:font-bold prose-h5:font-bold prose-blockquote:font-handwriting prose-blockquote:leading-auto prose-ul:font-serif prose-li:font-serif prose-ul:list-disc prose-ol:list-decimal prose-blockquote:text-yellow-600 prose-blockquote:italic text-base md:text-lg prose-h1:mt-10 md:prose-h1:mt-14 prose-h2:mt-8 md:prose-h2:mt-10 prose-h3:mt-6 md:prose-h3:mt-8 prose-h4:mt-3 md:prose-h4:mt-3 prose-headings:mb-5 prose-a:text-link prose-a:underline prose-a:hover:line-through prose-a:underline-offset-8">
+						<div class="mx-12 prose prose-neutral prose-lg dark:prose-invert max-w-3xl prose-headings:font-sans prose-p:font-serif prose-p:text-syoro prose-img:w-[95%] prose-img:aspect-auto prose-headings:text-konpeki prose-h4:uppercase prose-h3:uppercase prose-strong:text-pink-500 prose-h5:uppercase prose-h4:font-bold prose-h5:font-bold prose-blockquote:font-handwriting prose-blockquote:leading-auto prose-ul:font-serif prose-li:font-serif prose-ul:list-disc prose-ol:list-decimal prose-blockquote:text-yellow-600 prose-blockquote:italic text-base md:text-lg prose-h1:mt-10 md:prose-h1:mt-14 prose-h2:mt-8 md:prose-h2:mt-10 prose-h3:mt-6 md:prose-h3:mt-8 prose-h4:mt-3 md:prose-h4:mt-3 prose-headings:mb-5 prose-a:text-link prose-a:underline prose-a:hover:line-through prose-a:underline-offset-8">
 							<nowContent.Content />
 						</div>
 					</div>
 				)}
 				{thenPosts.length > 0 && (
 					<>
-						<GradientHeading size="xl" className="mt-0">Then ...</GradientHeading>
+						<h1>Then ...</h1>
 						<p class="text-lg sm:text-xl mt-2">In hindsight...</p>
 						<hr class="w-full my-8 border-stone-100">
 						<div class="space-y-8">
@@ -80,7 +77,7 @@ const thenContents = await Promise.all(thenPosts.map(post => render(post)));
 											<h2 class="text-5xl">{post.data.Month}</h2>
 										</div>
 										<p class="mx-12 text-xl mt-2 mb-5 font-sans">{post.data.OneLiner}</p>
-										<div class="mx-12 prose-neutral prose-lg max-w-3xl prose-headings:font-sans prose-p:font-serif prose-p:text-syoro prose-img:w-[95%] prose-img:aspect-auto prose-headings:text-konpeki prose-h4:uppercase prose-h3:uppercase prose-strong:text-pink-500 prose-h5:uppercase prose-h4:font-bold prose-h5:font-bold prose-blockquote:font-handwriting prose-blockquote:leading-auto prose-ul:font-serif prose-li:font-serif prose-ul:list-disc prose-ol:list-decimal prose-blockquote:text-yellow-600 prose-blockquote:italic text-base md:text-lg prose-h1:mt-10 md:prose-h1:mt-14 prose-h2:mt-8 md:prose-h2:mt-10 prose-h3:mt-6 md:prose-h3:mt-8 prose-h4:mt-3 md:prose-h4:mt-3 prose-headings:mb-5 prose-a:text-link prose-a:underline prose-a:hover:line-through prose-a:underline-offset-8">
+										<div class="mx-12 prose prose-neutral prose-lg dark:prose-invert max-w-3xl prose-headings:font-sans prose-p:font-serif prose-p:text-syoro prose-img:w-[95%] prose-img:aspect-auto prose-headings:text-konpeki prose-h4:uppercase prose-h3:uppercase prose-strong:text-pink-500 prose-h5:uppercase prose-h4:font-bold prose-h5:font-bold prose-blockquote:font-handwriting prose-blockquote:leading-auto prose-ul:font-serif prose-li:font-serif prose-ul:list-disc prose-ol:list-decimal prose-blockquote:text-yellow-600 prose-blockquote:italic text-base md:text-lg prose-h1:mt-10 md:prose-h1:mt-14 prose-h2:mt-8 md:prose-h2:mt-10 prose-h3:mt-6 md:prose-h3:mt-8 prose-h4:mt-3 md:prose-h4:mt-3 prose-headings:mb-5 prose-a:text-link prose-a:underline prose-a:hover:line-through prose-a:underline-offset-8">
 											{Content && <Content />}
 										</div>
 									</div>

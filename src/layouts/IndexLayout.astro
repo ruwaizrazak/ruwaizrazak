@@ -53,7 +53,7 @@ const sortedTags = [...tags.filter(tag => tag !== 'all').sort()];
           <a href={Astro.url.pathname.includes('/garden') ? '/' : '/garden'} class="inline-block z-1">
           <div class="flex items-center gap-2 group mb-5">
             <img src="/icons/backArrow.svg" class="w-8 h-auto group-hover:rotate-20 transition-all" alt="Back" />
-            <span class="uppercase font-sans font-medium">Back to {Astro.url.pathname.includes('/garden') ? 'Index' : 'Garden'}</span>
+            <span class="uppercase font-sans text-konpeki font-medium">Back to {Astro.url.pathname.includes('/garden') ? 'Index' : 'Garden'}</span>
           </div>
         </a>
         <div class="flex items-center gap-2">
@@ -63,7 +63,7 @@ const sortedTags = [...tags.filter(tag => tag !== 'all').sort()];
           <h1>{title}</h1>
         </div>
         
-          <p class="w-full md:w-[70%] text-left  text-base md:text-lg  mt-2 font-serif italic">{description}</p>
+          <p class="w-full md:w-[70%] text-left text-syoro  text-base md:text-lg  mt-2 font-serif italic">{description}</p>
         </div>
       </div>
       <div class="mt-10">
@@ -74,7 +74,7 @@ const sortedTags = [...tags.filter(tag => tag !== 'all').sort()];
               <>
                 {/* Desktop/Tablet: Tag system with show more */}
                 <div class="md:flex items-center h-9 hidden">
-                  <h4 class="text-lg uppercase border-l-2 pl-1 pr-5 border-konpeki ">Topics</h4>
+                  <h4 class="text-lg uppercase border-l-2 pl-1 pr-5 border-konpeki text-konpeki ">Topics</h4>
                 </div>
                 
                 <div class="hidden md:block">
@@ -89,7 +89,7 @@ const sortedTags = [...tags.filter(tag => tag !== 'all').sort()];
                     {sortedTags.length > 10 && (
                       <button
                         id="showMoreTags" 
-                        class="px-4 py-2 text-sm border border-gray-300 border-dashed transition-all duration-200 hover:-skew-x-6  hover:bg-gray-200"
+                        class="px-4 py-2 text-sm border border-gray-300 dark:border-card-border border-dashed transition-all duration-200 hover:-skew-x-6 hover:bg-gray-200 dark:hover:bg-gray-700"
                       >
                         +{sortedTags.length - 10} more
                       </button>
@@ -106,7 +106,7 @@ const sortedTags = [...tags.filter(tag => tag !== 'all').sort()];
                       ))}
                       <button 
                         id="showLessTags" 
-                        class="px-4 py-2 text-sm border border-gray-300 border-dashed transition-all duration-200 hover:-skew-x-6 bg-gray-100 hover:bg-gray-200"
+                        class="px-4 py-2 text-sm border border-gray-300 dark:border-card-border border-dashed transition-all duration-200 hover:-skew-x-6 bg-gray-100 dark:bg-cardbg hover:bg-gray-200 dark:hover:bg-gray-700"
                       >
                         show less
                       </button>
@@ -119,7 +119,7 @@ const sortedTags = [...tags.filter(tag => tag !== 'all').sort()];
                   <div class="relative inline-block">
                     <select 
                       id="tagDropdown" 
-                      class="px-4 py-2 text-sm border border-syoro hover:bg-yellow-50 text-syoro cursor-pointer bg-transparent appearance-none pr-10"
+                      class="px-4 py-2 text-sm border border-syoro hover:bg-yellow-50 dark:hover:bg-gray-700 text-syoro cursor-pointer bg-transparent dark:bg-transparent appearance-none pr-10"
                     >
                       <option value="all">All Topics</option>
                       {sortedTags.map(tag => (
@@ -143,7 +143,7 @@ const sortedTags = [...tags.filter(tag => tag !== 'all').sort()];
 
           {showCollections && collections.length > 1 && (
             <div class="relative inline-block self-start">
-              <select class="collection-filter px-4 py-2 text-sm border border-syoro hover:bg-yellow-50 text-syoro cursor-pointer bg-transparent appearance-none pr-10">
+              <select class="collection-filter px-4 py-2 text-sm border border-syoro hover:bg-yellow-50 dark:hover:bg-gray-700 text-syoro cursor-pointer bg-transparent dark:bg-transparent appearance-none pr-10">
                 {collections.map(collection => (
                   <option value={collection}>
                     {collection === 'all' ? 'All Posts' : collection.charAt(0).toUpperCase() + collection.slice(1)}

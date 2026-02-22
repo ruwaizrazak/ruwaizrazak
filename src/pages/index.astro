@@ -34,7 +34,7 @@ const renderedWorks = await Promise.all(
       <p class="text-syoro font-serif text-xl md:text-2xl w-full sm:w-2/3 md:w-1/2 mt-0.5 opacity-0" style="animation: HeroSectionIntro 0.7s ease-in-out 0.3s forwards;">I design and prototype systems that help people stay consistent over time. <span>Currently building something cool at <Link href="https://nordeus.com/" class="text-link">Nordeus.</Link></span></p>
     </section>
     <section
-      class="rounded-xl bg-white p-5 mt-10 work-cards-container opacity-0"
+      class="rounded-xl bg-white dark:bg-cardbg p-5 mt-10 work-cards-container opacity-0"
       id="Works"
       style="animation: selectedSectionIntro 0.7s ease-in-out 0.3s forwards; animation-delay: .8s;"
     >
@@ -72,7 +72,7 @@ const renderedWorks = await Promise.all(
             id={`work-content-${entry.id}`}
             class="work-modal-content hidden h-full min-h-0 overflow-y-auto p-6"
           >
-            <article class="prose prose-neutral prose-lg max-w-3xl mx-auto prose-headings:font-sans prose-p:font-serif prose-p:text-syoro prose-img:w-[95%] prose-img:aspect-auto prose-headings:text-konpeki prose-h4:uppercase prose-h3:uppercase prose-strong:text-pink-500 prose-h5:uppercase prose-h4:font-bold prose-h5:font-bold prose-blockquote:font-handwriting prose-blockquote:leading-auto prose-ul:font-serif prose-li:font-serif prose-ul:list-disc prose-ol:list-decimal prose-blockquote:text-yellow-600 prose-blockquote:italic text-base md:text-lg prose-h1:mt-4 prose-h2:mt-6 prose-h3:mt-4 prose-h4:mt-3 prose-headings:mb-4">
+            <article class="prose prose-neutral prose-lg dark:prose-invert max-w-3xl mx-auto prose-headings:font-sans prose-p:font-serif prose-p:text-syoro prose-img:w-[95%] prose-img:aspect-auto prose-headings:text-konpeki prose-h4:uppercase prose-h3:uppercase prose-strong:text-pink-500 prose-h5:uppercase prose-h4:font-bold prose-h5:font-bold prose-blockquote:font-handwriting prose-blockquote:leading-auto prose-ul:font-serif prose-li:font-serif prose-ul:list-disc prose-ol:list-decimal prose-blockquote:text-yellow-600 prose-blockquote:italic text-base md:text-lg prose-h1:mt-4 prose-h2:mt-6 prose-h3:mt-4 prose-h4:mt-3 prose-headings:mb-4">
               <h1 class="text-konpeki font-serif text-2xl">{title}</h1>
               <p class="text-syoro italic">{description}</p>
               {heroImage && (

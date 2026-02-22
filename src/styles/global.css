@@ -7,6 +7,8 @@
 @plugin "@tailwindcss/typography";
 @config "./tailwind.config.js";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --font-serif: "IBM Plex Serif",serif;
   --font-sans: "Saira Condensed",sans-serif;
@@ -28,10 +30,19 @@
   --color-link:#1A86FF;
 }
 
-
-p {
-  color: inherit;
+@layer theme {
+  .dark {
+    --color-backgroundcolor: #1a1a1a;
+    --color-syoro: #e0e8e8;
+    --color-konpeki: #7eb8e8;
+    --color-cardbg: #2a2a2a;
+    --color-card-border: #3a3a3a;
+    --color-link: #6bb3ff;
+    --color-text-primary: #e0e8e8;
+  }
 }
+
+
 
 
 

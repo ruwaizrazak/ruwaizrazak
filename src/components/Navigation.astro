@@ -1,4 +1,5 @@
 ---
+import ThemeToggle from './ThemeToggle.astro';
 // Navigation.astro
 export interface MenuItem {
   name: string;
@@ -45,11 +46,13 @@ const {
       </div>
 
       <!-- Desktop Menu Buttons (md and up) -->
-      <div class="hidden md:grid grid-cols-3 rounded-full bg-white">
+      <div class="hidden md:flex items-center gap-2">
+      <ThemeToggle />
+      <div class="grid grid-cols-3 rounded-full bg-white dark:bg-cardbg">
         <!-- Garden Dropdown Button -->
         <button 
           id="desktop-menu-button"
-          class="flex items-center text-xl font-medium text-syoro hover:text-link rounded-full bg-white hover:bg-yellow-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-200 transition-all uppercase hover:scale-95 px-5">
+          class="flex items-center text-xl font-medium text-syoro hover:text-link rounded-full bg-white dark:bg-cardbg hover:bg-yellow-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-200 dark:focus:ring-gray-600 transition-all uppercase hover:scale-95 px-5">
           Garden
           <svg  class="ml-2 -mr-1 w-4 h-4 flex-shrink-0 transition-transform duration-200" id="desktop-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
@@ -59,7 +62,7 @@ const {
         {additionalLinks.map((link) => (
           <a 
             href={link.href}
-            class="flex-1 min-w-0 flex items-center justify-center px-5 py-2 text-syoro rounded-full uppercase hover:scale-95 transition-all hover:bg-yellow-50 focus:outline-none focus:ring-5 focus:ring-offset-2 focus:ring-yellow-200 hover:text-link">
+            class="flex-1 min-w-0 flex items-center justify-center px-5 py-2 text-syoro rounded-full uppercase hover:scale-95 transition-all hover:bg-yellow-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-5 focus:ring-offset-2 focus:ring-yellow-200 dark:focus:ring-gray-600 hover:text-link">
             <h3 class="font-sans font-medium text-xl">
             {link.icon && <img src={typeof link.icon === 'string' ? link.icon : link.icon.href} alt={link.name} class="w-6 h-6" />}
             {link.name}
@@ -67,15 +70,15 @@ const {
             
           </a>
         ))}
-        
-        
+      </div>
       </div>
 
-      <!-- Mobile Menu Button (less than md) -->
-      <div class="md:hidden">
+      <!-- Mobile: Theme toggle + menu button -->
+      <div class="md:hidden flex items-center gap-2">
+        <ThemeToggle />
         <button 
           id="mobile-menu-button"
-          class="inline-flex items-center justify-center p-2 rounded-md text-link hover:text-gray-500 hover:bg-yellow-50 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-yellow-100 transition-colors"
+          class="inline-flex items-center justify-center p-2 rounded-md text-link hover:text-gray-500 hover:bg-yellow-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-yellow-100 dark:focus:ring-gray-600 transition-colors"
         >
           <svg class="h-6 w-6" id="mobile-menu-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
@@ -91,14 +94,14 @@ const {
   <!-- Desktop Dropdown Menu (md and up) -->
   <div 
     id="desktop-dropdown" 
-    class="hidden md:block absolute my-2 top-full md:w-[60%] lg:w-[50%] right-10 bg-white shadow-lg rounded-xl stransform opacity-0 scale-95 transition-all duration-200 ease-out border border-card-border backdrop-blur-md z-50"
+    class="hidden md:block absolute my-2 top-full md:w-[60%] lg:w-[50%] right-10 bg-white dark:bg-cardbg shadow-lg rounded-xl stransform opacity-0 scale-95 transition-all duration-200 ease-out border border-card-border backdrop-blur-md z-50"
   >
     <div class="w-[90%] mx-auto py-6">
       <div class="grid grid-cols-2 lg:gap-2 xl:gap-4">
         {menuItems.map((item) => (
           <a 
             href={item.href}
-            class="group p-4 rounded-lg hover:scale-95 hover:border border-card-border ease-in-out transition-all block duration-200 hover:bg-yellow-50 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-yellow-100"
+            class="group p-4 rounded-lg hover:scale-95 hover:border border-card-border ease-in-out transition-all block duration-200 hover:bg-yellow-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-yellow-100 dark:focus:ring-gray-600"
           >
             <div class="flex items-center space-x-4">
               {item.icon && (
@@ -137,7 +140,7 @@ const {
     <div class="flex items-end justify-end p-4 border-b">
       <button 
         id="mobile-close-button"
-        class="p-2 rounded-md text-konpeki hover:text-gray-500 hover:bg-yellow-50 transition-colors"
+        class="p-2 rounded-md text-konpeki hover:text-gray-500 hover:bg-yellow-50 dark:hover:bg-gray-700 transition-colors"
       >
         <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -150,7 +153,7 @@ const {
       {additionalLinks.map((link) => (
         <a 
           href={link.href}
-          class="flex items-center px-4 py-3 text-konpeki hover:scale-95 hover:text-indigo-600 transition-colors duration-200 border-b border-gray-100"
+          class="flex items-center px-4 py-3 text-konpeki hover:scale-95 hover:text-indigo-600 transition-colors duration-200 border-b border-gray-100 dark:border-card-border"
         >
           {link.icon && (
             <img src={typeof link.icon === 'string' ? link.icon : link.icon.href} alt={link.name} class="w-6 h-6 mr-3" />
@@ -163,7 +166,7 @@ const {
       ))}
       
       <!-- Separator -->
-      <div class="border-t border-gray-200 my-2"></div>
+      <div class="border-t border-gray-200 dark:border-card-border my-2"></div>
       
       <!-- Garden Menu Items -->
       <div class="px-4 py-2">
@@ -172,7 +175,7 @@ const {
       {menuItems.map((item) => (
         <a 
           href={item.href}
-          class="flex items-center px-4 py-3 text-konpeki hover:bg-yellow-50 hover:text-indigo-600 transition-colors duration-200"
+          class="flex items-center px-4 py-3 text-konpeki hover:bg-yellow-50 dark:hover:bg-gray-700 hover:text-indigo-600 transition-colors duration-200"
         >
           {item.icon && (
             <img src={typeof item.icon === 'string' ? item.icon : item.icon.href} alt={item.name} class="w-6 h-6 mr-3" />

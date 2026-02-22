@@ -91,7 +91,7 @@ const currentCollection = Astro.url.pathname.includes('/essays')
                     {tags.map((tag, index) => (
                       <a
                         href={`/tags/${tag.toLowerCase()}`}
-                        class="px-4 py-2 text-sm border transition-all duration-200 animate-slide-in transform uppercase hover:-skew-x-3 hover:border-r-2 hover:border-b-2 bg-white text-gray-600 border-gray-300 hover:border-gray-400"
+                        class="px-4 py-2 text-sm border transition-all duration-200 animate-slide-in transform uppercase hover:-skew-x-3 hover:border-r-2 hover:border-b-2 bg-white dark:bg-cardbg text-gray-600 dark:text-syoro border-gray-300 dark:border-card-border hover:border-gray-400 dark:hover:border-gray-500"
                         style={`animation-delay: ${index * 100}ms`}
                       >
                         {tag.charAt(0).toUpperCase() + tag.slice(1)}

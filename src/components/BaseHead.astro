@@ -19,6 +19,15 @@ const { title, description, image = '/blog-placeholder-1.jpg' } = Astro.props;
 <meta name="keywords" content="Designer | Prototyper ">
 <meta name="author" content="Ruwaiz Razak">
 <meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="color-scheme" content="light dark" />
+<script is:inline>
+  (function() {
+    const stored = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const shouldBeDark = stored === 'dark' || (stored !== 'light' && prefersDark);
+    if (shouldBeDark) document.documentElement.classList.add('dark');
+  })();
+</script>
 <meta name="fediverse:creator" content="@ruwaizrazak@mastodon.social">
 <link rel="icon" type="image/ico" href="/favicon.ico" />
 <link rel="sitemap" href="/sitemap-index.xml" />
