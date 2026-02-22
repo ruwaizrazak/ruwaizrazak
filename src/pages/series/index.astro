@@ -49,7 +49,8 @@ const seriesWithPosts = sortedSeries.map(series => {
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
 	</head>
-	<body class="bg-backgroundcolor">
+	<body class="footer-reveal bg-backgroundcolor">
+		<div class="footer-reveal-content">
 		<Header />
 		<main class="w-full sm:w-[90%] mx-auto">
 			<div class="mt-20">
@@ -152,6 +153,7 @@ const seriesWithPosts = sortedSeries.map(series => {
 				)}
 			</div>
 		</main>
+		</div>
 		<Footer />
 	</body>
 </html>

@@ -31,7 +31,8 @@ const currentCollection = Astro.url.pathname.includes('/essays')
   <head>
     <BaseHead title={title} description={description} />
   </head>
-  <body class="bg-backgroundcolor">
+  <body class="footer-reveal bg-backgroundcolor">
+    <div class="footer-reveal-content">
     <Header />
     <main class="w-full sm:w-[90%] mx-auto pb-20">
       <div>
@@ -120,6 +121,7 @@ const currentCollection = Astro.url.pathname.includes('/essays')
         </div>
       </div>
     </main>
+    </div>
     <Footer />
   </body>
 </html>

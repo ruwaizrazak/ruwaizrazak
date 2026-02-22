@@ -117,6 +117,19 @@ hr {
   }
 }
 
+/* Footer reveal: main content scrolls over sticky footer */
+.footer-reveal .footer-reveal-content {
+  position: relative;
+  z-index: 1;
+  background-color: var(--color-backgroundcolor);
+}
+
+.footer-reveal footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 0;
+}
+
 .sr-only {
   border: 0;
   padding: 0;

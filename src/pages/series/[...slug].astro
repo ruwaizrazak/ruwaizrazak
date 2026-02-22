@@ -64,7 +64,8 @@ const seoTitle = activePart ? `${activePart.data.title} · ${seriesDoc?.data.tit
   <head>
     <BaseHead title={seoTitle} description={seriesDoc?.data.description ?? ''} />
   </head>
-  <body class="bg-backgroundcolor">
+  <body class="footer-reveal bg-backgroundcolor">
+    <div class="footer-reveal-content">
     <Header />
     <main class="w-full sm:w-[90%] mx-auto">
       <div class="mt-20">
@@ -215,6 +216,7 @@ const seoTitle = activePart ? `${activePart.data.title} · ${seriesDoc?.data.tit
         )}
       </div>
     </main>
+    </div>
     <Footer />
   </body>
 </html>

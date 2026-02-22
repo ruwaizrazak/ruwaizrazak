@@ -28,7 +28,8 @@ const thenContents = await Promise.all(thenPosts.map(post => render(post)));
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
 	</head>
-	<body class="bg-backgroundcolor">
+	<body class="footer-reveal bg-backgroundcolor">
+		<div class="footer-reveal-content">
 		<Header />
 		<main class="w-full sm:w-[90%] lg:w-[90%] xl:w-[80%] 2xl:w-[70%] mx-auto">
 			<div class="mt-20">
@@ -88,6 +89,7 @@ const thenContents = await Promise.all(thenPosts.map(post => render(post)));
 				)}
 			</div>
 		</main>
+		</div>
 		<Footer />
 	</body>
 </html>
