@@ -4,21 +4,12 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import Link from '../components/mdxComponents/Link.astro';
 import WorkCard from '../components/WorkCard.astro';
-import WorkModal from '../components/WorkModal.astro';
 import ContactSection from '../components/ContactSection.astro';
-import ExternalLink from '../components/mdxComponents/ExternalLink.astro';
-import Image from '../components/mdxComponents/Image.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
-import { getCollection, render } from 'astro:content';
+import { getCollection } from 'astro:content';
 import { ClientRouter } from "astro:transitions";
 
 const works = await getCollection('works', ({ data }) => data.publish);
-const renderedWorks = await Promise.all(
-  works.map(async (entry) => {
-    const { Content } = await render(entry);
-    return { entry, Content };
-  })
-);
 ---
 
 <!doctype html>
@@ -41,53 +32,20 @@ const renderedWorks = await Promise.all(
     >
       <h2 class="text-syoro opacity-50 font-sans text-lg uppercase">Selected works</h2>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-10 mt-5">
-        {works.map((entry, i) => {
-          const { data } = entry;
-          return (
-            <div
-              class="work-card-intro work-card-trigger cursor-pointer"
-              data-work-slug={entry.id}
-              data-work-href={`/works/${entry.id}`}
-              data-work-title={data.title}
-              data-work-company={data.company}
-              data-work-role={data.role ?? ''}
-              data-work-duration={data.duration ?? ''}
-              data-work-description={data.description ?? ''}
-              data-work-hero={data.heroImage ?? ''}
-            >
-              <WorkCard entry={entry} />
-            </div>
-          );
-        })}
+        {works.map((entry) => (
+          <div
+            class="work-card-intro"
+            transition:name={`work-${entry.id.replace(/\s+/g, '-')}`}
+          >
+            <WorkCard entry={entry} />
+          </div>
+        ))}
       </div>
       <h2 class="text-syoro opacity-50 font-sans text-lg uppercase rotate-180">Selected works</h2>
     </section>
     <ContactSection />
 		</main>
 
-    <WorkModal>
-      {renderedWorks.map(({ entry, Content }) => {
-        const { data } = entry;
-        const { title, description, heroImage } = data;
-        return (
-          <div
-            id={`work-content-${entry.id}`}
-            class="work-modal-content hidden h-full min-h-0 overflow-y-auto p-6"
-          >
-            <article class="prose prose-neutral prose-lg dark:prose-invert max-w-3xl mx-auto prose-headings:font-sans prose-p:font-serif prose-p:text-syoro prose-img:w-[95%] prose-img:aspect-auto prose-headings:text-konpeki prose-h4:uppercase prose-h3:uppercase prose-strong:text-pink-500 prose-h5:uppercase prose-h4:font-bold prose-h5:font-bold prose-blockquote:font-handwriting prose-blockquote:leading-auto prose-ul:font-serif prose-li:font-serif prose-ul:list-disc prose-ol:list-decimal prose-blockquote:text-yellow-600 prose-blockquote:italic text-base md:text-lg prose-h1:mt-4 prose-h2:mt-6 prose-h3:mt-4 prose-h4:mt-3 prose-headings:mb-4">
-              <h1 class="text-konpeki font-serif text-2xl">{title}</h1>
-              <p class="text-syoro italic">{description}</p>
-              {heroImage && (
-                <div class="my-6">
-                  <Image src={heroImage} alt="" class="w-full h-auto object-cover rounded-lg" loading="eager" />
-                </div>
-              )}
-              <Content components={{ a: ExternalLink }} />
-            </article>
-          </div>
-        );
-      })}
-    </WorkModal>
 		<Footer />
 	</body>
 </html>
@@ -116,10 +74,4 @@ const renderedWorks = await Promise.all(
   }
 </style>
 
-<script>
-  import { initWorkModal } from '../scripts/work-modal';
-
-  document.addEventListener('DOMContentLoaded', initWorkModal);
-  document.addEventListener('astro:page-load', initWorkModal);
-</script>
 
