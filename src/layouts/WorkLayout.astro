@@ -1,0 +1,93 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { ClientRouter } from 'astro:transitions';
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Image from '../components/mdxComponents/Image.astro';
+
+type WorkLayoutProps = CollectionEntry<'works'>['data'] & {
+  transitionName?: string;
+};
+
+const { title, description, company, duration, role, heroImage, transitionName } = Astro.props as WorkLayoutProps;
+const workTransitionStyle = transitionName
+  ? `::view-transition-new(${transitionName}){animation:work-scale-in .4s cubic-bezier(.32,.72,0,1)}`
+  : '';
+---
+
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <BaseHead title={title} description={description} />
+    <ClientRouter />
+    {workTransitionStyle && <style is:global set:html={workTransitionStyle} />}
+  </head>
+  <body class="footer-reveal bg-backgroundcolor">
+    <div class="footer-reveal-content">
+      <Header />
+      <main class="w-full max-w-4xl mx-auto px-6 sm:px-10 pb-24 pt-8 sm:pt-16" transition:name={transitionName}>
+        <!-- Back link -->
+        <a
+          href="/"
+          class="inline-flex items-center gap-2 group text-syoro font-sans text-sm uppercase tracking-wide mb-12 sm:mb-16 hover:opacity-80 transition-opacity"
+        >
+          <img src="/icons/backArrow.svg" class="w-6 h-auto group-hover:rotate-20 transition-transform" alt="" />
+          <span>Back to Selected works</span>
+        </a>
+
+        <!-- Hero title (Itti-style large headline) -->
+        <h1 class="text-syoro dark:text-syoro font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight max-w-3xl mb-10 sm:mb-14">
+          {title}
+        </h1>
+
+        <!-- Metadata row: ROLE | COMPANY | DURATION -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-8 sm:gap-12 py-8 border-y border-gray-200 dark:border-card-border mb-10 sm:mb-14">
+          {role && (
+            <div>
+              <p class="text-syoro dark:text-syoro font-sans text-xs uppercase tracking-widest opacity-70 mb-1">Role</p>
+              <p class="text-syoro dark:text-syoro font-sans text-lg">{role}</p>
+            </div>
+          )}
+          {company && (
+            <div>
+              <p class="text-syoro dark:text-syoro font-sans text-xs uppercase tracking-widest opacity-70 mb-1">Company</p>
+              <p class="text-syoro dark:text-syoro font-sans text-lg">{company}</p>
+            </div>
+          )}
+          {duration && (
+            <div>
+              <p class="text-syoro dark:text-syoro font-sans text-xs uppercase tracking-widest opacity-70 mb-1">Timeline</p>
+              <p class="text-syoro dark:text-syoro font-sans text-lg">{duration}</p>
+            </div>
+          )}
+        </div>
+
+        <!-- Overview / description -->
+        {description && (
+          <p class="text-syoro dark:text-syoro font-serif text-lg sm:text-xl leading-relaxed mb-12 sm:mb-16 max-w-3xl">
+            {description}
+          </p>
+        )}
+
+        <!-- Hero image -->
+        {heroImage && (
+          <div class="w-full rounded-xl overflow-hidden mb-12 sm:mb-16 shadow-lg">
+            <Image
+              src={heroImage}
+              alt=""
+              class="w-full h-auto object-cover"
+              loading="eager"
+            />
+          </div>
+        )}
+
+        <!-- Main content (MDX) -->
+        <article class="prose prose-neutral prose-lg dark:prose-invert max-w-none prose-headings:font-sans prose-p:font-serif prose-p:text-syoro prose-img:rounded-lg prose-img:w-full prose-headings:text-konpeki prose-h4:uppercase prose-h3:uppercase prose-strong:text-pink-500 prose-h5:uppercase prose-h4:font-bold prose-h5:font-bold prose-blockquote:font-handwriting prose-blockquote:leading-auto prose-ul:font-serif prose-li:font-serif prose-ul:list-disc prose-ol:list-decimal prose-blockquote:text-yellow-600 prose-blockquote:italic prose-headings:mb-4 prose-headings:mt-8 first:prose-headings:mt-0">
+          <slot />
+        </article>
+      </main>
+    </div>
+    <Footer />
+  </body>
+</html>
