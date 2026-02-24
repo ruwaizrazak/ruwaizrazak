@@ -1,7 +1,7 @@
 ---
 import { type CollectionEntry, getCollection } from 'astro:content';
 import { render } from 'astro:content';
-import NotesPost from '../../layouts/notesPost.astro';
+import WorkLayout from '../../layouts/WorkLayout.astro';
 import Link from '../../components/mdxComponents/Link.astro';
 
 export async function getStaticPaths() {
@@ -17,6 +17,9 @@ const post = Astro.props;
 const { Content } = await render(post);
 ---
 
-<NotesPost {...post.data} collection="works" icon="/icons/series.svg">
-	<Content components={{ a: Link }}/>
-</NotesPost>
+<WorkLayout
+  {...post.data}
+  transitionName={`work-${post.id.replace(/\s+/g, '-')}`}
+>
+	<Content components={{ a: Link }} />
+</WorkLayout>
