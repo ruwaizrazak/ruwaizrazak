@@ -47,6 +47,11 @@ import Button from './Button.astro';
     const section = document.getElementById('Contact');
     if (!section) return;
 
+    if (document.body.classList.contains('returned-from-work') || document.documentElement.classList.contains('returned-from-work')) {
+      section.classList.add('contact-section-visible');
+      return;
+    }
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -130,6 +135,13 @@ import Button from './Button.astro';
   }
 
   .contact-section-reveal.contact-section-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* When returning from work page, show section immediately (html + body for view-transition swap) */
+  :global(html.returned-from-work) .contact-section-reveal,
+  :global(body.returned-from-work) .contact-section-reveal {
     opacity: 1;
     transform: translateY(0);
   }

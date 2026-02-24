@@ -27,10 +27,12 @@ const workTransitionStyle = transitionName
     <div class="footer-reveal-content">
       <Header />
       <main class="w-full max-w-4xl mx-auto px-6 sm:px-10 pb-24 pt-8 sm:pt-16" transition:name={transitionName}>
-        <!-- Back link -->
+        <!-- Back link: set flag so index skips entrance animations -->
         <a
           href="/"
           class="inline-flex items-center gap-2 group text-syoro font-sans text-sm uppercase tracking-wide mb-12 sm:mb-16 hover:opacity-80 transition-opacity"
+          data-astro-prefetch
+          onclick="sessionStorage.setItem('skipIndexAnimations','1')"
         >
           <img src="/icons/backArrow.svg" class="w-6 h-auto group-hover:rotate-20 transition-transform" alt="" />
           <span>Back to Selected works</span>

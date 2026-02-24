@@ -19,16 +19,43 @@ const works = await getCollection('works', ({ data }) => data.publish);
         <ClientRouter />
 	</head>
 	<body class="footer-reveal bg-backgroundcolor">
-		
+		<script is:inline>
+			(function applyIndexEntrance() {
+				var fromWork = document.referrer.indexOf('/works/') !== -1 || sessionStorage.getItem('skipIndexAnimations') === '1';
+				var target = document.body;
+				if (fromWork) {
+					target.classList.add('returned-from-work');
+					sessionStorage.removeItem('skipIndexAnimations');
+				} else {
+					target.classList.add('animate-in');
+				}
+			})();
+			function ensureIndexEntrance() {
+				if (window.location.pathname !== '/') return;
+				var fromWork = sessionStorage.getItem('skipIndexAnimations') === '1';
+				var el = document.body;
+				var root = document.documentElement;
+				if (fromWork) {
+					el.classList.add('returned-from-work');
+					root.classList.add('returned-from-work');
+					sessionStorage.removeItem('skipIndexAnimations');
+				} else if (!el.classList.contains('returned-from-work') && !el.classList.contains('animate-in')) {
+					el.classList.add('animate-in');
+					root.classList.add('animate-in');
+				}
+			}
+			// After view-transition swap, body may be new; re-apply class on live document
+			document.addEventListener('astro:page-load', ensureIndexEntrance);
+			requestAnimationFrame(function() { requestAnimationFrame(ensureIndexEntrance); });
+		</script>
 		<main class="footer-reveal-content w-full px-20">
       <Header />
     <section id="Intro-text">
-      <p class="text-syoro font-serif text-xl md:text-2xl w-full sm:w-2/3 md:w-1/2 mt-0.5 opacity-0" style="animation: HeroSectionIntro 0.7s ease-in-out 0.3s forwards;">I design and prototype systems that help people stay consistent over time. <span>Currently building something cool at <Link href="https://nordeus.com/" class="text-link">Nordeus.</Link></span></p>
+      <p class="index-intro text-syoro font-serif text-xl md:text-2xl w-full sm:w-2/3 md:w-1/2 mt-0.5">I design and prototype systems that help people stay consistent over time. <span>Currently building something cool at <Link href="https://nordeus.com/" class="text-link">Nordeus.</Link></span></p>
     </section>
     <section
-      class="rounded-xl bg-white dark:bg-cardbg p-5 mt-10 work-cards-container opacity-0"
+      class="rounded-xl bg-white dark:bg-cardbg p-5 mt-10 work-cards-container"
       id="Works"
-      style="animation: selectedSectionIntro 0.7s ease-in-out 0.3s forwards; animation-delay: .8s;"
     >
       <h2 class="text-syoro opacity-50 font-sans text-lg uppercase">Selected works</h2>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-10 mt-5">
@@ -51,7 +78,32 @@ const works = await getCollection('works', ({ data }) => data.publish);
 </html>
 
 <style>
-@keyframes HeroSectionIntro {
+  /* Default: hidden until animate-in or returned-from-work */
+  .index-intro,
+  .work-cards-container {
+    opacity: 0;
+  }
+
+  /* First visit: run entrance animations */
+  body.animate-in .index-intro {
+    animation: HeroSectionIntro 0.7s ease-in-out 0.3s forwards;
+  }
+  body.animate-in .work-cards-container {
+    animation: selectedSectionIntro 0.7s ease-in-out 0.3s forwards;
+    animation-delay: 0.8s;
+  }
+
+  /* Return from work: show immediately, no animation (html + body for view-transition swap) */
+  :global(html.returned-from-work) .index-intro,
+  :global(html.returned-from-work) .work-cards-container,
+  body.returned-from-work .index-intro,
+  body.returned-from-work .work-cards-container {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  @keyframes HeroSectionIntro {
     from {
       opacity: 0;
       transform: translateY(-20px);
