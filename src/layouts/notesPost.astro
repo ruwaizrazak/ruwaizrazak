@@ -1,5 +1,6 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import { ClientRouter } from 'astro:transitions';
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
@@ -16,34 +17,42 @@ import Tag from '../components/Tag.astro';
 type LayoutProps = CollectionEntry<'notes'>['data'] & {
   icon?: string;
   collection?: string;
+  transitionName?: string;
 };
 
-const { title, description, pubDate, updatedDate, heroImage, tags = [], maturity, icon } = Astro.props as LayoutProps;
+const { title, description, pubDate, updatedDate, heroImage, tags = [], maturity, icon, transitionName } = Astro.props as LayoutProps;
 const maturityIcon = getMaturityIcon(maturity);
+const workTransitionStyle = transitionName
+  ? `::view-transition-new(${transitionName}){animation:work-scale-in .4s cubic-bezier(.32,.72,0,1)}`
+  : '';
 const currentCollection = Astro.url.pathname.includes('/essays')
   ? 'essays'
   : Astro.url.pathname.includes('/notes')
   ? 'notes'
+  : Astro.url.pathname.includes('/works')
+  ? 'works'
   : 'garden';
 ---
 
 <html lang="en" class="scroll-smooth">
   <head>
     <BaseHead title={title} description={description} />
+    <ClientRouter />
+    {workTransitionStyle && <style is:global set:html={workTransitionStyle} />}
   </head>
   <body class="footer-reveal bg-backgroundcolor">
     <div class="footer-reveal-content">
     <Header />
-    <main class="w-full sm:w-[90%] mx-auto pb-20">
+    <main class="w-full sm:w-[90%] mx-auto pb-20" transition:name={transitionName}>
       <div>
         <div class="block">
-          <main>
+          <div>
             <div class="mt-20">
               <div class="flex flex-col gap-4">
-                <a href={Astro.url.pathname.includes('/essays') ? '/essays' : Astro.url.pathname.includes('/notes') ? '/notes' : Astro.url.pathname.includes('/garden') ? '/' : '/garden'} class="inline-block z-1">
+                <a href={currentCollection === 'essays' ? '/essays' : currentCollection === 'notes' ? '/notes' : currentCollection === 'works' ? '/' : '/garden'} class="inline-block z-1">
                   <div class="flex items-center gap-2 group not-prose">
                     <img src="/icons/backArrow.svg" class="w-8 h-auto group-hover:rotate-20 transition-all" alt="Back" />
-                    <span class="uppercase font-sans font-medium">Back to {Astro.url.pathname.includes('/essays') ? 'Essays' : Astro.url.pathname.includes('/notes') ? 'Notes' : Astro.url.pathname.includes('/garden') ? 'Index' : 'Garden'}</span>
+                    <span class="uppercase font-sans font-medium">Back to {currentCollection === 'essays' ? 'Essays' : currentCollection === 'notes' ? 'Notes' : currentCollection === 'works' ? 'Selected works' : 'Garden'}</span>
                   </div>
                 </a>
                 <div class="flex items-center gap-2 mt-10 sm:mt-0">
@@ -117,7 +126,7 @@ const currentCollection = Astro.url.pathname.includes('/essays')
                 <slot />
               </NoteMain>
             </div>
-          </main>
+          </div>
         </div>
       </div>
     </main>
