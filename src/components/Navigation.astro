@@ -39,7 +39,9 @@ const {
       
       <!-- Logo -->
       <div class="flex-shrink-0">
-        <a href={logoHref}>
+        <a href={logoHref} 
+        data-astro-prefetch
+        onclick="sessionStorage.setItem('skipIndexAnimations','1')">
             <h4 class="text-3xl font-medium text-syoro">{logoText}</h4>
           
         </a>
