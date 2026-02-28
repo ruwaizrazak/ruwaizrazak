@@ -21,6 +21,7 @@ import GooglePlayBadge from "../../components/GooglePlayBadge.astro";
 import VideoBreakout from "../../components/VideoBreakout.astro";
 import ImageCard from "../../components/mdxComponents/ImageCard.astro";
 
+
 <div class="w-full grid grid-cols-1 lg:grid-cols-4 justify-between gap-4 my-20 py-10 md:py-0">
   <div class="col-span-1">
     <h2 class="text-5xl font-sans border-l-2 border-syoro pl-4">Overview</h2>
@@ -37,48 +38,41 @@ import ImageCard from "../../components/mdxComponents/ImageCard.astro";
 <VideoBreakout src="https://www.youtube-nocookie.com/embed/lgnY0QYqAfE?si=FfJmZJcKRKHGnKOB&mute=1&rel=0" />
 
 <div class="my-20">
-<div class="w-full grid grid-cols-1 lg:grid-cols-4 justify-between gap-4 my-20 py-10 md:py-0">
-  <div class="col-span-1">
-    <h2 class="text-5xl font-sans border-l-2 border-syoro pl-4">Interactions</h2>
-  </div>
-  <div class="col-span-1 lg:col-span-3 lg:col-start-2">
-    <p class="text-2xl">Selected in-game interactions illustrating the types of player-facing systems I contributed to. Specific metrics and ownership details are omitted due to confidentiality.</p>
+  <div class="w-full grid grid-cols-1 lg:grid-cols-4 justify-between gap-4 my-20 py-10 md:py-0">
+    <div class="col-span-1">
+      <h2 class="text-5xl font-sans border-l-2 border-syoro pl-4">Player-facing Systems</h2>
+    </div>
+      <div class="col-span-1 lg:col-span-3 lg:col-start-2">
+    <p class="text-2xl">Few in-game systems illustrating the types of player-facing systems I contributed to.</p>
+    </div>
   </div>
 </div>
-<div class="w-full grid grid-cols-1 lg:grid-cols-2 justify-between gap-10 my-20 py-10 md:py-0">
+<div class="w-full grid grid-cols-1 lg:grid-cols-2 justify-between gap-10 py-20 md:py-0 rounded-2xl p-10">
   <ImageCard
     src="/works/fv3/fv3Progression1.jpg"
-    alt="Idle Indicator"
-    heading="Progression & Motivation Systems"
+    alt="Progression & Motivation Systems"
+    heading="Progression Systems"
     description="Progression and motivation systems are a set of features that are designed to keep users stick to the game and keep them engaged. Motivation systems often get paired with new features and rewards to keep both early and long-term users engaged."
   />
   <ImageCard
-    src="/works/farmville3/interaction2.png"
-    alt="Interaction 2"
-    heading="Interaction 2"
-    description=""
+    src="/works/fv3/fv3tips.jpg"
+    alt="In-game Tips"
+    heading="In-game instructions"
+    description="In-game tips were designed to help users to get a sense of direction in the game and to guide them through the game."
+  />
+  <ImageCard
+    src="/works/fv3/fv3Engagement2.jpg"
+    alt="Usage of Goal Gradient and Zeigarnik Effects"
+    heading="Motivation systems to help users to stay engaged."
+    description="The system allows the users to identify their goal and their current progress towards it, helping them to identify their next steps and act accordingly"
+  />
+  <ImageCard
+    src="/works/fv3/fv3Engagement1.jpg"
+    alt="Progressive Disclosure"
+    heading="Using Progressive Disclosure to avoid overwhelming."
+    description="In a game with lots of features, it is important to not overwhelm the users with too many options at once. Progressive disclosure helps to reveal the options gradually as the user progresses through the game."
   />
 </div>
-</div>
-Sadly, Empires and Allies is no more (yes, Zynga sunsetted the game after 8 incredible years). But It was dear and close to my heart thanks to my amazing team mates and passionate users, who always pushes us to be the best. Here is a short video of some of the games.
-<div class="w-full aspect-video mb-8">
-  <iframe
-    src="https://www.youtube.com/embed/xp8sWWBayTQ?si=Vpc-GbnANvy3Ei1p"
-    title="YouTube video player"
-    class="w-full h-full rounded-lg"
-    frameborder="0"
-    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-    allowfullscreen>
-  </iframe>
-</div>
 
-
-<ToSinglePost
-  title="Deer Hunter 2018"
-  subtitle="ASSOCIATE USER EXPERIENCE DESIGNER"
-  company="GLU"
-  imageSrc="https://i.imgur.com/J0ZJVTa.png"
-  url="/works/deerhunter2018"
-/>
 
 ---
