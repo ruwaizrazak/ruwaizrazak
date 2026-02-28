@@ -41,6 +41,8 @@ const works = defineCollection({
   loader: glob({
     base: './src/content/works',
     pattern: '**/*.{md,mdx}',
+    generateId: ({ entry }) =>
+      entry.replace(/\.[^.]+$/, '').replace(/\s+/g, '-'),
   }),
   schema: baseSchema.extend({
     company: z.string(),
