@@ -104,7 +104,7 @@ const workTransitionStyle = transitionName
       const heightPx = Math.max(0, initialHeightPx + top);
       hero.style.height = heightPx + 'px';
       const shrinkRatio = 1 - heightPx / initialHeightPx; //(0 when full height, 1 when height is 0).
-      const blurPx = Math.max(0, shrinkRatio * maxBlurPx);
+      const blurPx = Math.max(0,shrinkRatio * maxBlurPx);
       hero.style.filter = blurPx > 0 ? 'blur(' + blurPx + 'px)' : 'none'; //when blurPx > 0, and to 'none' when the hero is at full height.
     }
 
