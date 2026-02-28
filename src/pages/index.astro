@@ -50,15 +50,16 @@ const works = await getCollection('works', ({ data }) => data.publish);
 		</script>
 		<main class="footer-reveal-content w-full px-20">
       <Header />
-    <section id="Intro-text">
-      <p class="index-intro text-syoro font-serif text-xl md:text-2xl w-full sm:w-2/3 md:w-1/2 mt-0.5">I design and prototype systems that help people stay consistent over time. <span>Currently building something cool at <Link href="https://nordeus.com/" class="text-link">Nordeus.</Link></span></p>
+    <section id="Intro-text" class="text-2xl xl:text-3xl w-full sm:w-3/4 md:w-3/4 xl:w-1/2 font-serif my-20">
+      <p class="index-intro">I design and prototype systems that help people stay consistent over time.</p> 
+      <p class="index-intro mt-10" >Currently building something cool at <Link href="https://nordeus.com/" class="text-link">Nordeus.</Link></p>
     </section>
     <section
       class="rounded-xl bg-white dark:bg-cardbg p-5 mt-10 work-cards-container"
       id="Works"
     >
       <h2 class="text-syoro opacity-50 font-sans text-lg uppercase">Selected works</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-10 mt-5">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 mt-5">
         {works.map((entry) => (
           <div
             class="work-card-intro"
