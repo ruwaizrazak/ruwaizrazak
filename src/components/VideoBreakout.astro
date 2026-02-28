@@ -1,0 +1,75 @@
+---
+interface Props {
+  src: string;
+  title?: string;
+}
+const { src, title = "YouTube video player" } = Astro.props;
+---
+
+<div
+  class="video-breakout w-screen max-w-[100vw] ml-[calc(50%-50vw)] mb-8 rounded-none overflow-hidden"
+  data-video-breakout
+>
+  <iframe
+    src={src}
+    title={title}
+    class="video-breakout__iframe w-full rounded-lg"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    allowfullscreen
+  />
+</div>
+
+<style>
+  .video-breakout {
+    height: 56.25vw; /* fallback before script runs */
+  }
+  .video-breakout__iframe {
+    height: 56.25vw; /* 16:9 of viewport width — video keeps aspect, wrapper clips on scroll */
+  }
+</style>
+
+<script>
+  function initVideoBreakouts() {
+    const wrappers = document.querySelectorAll<HTMLElement>('[data-video-breakout]');
+    wrappers.forEach((el) => {
+      if (el.dataset.videoBreakoutInited === '1') return;
+      el.dataset.videoBreakoutInited = '1';
+
+      // 16:9 height for full viewport width
+      let initialHeightPx = 0.7 * window.innerWidth;
+      let ticking = false;
+
+      function updateHeight() {
+        const top = el.getBoundingClientRect().top;
+        const heightPx = Math.max(0, initialHeightPx + top);
+        el.style.height = heightPx + 'px';
+      }
+
+      function onScroll() {
+        if (!ticking) {
+          ticking = true;
+          requestAnimationFrame(() => {
+            updateHeight();
+            ticking = false;
+          });
+        }
+      }
+
+      function onResize() {
+        initialHeightPx = 0.5625 * window.innerWidth; // 16:9 of viewport width
+        updateHeight();
+      }
+
+      updateHeight();
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onResize);
+    });
+  }
+
+  document.addEventListener('astro:page-load', initVideoBreakouts);
+  if (document.readyState === 'complete') {
+    initVideoBreakouts();
+  } else {
+    window.addEventListener('load', initVideoBreakouts);
+  }
+</script>
