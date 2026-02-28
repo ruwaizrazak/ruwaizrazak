@@ -1,0 +1,83 @@
+---
+import { getCollection } from 'astro:content';
+import WorkCard from './WorkCard.astro';
+
+interface Props {
+  currentSlug: string;
+}
+
+const { currentSlug } = Astro.props;
+const otherWorks = (await getCollection('works', ({ data }) => data.publish)).filter(
+  (entry) => entry.id !== currentSlug
+);
+---
+
+<div class="my-20 relative" data-other-works>
+  <div
+    class="w-screen max-w-[100vw] ml-[calc(50%-50vw)] bg-white dark:bg-[var(--color-cardbg)] shadow-[inset_0_1px_2px_0_rgb(0_0_0/0.05)] py-20"
+  >
+    <div class="w-full mx-auto py-8 px-8 md:px-20">
+      <div class="w-full grid grid-cols-1 lg:grid-cols-4 justify-between gap-4 mb-20 md:py-0 items-center">
+        <div class="col-span-1">
+          <h2 class="text-5xl font-sans border-l-2 border-syoro pl-4">Other works</h2>
+        </div>
+        <div class="col-span-1 lg:col-span-3 lg:col-start-2">
+          <p class="text-2xl">Here are some of the other works I can share with you.</p>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+        {otherWorks.map((entry, i) => (
+          <div class="other-works-card" data-other-works-card>
+            <WorkCard entry={entry} />
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  import gsap from 'gsap';
+
+  function init() {
+    const section = document.querySelector<HTMLElement>('[data-other-works]');
+    const cards = section?.querySelectorAll<HTMLElement>('[data-other-works-card]');
+    if (!section || !cards?.length) return;
+    if (section.dataset.inited === '1') return;
+    section.dataset.inited = '1';
+
+    const cardDelay = 0.2;
+    const cardDuration = 0.4;
+
+    gsap.set(cards, { opacity: 0, y: 24, scale: 0.92 });
+
+    const tl = gsap.timeline({ paused: true });
+    cards.forEach((card, i) => {
+      tl.to(
+        card,
+        { opacity: 1, y: 0, scale: 1, duration: cardDuration, ease: 'power2.out' },
+        `+=${i === 0 ? 0 : cardDelay}`
+      );
+    });
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const e = entries[0];
+        if (!e || !section) return;
+        const rect = section.getBoundingClientRect();
+        const isAbove = rect.top < 0;
+
+        if (e.isIntersecting) {
+          tl.play();
+        } else if (isAbove) {
+          tl.reverse();
+        }
+      },
+      { threshold: 0.1 }
+    );
+    observer.observe(section);
+  }
+
+  document.addEventListener('astro:page-load', init);
+  document.readyState === 'complete' ? init() : window.addEventListener('load', init);
+</script>

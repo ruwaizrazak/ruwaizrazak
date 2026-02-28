@@ -5,6 +5,7 @@ import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import Image from '../components/mdxComponents/Image.astro';
+import OtherWorksSection from '../components/OtherWorksSection.astro';
 
 type WorkLayoutProps = CollectionEntry<'works'>['data'] & {
   transitionName?: string;
@@ -79,9 +80,10 @@ const workTransitionStyle = transitionName
         
 
         <!-- Main content (MDX) -->
-        <article class="text-syoro font-serif text-2xl w-4/5 mx-auto my-20">
+        <article class="text-syoro font-serif text-2xl w-4/5 mx-auto">
           <slot />
         </article>
+        <OtherWorksSection currentSlug={Astro.url.pathname.replace('/works/', '').replace(/\/$/, '')} />
       </main>
     </div>
     <Footer />
