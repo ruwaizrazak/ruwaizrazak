@@ -1,0 +1,33 @@
+---
+import BaseHead from '../../components/BaseHead.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import WorkCard from '../../components/WorkCard.astro';
+import { getCollection } from 'astro:content';
+import { SITE_TITLE } from '../../consts';
+import { ClientRouter } from 'astro:transitions';
+
+const works = await getCollection('works', ({ data }) => data.publish);
+---
+
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <BaseHead title={`Works | ${SITE_TITLE}`} description="Selected product and design work." />
+    <ClientRouter />
+  </head>
+  <body class="footer-reveal bg-backgroundcolor">
+    <div class="footer-reveal-content px-20">
+      <Header />
+      <main class="w-full mx-auto px-6 sm:px-10 pb-24 pt-8 sm:pt-16">
+        <h1 class="text-syoro dark:text-syoro font-sans text-3xl sm:text-4xl font-bold mb-10">Works</h1>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+          {works.map((entry) => (
+            <WorkCard entry={entry} />
+          ))}
+        </div>
+      </main>
+    </div>
+    <Footer />
+  </body>
+</html>
