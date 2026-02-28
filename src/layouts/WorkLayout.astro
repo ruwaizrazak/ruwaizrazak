@@ -54,9 +54,10 @@ const workTransitionStyle = transitionName
         
 
         <!-- Hero image -->
-        <section>
+        <section class="relative mb-0" id="hero-image-section">
           <div
-            class="hero-image-wrapper w-full content-end rounded-xl overflow-hidden mt-15 shadow-lg bg-center bg-cover bg-no-repeat"
+            class="hero-image-wrapper relative z-0 w-full content-end rounded-xl overflow-hidden mt-15 
+            inset-shadow-white bg-center bg-cover bg-no-repeat"
             style={heroImage ? `background-image: url(${heroImage})` : undefined}
             id="hero-image"
           >
@@ -65,17 +66,10 @@ const workTransitionStyle = transitionName
             <Image
               src={phoneImage}
               alt=""
-              class="w-1/2 h-auto object-cover mx-auto -translate-y-[70%]"
+              class="relative z-10 w-1/2 h-auto object-cover mx-auto -mt-50"
               loading="eager"
             />
           )}
-          <div class="w-full -mt-30 mb-12">
-            {description && (
-              <p class="text-syoro dark:text-syoro font-serif text-3xl -mt-30 mb-12 sm:mb-16 w-full mx auto not-prose">
-                {description}
-              </p>
-            )}
-          </div>
           </section>
         
         <!-- Overview / description -->
@@ -85,7 +79,7 @@ const workTransitionStyle = transitionName
         
 
         <!-- Main content (MDX) -->
-        <article class="prose prose-neutral prose-lg dark:prose-invert max-w-none prose-headings:font-sans prose-p:font-serif prose-p:text-syoro prose-img:rounded-lg prose-img:w-full prose-headings:text-konpeki prose-h4:uppercase prose-h3:uppercase prose-strong:text-pink-500 prose-h5:uppercase prose-h4:font-bold prose-h5:font-bold prose-blockquote:font-handwriting prose-blockquote:leading-auto prose-ul:font-serif prose-li:font-serif prose-ul:list-disc prose-ol:list-decimal prose-blockquote:text-yellow-600 prose-blockquote:italic prose-headings:mb-4 prose-headings:mt-8 first:prose-headings:mt-0">
+        <article class="text-syoro font-serif text-2xl w-4/5 mx-auto my-20">
           <slot />
         </article>
       </main>
