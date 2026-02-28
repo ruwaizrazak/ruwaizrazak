@@ -47,6 +47,7 @@ const works = defineCollection({
     duration: z.string(),
     role: z.string().optional(),
     location: z.string().optional(),
+    phoneImage: z.string().optional(),
   }),
 });
 
