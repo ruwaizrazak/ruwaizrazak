@@ -50,6 +50,8 @@ const works = defineCollection({
     role: z.string().optional(),
     location: z.string().optional(),
     phoneImage: z.string().optional(),
+    appStoreUrl: z.string().url().optional(),
+    playStoreUrl: z.string().url().optional(),
   }),
 });
 
