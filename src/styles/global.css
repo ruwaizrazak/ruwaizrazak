@@ -35,15 +35,19 @@
 @keyframes shiver-animation {
   0%, 100% {
     transform: translate(0, 0);
+    box-shadow: none;
   }
   25% {
-    transform: translate(-4px, -4px);
+    transform: translate(-2px, -2px);
+    box-shadow: 4px 4px #00000003;
   }
   50% {
-    transform: translate(4px, 4px);
+    transform: translate(2px, 2px);
+    box-shadow: -4px -4px #00000003;
   }
   75% {
-    transform: translate(-4px, 4px);
+    transform: translate(-2px, 2px);
+    box-shadow: 4px 4px #00000003;
   }
 }
 

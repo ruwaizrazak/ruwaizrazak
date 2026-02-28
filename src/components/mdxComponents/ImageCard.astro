@@ -11,7 +11,7 @@ const uniqueId = `image-card-${Math.random().toString(36).slice(2, 11)}`;
 ---
 
 <div
-  class="image-card relative overflow-hidden rounded-2xl min-h-[20rem] cursor-pointer bg-cardbg hover:animate-shiver"
+  class="image-card relative overflow-hidden rounded-2xl min-h-[20rem] cursor-pointer bg-cardbg hover:animate-shiver hover:scale-105 transition-all duration-200 ease-in-out"
   data-image-card-trigger={uniqueId}
   role="button"
   tabindex={0}
