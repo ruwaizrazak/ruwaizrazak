@@ -10,7 +10,7 @@ type WorkLayoutProps = CollectionEntry<'works'>['data'] & {
   transitionName?: string;
 };
 
-const { title, description, company, duration, role, heroImage, transitionName } = Astro.props as WorkLayoutProps;
+const { title, description, company, duration, role, heroImage, transitionName,phoneImage } = Astro.props as WorkLayoutProps;
 const workTransitionStyle = transitionName
   ? `::view-transition-new(${transitionName}){animation:work-scale-in .4s cubic-bezier(.32,.72,0,1)}`
   : '';
@@ -26,14 +26,14 @@ const workTransitionStyle = transitionName
   <body class="footer-reveal bg-backgroundcolor">
     <div class="footer-reveal-content px-20">
       <Header />
-      <main class="w-full  mx-auto px-6 sm:px-10 pb-24 pt-8 sm:pt-16" transition:name={transitionName}>
+      <main transition:name={transitionName}>
         <!-- Back link: set flag so index skips entrance animations -->
         
         
         <!-- Hero title (Itti-style large headline) -->
          
-        <div class="py-8  mt-10 sm:mt-14">
-          <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between mt-20">
             <h1 class="text-syoro dark:text-syoro font-sans text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold leading-tight max-w-3xl">
               {title} <span class="font-normal">| {company}</span>
             </h1>
@@ -48,28 +48,39 @@ const workTransitionStyle = transitionName
             </div>
           </div>
         </div>
-        <p class="text-syoro dark:text-syoro font-serif text-3xl border-l-4 border-syoro pl-4 mb-10  w-full lg:w-3/4"> {description} </p>
-
-        <!-- Hero image -->
-        {heroImage && (
-          <div class="w-full rounded-xl overflow-hidden mb-12 sm:mb-16 shadow-lg">
-            <Image
-              src={heroImage}
-              alt=""
-              class="w-full h-auto object-cover"
-              loading="eager"
-            />
-          </div>
-        )}
-        <!-- Metadata row: ROLE | COMPANY | DURATION -->
+        <div class="w-full">
+          <p class="text-syoro dark:text-syoro font-serif text-3xl border-l-4 border-syoro pl-4 my-5  w-full lg:w-3/4"> {description} </p>
+        </div>
         
 
+        <!-- Hero image -->
+        <section>
+          <div
+            class="hero-image-wrapper w-full content-end rounded-xl overflow-hidden mt-15 shadow-lg bg-center bg-cover bg-no-repeat"
+            style={heroImage ? `background-image: url(${heroImage})` : undefined}
+            id="hero-image"
+          >
+          </div>
+          {phoneImage && (
+            <Image
+              src={phoneImage}
+              alt=""
+              class="w-1/2 h-auto object-cover mx-auto -translate-y-[70%]"
+              loading="eager"
+            />
+          )}
+          <div class="w-full -mt-30 mb-12">
+            {description && (
+              <p class="text-syoro dark:text-syoro font-serif text-3xl -mt-30 mb-12 sm:mb-16 w-full mx auto not-prose">
+                {description}
+              </p>
+            )}
+          </div>
+          </section>
+        
         <!-- Overview / description -->
-        {description && (
-          <p class="text-syoro dark:text-syoro font-serif text-lg sm:text-xl leading-relaxed mb-12 sm:mb-16 max-w-3xl">
-            {description}
-          </p>
-        )}
+        
+        
 
         
 
@@ -82,3 +93,78 @@ const workTransitionStyle = transitionName
     <Footer />
   </body>
 </html>
+
+<script>
+  function initHeroScrollHeight() {
+    const hero = document.getElementById('hero-image');
+    if (!hero || hero.dataset.heroScrollInited === '1') return;
+    hero.dataset.heroScrollInited = '1';
+
+    let initialHeightPx = 0.8 * window.innerHeight;
+    let ticking = false;
+
+    function updateHeight() {
+      if (!hero) return;
+      const top = hero.getBoundingClientRect().top;
+      const heightPx = Math.max(0, initialHeightPx + top);
+      hero.style.height = heightPx + 'px';
+    }
+
+    function onScroll() {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(function () {
+          updateHeight();
+          ticking = false;
+        });
+      }
+    }
+
+    function onResize() {
+      initialHeightPx = 0.8 * window.innerHeight;
+      updateHeight();
+    }
+
+    updateHeight();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onResize);
+  }
+
+  function runIfWorkPage() {
+    if (window.location.pathname.startsWith('/works/')) {
+      initHeroScrollHeight();
+    }
+  }
+
+  // After view-transition swap (client-side nav to work page)
+  document.addEventListener('astro:page-load', runIfWorkPage);
+
+  // Full page load of a work URL (DOM already has #hero-image)
+  if (document.readyState === 'complete') {
+    runIfWorkPage();
+  } else {
+    window.addEventListener('load', runIfWorkPage);
+  }
+</script>
+
+<style>
+  #hero-image {
+    height: 80vh; /* fallback before script runs */
+    background-attachment: fixed;
+    background-position: center;
+    animation: scale-up-hero .8s cubic-bezier(0.4, 0.2, 0.2, 1) forwards;
+    transform: scale(0.96);
+    opacity: 0.93;
+  }
+
+  @keyframes scale-up-hero {
+    from {
+      transform: scale(0.5);
+      opacity: 0.5;
+    }
+    to {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+</style>
