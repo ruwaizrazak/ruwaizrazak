@@ -108,6 +108,11 @@ const uniqueId = `image-card-${Math.random().toString(36).slice(2, 11)}`;
     const closeBtn = lightbox?.querySelector('[data-image-card-close]');
     const panel = lightbox?.querySelector('[data-image-card-panel]');
 
+    // Move lightbox to body so it isn't clipped by overflow/transform ancestors
+    if (lightbox && lightbox.parentNode !== document.body) {
+      document.body.appendChild(lightbox);
+    }
+
     const prefersReducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     function openLightbox() {
