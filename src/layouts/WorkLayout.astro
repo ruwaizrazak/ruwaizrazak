@@ -11,7 +11,7 @@ type WorkLayoutProps = CollectionEntry<'works'>['data'] & {
   transitionName?: string;
 };
 
-const { title, description, company, duration, role, heroImage, transitionName, phoneImage } = Astro.props as WorkLayoutProps;
+const { title, description, company, duration, role, heroImage, transitionName,phoneImage } = Astro.props as WorkLayoutProps;
 const workTransitionStyle = transitionName
   ? `::view-transition-new(${transitionName}){animation:work-scale-in .4s cubic-bezier(.32,.72,0,1)}`
   : '';
@@ -28,31 +28,41 @@ const workTransitionStyle = transitionName
     <div class="footer-reveal-content px-20">
       <Header />
       <main transition:name={transitionName}>
+        <!-- Back link: set flag so index skips entrance animations -->
+        
+        
+        <!-- Hero title (Itti-style large headline) -->
+         
         <div>
-          <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between mt-20">
-            <h1 class="text-syoro font-sans text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold leading-tight max-w-3xl">
+          <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between mt-20 mb-10">
+            <h1 class="text-syoro dark:text-syoro font-sans text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold leading-none max-w-3xl">
               {title} <span class="font-normal">| {company}</span>
             </h1>
-            <div class="flex flex-col items-center sm:items-end gap-1 my-auto">
+            <div class="flex flex-col items-center md:items-end gap-1 my-auto">
               {role && (
-                <p class="text-syoro font-sans text-base sm:text-xl md:text-3xl">{role}</p>
+                <p class="text-syoro dark:text-syoro font-sans text-base sm:text-xl md:text-3xl">{role}</p>
               )}
               {duration && (
-                <p class="text-syoro font-sans text-base sm:text-lg md:text-2xl uppercase">{duration}</p>
+                <p class="text-syoro dark:text-syoro font-sans text-base sm:text-lg md:text-2xl uppercase">{duration}</p>
               )}
+              
             </div>
           </div>
         </div>
         <div class="w-full">
-          <p class="text-syoro font-serif text-3xl border-l-4 border-syoro pl-4 my-5 w-full lg:w-3/4">{description}</p>
+          <p class="text-syoro dark:text-syoro font-serif text-3xl border-l-4 border-syoro pl-4 mt-10 mb-20  w-full lg:w-3/4"> {description} </p>
         </div>
+        
 
+        <!-- Hero image -->
         <section class="relative mb-0" id="hero-image-section">
           <div
-            class="hero-image-wrapper relative z-0 w-screen max-w-[100vw] ml-[calc(50%-50vw)] content-end overflow-hidden mt-15 inset-shadow-white bg-center bg-cover bg-no-repeat"
+            class="hero-image-wrapper relative z-0 w-screen max-w-[100vw] ml-[calc(50%-50vw)] content-end overflow-hidden mt-15 
+            inset-shadow-white bg-center bg-cover bg-no-repeat"
             style={heroImage ? `background-image: url(${heroImage})` : undefined}
             id="hero-image"
-          />
+          >
+          </div>
           {phoneImage && (
             <Image
               src={phoneImage}
@@ -61,8 +71,15 @@ const workTransitionStyle = transitionName
               loading="eager"
             />
           )}
-        </section>
+          </section>
+        
+        <!-- Overview / description -->
+        
+        
 
+        
+
+        <!-- Main content (MDX) -->
         <article class="work-article text-syoro font-serif text-2xl w-4/5 mx-auto">
           <slot />
         </article>
@@ -70,10 +87,69 @@ const workTransitionStyle = transitionName
           <OtherWorksSection currentSlug={Astro.url.pathname.replace('/works/', '').replace(/\/$/, '')} />
         </div>
       </main>
+      
     </div>
     <Footer />
   </body>
 </html>
+
+<script>
+  function initHeroScrollHeight() {
+    const hero = document.getElementById('hero-image');
+    if (!hero || hero.dataset.heroScrollInited === '1') return;
+    hero.dataset.heroScrollInited = '1';
+
+    let initialHeightPx = 0.8 * window.innerHeight;
+    let ticking = false;
+    const maxBlurPx = 8;
+
+    function updateHeight() {
+      if (!hero) return;
+      const top = hero.getBoundingClientRect().top;
+      const heightPx = Math.max(0, initialHeightPx + top);
+      hero.style.height = heightPx + 'px';
+      const shrinkRatio = 1 - heightPx / initialHeightPx; //(0 when full height, 1 when height is 0).
+      const blurPx = Math.max(0,shrinkRatio * maxBlurPx);
+      hero.style.filter = blurPx > 0 ? 'blur(' + blurPx + 'px)' : 'none'; //when blurPx > 0, and to 'none' when the hero is at full height.
+    }
+
+    function onScroll() {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(function () {
+          updateHeight();
+          ticking = false;
+        });
+      }
+
+    }
+
+    function onResize() {
+      initialHeightPx = 0.8 * window.innerHeight;
+      updateHeight();
+    }
+
+    updateHeight();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onResize);
+  }
+
+  function runIfWorkPage() {
+    if (window.location.pathname.startsWith('/works/')) {
+      initHeroScrollHeight();
+    }
+  }
+
+  // After view-transition swap (client-side nav to work page)
+  document.addEventListener('astro:page-load', runIfWorkPage);
+
+  // Full page load of a work URL (DOM already has #hero-image)
+  if (document.readyState === 'complete') {
+    runIfWorkPage();
+  } else {
+    window.addEventListener('load', runIfWorkPage);
+  }
+</script>
 
 <script>
   import gsap from 'gsap';
@@ -81,42 +157,11 @@ const workTransitionStyle = transitionName
 
   gsap.registerPlugin(ScrollTrigger);
 
-  function initHeroScroll() {
-    const hero = document.getElementById('hero-image');
-    if (!hero || hero.dataset.inited === '1') return;
-    hero.dataset.inited = '1';
-
-    let baseH = 0.8 * window.innerHeight;
-    const maxBlur = 8;
-    let ticking = false;
-
-    function update() {
-      if (!hero) return;
-      const top = hero.getBoundingClientRect().top;
-      const h = Math.max(0, baseH + top);
-      hero.style.height = h + 'px';
-      const ratio = 1 - h / baseH;
-      const blur = Math.max(0, ratio * maxBlur);
-      hero.style.filter = blur > 0 ? `blur(${blur}px)` : 'none';
-    }
-
-    function onScroll() {
-      if (!ticking) {
-        ticking = true;
-        requestAnimationFrame(() => { update(); ticking = false; });
-      }
-    }
-
-    update();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', () => { baseH = 0.8 * window.innerHeight; update(); });
-  }
-
   function initOtherWorksOverlap() {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const wrapper = document.querySelector<HTMLElement>('[data-other-works-wrapper]');
-    if (!wrapper || wrapper.dataset.inited === '1') return;
-    wrapper.dataset.inited = '1';
+    if (!wrapper || wrapper.dataset.overlapInited === '1') return;
+    wrapper.dataset.overlapInited = '1';
 
     gsap.to(wrapper, {
       y: -200,
@@ -130,33 +175,41 @@ const workTransitionStyle = transitionName
     });
   }
 
-  function initWorkPage() {
-    if (!window.location.pathname.startsWith('/works/')) return;
-    initHeroScroll();
-    initOtherWorksOverlap();
+  function runOverlapIfWorkPage() {
+    if (window.location.pathname.startsWith('/works/')) {
+      initOtherWorksOverlap();
+    }
   }
 
-  document.addEventListener('astro:page-load', initWorkPage);
+  document.addEventListener('astro:page-load', runOverlapIfWorkPage);
   if (document.readyState === 'complete') {
-    initWorkPage();
+    runOverlapIfWorkPage();
   } else {
-    window.addEventListener('load', initWorkPage);
+    window.addEventListener('load', runOverlapIfWorkPage);
   }
 </script>
 
 <style>
   #hero-image {
-    height: 80vh;
+    height: 80vh; /* fallback before script runs */
     background-attachment: fixed;
     background-position: center;
     animation: scale-up-hero .8s cubic-bezier(0.4, 0.2, 0.2, 1) forwards;
-    transform: scale(0.96);
+    transform: scale(1);
     opacity: 0.93;
   }
+
   @keyframes scale-up-hero {
-    from { transform: scale(0.5); opacity: 0.5; }
-    to   { transform: scale(1);   opacity: 1; }
+    from {
+      transform: scale(1);
+      opacity: 0.5;
+    }
+    to {
+      transform: scale(1);
+      opacity: 1;
+    }
   }
+
   .other-works-overlap {
     position: relative;
     z-index: 10;
