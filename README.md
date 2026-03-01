@@ -1,42 +1,27 @@
-Hi, I’m Ruwaiz.
+# Ruwaiz Razak
 
-I’m a designer–builder with experience shipping large-scale mobile products,
-and a growing practice of learning by building the things I design.
+Senior UX Designer with 7+ years of experience, building what I design.
 
-This GitHub reflects how I work; close to the surface,curious about systems and human behavior,and deliberate about details.
+I build things. I got into HTML before I knew design existed, code came first, design came later. That origin shapes how I work: I'm a builder who became a designer, not the other way around.
 
-For a complete view of my work and thinking:
-🌐 http://www.ruwaizrazak.com
+→ [ruwaizrazak.com](http://www.ruwaizrazak.com)
 
 ---
 
-### Background
+## Background
 
-- Senior User Experience Designer with 7+ years of experience
-- Designed for high-scale, long-lived mobile products
-- Worked across product definition, interaction design, and live systems
-
-My interest in building comes from wanting tighter feedback loops and better alignment between intent and execution.
+Designed for high-scale, long-lived mobile products. My work spans early product definition through live systems, research, interaction design, and everything in between.
 
 ---
 
-### Tools & Mediums
+## Skills
 
-- **Design:** Quantitative & qualitative research, interaction design, prototyping
-- **Code:** Swift, SwiftUI, JavaScript, React
-- **Web:** Astro, HTML, CSS
+**Design** — Quantitative & qualitative research, interaction design, prototyping, design systems
 
-I use code as a thinking tool to test assumptions, understand constraints, and learn how systems behave in practice.
+**Code (Amateur in everything - picking up as required)** — Swift, SwiftUI, JavaScript, TypeScript, React, Astro
 
 ---
 
-### What you’ll see here
+## What's here
 
-- Learning projects and technical explorations
-- Code written to test ideas and understand trade-offs
-- Iterations, experiments, and work-in-progress artifacts
-
-This where I test my recipes, and it is intentionally made messier :D.
-
----
-
+Learning projects, technical explorations, and experiments I run to test ideas before committing to them in design. Intentionally messy — this is where I test recipes, not serve them.
