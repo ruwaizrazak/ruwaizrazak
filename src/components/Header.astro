@@ -40,7 +40,7 @@ const additionalLinks = [
 ---
 
 <header class="relative z-20 w-full mx-auto mt-10">
-	<nav class="opacity-0 animate-nav-intro">
+	<nav>
 		<Navigation 
   			menuItems={menuItems}
   			additionalLinks={additionalLinks}
@@ -50,16 +50,3 @@ const additionalLinks = [
 	</nav>
 </header>
 
-<style>
-  @keyframes navIntro {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-  .animate-nav-intro {
-    animation: navIntro 0.1s ease-out 0.1s forwards;
-  }
-</style>
