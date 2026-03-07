@@ -53,74 +53,81 @@ const sortedTags = [...tags.filter(tag => tag !== 'all').sort()];
     <>
       <Header />
 
-      <!-- Phase 1 & 2: Intro section — pinned during scroll-driven animation -->
-      <section class="intro-section h-screen flex flex-col items-center justify-center px-10" style="padding-bottom: 220px;">
-        <h1 class="garden-heading text-center text-konpeki">THE GARDEN</h1>
-        <p class="font-serif text-2xl md:text-[32px] text-center text-syoro mt-6 max-w-2xl italic">{description}</p>
-        <div class="topics-bar opacity-0 flex flex-wrap gap-3 justify-center mt-8 max-w-3xl">
-          {sortedTags.map((tag, index) => (
-            <Tag tag={tag} isActive={false} index={index} />
-          ))}
-        </div>
-      </section>
+      <!-- Horizontal scroll wrapper: pinned at 100vh, GSAP translates the track -->
+      <div class="garden-scroll-wrapper h-screen overflow-hidden">
+        <div class="garden-track flex items-stretch">
 
-      <!-- Phase 3: Horizontal scroll section — pinned, card-row moves left -->
-      <section class="horizontal-scroll-container h-screen overflow-hidden relative opacity-0">
-        <div class="card-row flex h-full items-center pl-20" style="gap: 484px; padding-bottom: 240px; width: max-content;">
-          {posts?.map((post) => (
-            post.collection === 'essays' ? (
-              <div class="flex-shrink-0 w-[320px]">
-                <EssayCard
-                  title={post.data.title}
-                  description={post.data.description || ''}
-                  pubDate={post.data.pubDate}
-                  url={`/essays/${post.id}/`}
-                  heroImage={post.data.heroImage}
-                  maturity={post.data.maturity}
-                />
-              </div>
-            ) : (
-              <div class="flex-shrink-0 w-[360px]">
-                <NoteCard
-                  title={post.data.title}
-                  description={post.data.description || ''}
-                  pubDate={post.data.pubDate}
-                  url={`/${post.collection}/${post.id}/`}
-                  maturity={post.data.maturity}
-                />
-              </div>
-            )
-          ))}
-        </div>
+          <!-- Panel 1: Intro -->
+          <section class="intro-section flex-shrink-0 flex flex-col items-center justify-center px-10" style="width: 100vw; height: 100vh; padding-bottom: 220px;">
+            <h1 class="garden-heading text-center text-konpeki">THE GARDEN</h1>
+            <p class="font-serif text-2xl md:text-[32px] text-center text-syoro mt-6 max-w-2xl italic">{description}</p>
+            <div class="topics-bar opacity-0 flex flex-wrap gap-3 justify-center mt-8 max-w-3xl">
+              {sortedTags.map((tag, index) => (
+                <Tag tag={tag} isActive={false} index={index} />
+              ))}
+            </div>
+          </section>
 
-        <!-- Closing panel: slides in from right during final 20% of horizontal scroll -->
-        <div class="closing-panel absolute top-0 right-0 h-full w-[411px] bg-[#141414] flex flex-col justify-center px-12 z-10" style="transform: translateX(420px);">
-          <p class="font-serif text-white text-[32px] leading-tight">Thank you for<br/>your time.</p>
-          <p class="font-serif text-white text-[32px] mt-4">—Ruwaiz</p>
-          <div class="mt-10 font-sans text-base space-y-6">
-            <div>
-              <p class="mb-2 uppercase text-xs tracking-widest text-white/50">Quick Links</p>
-              <div class="flex gap-3 text-white/70">
-                <a href="/" class="hover:text-white transition-colors" style="text-decoration: none;">Home</a>
-                <span class="text-white/30">/</span>
-                <a href="/garden" class="hover:text-white transition-colors" style="text-decoration: none;">Garden</a>
-                <span class="text-white/30">/</span>
-                <a href="/works" class="hover:text-white transition-colors" style="text-decoration: none;">Works</a>
+          <!-- Panel 2: Cards in masonry grid -->
+          <section class="cards-section flex-shrink-0 relative opacity-0" style="height: 100vh;">
+            <div class="card-masonry" style="padding: 24px 40px 40px 60px;">
+              {posts?.map((post) => (
+                post.collection === 'essays' ? (
+                  <div class="garden-card-item break-inside-avoid mb-6">
+                    <EssayCard
+                      title={post.data.title}
+                      description={post.data.description || ''}
+                      pubDate={post.data.pubDate}
+                      url={`/essays/${post.id}/`}
+                      heroImage={post.data.heroImage}
+                      maturity={post.data.maturity}
+                    />
+                  </div>
+                ) : (
+                  <div class="garden-card-item break-inside-avoid mb-6">
+                    <NoteCard
+                      title={post.data.title}
+                      description={post.data.description || ''}
+                      pubDate={post.data.pubDate}
+                      url={`/${post.collection}/${post.id}/`}
+                      maturity={post.data.maturity}
+                    />
+                  </div>
+                )
+              ))}
+            </div>
+
+            <!-- Closing panel: slides in from right at end of scroll -->
+            <div class="closing-panel absolute top-0 right-0 h-full w-[411px] bg-[#141414] flex flex-col justify-center px-12 z-10">
+              <p class="font-serif text-white text-[32px] leading-tight">Thank you for<br/>your time.</p>
+              <p class="font-serif text-white text-[32px] mt-4">—Ruwaiz</p>
+              <div class="mt-10 font-sans text-base space-y-6">
+                <div>
+                  <p class="mb-2 uppercase text-xs tracking-widest text-white/50">Quick Links</p>
+                  <div class="flex gap-3 text-white/70">
+                    <a href="/" class="hover:text-white transition-colors" style="text-decoration: none;">Home</a>
+                    <span class="text-white/30">/</span>
+                    <a href="/garden" class="hover:text-white transition-colors" style="text-decoration: none;">Garden</a>
+                    <span class="text-white/30">/</span>
+                    <a href="/works" class="hover:text-white transition-colors" style="text-decoration: none;">Works</a>
+                  </div>
+                </div>
+                <div>
+                  <p class="mb-2 uppercase text-xs tracking-widest text-white/50">Social</p>
+                  <div class="flex gap-3 text-white/70">
+                    <a href="https://github.com/ruwaizrazak" class="hover:text-white transition-colors" style="text-decoration: none;">Github</a>
+                    <span class="text-white/30">/</span>
+                    <a href="https://mastodon.social/@ruwaizrazak" class="hover:text-white transition-colors" style="text-decoration: none;">Mastodon</a>
+                    <span class="text-white/30">/</span>
+                    <a href="https://www.behance.net/ruwaizrazak" class="hover:text-white transition-colors" style="text-decoration: none;">Behance</a>
+                  </div>
+                </div>
               </div>
             </div>
-            <div>
-              <p class="mb-2 uppercase text-xs tracking-widest text-white/50">Social</p>
-              <div class="flex gap-3 text-white/70">
-                <a href="https://github.com/ruwaizrazak" class="hover:text-white transition-colors" style="text-decoration: none;">Github</a>
-                <span class="text-white/30">/</span>
-                <a href="https://mastodon.social/@ruwaizrazak" class="hover:text-white transition-colors" style="text-decoration: none;">Mastodon</a>
-                <span class="text-white/30">/</span>
-                <a href="https://www.behance.net/ruwaizrazak" class="hover:text-white transition-colors" style="text-decoration: none;">Behance</a>
-              </div>
-            </div>
-          </div>
+          </section>
+
         </div>
-      </section>
+      </div>
 
       <!-- Garden strip: fixed to bottom, always visible, shape animated by GSAP -->
       <div class="garden-strip fixed bottom-0 left-0 w-full bg-[#141414] z-50" style="height: 220px; border-radius: 50% 50% 0 0 / 60px 60px 0 0; overflow: visible;">
@@ -173,7 +180,7 @@ const sortedTags = [...tags.filter(tag => tag !== 'all').sort()];
           </div>
         </div>
         <div class="mt-10">
-          <div class="flex flex-row gap-4 mb-4 justify-between items-center">
+          <div class="flex flex-row gap-4 mb-4 justify-start">
             <div class="flex flex-row">
 
               {showTags && (
@@ -308,52 +315,30 @@ const sortedTags = [...tags.filter(tag => tag !== 'all').sort()];
 
       ScrollTrigger.getAll().forEach(st => st.kill());
 
-      const cardRow = document.querySelector('.card-row') as HTMLElement;
+      const track = document.querySelector('.garden-track') as HTMLElement;
+      const cardsSection = document.querySelector('.cards-section') as HTMLElement;
+      const masonry = document.querySelector('.card-masonry') as HTMLElement;
       const character = document.querySelector('.character-placeholder') as HTMLElement;
       const plants = document.querySelectorAll('.plant-icon') as NodeListOf<HTMLElement>;
 
-      if (!cardRow) return;
+      if (!track || !cardsSection || !masonry) return;
 
-      const cardSpacing = 484 + 340;
+      const vw = window.innerWidth;
+      // Cards section width = masonry content width + closing panel
+      const masonryW = masonry.scrollWidth + 60;
+      cardsSection.style.width = `${masonryW + 420}px`;
 
-      // Position plant icons (override initial CSS translateX(-9999px))
-      plants.forEach((plant, i) => {
-        gsap.set(plant, { x: 80 + i * cardSpacing });
-      });
+      const totalTrackWidth = track.scrollWidth;
+      const totalScrollX = totalTrackWidth - vw;
 
-      const totalScrollX = cardRow.scrollWidth - window.innerWidth + 420;
+      // Intro phase occupies first viewport width of total scroll
+      const introFraction = vw / totalScrollX;
 
-      // PHASE 2: Intro pin — hill morphs flat, heading shrinks, cards fade in
+      plants.forEach((plant) => gsap.set(plant, { opacity: 0 }));
+
+      // Single ScrollTrigger: pins the wrapper, translates the track horizontally
       ScrollTrigger.create({
-        trigger: '.intro-section',
-        start: 'top top',
-        end: '+=600',
-        pin: true,
-        scrub: true,
-        onUpdate(self) {
-          const p = self.progress;
-
-          gsap.set('.garden-strip', {
-            borderRadius: `${50 * (1 - p)}% ${50 * (1 - p)}% 0 0 / ${60 * (1 - p)}px ${60 * (1 - p)}px 0 0`
-          });
-
-          gsap.set('.garden-heading', {
-            scale: 1 - p * 0.25,
-            y: -(p * 40)
-          });
-
-          gsap.set('.horizontal-scroll-container', {
-            opacity: p,
-            y: 20 * (1 - p)
-          });
-
-          gsap.set('.topics-bar', { opacity: p });
-        }
-      });
-
-      // PHASE 3: Horizontal scroll — cards move left, closing panel slides in
-      ScrollTrigger.create({
-        trigger: '.horizontal-scroll-container',
+        trigger: '.garden-scroll-wrapper',
         start: 'top top',
         end: () => `+=${totalScrollX}`,
         pin: true,
@@ -361,21 +346,39 @@ const sortedTags = [...tags.filter(tag => tag !== 'all').sort()];
         onUpdate(self) {
           const p = self.progress;
 
-          gsap.set('.card-row', { x: -(p * totalScrollX) });
+          // Translate the entire track
+          gsap.set(track, { x: -(p * totalScrollX) });
 
-          const panelP = Math.max(0, (p - 0.8) / 0.2);
+          // Sub-phase: intro (0 → introFraction)
+          const introP = Math.min(1, p / introFraction);
+
+          gsap.set('.garden-strip', {
+            height: 220 - 190 * introP,
+            borderRadius: `${50 * (1 - introP)}% ${50 * (1 - introP)}% 0 0 / ${60 * (1 - introP)}px ${60 * (1 - introP)}px 0 0`,
+          });
+
+          gsap.set('.garden-heading', {
+            scale: 1 - introP * 0.25,
+            y: -(introP * 40),
+          });
+
+          gsap.set('.cards-section', {
+            opacity: introP,
+          });
+
+          gsap.set('.topics-bar', { opacity: introP });
+
+          // Sub-phase: cards (introFraction → 1)
+          const cardsP = Math.max(0, (p - introFraction) / (1 - introFraction));
+
+          const panelP = Math.max(0, (cardsP - 0.85) / 0.15);
           gsap.set('.closing-panel', { x: 420 * (1 - panelP) });
 
           if (character) {
             const charStartX = 60;
-            const charEndX = window.innerWidth - 100;
-            gsap.set(character, { x: charStartX + p * (charEndX - charStartX) });
+            const charEndX = vw - 100;
+            gsap.set(character, { x: charStartX + cardsP * (charEndX - charStartX) });
           }
-
-          plants.forEach((plant, i) => {
-            const baseX = 80 + i * cardSpacing;
-            gsap.set(plant, { x: baseX - p * totalScrollX * 0.85 });
-          });
 
           if (character) {
             const velocity = self.getVelocity();
@@ -514,7 +517,23 @@ const sortedTags = [...tags.filter(tag => tag !== 'all').sort()];
     text-decoration-style: wavy;
   }
 
-  /* Garden layout styles */
+  /* Garden: horizontal scroll experience */
+  .garden-track {
+    will-change: transform;
+  }
+
+  .card-masonry {
+    column-count: 4;
+    column-gap: 1.5rem;
+    column-fill: auto;
+    height: calc(100vh - 24px - 40px - 30px);
+    width: max-content;
+  }
+  .garden-card-item {
+    width: 320px;
+    break-inside: avoid;
+  }
+
   .garden-heading {
     font-family: 'Saira Extra Condensed', 'Saira Condensed', sans-serif;
     font-size: clamp(56px, 10vw, 96px);
@@ -523,10 +542,6 @@ const sortedTags = [...tags.filter(tag => tag !== 'all').sort()];
     transform-origin: center top;
     letter-spacing: 0.02em;
     line-height: 1;
-  }
-
-  .card-row {
-    will-change: transform;
   }
 
   /* Override global a:hover for closing panel links */
