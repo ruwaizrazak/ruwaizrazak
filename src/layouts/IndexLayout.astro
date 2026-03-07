@@ -15,8 +15,8 @@ interface Props {
   tags?: string[];
   collections?: string[];
   showCollections?: boolean;
-  icon?:string;
-  showTags?: boolean; // Add this prop
+  icon?: string;
+  showTags?: boolean;
 }
 
 const {
@@ -27,11 +27,12 @@ const {
   tags = ['all'],
   collections = ['all'],
   showCollections = false,
-  showTags = true // Default to true
+  showTags = true
 } = Astro.props;
 
-const currentTag = 'all';
+const isGarden = Astro.url.pathname === '/garden' || Astro.url.pathname === '/garden/';
 
+const currentTag = 'all';
 
 // Sort tags with 'all' first, then alphabetically
 const sortedTags = [...tags.filter(tag => tag !== 'all').sort()];
@@ -41,273 +42,495 @@ const sortedTags = [...tags.filter(tag => tag !== 'all').sort()];
 <html lang="en" transition:name="root" transition:animate="none">
   <head>
     <BaseHead title={title} description={description} />
+    {isGarden && (
+      <link href="https://fonts.googleapis.com/css2?family=Saira+Extra+Condensed:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    )}
     <ClientRouter />
   </head>
-  <body class="footer-reveal bg-backgroundcolor">
-    
-    <main class="footer-reveal-content w-full px-20">
+
+  <body class:list={[isGarden && 'garden-body', !isGarden && 'footer-reveal', 'bg-backgroundcolor']}>
+  {isGarden ? (
+    <>
       <Header />
-      <div class="mt-8">
 
-        <div class="flex flex-col mt-20">
-          <a href={Astro.url.pathname.includes('/garden') ? '/' : '/garden'} class="inline-block z-1">
-          <div class="flex items-center gap-2 group mb-5">
-            <img src="/icons/backArrow.svg" class="w-8 h-auto group-hover:rotate-20 transition-all" alt="Back" />
-            <span class="uppercase font-sans text-konpeki font-medium">Back to {Astro.url.pathname.includes('/garden') ? 'Index' : 'Garden'}</span>
-          </div>
-        </a>
-        <div class="flex items-center gap-2">
-          {icon && (
-            <img src={icon} class="w-20 h-auto" alt={title} />
-          )}
-          <h1>{title}</h1>
+      <!-- Phase 1 & 2: Intro section — pinned during scroll-driven animation -->
+      <section class="intro-section h-screen flex flex-col items-center justify-center px-10" style="padding-bottom: 220px;">
+        <h1 class="garden-heading text-center text-konpeki">THE GARDEN</h1>
+        <p class="font-serif text-2xl md:text-[32px] text-center text-syoro mt-6 max-w-2xl italic">{description}</p>
+        <div class="topics-bar opacity-0 flex flex-wrap gap-3 justify-center mt-8 max-w-3xl">
+          {sortedTags.map((tag, index) => (
+            <Tag tag={tag} isActive={false} index={index} />
+          ))}
         </div>
-        
-          <p class="w-full md:w-[70%] text-left text-syoro  text-base md:text-lg  mt-2 font-serif italic">{description}</p>
-        </div>
-      </div>
-      <div class="mt-10">
-        <div class="flex flex-row gap-4 mb-4 justify-between items-center">
-          <div class="flex flex-row">
-            
-            {showTags && (
-              <>
-                {/* Desktop/Tablet: Tag system with show more */}
-                <div class="md:flex items-center h-9 hidden">
-                  <h4 class="text-lg uppercase border-l-2 pl-1 pr-5 border-konpeki text-konpeki ">Topics</h4>
-                </div>
-                
-                <div class="hidden md:block">
-                  <div class="flex flex-wrap justify-start gap-4 mr-10 mb-5">
-                    {sortedTags.slice(0, 10).map((tag, index) => (
-                      <Tag
-                        tag={tag}
-                        isActive={tag === currentTag}
-                        index={index}
-                      />
-                    ))}
-                    {sortedTags.length > 10 && (
-                      <button
-                        id="showMoreTags" 
-                        class="px-4 py-2 text-sm border border-gray-300 dark:border-card-border border-dashed transition-all duration-200 hover:-skew-x-6 hover:bg-gray-200 dark:hover:bg-gray-700"
-                      >
-                        +{sortedTags.length - 10} more
-                      </button>
-                    )}
-                  </div>
-                  {sortedTags.length > 10 && (
-                    <div id="additionalTags" class="flex-wrap justify-start gap-4 mb-5" style="display: none;">
-                      {sortedTags.slice(10).map((tag, index) => (
-                        <Tag
-                          tag={tag}
-                          isActive={tag === currentTag}
-                          index={index + 10}
-                        />
-                      ))}
-                      <button 
-                        id="showLessTags" 
-                        class="px-4 py-2 text-sm border border-gray-300 dark:border-card-border border-dashed transition-all duration-200 hover:-skew-x-6 bg-gray-100 dark:bg-cardbg hover:bg-gray-200 dark:hover:bg-gray-700"
-                      >
-                        show less
-                      </button>
-                    </div>
-                  )}
-                </div>
+      </section>
 
-                {/* Mobile: Dropdown menu */}
-                <div class="md:hidden">
-                  <div class="relative inline-block">
-                    <select 
-                      id="tagDropdown" 
-                      class="px-4 py-2 text-sm border border-syoro hover:bg-yellow-50 dark:hover:bg-gray-700 text-syoro cursor-pointer bg-transparent dark:bg-transparent appearance-none pr-10"
-                    >
-                      <option value="all">All Topics</option>
-                      {sortedTags.map(tag => (
-                        <option value={tag}>
-                          {tag.charAt(0).toUpperCase() + tag.slice(1)}
-                        </option>
-                      ))}
-                    </select>
-                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
-                      <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                      </svg>
-                    </div>
-                  </div>
-                </div>
-              </>
-            )}
-
-          </div>
-          
-
-          {showCollections && collections.length > 1 && (
-            <div class="relative inline-block self-start">
-              <select class="collection-filter px-4 py-2 text-sm border border-syoro hover:bg-yellow-50 dark:hover:bg-gray-700 text-syoro cursor-pointer bg-transparent dark:bg-transparent appearance-none pr-10">
-                {collections.map(collection => (
-                  <option value={collection}>
-                    {collection === 'all' ? 'All Posts' : collection.charAt(0).toUpperCase() + collection.slice(1)}
-                  </option>
-                ))}
-              </select>
-              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
-                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-                </svg>
-              </div>
-            </div>
-          )}
-        </div>
-
-        <div class="masonry-grid columns-1 md:columns-2 lg:columns-3 2xl:columns-4 gap-5 md:gap-7 lg:gap-10">
+      <!-- Phase 3: Horizontal scroll section — pinned, card-row moves left -->
+      <section class="horizontal-scroll-container h-screen overflow-hidden relative opacity-0">
+        <div class="card-row flex h-full items-center pl-20" style="gap: 484px; padding-bottom: 240px; width: max-content;">
           {posts?.map((post) => (
-            <div class="break-inside-avoid mb-4 post-item transition-all duration-700" data-tags={post.data.tags?.join(' ')} data-collection={post.collection}>
-              {post.collection === 'essays' ? (
+            post.collection === 'essays' ? (
+              <div class="flex-shrink-0 w-[320px]">
                 <EssayCard
                   title={post.data.title}
-                  description={post.data.description || 'No description available'}
+                  description={post.data.description || ''}
                   pubDate={post.data.pubDate}
                   url={`/essays/${post.id}/`}
                   heroImage={post.data.heroImage}
                   maturity={post.data.maturity}
                 />
-              ) : (
+              </div>
+            ) : (
+              <div class="flex-shrink-0 w-[360px]">
                 <NoteCard
                   title={post.data.title}
-                  description={post.data.description || 'No description available'}
+                  description={post.data.description || ''}
                   pubDate={post.data.pubDate}
                   url={`/${post.collection}/${post.id}/`}
                   maturity={post.data.maturity}
                 />
-              )}
-            </div>
+              </div>
+            )
           ))}
         </div>
 
-        <script>
-          function initializeFilters() {
-            const collectionFilter = document.querySelector('.collection-filter') as HTMLSelectElement;
-            const tagDropdown = document.querySelector('#tagDropdown') as HTMLSelectElement;
-            const showMoreBtn = document.querySelector('#showMoreTags') as HTMLButtonElement;
-            const showLessBtn = document.querySelector('#showLessTags') as HTMLButtonElement;
-            const additionalTags = document.querySelector('#additionalTags') as HTMLElement;
-            const posts = document.querySelectorAll('.post-item') as NodeListOf<HTMLElement>;
-            let currentCollection = 'all';
-            let currentTag = 'all';
+        <!-- Closing panel: slides in from right during final 20% of horizontal scroll -->
+        <div class="closing-panel absolute top-0 right-0 h-full w-[411px] bg-[#141414] flex flex-col justify-center px-12 z-10" style="transform: translateX(420px);">
+          <p class="font-serif text-white text-[32px] leading-tight">Thank you for<br/>your time.</p>
+          <p class="font-serif text-white text-[32px] mt-4">—Ruwaiz</p>
+          <div class="mt-10 font-sans text-base space-y-6">
+            <div>
+              <p class="mb-2 uppercase text-xs tracking-widest text-white/50">Quick Links</p>
+              <div class="flex gap-3 text-white/70">
+                <a href="/" class="hover:text-white transition-colors" style="text-decoration: none;">Home</a>
+                <span class="text-white/30">/</span>
+                <a href="/garden" class="hover:text-white transition-colors" style="text-decoration: none;">Garden</a>
+                <span class="text-white/30">/</span>
+                <a href="/works" class="hover:text-white transition-colors" style="text-decoration: none;">Works</a>
+              </div>
+            </div>
+            <div>
+              <p class="mb-2 uppercase text-xs tracking-widest text-white/50">Social</p>
+              <div class="flex gap-3 text-white/70">
+                <a href="https://github.com/ruwaizrazak" class="hover:text-white transition-colors" style="text-decoration: none;">Github</a>
+                <span class="text-white/30">/</span>
+                <a href="https://mastodon.social/@ruwaizrazak" class="hover:text-white transition-colors" style="text-decoration: none;">Mastodon</a>
+                <span class="text-white/30">/</span>
+                <a href="https://www.behance.net/ruwaizrazak" class="hover:text-white transition-colors" style="text-decoration: none;">Behance</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-            // Make all posts visible initially
-            posts.forEach(post => {
-              post.style.display = 'block';
-            });
+      <!-- Garden strip: fixed to bottom, always visible, shape animated by GSAP -->
+      <div class="garden-strip fixed bottom-0 left-0 w-full bg-[#141414] z-50" style="height: 220px; border-radius: 50% 50% 0 0 / 60px 60px 0 0; overflow: visible;">
+        <!-- Earth/ground fill -->
+        <div class="absolute inset-0" style="border-radius: inherit; background: linear-gradient(to bottom, #1e341e 0%, #141414 70%);"></div>
+        <!-- Grass top layer -->
+        <div class="absolute inset-x-0" style="top: 30px; height: 28px; background: #3a7a24; border-radius: 40% 40% 0 0 / 8px 8px 0 0; z-index: 1;"></div>
+        <!-- Grass lower band -->
+        <div class="absolute inset-x-0" style="top: 48px; height: 20px; background: #2d5a1b; z-index: 1;"></div>
+        <!-- Plants layer: maturity icons positioned under each card by GSAP -->
+        {posts?.map((post, i) => (
+          <img
+            src={`/icons/${post.data.maturity ?? 'seed'}.svg`}
+            class="plant-icon absolute"
+            data-index={String(i)}
+            style="width: 28px; height: auto; bottom: 52px; left: 0; transform: translateX(-9999px); z-index: 3;"
+            alt=""
+          />
+        ))}
+        <!-- Character placeholder — GSAP drives x position; Rive replaces this div later -->
+        <div
+          class="character-placeholder absolute"
+          style="bottom: 52px; left: 60px; width: 40px; height: 70px; background: #555; border-radius: 4px; z-index: 4;"
+          data-walking="false"
+          data-facing-right="true"
+        ></div>
+      </div>
+    </>
+  ) : (
+    <>
+      <main class="footer-reveal-content w-full px-20">
+        <Header />
+        <div class="mt-8">
 
-            // Initialize tag show more/less functionality
-            if (showMoreBtn && additionalTags) {
-              showMoreBtn.addEventListener('click', () => {
-                additionalTags.style.display = 'flex';
-                showMoreBtn.style.display = 'none';
-              });
-            }
+          <div class="flex flex-col mt-20">
+            <a href={Astro.url.pathname.includes('/garden') ? '/' : '/garden'} class="inline-block z-1">
+            <div class="flex items-center gap-2 group mb-5">
+              <img src="/icons/backArrow.svg" class="w-8 h-auto group-hover:rotate-20 transition-all" alt="Back" />
+              <span class="uppercase font-sans text-konpeki font-medium">Back to {Astro.url.pathname.includes('/garden') ? 'Index' : 'Garden'}</span>
+            </div>
+          </a>
+          <div class="flex items-center gap-2">
+            {icon && (
+              <img src={icon} class="w-20 h-auto" alt={title} />
+            )}
+            <h1>{title}</h1>
+          </div>
 
-            if (showLessBtn && additionalTags && showMoreBtn) {
-              showLessBtn.addEventListener('click', () => {
-                additionalTags.style.display = 'none';
-                showMoreBtn.style.display = 'inline-block';
-              });
-            }
+            <p class="w-full md:w-[70%] text-left text-syoro  text-base md:text-lg  mt-2 font-serif italic">{description}</p>
+          </div>
+        </div>
+        <div class="mt-10">
+          <div class="flex flex-row gap-4 mb-4 justify-between items-center">
+            <div class="flex flex-row">
 
-            // Initialize tag dropdown for mobile
-            if (tagDropdown) {
-              tagDropdown.value = 'all';
-              tagDropdown.addEventListener('change', (e) => {
-                const target = e.target as HTMLSelectElement;
-                currentTag = target.value;
-                filterPosts();
-              });
-            }
+              {showTags && (
+                <>
+                  {/* Desktop/Tablet: Tag system with show more */}
+                  <div class="md:flex items-center h-9 hidden">
+                    <h4 class="text-lg uppercase border-l-2 pl-1 pr-5 border-konpeki text-konpeki ">Topics</h4>
+                  </div>
 
-            // Initialize collection filter
-            if (collectionFilter) {
-              // Set initial value
-              collectionFilter.value = 'all';
+                  <div class="hidden md:block">
+                    <div class="flex flex-wrap justify-start gap-4 mr-10 mb-5">
+                      {sortedTags.slice(0, 10).map((tag, index) => (
+                        <Tag
+                          tag={tag}
+                          isActive={tag === currentTag}
+                          index={index}
+                        />
+                      ))}
+                      {sortedTags.length > 10 && (
+                        <button
+                          id="showMoreTags"
+                          class="px-4 py-2 text-sm border border-gray-300 dark:border-card-border border-dashed transition-all duration-200 hover:-skew-x-6 hover:bg-gray-200 dark:hover:bg-gray-700"
+                        >
+                          +{sortedTags.length - 10} more
+                        </button>
+                      )}
+                    </div>
+                    {sortedTags.length > 10 && (
+                      <div id="additionalTags" class="flex-wrap justify-start gap-4 mb-5" style="display: none;">
+                        {sortedTags.slice(10).map((tag, index) => (
+                          <Tag
+                            tag={tag}
+                            isActive={tag === currentTag}
+                            index={index + 10}
+                          />
+                        ))}
+                        <button
+                          id="showLessTags"
+                          class="px-4 py-2 text-sm border border-gray-300 dark:border-card-border border-dashed transition-all duration-200 hover:-skew-x-6 bg-gray-100 dark:bg-cardbg hover:bg-gray-200 dark:hover:bg-gray-700"
+                        >
+                          show less
+                        </button>
+                      </div>
+                    )}
+                  </div>
 
-              collectionFilter.addEventListener('change', (e) => {
-                const target = e.target as HTMLSelectElement;
-                currentCollection = target.value;
-                filterPosts();
-              });
-            }
+                  {/* Mobile: Dropdown menu */}
+                  <div class="md:hidden">
+                    <div class="relative inline-block">
+                      <select
+                        id="tagDropdown"
+                        class="px-4 py-2 text-sm border border-syoro hover:bg-yellow-50 dark:hover:bg-gray-700 text-syoro cursor-pointer bg-transparent dark:bg-transparent appearance-none pr-10"
+                      >
+                        <option value="all">All Topics</option>
+                        {sortedTags.map(tag => (
+                          <option value={tag}>
+                            {tag.charAt(0).toUpperCase() + tag.slice(1)}
+                          </option>
+                        ))}
+                      </select>
+                      <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
 
-            // Add click handlers for desktop tag links
-            const tagLinks = document.querySelectorAll('a[data-tag]') as NodeListOf<HTMLAnchorElement>;
-            tagLinks.forEach(link => {
-              link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const tag = link.dataset.tag;
-                
-                // Update active states
-                tagLinks.forEach(l => l.classList.remove('active'));
-                link.classList.add('active');
-                
-                // Update dropdown if it exists
-                if (tagDropdown && tag) {
-                  tagDropdown.value = tag;
-                }
-                
-                if (tag) {
-                  currentTag = tag;
-                  filterPosts();
-                }
-              });
-            });
+            </div>
 
-            function filterPosts() {
-              posts.forEach(post => {
-                const postCollection = post.dataset.collection;
-                const postTags = post.dataset.tags ? post.dataset.tags.split(' ') : [];
-                
-                const matchesCollection = currentCollection === 'all' || postCollection === currentCollection;
-                const matchesTag = currentTag === 'all' || postTags.includes(currentTag);
 
-                if (matchesCollection && matchesTag) {
-                  post.style.display = 'block';
-                } else {
-                  post.style.display = 'none';
-                }
-              });
-            }
+            {showCollections && collections.length > 1 && (
+              <div class="relative inline-block self-start">
+                <select class="collection-filter px-4 py-2 text-sm border border-syoro hover:bg-yellow-50 dark:hover:bg-gray-700 text-syoro cursor-pointer bg-transparent dark:bg-transparent appearance-none pr-10">
+                  {collections.map(collection => (
+                    <option value={collection}>
+                      {collection === 'all' ? 'All Posts' : collection.charAt(0).toUpperCase() + collection.slice(1)}
+                    </option>
+                  ))}
+                </select>
+                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                  </svg>
+                </div>
+              </div>
+            )}
+          </div>
 
-            // Initial filter
-            filterPosts();
+          <div class="masonry-grid columns-1 md:columns-2 lg:columns-3 2xl:columns-4 gap-5 md:gap-7 lg:gap-10">
+            {posts?.map((post) => (
+              <div class="break-inside-avoid mb-4 post-item transition-all duration-700" data-tags={post.data.tags?.join(' ')} data-collection={post.collection}>
+                {post.collection === 'essays' ? (
+                  <EssayCard
+                    title={post.data.title}
+                    description={post.data.description || 'No description available'}
+                    pubDate={post.data.pubDate}
+                    url={`/essays/${post.id}/`}
+                    heroImage={post.data.heroImage}
+                    maturity={post.data.maturity}
+                  />
+                ) : (
+                  <NoteCard
+                    title={post.data.title}
+                    description={post.data.description || 'No description available'}
+                    pubDate={post.data.pubDate}
+                    url={`/${post.collection}/${post.id}/`}
+                    maturity={post.data.maturity}
+                  />
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </main>
+      <Footer />
+    </>
+  )}
+
+  <script>
+    import gsap from 'gsap';
+    import ScrollTrigger from 'gsap/ScrollTrigger';
+    gsap.registerPlugin(ScrollTrigger);
+
+    // ═══════════════════════════════════════════════════════════════
+    // GARDEN: GSAP scroll-driven horizontal scroll experience
+    // ═══════════════════════════════════════════════════════════════
+    function initGarden() {
+      if (!document.querySelector('.garden-body')) return;
+
+      ScrollTrigger.getAll().forEach(st => st.kill());
+
+      const cardRow = document.querySelector('.card-row') as HTMLElement;
+      const character = document.querySelector('.character-placeholder') as HTMLElement;
+      const plants = document.querySelectorAll('.plant-icon') as NodeListOf<HTMLElement>;
+
+      if (!cardRow) return;
+
+      const cardSpacing = 484 + 340;
+
+      // Position plant icons (override initial CSS translateX(-9999px))
+      plants.forEach((plant, i) => {
+        gsap.set(plant, { x: 80 + i * cardSpacing });
+      });
+
+      const totalScrollX = cardRow.scrollWidth - window.innerWidth + 420;
+
+      // PHASE 2: Intro pin — hill morphs flat, heading shrinks, cards fade in
+      ScrollTrigger.create({
+        trigger: '.intro-section',
+        start: 'top top',
+        end: '+=600',
+        pin: true,
+        scrub: true,
+        onUpdate(self) {
+          const p = self.progress;
+
+          gsap.set('.garden-strip', {
+            borderRadius: `${50 * (1 - p)}% ${50 * (1 - p)}% 0 0 / ${60 * (1 - p)}px ${60 * (1 - p)}px 0 0`
+          });
+
+          gsap.set('.garden-heading', {
+            scale: 1 - p * 0.25,
+            y: -(p * 40)
+          });
+
+          gsap.set('.horizontal-scroll-container', {
+            opacity: p,
+            y: 20 * (1 - p)
+          });
+
+          gsap.set('.topics-bar', { opacity: p });
+        }
+      });
+
+      // PHASE 3: Horizontal scroll — cards move left, closing panel slides in
+      ScrollTrigger.create({
+        trigger: '.horizontal-scroll-container',
+        start: 'top top',
+        end: () => `+=${totalScrollX}`,
+        pin: true,
+        scrub: 1,
+        onUpdate(self) {
+          const p = self.progress;
+
+          gsap.set('.card-row', { x: -(p * totalScrollX) });
+
+          const panelP = Math.max(0, (p - 0.8) / 0.2);
+          gsap.set('.closing-panel', { x: 420 * (1 - panelP) });
+
+          if (character) {
+            const charStartX = 60;
+            const charEndX = window.innerWidth - 100;
+            gsap.set(character, { x: charStartX + p * (charEndX - charStartX) });
           }
 
-          // Initialize on load and navigation
-          document.addEventListener('DOMContentLoaded', initializeFilters);
-          window.addEventListener('pageshow', initializeFilters);
+          plants.forEach((plant, i) => {
+            const baseX = 80 + i * cardSpacing;
+            gsap.set(plant, { x: baseX - p * totalScrollX * 0.85 });
+          });
 
-          // Also initialize when Astro transitions complete
-          document.addEventListener('astro:page-load', initializeFilters);
-        </script>
-      </div>
-    </main>
-    <Footer />
+          if (character) {
+            const velocity = self.getVelocity();
+            character.dataset.walking = String(Math.abs(velocity) > 10);
+            character.dataset.facingRight = String(velocity >= 0);
+          }
+        }
+      });
+
+      ScrollTrigger.refresh();
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // NON-GARDEN: Tag/collection filtering for masonry grid
+    // ═══════════════════════════════════════════════════════════════
+    function initializeFilters() {
+      const collectionFilter = document.querySelector('.collection-filter') as HTMLSelectElement;
+      const tagDropdown = document.querySelector('#tagDropdown') as HTMLSelectElement;
+      const showMoreBtn = document.querySelector('#showMoreTags') as HTMLButtonElement;
+      const showLessBtn = document.querySelector('#showLessTags') as HTMLButtonElement;
+      const additionalTags = document.querySelector('#additionalTags') as HTMLElement;
+      const posts = document.querySelectorAll('.post-item') as NodeListOf<HTMLElement>;
+
+      if (!posts.length) return; // Not a masonry page
+
+      let currentCollection = 'all';
+      let currentTag = 'all';
+
+      posts.forEach(post => {
+        post.style.display = 'block';
+      });
+
+      if (showMoreBtn && additionalTags) {
+        showMoreBtn.addEventListener('click', () => {
+          additionalTags.style.display = 'flex';
+          showMoreBtn.style.display = 'none';
+        });
+      }
+
+      if (showLessBtn && additionalTags && showMoreBtn) {
+        showLessBtn.addEventListener('click', () => {
+          additionalTags.style.display = 'none';
+          showMoreBtn.style.display = 'inline-block';
+        });
+      }
+
+      if (tagDropdown) {
+        tagDropdown.value = 'all';
+        tagDropdown.addEventListener('change', (e) => {
+          const target = e.target as HTMLSelectElement;
+          currentTag = target.value;
+          filterPosts();
+        });
+      }
+
+      if (collectionFilter) {
+        collectionFilter.value = 'all';
+        collectionFilter.addEventListener('change', (e) => {
+          const target = e.target as HTMLSelectElement;
+          currentCollection = target.value;
+          filterPosts();
+        });
+      }
+
+      const tagLinks = document.querySelectorAll('a[data-tag]') as NodeListOf<HTMLAnchorElement>;
+      tagLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const tag = link.dataset.tag;
+
+          tagLinks.forEach(l => l.classList.remove('active'));
+          link.classList.add('active');
+
+          if (tagDropdown && tag) {
+            tagDropdown.value = tag;
+          }
+
+          if (tag) {
+            currentTag = tag;
+            filterPosts();
+          }
+        });
+      });
+
+      function filterPosts() {
+        posts.forEach(post => {
+          const postCollection = post.dataset.collection;
+          const postTags = post.dataset.tags ? post.dataset.tags.split(' ') : [];
+
+          const matchesCollection = currentCollection === 'all' || postCollection === currentCollection;
+          const matchesTag = currentTag === 'all' || postTags.includes(currentTag);
+
+          if (matchesCollection && matchesTag) {
+            post.style.display = 'block';
+          } else {
+            post.style.display = 'none';
+          }
+        });
+      }
+
+      filterPosts();
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // INIT: Run the right logic based on which page is loaded
+    // ═══════════════════════════════════════════════════════════════
+    function init() {
+      requestAnimationFrame(() => {
+        initGarden();
+        initializeFilters();
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+    document.addEventListener('astro:page-load', init);
+    window.addEventListener('pageshow', init);
+  </script>
   </body>
 </html>
 
 <style>
+  /* Shared styles */
   .masonry-grid {
     column-gap: 1rem;
   }
   .break-inside-avoid {
     break-inside: avoid;
   }
-  a:hover{
+  a:hover {
     text-decoration: line-through;
     text-decoration-style: wavy;
   }
-  .active{
+  .active {
     text-decoration-thickness: .05em;
     text-decoration: line-through;
     text-decoration-style: wavy;
+  }
 
+  /* Garden layout styles */
+  .garden-heading {
+    font-family: 'Saira Extra Condensed', 'Saira Condensed', sans-serif;
+    font-size: clamp(56px, 10vw, 96px);
+    font-weight: 600;
+    text-transform: uppercase;
+    transform-origin: center top;
+    letter-spacing: 0.02em;
+    line-height: 1;
+  }
+
+  .card-row {
+    will-change: transform;
+  }
+
+  /* Override global a:hover for closing panel links */
+  .closing-panel a:hover {
+    text-decoration: none;
   }
 </style>
