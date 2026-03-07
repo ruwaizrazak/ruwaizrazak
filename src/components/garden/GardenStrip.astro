@@ -1,0 +1,58 @@
+---
+interface Props {
+  posts: any[];
+}
+const { posts } = Astro.props;
+
+const treeSrcs = [
+  '/siteAssets/trees/Tree1.svg',
+  '/siteAssets/trees/Tree2.svg',
+];
+const flowerSrcs = [
+  '/siteAssets/trees/flower/flower1.svg',
+  '/siteAssets/trees/flower/flower2.svg',
+  '/siteAssets/trees/flower/grass2.svg',
+];
+---
+
+<div
+  class="garden-strip fixed bottom-0 left-0 w-full bg-black z-50"
+  style="height: 220px; border-radius: 50% 50% 0 0 / 110px 110px 0 0; overflow: visible;"
+>
+  <!-- Trees: tallest layer, behind everything -->
+  {[0,1,2,3,4,5,6,7].map((i) => (
+    <img
+      src={treeSrcs[i % treeSrcs.length]}
+      class="tree-item absolute z-[0] pointer-events-none"
+      data-index={String(i)}
+      style="left: 0; top: 0; height: 60px; width: auto; transform: translate(-50%, -100%);"
+      alt=""
+    />
+  ))}
+
+  <!-- Flowers: shorter, in front of trees -->
+  {flowerSrcs.map((src, i) => (
+    <img
+      src={src}
+      class="flower-item absolute z-[0] pointer-events-none"
+      data-index={String(i)}
+      style="left: 0; top: 0; height: 30px; width: auto; transform: translate(-50%, -100%);"
+      alt=""
+    />
+  ))}
+
+  <!-- Grass: procedural canvas blades along the curve -->
+  <canvas
+    class="grass-canvas absolute left-0 w-full z-[1] pointer-events-none"
+    style="top: -15px; height: 125px;"
+  ></canvas>
+
+  <!-- Character: walks along the curve via GSAP -->
+  <div
+    class="character-placeholder absolute"
+    style="top: 0; left: 20px; width: 40px; height: 50px; background: #555; border-radius: 4px; z-index: 4; transform: translate(0, 0);"
+    data-walking="false"
+    data-facing-right="true"
+  ></div>
+</div>
+
