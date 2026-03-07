@@ -12,6 +12,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 const B_MAX = 110;
 const CHAR_HEIGHT = 50;
+const IDLE_FRAME = 3; // 0–8: which sprite frame to show when not scrolling
 
 export function initGarden() {
   if (!document.querySelector('.garden-body')) return;
@@ -19,7 +20,7 @@ export function initGarden() {
   ScrollTrigger.getAll().forEach(st => st.kill());
 
   const strip = document.querySelector('.garden-strip') as HTMLElement;
-  const character = document.querySelector('.character-placeholder') as HTMLElement;
+  const character = document.querySelector('.character') as HTMLElement;
   const stickyBar = document.getElementById('garden-sticky-bar');
   const grassCanvas = document.querySelector('.grass-canvas') as HTMLCanvasElement;
   const grassCtx = grassCanvas ? initGrassCanvas(grassCanvas) : null;
@@ -52,6 +53,7 @@ export function initGarden() {
   }
 
   if (character && strip) {
+    character.style.setProperty('--idle-frame', String(IDLE_FRAME));
     gsap.set(character, { x: 30, y: curveY(20 + 30, strip.offsetWidth, B_MAX) - CHAR_HEIGHT });
   }
 
@@ -101,6 +103,8 @@ export function initGarden() {
 
   // Character walks left-to-right while scrolling through cards
   if (character) {
+    let idleTimer: ReturnType<typeof setTimeout> | null = null;
+
     ScrollTrigger.create({
       trigger: '.garden-cards-section',
       start: 'top 50%',
@@ -117,8 +121,14 @@ export function initGarden() {
         gsap.set(character, { x: charX, y });
 
         const velocity = self.getVelocity();
-        character.dataset.walking = String(Math.abs(velocity) > 10);
-        character.dataset.facingRight = String(velocity >= 0);
+        if (Math.abs(velocity) > 10) {
+          character.dataset.walking = 'true';
+          character.dataset.facingRight = String(velocity >= 0);
+          if (idleTimer) { clearTimeout(idleTimer); idleTimer = null; }
+          idleTimer = setTimeout(() => {
+            character.dataset.walking = 'false';
+          }, 150);
+        }
       },
     });
   }

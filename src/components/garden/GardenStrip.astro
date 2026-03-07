@@ -47,12 +47,40 @@ const flowerSrcs = [
     style="top: -15px; height: 125px;"
   ></canvas>
 
-  <!-- Character: walks along the curve via GSAP -->
+  <!-- Character: walks along the curve via GSAP, animated via sprite sheet -->
   <div
-    class="character-placeholder absolute"
-    style="top: 0; left: 20px; width: 40px; height: 50px; background: #555; border-radius: 4px; z-index: 4; transform: translate(0, 0);"
+    class="character absolute"
+    style="top: 0; left: 20px; z-index: 4; transform: translate(0, 0);"
     data-walking="false"
     data-facing-right="true"
-  ></div>
+  >
+    <div class="character-sprite"></div>
+  </div>
 </div>
 
+<style>
+  .character-sprite {
+    width: 28.2px;
+    height: 50px;
+    background-image: url('/siteAssets/characterSpriteSheet.png');
+    background-size: 900% auto;
+    background-position: 0 0;
+    background-repeat: no-repeat;
+  }
+
+  @keyframes sprite-walk {
+    to { background-position-x: -254px; }
+  }
+
+  .character[data-walking="true"] .character-sprite {
+    animation: sprite-walk 1s steps(9) infinite;
+  }
+
+  .character[data-walking="false"] .character-sprite {
+    background-position-x: calc(var(--idle-frame, 0) * -28.2px);
+  }
+
+  .character[data-facing-right="false"] .character-sprite {
+    transform: scaleX(-1);
+  }
+</style>
