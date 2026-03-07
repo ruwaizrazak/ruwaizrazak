@@ -48,109 +48,83 @@ const sortedTags = [...tags.filter(tag => tag !== 'all').sort()];
     <ClientRouter />
   </head>
 
-  <body class:list={[isGarden && 'garden-body', !isGarden && 'footer-reveal', 'bg-backgroundcolor']}>
+  <body class:list={[isGarden && 'garden-body', !isGarden && 'footer-reveal', 'bg-backgroundcolor','px-20']}>
   {isGarden ? (
     <>
       <Header />
+      <main>
+        <section class="intro-section flex flex-col items-center justify-center px-10" style="padding-bottom: 220px;">
+          <h1 class="garden-heading text-center text-konpeki">THE GARDEN</h1>
+          <p class="garden-description font-serif text-2xl md:text-[32px] text-center text-syoro mt-6 max-w-2xl italic">{description}</p>
+        </section>
 
-      <!-- Horizontal scroll wrapper: pinned at 100vh, GSAP translates the track -->
-      <div class="garden-scroll-wrapper h-screen overflow-hidden">
-        <div class="garden-track flex items-stretch">
-
-          <!-- Panel 1: Intro -->
-          <section class="intro-section flex-shrink-0 flex flex-col items-center justify-center px-10" style="width: 100vw; height: 100vh; padding-bottom: 220px;">
-            <h1 class="garden-heading text-center text-konpeki">THE GARDEN</h1>
-            <p class="font-serif text-2xl md:text-[32px] text-center text-syoro mt-6 max-w-2xl italic">{description}</p>
-            <div class="topics-bar opacity-0 flex flex-wrap gap-3 justify-center mt-8 max-w-3xl">
+        <div class="garden-sticky-bar sticky top-0 z-40 bg-backgroundcolor/90 backdrop-blur-sm px-10 py-3 opacity-0 pointer-events-none transition-opacity duration-200" id="garden-sticky-bar">
+          <div class="flex items-center gap-6 flex-wrap">
+            <h2 class="garden-heading-small text-konpeki whitespace-nowrap">THE GARDEN</h2>
+            <div class="topics-bar flex flex-wrap gap-3">
               {sortedTags.map((tag, index) => (
                 <Tag tag={tag} isActive={false} index={index} />
               ))}
             </div>
-          </section>
-
-          <!-- Panel 2: Cards in masonry grid -->
-          <section class="cards-section flex-shrink-0 relative opacity-0" style="height: 100vh;">
-            <div class="card-masonry" style="padding: 24px 40px 40px 60px;">
-              {posts?.map((post) => (
-                post.collection === 'essays' ? (
-                  <div class="garden-card-item break-inside-avoid mb-6">
-                    <EssayCard
-                      title={post.data.title}
-                      description={post.data.description || ''}
-                      pubDate={post.data.pubDate}
-                      url={`/essays/${post.id}/`}
-                      heroImage={post.data.heroImage}
-                      maturity={post.data.maturity}
-                    />
-                  </div>
-                ) : (
-                  <div class="garden-card-item break-inside-avoid mb-6">
-                    <NoteCard
-                      title={post.data.title}
-                      description={post.data.description || ''}
-                      pubDate={post.data.pubDate}
-                      url={`/${post.collection}/${post.id}/`}
-                      maturity={post.data.maturity}
-                    />
-                  </div>
-                )
-              ))}
-            </div>
-
-            <!-- Closing panel: slides in from right at end of scroll -->
-            <div class="closing-panel absolute top-0 right-0 h-full w-[411px] bg-[#141414] flex flex-col justify-center px-12 z-10">
-              <p class="font-serif text-white text-[32px] leading-tight">Thank you for<br/>your time.</p>
-              <p class="font-serif text-white text-[32px] mt-4">—Ruwaiz</p>
-              <div class="mt-10 font-sans text-base space-y-6">
-                <div>
-                  <p class="mb-2 uppercase text-xs tracking-widest text-white/50">Quick Links</p>
-                  <div class="flex gap-3 text-white/70">
-                    <a href="/" class="hover:text-white transition-colors" style="text-decoration: none;">Home</a>
-                    <span class="text-white/30">/</span>
-                    <a href="/garden" class="hover:text-white transition-colors" style="text-decoration: none;">Garden</a>
-                    <span class="text-white/30">/</span>
-                    <a href="/works" class="hover:text-white transition-colors" style="text-decoration: none;">Works</a>
-                  </div>
-                </div>
-                <div>
-                  <p class="mb-2 uppercase text-xs tracking-widest text-white/50">Social</p>
-                  <div class="flex gap-3 text-white/70">
-                    <a href="https://github.com/ruwaizrazak" class="hover:text-white transition-colors" style="text-decoration: none;">Github</a>
-                    <span class="text-white/30">/</span>
-                    <a href="https://mastodon.social/@ruwaizrazak" class="hover:text-white transition-colors" style="text-decoration: none;">Mastodon</a>
-                    <span class="text-white/30">/</span>
-                    <a href="https://www.behance.net/ruwaizrazak" class="hover:text-white transition-colors" style="text-decoration: none;">Behance</a>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-
+          </div>
         </div>
-      </div>
 
-      <!-- Garden strip: fixed to bottom, always visible, shape animated by GSAP -->
-      <div class="garden-strip fixed bottom-0 left-0 w-full bg-[#141414] z-50" style="height: 220px; border-radius: 50% 50% 0 0 / 60px 60px 0 0; overflow: visible;">
-        <!-- Earth/ground fill -->
-        <div class="absolute inset-0" style="border-radius: inherit; background: linear-gradient(to bottom, #1e341e 0%, #141414 70%);"></div>
-        <!-- Grass top layer -->
-        <div class="absolute inset-x-0" style="top: 30px; height: 28px; background: #3a7a24; border-radius: 40% 40% 0 0 / 8px 8px 0 0; z-index: 1;"></div>
-        <!-- Grass lower band -->
-        <div class="absolute inset-x-0" style="top: 48px; height: 20px; background: #2d5a1b; z-index: 1;"></div>
-        <!-- Plants layer: maturity icons positioned under each card by GSAP -->
-        {posts?.map((post, i) => (
+        <section class="garden-cards-section px-10 pb-40">
+          <div class="card-masonry columns-1 md:columns-2 lg:columns-3 2xl:columns-4 gap-6">
+            {posts?.map((post) => (
+              post.collection === 'essays' ? (
+                <div class="garden-card-item break-inside-avoid mb-6">
+                  <EssayCard
+                    title={post.data.title}
+                    description={post.data.description || ''}
+                    pubDate={post.data.pubDate}
+                    url={`/essays/${post.id}/`}
+                    heroImage={post.data.heroImage}
+                    maturity={post.data.maturity}
+                  />
+                </div>
+              ) : (
+                <div class="garden-card-item break-inside-avoid mb-6">
+                  <NoteCard
+                    title={post.data.title}
+                    description={post.data.description || ''}
+                    pubDate={post.data.pubDate}
+                    url={`/${post.collection}/${post.id}/`}
+                    maturity={post.data.maturity}
+                  />
+                </div>
+              )
+            ))}
+          </div>
+        </section>
+      </main>
+
+      <!-- Garden strip: fixed to bottom, shape animated by GSAP -->
+      <div class="garden-strip fixed bottom-0 left-0 w-full bg-black z-50" style="height: 220px; border-radius: 50% 50% 0 0 / 110px 110px 0 0; overflow: visible;">
+        <!-- Grass tiles: same placement logic as plants, positioned along top oval by JS -->
+        {Array.from({ length: 24 }).map((_, i) => (
           <img
-            src={`/icons/${post.data.maturity ?? 'seed'}.svg`}
-            class="plant-icon absolute"
+            src="/siteAssets/grass.svg"
+            class="grass-tile absolute z-[1] pointer-events-none"
             data-index={String(i)}
-            style="width: 28px; height: auto; bottom: 52px; left: 0; transform: translateX(-9999px); z-index: 3;"
+            style="width: 104px; height: 38px; left: 0; top: 0; object-fit: contain; transform: translate(-50%, -100%);"
             alt=""
           />
         ))}
-        <!-- Character placeholder — GSAP drives x position; Rive replaces this div later -->
+        <!-- Plants layer: positioned along top oval path by JS -->
+        {posts?.map((post, i) => (
+          <img
+            src={`/icons/${post.data.maturity ?? 'seed'}.svg`}
+            class="plant-icon absolute w-7 h-auto z-[3]"
+            data-index={String(i)}
+            style="min-width: 28px; left: 0; top: 0; transform: translate(-50%, -100%);"
+            alt=""
+          />
+        ))}
+        <!-- Character placeholder: x by GSAP, y follows oval path -->
         <div
           class="character-placeholder absolute"
-          style="top: 0px; left: 60px; width: 40px; height: 70px; background: #555; border-radius: 4px; z-index: 4;"
+          style="top: 0; left: 20px; width: 40px; height: 70px; background: #555; border-radius: 4px; z-index: 4; transform: translate(0, 0);"
           data-walking="false"
           data-facing-right="true"
         ></div>
@@ -161,9 +135,8 @@ const sortedTags = [...tags.filter(tag => tag !== 'all').sort()];
       <main class="footer-reveal-content w-full px-20">
         <Header />
         <div class="mt-8">
-
           <div class="flex flex-col mt-20">
-            <a href={Astro.url.pathname.includes('/garden') ? '/' : '/garden'} class="inline-block z-1">
+            <a href={Astro.url.pathname.includes('/garden') ? '/' : '/garden'} class="inline-block">
             <div class="flex items-center gap-2 group mb-5">
               <img src="/icons/backArrow.svg" class="w-8 h-auto group-hover:rotate-20 transition-all" alt="Back" />
               <span class="uppercase font-sans text-konpeki font-medium">Back to {Astro.url.pathname.includes('/garden') ? 'Index' : 'Garden'}</span>
@@ -176,18 +149,15 @@ const sortedTags = [...tags.filter(tag => tag !== 'all').sort()];
             <h1>{title}</h1>
           </div>
 
-            <p class="w-full md:w-[70%] text-left text-syoro  text-base md:text-lg  mt-2 font-serif italic">{description}</p>
+            <p class="w-full md:w-[70%] text-left text-syoro text-base md:text-lg mt-2 font-serif italic">{description}</p>
           </div>
-        </div>
-        <div class="mt-10">
-          <div class="flex flex-row gap-4 mb-4 justify-start">
-            <div class="flex flex-row">
-
+          <div class="mt-10">
+            <div class="flex flex-row gap-4 mb-4 justify-start">
               {showTags && (
                 <>
                   {/* Desktop/Tablet: Tag system with show more */}
                   <div class="md:flex items-center h-9 hidden">
-                    <h4 class="text-lg uppercase border-l-2 pl-1 pr-5 border-konpeki text-konpeki ">Topics</h4>
+                    <h4 class="text-lg uppercase border-l-2 pl-1 pr-5 border-konpeki text-konpeki">Topics</h4>
                   </div>
 
                   <div class="hidden md:block">
@@ -250,11 +220,7 @@ const sortedTags = [...tags.filter(tag => tag !== 'all').sort()];
                   </div>
                 </>
               )}
-
-            </div>
-
-
-            {showCollections && collections.length > 1 && (
+              {showCollections && collections.length > 1 && (
               <div class="relative inline-block self-start">
                 <select class="collection-filter px-4 py-2 text-sm border border-syoro hover:bg-yellow-50 dark:hover:bg-gray-700 text-syoro cursor-pointer bg-transparent dark:bg-transparent appearance-none pr-10">
                   {collections.map(collection => (
@@ -270,9 +236,8 @@ const sortedTags = [...tags.filter(tag => tag !== 'all').sort()];
                 </div>
               </div>
             )}
-          </div>
-
-          <div class="masonry-grid columns-1 md:columns-2 lg:columns-3 2xl:columns-4 gap-5 md:gap-7 lg:gap-10">
+            </div>
+            <div class="masonry-grid columns-1 md:columns-2 lg:columns-3 2xl:columns-4 gap-5 md:gap-7 lg:gap-10">
             {posts?.map((post) => (
               <div class="break-inside-avoid mb-4 post-item transition-all duration-700" data-tags={post.data.tags?.join(' ')} data-collection={post.collection}>
                 {post.collection === 'essays' ? (
@@ -295,7 +260,7 @@ const sortedTags = [...tags.filter(tag => tag !== 'all').sort()];
                 )}
               </div>
             ))}
-          </div>
+            </div>
         </div>
       </main>
       <Footer />
@@ -308,85 +273,143 @@ const sortedTags = [...tags.filter(tag => tag !== 'all').sort()];
     gsap.registerPlugin(ScrollTrigger);
 
     // ═══════════════════════════════════════════════════════════════
-    // GARDEN: GSAP scroll-driven horizontal scroll experience
+    // GARDEN: vertical scroll with animated garden-strip
     // ═══════════════════════════════════════════════════════════════
+    // Top oval path: y offset from strip top for a given x (0 = left edge). b = vertical radius of ellipse.
+    function curveY(x: number, stripWidth: number, b: number): number {
+      if (stripWidth <= 0 || b <= 0) return 0;
+      const t = 2 * (x / stripWidth) - 1; // -1 to 1
+      const inner = 1 - t * t;
+      return inner <= 0 ? b : b * (1 - Math.sqrt(inner));
+    }
+
+    function positionAlongCurve(
+      strip: HTMLElement,
+      b: number,
+      selector: string,
+      transform = 'translate(-50%, -100%)'
+    ) {
+      const w = strip.offsetWidth;
+      const elements = strip.querySelectorAll<HTMLElement>(selector);
+      const n = elements.length;
+      if (n === 0 || w <= 0) return;
+      elements.forEach((el, i) => {
+        const x = ((i + 1) / (n + 1)) * w;
+        const y = curveY(x, w, b);
+        el.style.left = `${x}px`;
+        el.style.top = `${y}px`;
+        el.style.transform = transform;
+      });
+    }
+
+    function positionPlantsAlongCurve(strip: HTMLElement, b: number) {
+      positionAlongCurve(strip, b, '.plant-icon');
+    }
+
+    function positionGrassAlongCurve(strip: HTMLElement, b: number) {
+      positionAlongCurve(strip, b, '.grass-tile');
+    }
+
     function initGarden() {
       if (!document.querySelector('.garden-body')) return;
 
       ScrollTrigger.getAll().forEach(st => st.kill());
 
-      const track = document.querySelector('.garden-track') as HTMLElement;
-      const cardsSection = document.querySelector('.cards-section') as HTMLElement;
-      const masonry = document.querySelector('.card-masonry') as HTMLElement;
+      const strip = document.querySelector('.garden-strip') as HTMLElement;
       const character = document.querySelector('.character-placeholder') as HTMLElement;
-      const plants = document.querySelectorAll('.plant-icon') as NodeListOf<HTMLElement>;
+      const stickyBar = document.getElementById('garden-sticky-bar');
 
-      if (!track || !cardsSection || !masonry) return;
+      let stripCurveB = 110;
+      const B_MAX = 110;
 
-      const vw = window.innerWidth;
-      // Cards section width = masonry content width + closing panel
-      const masonryW = masonry.scrollWidth + 60;
-      cardsSection.style.width = `${masonryW + 420}px`;
+      if (strip) {
+        positionPlantsAlongCurve(strip, stripCurveB);
+        positionGrassAlongCurve(strip, stripCurveB);
+        window.addEventListener('resize', () => {
+          positionPlantsAlongCurve(strip, stripCurveB);
+          positionGrassAlongCurve(strip, stripCurveB);
+        });
+      }
 
-      const totalTrackWidth = track.scrollWidth;
-      const totalScrollX = totalTrackWidth - vw;
+      if (character && strip) {
+        const w = strip.offsetWidth;
+        gsap.set(character, { x: 30, y: curveY(120, w, B_MAX) - 70 });
+      }
 
-      // Intro phase occupies first viewport width of total scroll
-      const introFraction = vw / totalScrollX;
+      // Show sticky bar only when garden-cards-section reaches center of viewport
+      if (stickyBar) {
+        ScrollTrigger.create({
+          trigger: '.garden-cards-section',
+          start: 'top center',
+          end: 'top top',
+          onEnter: () => {
+            stickyBar.classList.remove('opacity-0', 'pointer-events-none');
+            stickyBar.classList.add('opacity-100');
+          },
+          onLeaveBack: () => {
+            stickyBar.classList.add('opacity-0', 'pointer-events-none');
+            stickyBar.classList.remove('opacity-100');
+          }
+        });
+      }
 
-      plants.forEach((plant) => gsap.set(plant, { opacity: 0 }));
-
-      // Single ScrollTrigger: pins the wrapper, translates the track horizontally
+      // Garden strip animation: shrinks as user scrolls past intro; plants + character follow curve
       ScrollTrigger.create({
-        trigger: '.garden-scroll-wrapper',
+        id: 'intro-strip',
+        trigger: '.intro-section',
         start: 'top top',
-        end: () => `+=${totalScrollX}`,
-        pin: true,
-        scrub: 1,
+        end: 'bottom top',
+        scrub: true,
         onUpdate(self) {
           const p = self.progress;
-
-          // Translate the entire track
-          gsap.set(track, { x: -(p * totalScrollX) });
-
-          // Sub-phase: intro (0 → introFraction)
-          const introP = Math.min(1, p / introFraction);
+          stripCurveB = B_MAX * (1 - p);
 
           gsap.set('.garden-strip', {
-            height: 220 - 190 * introP,
-            borderRadius: `${50 * (1 - introP)}% ${50 * (1 - introP)}% 0 0 / ${60 * (1 - introP)}px ${60 * (1 - introP)}px 0 0`,
+            height: 220 - 190 * p,
+            borderRadius: `${50 * (1 - p)}% ${50 * (1 - p)}% 0 0 / ${110 * (1 - p)}px ${110 * (1 - p)}px 0 0`,
           });
 
-          gsap.set('.garden-heading', {
-            scale: 1 - introP * 0.25,
-            y: -(introP * 40),
+          gsap.set('.garden-description', {
+            opacity: 1 - p,
           });
 
-          gsap.set('.cards-section', {
-            opacity: introP,
-          });
-
-          gsap.set('.topics-bar', { opacity: introP });
-
-          // Sub-phase: cards (introFraction → 1)
-          const cardsP = Math.max(0, (p - introFraction) / (1 - introFraction));
-
-          const panelP = Math.max(0, (cardsP - 0.85) / 0.15);
-          gsap.set('.closing-panel', { x: 420 * (1 - panelP) });
-
-          if (character) {
-            const charStartX = 60;
-            const charEndX = vw - 100;
-            gsap.set(character, { x: charStartX + cardsP * (charEndX - charStartX) });
+          if (strip) {
+            positionPlantsAlongCurve(strip, stripCurveB);
+            positionGrassAlongCurve(strip, stripCurveB);
           }
-
           if (character) {
+            const w = strip?.offsetWidth ?? window.innerWidth;
+            const charX = 10 + (gsap.getProperty(character, 'x') as number);
+            gsap.set(character, { y: curveY(charX, w, stripCurveB) - 70 });
+          }
+        }
+      });
+
+      // Character walks across the strip as user scrolls through cards; y follows oval path
+      if (character) {
+        ScrollTrigger.create({
+          trigger: '.garden-cards-section',
+          start: 'top 80%',
+          end: 'bottom bottom',
+          scrub: 1,
+          onUpdate(self) {
+            const p = self.progress;
+            const vw = window.innerWidth;
+            const charStartX = 10;
+            const charEndX = vw - 100;
+            const charX = charStartX + p * (charEndX - charStartX);
+            const introTrigger = ScrollTrigger.getById('intro-strip');
+            const b = introTrigger ? B_MAX * (1 - introTrigger.progress) : B_MAX;
+            const y = curveY(10 + charX, vw, b) - 70;
+
+            gsap.set(character, { x: charX, y });
+
             const velocity = self.getVelocity();
             character.dataset.walking = String(Math.abs(velocity) > 10);
             character.dataset.facingRight = String(velocity >= 0);
           }
-        }
-      });
+        });
+      }
 
       ScrollTrigger.refresh();
     }
@@ -517,23 +540,7 @@ const sortedTags = [...tags.filter(tag => tag !== 'all').sort()];
     text-decoration-style: wavy;
   }
 
-  /* Garden: horizontal scroll experience */
-  .garden-track {
-    will-change: transform;
-  }
-
-  .card-masonry {
-    column-count: 4;
-    column-gap: 1.5rem;
-    column-fill: auto;
-    height: calc(100vh - 24px - 40px - 30px);
-    width: max-content;
-  }
-  .garden-card-item {
-    width: 320px;
-    break-inside: avoid;
-  }
-
+  /* Garden: vertical scroll with animated strip */
   .garden-heading {
     font-family: 'Saira Extra Condensed', 'Saira Condensed', sans-serif;
     font-size: clamp(56px, 10vw, 96px);
@@ -543,9 +550,24 @@ const sortedTags = [...tags.filter(tag => tag !== 'all').sort()];
     letter-spacing: 0.02em;
     line-height: 1;
   }
-
-  /* Override global a:hover for closing panel links */
-  .closing-panel a:hover {
-    text-decoration: none;
+  .garden-heading-small {
+    font-family: 'Saira Extra Condensed', 'Saira Condensed', sans-serif;
+    font-size: 28px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    line-height: 1;
+  }
+  .garden-card-item {
+    break-inside: avoid;
+  }
+  .garden-cards-section {
+    padding-bottom: 60px;
+  }
+  .garden-sticky-bar.opacity-0 {
+    pointer-events: none;
+  }
+  .garden-sticky-bar:not(.opacity-0) {
+    pointer-events: auto;
   }
 </style>
