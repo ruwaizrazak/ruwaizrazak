@@ -101,16 +101,9 @@ const sortedTags = [...tags.filter(tag => tag !== 'all').sort()];
 
       <!-- Garden strip: fixed to bottom, shape animated by GSAP -->
       <div class="garden-strip fixed bottom-0 left-0 w-full bg-black z-50" style="height: 220px; border-radius: 50% 50% 0 0 / 110px 110px 0 0; overflow: visible;">
-        <!-- Grass tiles: same placement logic as plants, positioned along top oval by JS -->
-        {Array.from({ length: 24 }).map((_, i) => (
-          <img
-            src="/siteAssets/grass.svg"
-            class="grass-tile absolute z-[1] pointer-events-none"
-            data-index={String(i)}
-            style="width: 104px; height: 38px; left: 0; top: 0; object-fit: contain; transform: translate(-50%, -100%);"
-            alt=""
-          />
-        ))}
+        <!-- Grass canvas: procedural grass blades drawn along the curve -->
+        <canvas class="grass-canvas absolute left-0 w-full z-[1] pointer-events-none"
+                style="top: -15px; height: 125px;"></canvas>
         <!-- Plants layer: positioned along top oval path by JS -->
         {posts?.map((post, i) => (
           <img
@@ -306,8 +299,76 @@ const sortedTags = [...tags.filter(tag => tag !== 'all').sort()];
       positionAlongCurve(strip, b, '.plant-icon');
     }
 
-    function positionGrassAlongCurve(strip: HTMLElement, b: number) {
-      positionAlongCurve(strip, b, '.grass-tile');
+    // Seeded pseudo-random for deterministic blade shapes (no shimmer between frames)
+    function seededRandom(seed: number): number {
+      const x = Math.sin(seed * 127.1) * 43758.5453;
+      return x - Math.floor(x);
+    }
+
+    // Compute outward normal angle from ellipse derivative at position x
+    function curveNormalAngle(x: number, w: number, b: number): number {
+      if (w <= 0 || b <= 0) return -Math.PI / 2; // straight up when flat
+      const t = 2 * (x / w) - 1;
+      const inner = 1 - t * t;
+      if (inner <= 0.001) return -Math.PI / 2;
+      const dydx = (2 * b / w) * t / Math.sqrt(inner);
+      return Math.atan2(-1, dydx);
+    }
+
+    // Draw procedural grass blades on canvas along the curve
+    function drawGrass(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, stripWidth: number, b: number) {
+      const canvasH = 125;
+      const maxBladeH = 15;
+      ctx.clearRect(0, 0, stripWidth, canvasH);
+
+      const step = 4; // pixels between blade clusters
+      const bladeColors = ['#00300e', '#003d12', '#002a0c', '#004a16', '#001f08'];
+
+      for (let x = 0; x < stripWidth; x += step) {
+        const curveYPos = curveY(x, stripWidth, b);
+        // baseY follows the curve: 15px offset for blade room above, plus curve depth
+        const baseY = maxBladeH + curveYPos;
+        const angle = curveNormalAngle(x, stripWidth, b);
+
+        // Draw 2-3 blades per cluster
+        const bladeCount = 2 + Math.floor(seededRandom(x * 0.73) * 2);
+        for (let j = 0; j < bladeCount; j++) {
+          const seed = x * 13.7 + j * 47.3;
+          const bladeHeight = 6 + seededRandom(seed) * 9;
+          const lean = (seededRandom(seed + 1) - 0.5) * 0.4;
+          const width = 1.5 + seededRandom(seed + 2) * 2.5;
+
+          const bladeAngle = angle + lean;
+          const tipX = x + Math.cos(bladeAngle) * bladeHeight;
+          const tipY = baseY + Math.sin(bladeAngle) * bladeHeight;
+          const cpX = x + Math.cos(bladeAngle + lean * 0.5) * bladeHeight * 0.6;
+          const cpY = baseY + Math.sin(bladeAngle + lean * 0.5) * bladeHeight * 0.6;
+
+          ctx.beginPath();
+          ctx.moveTo(x - width / 2, baseY);
+          ctx.quadraticCurveTo(cpX, cpY, tipX, tipY);
+          ctx.quadraticCurveTo(cpX + width * 0.3, cpY, x + width / 2, baseY);
+          ctx.closePath();
+
+          ctx.fillStyle = bladeColors[Math.floor(seededRandom(seed + 3) * bladeColors.length)];
+          ctx.fill();
+        }
+      }
+    }
+
+    function initGrassCanvas(canvas: HTMLCanvasElement): CanvasRenderingContext2D | null {
+      const ctx = canvas.getContext('2d');
+      return ctx;
+    }
+
+    function sizeGrassCanvas(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, stripWidth: number) {
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = stripWidth * dpr;
+      canvas.height = 125 * dpr;
+      canvas.style.width = `${stripWidth}px`;
+      canvas.style.height = '125px';
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.scale(dpr, dpr);
     }
 
     function initGarden() {
@@ -318,16 +379,24 @@ const sortedTags = [...tags.filter(tag => tag !== 'all').sort()];
       const strip = document.querySelector('.garden-strip') as HTMLElement;
       const character = document.querySelector('.character-placeholder') as HTMLElement;
       const stickyBar = document.getElementById('garden-sticky-bar');
+      const grassCanvas = document.querySelector('.grass-canvas') as HTMLCanvasElement;
+      const grassCtx = grassCanvas ? initGrassCanvas(grassCanvas) : null;
 
       let stripCurveB = 110;
       const B_MAX = 110;
 
       if (strip) {
         positionPlantsAlongCurve(strip, stripCurveB);
-        positionGrassAlongCurve(strip, stripCurveB);
+        if (grassCanvas && grassCtx) {
+          sizeGrassCanvas(grassCanvas, grassCtx, strip.offsetWidth);
+          drawGrass(grassCanvas, grassCtx, strip.offsetWidth, stripCurveB);
+        }
         window.addEventListener('resize', () => {
           positionPlantsAlongCurve(strip, stripCurveB);
-          positionGrassAlongCurve(strip, stripCurveB);
+          if (grassCanvas && grassCtx) {
+            sizeGrassCanvas(grassCanvas, grassCtx, strip.offsetWidth);
+            drawGrass(grassCanvas, grassCtx, strip.offsetWidth, stripCurveB);
+          }
         });
       }
 
@@ -375,7 +444,9 @@ const sortedTags = [...tags.filter(tag => tag !== 'all').sort()];
 
           if (strip) {
             positionPlantsAlongCurve(strip, stripCurveB);
-            positionGrassAlongCurve(strip, stripCurveB);
+            if (grassCanvas && grassCtx) {
+              drawGrass(grassCanvas, grassCtx, strip.offsetWidth, stripCurveB);
+            }
           }
           if (character) {
             const w = strip?.offsetWidth ?? window.innerWidth;
