@@ -12,7 +12,7 @@ const { posts } = Astro.props;
   <div class="card-masonry columns-1 md:columns-2 lg:columns-3 2xl:columns-4 gap-6">
     {posts?.map((post) => (
       <div
-        class="garden-card-item post-item break-inside-avoid mb-6"
+        class="garden-card-item post-item break-inside-avoid mb-6 card-reveal"
         data-tags={post.data.tags?.join(' ')}
         data-collection={post.collection}
       >
@@ -38,3 +38,39 @@ const { posts } = Astro.props;
     ))}
   </div>
 </section>
+
+<style is:global>
+  .card-reveal {
+    transition: opacity 0.15s ease;
+  }
+</style>
+
+<script>
+  function initCardReveal() {
+    const cards = document.querySelectorAll<HTMLElement>('.card-reveal');
+    if (!cards.length) return;
+
+    function updateOpacities() {
+      const vh = window.innerHeight;
+      cards.forEach((card) => {
+        const rect = card.getBoundingClientRect();
+        const cardCenter = rect.top + rect.height / 2;
+
+        if (cardCenter <= vh / 2) {
+          card.style.opacity = '1';
+        } else if (cardCenter >= vh) {
+          card.style.opacity = '0.8';
+        } else {
+          const t = (cardCenter - vh / 2) / (vh / 2);
+          card.style.opacity = String(1 - 0.4 * t);
+        }
+      });
+    }
+
+    updateOpacities();
+    window.addEventListener('scroll', updateOpacities, { passive: true });
+  }
+
+  document.addEventListener('DOMContentLoaded', initCardReveal);
+  document.addEventListener('astro:page-load', initCardReveal);
+</script>
