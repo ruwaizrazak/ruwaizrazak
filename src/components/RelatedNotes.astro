@@ -1,0 +1,138 @@
+---
+import { getCollection } from 'astro:content';
+import NoteCard from './NoteCard.astro';
+
+interface Props {
+  currentTags: string[];
+  currentTitle: string;
+}
+
+const { currentTags, currentTitle } = Astro.props;
+const allNotes = await getCollection('notes', ({ data }) => data.publish === true);
+const relatedNotes = allNotes
+  .filter(note => note.data.title !== currentTitle)
+  .filter(note => note.data.tags?.some(tag => currentTags.includes(tag)))
+  .slice(0, 8);
+---
+
+{relatedNotes.length > 0 && (
+  <section class="related-notes-section text-center bg-black/5 my-20 shadow-[inset_0_2px_8px_rgba(0,0,0,0.15),inset_0_-2px_8px_rgba(0,0,0,0.15)]">
+    <div class="related-reveal overflow-hidden" style="height: 0">
+      <div class="mt-20 mb-10">
+        <h2 class="text-syoro font-sans text-3xl mb-8 mx-auto">Also related to...</h2>
+        <div class="relative">
+          <button
+            class="related-arrow related-arrow-left absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-10 h-10 items-center justify-center bg-backgroundcolor border border-syoro/20 hover:border-syoro/50 transition-colors"
+            style="display: none;"
+            aria-label="Scroll left"
+          >
+            &larr;
+          </button>
+          <button
+            class="related-arrow related-arrow-right absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-10 h-10 items-center justify-center bg-backgroundcolor border border-syoro/20 hover:border-syoro/50 transition-colors"
+            style="display: none;"
+            aria-label="Scroll right"
+          >
+            &rarr;
+          </button>
+
+          <div class="related-scroll flex gap-6 justify-center overflow-x-auto snap-x snap-mandatory pb-4 -mx-4 px-4" style="-webkit-overflow-scrolling: touch; scrollbar-width: none;">
+            {relatedNotes.map(note => (
+              <div class="related-card snap-start shrink-0 w-[280px] sm:w-[320px]">
+                <NoteCard
+                  title={note.data.title}
+                  description={note.data.description}
+                  pubDate={note.data.pubDate}
+                  url={`/notes/${note.id}/`}
+                  maturity={note.data.maturity}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+)}
+
+<style is:global>
+  .related-scroll::-webkit-scrollbar {
+    display: none;
+  }
+  .related-card {
+    opacity: 0;
+  }
+</style>
+
+<script>
+  import gsap from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+  gsap.registerPlugin(ScrollTrigger);
+
+  function initRelatedNotes() {
+    const section = document.querySelector('.related-notes-section');
+    const reveal = document.querySelector('.related-reveal') as HTMLElement;
+    const container = document.querySelector('.related-scroll') as HTMLElement;
+    const cards = gsap.utils.toArray('.related-card');
+    const leftBtn = document.querySelector('.related-arrow-left') as HTMLElement;
+    const rightBtn = document.querySelector('.related-arrow-right') as HTMLElement;
+    if (!section || !reveal || !container) return;
+
+    // Temporarily make cards visible to measure true height
+    (cards as HTMLElement[]).forEach(c => { c.style.opacity = '1'; });
+    reveal.style.height = 'auto';
+    const fullHeight = reveal.offsetHeight;
+    reveal.style.height = '0px';
+    (cards as HTMLElement[]).forEach(c => { c.style.opacity = '0'; });
+
+    // Height reveal as section approaches viewport (scrubs = reverses naturally)
+    gsap.to(reveal, {
+      height: fullHeight,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: section,
+        start: 'top 90%',
+        end: 'top 50%',
+        scrub: true,
+      },
+    });
+
+    // Card pop-in with reverse support
+    const cardTl = gsap.timeline({
+      paused: true,
+      onComplete() { reveal.style.height = 'auto'; },
+      onReverseComplete() { reveal.style.height = fullHeight + 'px'; },
+    });
+    cardTl.fromTo(cards,
+      { opacity: 0, scale: 0.8, y: 20 },
+      { opacity: 1, scale: 1, y: 0, duration: 0.4, stagger: 0.08, ease: 'back.out(1.4)' }
+    );
+
+    ScrollTrigger.create({
+      trigger: section,
+      start: 'top 50%',
+      onEnter: () => cardTl.play(),
+      onLeaveBack: () => cardTl.reverse(),
+    });
+
+    // Smart arrow visibility based on overflow
+    function updateArrows() {
+      if (!leftBtn || !rightBtn) return;
+      const overflows = container.scrollWidth > container.clientWidth;
+      leftBtn.style.display = overflows ? 'flex' : 'none';
+      rightBtn.style.display = overflows ? 'flex' : 'none';
+    }
+    updateArrows();
+    window.addEventListener('resize', updateArrows);
+
+    // Arrow click handlers
+    if (leftBtn && rightBtn) {
+      const scrollAmount = 340;
+      leftBtn.addEventListener('click', () => container.scrollBy({ left: -scrollAmount, behavior: 'smooth' }));
+      rightBtn.addEventListener('click', () => container.scrollBy({ left: scrollAmount, behavior: 'smooth' }));
+    }
+  }
+
+  document.addEventListener('astro:page-load', initRelatedNotes);
+  document.addEventListener('DOMContentLoaded', initRelatedNotes);
+</script>
