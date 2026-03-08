@@ -13,9 +13,9 @@ gsap.registerPlugin(ScrollTrigger);
 const B_MAX = 110;
 const CHAR_HEIGHT = 50;
 const IDLE_FRAME = 2; // 0–8: which sprite frame to show when not scrolling
-const RUN_THRESHOLD = 150; // px — distance above which character runs
-const WALK_SPEED = 200;    // px/s
-const RUN_SPEED = 400;     // px/s
+const RUN_THRESHOLD = 250; // px — distance above which character runs
+const WALK_SPEED = 100;    // px/s
+const RUN_SPEED = 250;     // px/s
 
 export function initGarden() {
   if (!document.querySelector('.garden-body')) return;
