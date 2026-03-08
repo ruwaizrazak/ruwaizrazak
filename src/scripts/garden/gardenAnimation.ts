@@ -12,7 +12,10 @@ gsap.registerPlugin(ScrollTrigger);
 
 const B_MAX = 110;
 const CHAR_HEIGHT = 50;
-const IDLE_FRAME = 3; // 0–8: which sprite frame to show when not scrolling
+const IDLE_FRAME = 2; // 0–8: which sprite frame to show when not scrolling
+const RUN_THRESHOLD = 150; // px — distance above which character runs
+const WALK_SPEED = 200;    // px/s
+const RUN_SPEED = 400;     // px/s
 
 export function initGarden() {
   if (!document.querySelector('.garden-body')) return;
@@ -101,34 +104,48 @@ export function initGarden() {
     },
   });
 
-  // Character walks left-to-right while scrolling through cards
+  // Character walks toward scroll-defined target position
   if (character) {
-    let idleTimer: ReturnType<typeof setTimeout> | null = null;
+    let walkTween: gsap.core.Tween | null = null;
 
     ScrollTrigger.create({
       trigger: '.garden-cards-section',
       start: 'top 50%',
       end: 'bottom bottom',
-      scrub: 1,
       onUpdate(self) {
         const p = self.progress;
         const vw = window.innerWidth;
-        const charX = 10 + p * (vw - 110);
+        const targetX = 10 + p * (vw - 110);
         const introTrigger = ScrollTrigger.getById('intro-strip');
         const b = introTrigger ? B_MAX * (1 - introTrigger.progress) : B_MAX;
-        const y = curveY(20 + charX, vw, b) - CHAR_HEIGHT;
 
-        gsap.set(character, { x: charX, y });
+        const currentX = gsap.getProperty(character, 'x') as number;
+        const distance = Math.abs(targetX - currentX);
 
-        const velocity = self.getVelocity();
-        if (Math.abs(velocity) > 10) {
-          character.dataset.walking = 'true';
-          character.dataset.facingRight = String(velocity >= 0);
-          if (idleTimer) { clearTimeout(idleTimer); idleTimer = null; }
-          idleTimer = setTimeout(() => {
-            character.dataset.walking = 'false';
-          }, 150);
-        }
+        if (distance < 5) return;
+
+        character.dataset.facingRight = String(targetX > currentX);
+        const isRunning = distance > RUN_THRESHOLD;
+        character.dataset.motion = isRunning ? 'run' : 'walk';
+
+        if (walkTween) walkTween.kill();
+
+        const speed = isRunning ? RUN_SPEED : WALK_SPEED;
+        const duration = Math.max(0.3, Math.min(2, distance / speed));
+
+        walkTween = gsap.to(character, {
+          x: targetX,
+          duration,
+          ease: 'none',
+          onUpdate() {
+            const cx = gsap.getProperty(character, 'x') as number;
+            gsap.set(character, { y: curveY(20 + cx, vw, b) - CHAR_HEIGHT });
+          },
+          onComplete() {
+            character.dataset.motion = 'idle';
+            walkTween = null;
+          },
+        });
       },
     });
   }
