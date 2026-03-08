@@ -24,7 +24,9 @@ export function positionAlongCurve(
   transform = 'translate(-50%, -100%)'
 ) {
   const w = strip.offsetWidth;
-  const elements = strip.querySelectorAll<HTMLElement>(selector);
+  const elements = Array.from(strip.querySelectorAll<HTMLElement>(selector)).filter(
+    (el) => el.offsetParent !== null
+  );
   const n = elements.length;
   if (n === 0 || w <= 0) return;
   elements.forEach((el, i) => {
