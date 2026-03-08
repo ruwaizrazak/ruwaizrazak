@@ -13,6 +13,13 @@ const flowerSrcs = [
   '/siteAssets/trees/flower/flower2.svg',
   '/siteAssets/trees/flower/grass2.svg',
 ];
+
+function treeVisibility(i: number): string {
+  if (i < 2) return '';
+  if (i < 3) return 'hidden md:block';
+  if (i < 6) return 'hidden lg:block';
+  return 'hidden xl:block';
+}
 ---
 
 <div
@@ -23,7 +30,7 @@ const flowerSrcs = [
   {[0,1,2,3,4,5,6,7].map((i) => (
     <img
       src={treeSrcs[i % treeSrcs.length]}
-      class="tree-item absolute z-[0] pointer-events-none"
+      class={"tree-item absolute z-[0] pointer-events-none " + treeVisibility(i)}
       data-index={String(i)}
       style="left: 0; top: 0; height: 60px; width: auto; transform: translate(-50%, -100%);"
       alt=""
