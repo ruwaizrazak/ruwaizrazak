@@ -27,6 +27,8 @@ const workTransitionStyle = transitionName
   <body class="footer-reveal bg-backgroundcolor">
     <main class="w-full sm:w-[90%] mx-auto" transition:name={transitionName}>
       <Header />
+
+      <!-- Hero section: title, metadata, background image -->
       <NotePostHero
         title={title}
         description={description}
@@ -36,73 +38,21 @@ const workTransitionStyle = transitionName
         tags={tags}
         maturity={maturity}
       />
+
+      <!-- Main content wrapper: overlaps hero on scroll (see note-post-animations.ts) -->
       <div class="note-main-wrapper relative z-10 bg-backgroundcolor w-screen max-w-[100vw] ml-[calc(50%-50vw)]">
         <NoteMain>
           <slot />
         </NoteMain>
+        <!-- Related notes carousel -->
         <RelatedNotes currentTags={tags} currentTitle={title} />
       </div>
     </main>
     <Footer />
 
+    <!-- Scroll animations: hero overlap, fade-out, and zoom (see note-post-animations.ts) -->
     <script>
-      import gsap from 'gsap';
-      import { ScrollTrigger } from 'gsap/ScrollTrigger';
-      gsap.registerPlugin(ScrollTrigger);
-
-      function initNotePostAnimations() {
-        // Kill only our own ScrollTriggers (not RelatedNotes' ones)
-        ['note-hero-overlap', 'note-hero-fade', 'note-hero-zoom'].forEach(id => {
-          ScrollTrigger.getById(id)?.kill();
-        });
-
-        const heroContent = document.getElementById('note-hero-content');
-        const heroBg = document.getElementById('note-hero-bg');
-        const mainWrapper = document.querySelector('.note-main-wrapper');
-
-        if (!heroContent || !mainWrapper) return;
-
-        // NoteMain overlaps hero as user scrolls
-        gsap.to(mainWrapper, {
-          y: -120,
-          ease: 'none',
-          scrollTrigger: {
-            id: 'note-hero-overlap',
-            trigger: mainWrapper,
-            start: 'top bottom',
-            end: 'top 40%',
-            scrub: true,
-          },
-        });
-
-        // Hero content fades out on scroll
-        gsap.to(heroContent, {
-          opacity: 0,
-          ease: 'none',
-          scrollTrigger: {
-            id: 'note-hero-fade',
-            trigger: heroContent,
-            start: 'top top',
-            end: 'bottom top',
-            scrub: true,
-          },
-        });
-
-        // Hero background zooms out from 1.15 to 1.0
-        if (heroBg) {
-          gsap.to(heroBg, {
-            scale: 1.0,
-            ease: 'none',
-            scrollTrigger: {
-              id: 'note-hero-zoom',
-              trigger: heroBg,
-              start: 'top top',
-              end: 'bottom top',
-              scrub: true,
-            },
-          });
-        }
-      }
+      import { initNotePostAnimations } from '../scripts/note-post-animations';
 
       document.addEventListener('astro:page-load', initNotePostAnimations);
       document.addEventListener('DOMContentLoaded', initNotePostAnimations);
