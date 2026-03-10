@@ -1,7 +1,7 @@
 import { curveY, curveNormalAngle } from './curveUtils';
 
-const CANVAS_H = 125;
-const MAX_BLADE_H = 15;
+const BASE_CANVAS_H = 125;
+const BASE_MAX_BLADE_H = 15;
 const BLADE_COLORS = ['#00300e', '#003d12', '#002a0c', '#004a16', '#001f08'];
 
 export function seededRandom(seed: number): number {
@@ -16,13 +16,15 @@ export function initGrassCanvas(canvas: HTMLCanvasElement): CanvasRenderingConte
 export function sizeGrassCanvas(
   canvas: HTMLCanvasElement,
   ctx: CanvasRenderingContext2D,
-  stripWidth: number
+  stripWidth: number,
+  scale: number = 1
 ) {
+  const canvasH = BASE_CANVAS_H * scale;
   const dpr = window.devicePixelRatio || 1;
   canvas.width = stripWidth * dpr;
-  canvas.height = CANVAS_H * dpr;
+  canvas.height = canvasH * dpr;
   canvas.style.width = `${stripWidth}px`;
-  canvas.style.height = `${CANVAS_H}px`;
+  canvas.style.height = `${canvasH}px`;
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.scale(dpr, dpr);
 }
@@ -31,18 +33,21 @@ export function drawGrass(
   canvas: HTMLCanvasElement,
   ctx: CanvasRenderingContext2D,
   stripWidth: number,
-  b: number
+  b: number,
+  scale: number = 1
 ) {
-  ctx.clearRect(0, 0, stripWidth, CANVAS_H);
+  const canvasH = BASE_CANVAS_H * scale;
+  const maxBladeH = BASE_MAX_BLADE_H * scale;
+  ctx.clearRect(0, 0, stripWidth, canvasH);
 
   for (let x = 0; x < stripWidth; x += 4) {
-    const baseY = MAX_BLADE_H + curveY(x, stripWidth, b);
+    const baseY = maxBladeH + curveY(x, stripWidth, b);
     const angle = curveNormalAngle(x, stripWidth, b);
     const bladeCount = 2 + Math.floor(seededRandom(x * 0.73) * 2);
 
     for (let j = 0; j < bladeCount; j++) {
       const seed = x * 13.7 + j * 47.3;
-      const bladeHeight = 6 + seededRandom(seed) * 9;
+      const bladeHeight = (6 + seededRandom(seed) * 9) * scale;
       const lean = (seededRandom(seed + 1) - 0.5) * 0.4;
       const width = 1.5 + seededRandom(seed + 2) * 2.5;
       const bladeAngle = angle + lean;
