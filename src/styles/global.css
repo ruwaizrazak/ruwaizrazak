@@ -28,6 +28,8 @@
   --color-konpeki:#004A8F;
   --color-backgroundcolor:#ffffff;
   --color-link:#1A86FF;
+  --color-cursor: #003535;
+  --color-cursor-text: #ffffff;
 
   --animate-shiver: shiver-animation 0.5s ease-in-out infinite;
 }
@@ -60,6 +62,8 @@
     --color-card-border: #3a3a3a;
     --color-link: #6bb3ff;
     --color-text-primary: #e0e8e8;
+    --color-cursor: #e0e8e8;
+    --color-cursor-text: #1a1a1a;
   }
 }
 
@@ -161,6 +165,53 @@ hr {
     transform: scale(1);
     opacity: 1;
   }
+}
+
+/* Custom cursor — desktop only */
+@media (pointer: fine) {
+  *, *::before, *::after {
+    cursor: none !important;
+  }
+}
+
+#custom-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0;
+}
+
+#custom-cursor .cursor-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transform: translate(-50%, -50%);
+}
+
+#custom-cursor .cursor-morph-svg {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+}
+
+#custom-cursor .cursor-label {
+  position: absolute;
+  white-space: nowrap;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-cursor-text);
+  opacity: 0;
+  pointer-events: none;
 }
 
 .sr-only {
