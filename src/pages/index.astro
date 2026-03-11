@@ -5,6 +5,7 @@ import Footer from '../components/Footer.astro';
 import IntroSection from '../components/IntroSection.astro';
 import SelectedWorksSection from '../components/SelectedWorksSection.astro';
 
+import CustomCursor from '../components/CustomCursor.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 import { getCollection } from 'astro:content';
 import { ClientRouter } from "astro:transitions";
@@ -52,5 +53,6 @@ const works = await getCollection('works', ({ data }) => data.publish);
 		</main>
 
 		<Footer />
+		<CustomCursor />
 	</body>
 </html>

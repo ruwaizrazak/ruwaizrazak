@@ -2,6 +2,7 @@
 import BaseHead from '../components/BaseHead.astro';
 import GardenView from '../components/garden/GardenView.astro';
 import { ClientRouter } from 'astro:transitions';
+import CustomCursor from '../components/CustomCursor.astro';
 
 interface Props {
   title: string;
@@ -36,6 +37,7 @@ const sortedTags = [...tags.filter(tag => tag !== 'all').sort()];
   </head>
 
   <body class="garden-body bg-backgroundcolor px-5 md:px-20">
+    <CustomCursor />
     <GardenView
       title={title}
       description={description}

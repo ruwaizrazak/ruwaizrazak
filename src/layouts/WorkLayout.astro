@@ -6,6 +6,7 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import Image from '../components/mdxComponents/Image.astro';
 import OtherWorksSection from '../components/OtherWorksSection.astro';
+import CustomCursor from '../components/CustomCursor.astro';
 
 type WorkLayoutProps = CollectionEntry<'works'>['data'] & {
   transitionName?: string;
@@ -81,6 +82,7 @@ const workTransitionStyle = transitionName
       
     </div>
     <Footer />
+    <CustomCursor />
   </body>
 </html>
 
