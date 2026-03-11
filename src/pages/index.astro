@@ -2,8 +2,8 @@
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import Link from '../components/mdxComponents/Link.astro';
-import WorkCard from '../components/WorkCard.astro';
+import IntroSection from '../components/IntroSection.astro';
+import SelectedWorksSection from '../components/SelectedWorksSection.astro';
 
 import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 import { getCollection } from 'astro:content';
@@ -20,9 +20,10 @@ const works = await getCollection('works', ({ data }) => data.publish);
 	</head>
 	<body class="footer-reveal bg-backgroundcolor">
 		<!--
-			Entrance animation gate (is:inline — must run before hydration to prevent FOUC).
-			Adds 'animate-in' on first visit or 'returned-from-work' when navigating back
-			from a work page, so CSS can show/animate content immediately.
+			Entrance animation gate (is:inline — must run synchronously before first
+			paint to prevent FOUC. Module scripts are deferred, so this cannot be
+			an import). Adds 'animate-in' on first visit or 'returned-from-work'
+			when navigating back from a work page.
 		-->
 		<script is:inline>
 			(function applyIndexEntrance() {
@@ -35,101 +36,21 @@ const works = await getCollection('works', ({ data }) => data.publish);
 					target.classList.add('animate-in');
 				}
 			})();
-			function ensureIndexEntrance() {
-				if (window.location.pathname !== '/') return;
-				var fromWork = sessionStorage.getItem('skipIndexAnimations') === '1';
-				var el = document.body;
-				var root = document.documentElement;
-				if (fromWork) {
-					el.classList.add('returned-from-work');
-					root.classList.add('returned-from-work');
-					sessionStorage.removeItem('skipIndexAnimations');
-				} else if (!el.classList.contains('returned-from-work') && !el.classList.contains('animate-in')) {
-					el.classList.add('animate-in');
-					root.classList.add('animate-in');
-				}
-			}
-			// After view-transition swap, body may be new; re-apply class on live document
-			document.addEventListener('astro:page-load', ensureIndexEntrance);
-			requestAnimationFrame(function() { requestAnimationFrame(ensureIndexEntrance); });
 		</script>
+
+		<!-- Re-apply entrance classes after view-transition page swaps (module script) -->
+		<script>
+			import { ensureIndexEntrance } from '../scripts/index-entrance';
+			document.addEventListener('astro:page-load', ensureIndexEntrance);
+			requestAnimationFrame(() => { requestAnimationFrame(ensureIndexEntrance); });
+		</script>
+
 		<main class="footer-reveal-content w-full px-6 md:px-12 lg:px-20">
       <Header />
-
-      <!-- Intro: role + tagline -->
-      <section id="Intro-text" class="w-full sm:w-3/4 md:w-3/4 xl:w-[50%] font-serif my-30 text-syoro">
-        <p class="index-intro text-lg  mb-2 text-syoro/60 font-sans" >Currently Senior UX Designer at <Link href="https://nordeus.com/" class="text-link">Nordeus.</Link></p>
-        <p class="index-intro text-2xl md:text-3xl xl:text-4xl ">I design and optimize product systems that improve onboarding, retention, and long-term user motivation</p> 
-        
-        </section>
-    <!-- Selected works grid (parallax zoom via work-card-animations.ts) -->
-    <section class="work-cards-container w-full mx-auto mt-40 mb-20" id="Works">
-      <h2 class="text-syoro opacity-50 font-sans text-lg uppercase mb-10">Selected works</h2>
-      <div class="flex flex-col gap-16 md:gap-24">
-        {works.map((entry) => (
-          <div
-            class="work-card-intro"
-            transition:name={`work-${entry.id.replace(/\s+/g, '-')}`}
-          >
-            <WorkCard entry={entry} />
-          </div>
-        ))}
-      </div>
-    </section>
-
+      <IntroSection />
+      <SelectedWorksSection works={works} />
 		</main>
 
 		<Footer />
 	</body>
 </html>
-
-<style>
-  /* Default: hidden until animate-in or returned-from-work */
-  .index-intro,
-  .work-cards-container {
-    opacity: 0;
-  }
-
-  /* First visit: run entrance animations */
-  body.animate-in .index-intro {
-    animation: HeroSectionIntro 0.7s ease-in-out 0.3s forwards;
-  }
-  body.animate-in .work-cards-container {
-    animation: selectedSectionIntro 0.7s ease-in-out 0.3s forwards;
-    animation-delay: 0.8s;
-  }
-
-  /* Return from work: show immediately, no animation (html + body for view-transition swap) */
-  :global(html.returned-from-work) .index-intro,
-  :global(html.returned-from-work) .work-cards-container,
-  body.returned-from-work .index-intro,
-  body.returned-from-work .work-cards-container {
-    animation: none;
-    opacity: 1;
-    transform: none;
-  }
-
-  @keyframes HeroSectionIntro {
-    from {
-      opacity: 0;
-      transform: translateY(-20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @keyframes selectedSectionIntro {
-    from {
-      opacity: 0;
-      transform: translateY(70px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-</style>
-
-
