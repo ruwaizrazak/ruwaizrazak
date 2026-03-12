@@ -310,6 +310,11 @@ export function initCustomCursor(): void {
 
   createCursorDOM();
 
+  // Restore cursor visibility on re-init (hasMoved persists across navigations)
+  if (hasMoved && cursor) {
+    gsap.set(cursor, { opacity: 1 });
+  }
+
   if (initialized) return;
   initialized = true;
 

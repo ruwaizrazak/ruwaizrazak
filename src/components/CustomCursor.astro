@@ -1,5 +1,5 @@
 <script>
   import { initCustomCursor } from '../scripts/custom-cursor';
-  initCustomCursor();
+  document.addEventListener('DOMContentLoaded', initCustomCursor);
   document.addEventListener('astro:page-load', initCustomCursor);
 </script>
