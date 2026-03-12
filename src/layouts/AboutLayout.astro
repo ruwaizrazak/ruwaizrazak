@@ -3,11 +3,10 @@ import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import Main from '../components/Main.astro';
-import H1 from '../components/mdxComponents/H1.astro';
-import P from '../components/mdxComponents/P.astro';
 import Link from '../components/mdxComponents/Link.astro';
 import NoteCard from '../components/NoteCard.astro';
 import EssayCard from '../components/EssayCard.astro';
+import CustomCursor from '../components/CustomCursor.astro';
 
 interface Props {
   title: string;
@@ -22,14 +21,14 @@ const { title, description } = Astro.props;
   <head>
     <BaseHead title={title} description={description} />
   </head>
-  <body class="bg-backgroundcolor">
-    <Header />
+  <body class="footer-reveal bg-backgroundcolor">
+    
     <Main>
-      <div class="prose lg:max-w max-w-none">
-        <slot />
-      </div>
+      <Header />
+      <slot />
     </Main>
     <Footer />
+    <CustomCursor />
   </body>
 </html>
 

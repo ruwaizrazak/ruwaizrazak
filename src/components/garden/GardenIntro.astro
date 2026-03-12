@@ -1,0 +1,14 @@
+---
+interface Props {
+  title: string;
+  description: string;
+}
+const { title, description } = Astro.props;
+---
+
+<section class="intro-section flex flex-col items-center justify-center px-10 h-[calc(80vh-220px)]">
+  <h1 class="garden-heading text-center text-konpeki text-5xl md:text-6xl font-sans font-medium">{title}</h1>
+  <p class="garden-description font-serif text-2xl md:text-[32px] text-center text-syoro mt-6 max-w-2xl italic">
+    {description}
+  </p>
+</section>

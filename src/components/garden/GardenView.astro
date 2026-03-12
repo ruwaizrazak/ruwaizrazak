@@ -1,0 +1,23 @@
+---
+import Header from '../Header.astro';
+import GardenIntro from './GardenIntro.astro';
+import GardenStickyBar from './GardenStickyBar.astro';
+import GardenCards from './GardenCards.astro';
+import GardenStrip from './GardenStrip.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  posts: any[];
+  sortedTags: string[];
+}
+const { title, description, posts, sortedTags } = Astro.props;
+---
+
+<Header />
+<main>
+  <GardenIntro title={title} description={description} />
+  <!-- <GardenStickyBar title={title} sortedTags={sortedTags} /> -->
+  <GardenCards posts={posts} />
+</main>
+<GardenStrip posts={posts} />

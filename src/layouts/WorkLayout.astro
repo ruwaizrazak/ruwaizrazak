@@ -1,0 +1,154 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { ClientRouter } from 'astro:transitions';
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Image from '../components/mdxComponents/Image.astro';
+import OtherWorksSection from '../components/OtherWorksSection.astro';
+import CustomCursor from '../components/CustomCursor.astro';
+
+type WorkLayoutProps = CollectionEntry<'works'>['data'] & {
+  transitionName?: string;
+};
+
+const { title, description, company, duration, role, heroImage, transitionName,phoneImage } = Astro.props as WorkLayoutProps;
+const workTransitionStyle = transitionName
+  ? `::view-transition-new(${transitionName}){animation:work-scale-in .4s cubic-bezier(.32,.72,0,1)}`
+  : '';
+---
+
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <BaseHead title={title} description={description} />
+    <ClientRouter />
+    {workTransitionStyle && <style is:global set:html={workTransitionStyle} />}
+  </head>
+  <body class="footer-reveal bg-backgroundcolor">
+    <div class="footer-reveal-content px-20">
+      <Header />
+      <main transition:name={transitionName}>
+        <!-- Title + metadata header -->
+        <div>
+          <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between mt-20 mb-10">
+            <h1 class="text-syoro dark:text-syoro font-sans text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold leading-none max-w-3xl">
+              {title} <span class="font-normal">| {company}</span>
+            </h1>
+            <div class="flex flex-col items-center md:items-end gap-1 my-auto">
+              {role && (
+                <p class="text-syoro dark:text-syoro font-sans text-base sm:text-xl md:text-3xl">{role}</p>
+              )}
+              {duration && (
+                <p class="text-syoro dark:text-syoro font-sans text-base sm:text-lg md:text-2xl uppercase">{duration}</p>
+              )}
+              
+            </div>
+          </div>
+        </div>
+        <div class="w-full">
+          <p class="text-syoro dark:text-syoro font-serif text-3xl border-l-4 border-syoro pl-4 mt-10 mb-20  w-full lg:w-3/4"> {description} </p>
+        </div>
+        
+
+        <!-- Hero image: shrinks + blurs on scroll (see work-hero-scroll.ts) -->
+        <section class="relative mb-0" id="hero-image-section">
+          <div
+            class="hero-image-wrapper relative z-0 w-screen max-w-[100vw] ml-[calc(50%-50vw)] content-end overflow-hidden mt-15 
+            inset-shadow-white bg-center bg-cover bg-no-repeat"
+            style={heroImage ? `background-image: url(${heroImage})` : undefined}
+            id="hero-image"
+          >
+          </div>
+          {phoneImage && (
+            <Image
+              src={phoneImage}
+              alt=""
+              class="relative z-10 w-1/2 h-auto object-cover mx-auto -mt-50"
+              loading="eager"
+            />
+          )}
+          </section>
+        
+        <!-- Main content (MDX) -->
+        <article class="work-article text-syoro font-serif text-2xl w-4/5 mx-auto">
+          <slot />
+        </article>
+        <!-- Other works: slides up to overlap article on scroll (see other-works-overlap.ts) -->
+        <div class="other-works-overlap" data-other-works-wrapper>
+          <OtherWorksSection currentSlug={Astro.url.pathname.replace('/works/', '').replace(/\/$/, '')} />
+        </div>
+      </main>
+      
+    </div>
+    <Footer />
+    <CustomCursor />
+  </body>
+</html>
+
+<!-- Hero scroll height + blur effect (see work-hero-scroll.ts) -->
+<script>
+  import { initHeroScrollHeight } from '../scripts/work-hero-scroll';
+
+  function runIfWorkPage() {
+    if (window.location.pathname.startsWith('/works/')) {
+      initHeroScrollHeight();
+    }
+  }
+
+  document.addEventListener('astro:page-load', runIfWorkPage);
+  if (document.readyState === 'complete') {
+    runIfWorkPage();
+  } else {
+    window.addEventListener('load', runIfWorkPage);
+  }
+</script>
+
+<!-- "Other works" overlap animation (see other-works-overlap.ts) -->
+<script>
+  import { initOtherWorksOverlap } from '../scripts/other-works-overlap';
+
+  function runOverlapIfWorkPage() {
+    if (window.location.pathname.startsWith('/works/')) {
+      initOtherWorksOverlap();
+    }
+  }
+
+  document.addEventListener('astro:page-load', runOverlapIfWorkPage);
+  if (document.readyState === 'complete') {
+    runOverlapIfWorkPage();
+  } else {
+    window.addEventListener('load', runOverlapIfWorkPage);
+  }
+</script>
+
+<style>
+  #hero-image {
+    height: 80vh; /* fallback before script runs */
+    background-attachment: fixed;
+    background-position: center;
+    animation: scale-up-hero .8s cubic-bezier(0.4, 0.2, 0.2, 1) forwards;
+    transform: scale(1);
+    opacity: 0.93;
+  }
+
+  @keyframes scale-up-hero {
+    from {
+      transform: scale(1);
+      opacity: 0.5;
+    }
+    to {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  .other-works-overlap {
+    position: relative;
+    z-index: 10;
+  }
+  .work-article {
+    position: relative;
+    z-index: 1;
+  }
+</style>

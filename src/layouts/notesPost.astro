@@ -1,132 +1,63 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import { ClientRouter } from 'astro:transitions';
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import Main from '../components/Main.astro';
 import NoteMain from '../components/NoteMain.astro';
-import P from '../components/mdxComponents/P.astro';
-import H2 from '../components/mdxComponents/H2.astro';
-import H1 from '../components/mdxComponents/H1.astro';
-import H3 from '../components/mdxComponents/H3.astro';
-import Image from '../components/mdxComponents/Image.astro';
-import PostMeta from '../components/mdxComponents/PostMeta.astro';
-import { getMaturityIcon } from '../utils/maturityIcons';
-import Link from '../components/mdxComponents/Link.astro'
-// Removed TableOfContents import
-import GradientHeading from '../components/mdxComponents/gradientHeading.astro';
-import Tag from '../components/Tag.astro';
-
+import NotePostHero from '../components/NotePostHero.astro';
+import RelatedNotes from '../components/RelatedNotes.astro';
+import CustomCursor from '../components/CustomCursor.astro';
 
 type LayoutProps = CollectionEntry<'notes'>['data'] & {
-  icon?: string;
-  collection?: string;
+  transitionName?: string;
 };
 
-const { title, description, pubDate, updatedDate, heroImage, tags = [], maturity, icon } = Astro.props as LayoutProps;
-const maturityIcon = getMaturityIcon(maturity);
-const currentCollection = Astro.url.pathname.includes('/essays')
-  ? 'essays'
-  : Astro.url.pathname.includes('/notes')
-  ? 'notes'
-  : 'garden';
+const { title, description, pubDate, updatedDate, heroImage, tags = [], maturity, transitionName } = Astro.props as LayoutProps;
+const workTransitionStyle = transitionName
+  ? `::view-transition-new(${transitionName}){animation:work-scale-in .4s cubic-bezier(.32,.72,0,1)}`
+  : '';
 ---
 
 <html lang="en" class="scroll-smooth">
   <head>
     <BaseHead title={title} description={description} />
+    <ClientRouter />
+    {workTransitionStyle && <style is:global set:html={workTransitionStyle} />}
   </head>
-  <body class="bg-backgroundcolor">
-    <Header />
-    <main class="w-full sm:w-[90%] mx-auto pb-20">
-      <div>
-        <div class="block">
-          <main>
-            <div class="mt-20">
-              <div class="flex flex-col gap-4">
-                <a href={Astro.url.pathname.includes('/essays') ? '/essays' : Astro.url.pathname.includes('/notes') ? '/notes' : Astro.url.pathname.includes('/garden') ? '/' : '/garden'} class="inline-block z-1">
-                  <div class="flex items-center gap-2 group not-prose">
-                    <img src="/icons/backArrow.svg" class="w-8 h-auto group-hover:rotate-20 transition-all" alt="Back" />
-                    <span class="uppercase font-sans font-medium">Back to {Astro.url.pathname.includes('/essays') ? 'Essays' : Astro.url.pathname.includes('/notes') ? 'Notes' : Astro.url.pathname.includes('/garden') ? 'Index' : 'Garden'}</span>
-                  </div>
-                </a>
-                <div class="flex items-center gap-2 mt-10 sm:mt-0">
-                  {currentCollection && (
-                    <div class="flex items-center mx-auto my-0 gap-1">
-                      {maturityIcon && (
-                        <span class="text-xl" aria-label={`Maturity level: ${maturity}`}>
-                          <img src={maturityIcon} class="w-5">
-                        </span>
-                      )}
-                      <span class="text-gray-600 uppercase font-sans">{maturity}</span>
+  <body class="footer-reveal bg-backgroundcolor">
+    <main class="w-full sm:w-[90%] mx-auto" transition:name={transitionName}>
+      <Header />
 
-                    </div>
-                  )}
-                </div>
-                <div class="md:w-3/4 items-center gap-2 flex w-full mx-auto">
-                  
-                  <GradientHeading size="lg" className="text-center my-0 w-[80%] mx-auto">{title}</GradientHeading>
-                  </div>
-                
-                <p class="text-syoro w-full sm:w-[80%] lg:w-[60%] mx-auto text-center text-lg md:text-xl italic font-serif">{description}</p>
-                <div class="flex items-center gap-2 text-syoro mx-auto mb-4 uppercase font-sans text-lg">
-                      <time datetime={pubDate.toISOString()}>
-                        Published: {pubDate.toLocaleDateString('en-us', {
-                          year: 'numeric',
-                          month: 'short',
-                          day: 'numeric',
-                        })}
-                      </time>
-                      {updatedDate && (
-                        <>
-                          <span>•</span>
-                          <time datetime={updatedDate.toISOString()}>
-                            Updated: {updatedDate.toLocaleDateString('en-us', {
-                              year: 'numeric',
-                              month: 'short',
-                              day: 'numeric',
-                            })}
-                          </time>
-                        </>
-                      )}
-                    </div>
-                {tags.length > 0 && (
-                  <div class="flex flex-wrap gap-2 items-center mx-auto">
+      <!-- Hero section: title, metadata, background image -->
+      <NotePostHero
+        title={title}
+        description={description}
+        pubDate={pubDate}
+        updatedDate={updatedDate}
+        heroImage={heroImage}
+        tags={tags}
+        maturity={maturity}
+      />
 
-                    {tags.map((tag, index) => (
-                      <a
-                        href={`/tags/${tag.toLowerCase()}`}
-                        class="px-4 py-2 text-sm border transition-all duration-200 animate-slide-in transform uppercase hover:-skew-x-3 hover:border-r-2 hover:border-b-2 bg-white text-gray-600 border-gray-300 hover:border-gray-400"
-                        style={`animation-delay: ${index * 100}ms`}
-                      >
-                        {tag.charAt(0).toUpperCase() + tag.slice(1)}
-                      </a>
-                    ))}
-                  </div>
-                )}
-                <div class="w-[40%] mx-auto h-px bg-gray-300 my-6"></div>
-              </div>
-
-              <NoteMain>
-                <div class="hero-image w-full mt-8">
-                {heroImage && (
-                  <Image
-                    src={heroImage}
-                    alt=""
-                    class="w-full h-auto object-cover rounded-lg"
-                    loading="eager"
-                  />
-                )}
-              </div>
-                <slot />
-              </NoteMain>
-            </div>
-          </main>
-        </div>
+      <!-- Main content wrapper: overlaps hero on scroll (see note-post-animations.ts) -->
+      <div class="note-main-wrapper relative z-10 bg-backgroundcolor w-screen max-w-[100vw] ml-[calc(50%-50vw)]">
+        <NoteMain>
+          <slot />
+        </NoteMain>
+        <!-- Related notes carousel -->
+        <RelatedNotes currentTags={tags} currentTitle={title} />
       </div>
     </main>
     <Footer />
+    <CustomCursor />
+
+    <!-- Scroll animations: hero overlap, fade-out, and zoom (see note-post-animations.ts) -->
+    <script>
+      import { initNotePostAnimations } from '../scripts/note-post-animations';
+
+      document.addEventListener('astro:page-load', initNotePostAnimations);
+      document.addEventListener('DOMContentLoaded', initNotePostAnimations);
+    </script>
   </body>
 </html>
-
-<!-- Keep your global styles -->

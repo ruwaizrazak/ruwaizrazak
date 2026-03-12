@@ -1,4 +1,5 @@
 ---
+import ThemeToggle from './ThemeToggle.astro';
 // Navigation.astro
 export interface MenuItem {
   name: string;
@@ -22,7 +23,7 @@ export interface Props {
 
 const { 
   menuItems = [],
-  logoText = "Cacophony of Thoughts",
+  logoText = "Ruwaiz Razak",
   logoHref = "/",
   class: className = "",
   additionalLinks = [
@@ -33,49 +34,104 @@ const {
 ---
 
 <nav class={`relative z-50 ${className}`}>
-  <div class="max-w-[95%] mx-auto px-4 sm:px-6 lg:px-10">
+  <div>
     <div class="flex justify-between items-center h-16">
       
       <!-- Logo -->
       <div class="flex-shrink-0">
-        <a href={logoHref}>
-            <h4 class="text-xl text-gray-400">{logoText}</h4>
+        <a href={logoHref} 
+        data-astro-prefetch
+        onclick="sessionStorage.setItem('skipIndexAnimations','1')">
+            <h4 class="text-3xl font-medium font-handwriting text-syoro">{logoText}</h4>
           
         </a>
       </div>
 
       <!-- Desktop Menu Buttons (md and up) -->
-      <div class="hidden md:flex items-center space-x-6">
-        <!-- Garden Dropdown Button -->
-        <button 
-          id="desktop-menu-button"
-          class="inline-flex items-center px-4 py-2 text-xl font-medium text-link rounded-md hover:bg-yellow-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-200 transition-all uppercase hover:scale-95">
-          Garden
-          <svg  class="ml-2 -mr-1 w-4 h-4 transition-transform duration-200" id="desktop-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-          </svg>
-        </button>
-        <!-- Additional Links -->
-        {additionalLinks.map((link) => (
-          <a 
-            href={link.href}
-            class="inline-flex items-center px-3 py-2 text-link hover:text-link rounded-md uppercase hover:scale-95 transition-all">
-            <h3 class="font-sans font-medium text-xl">
-            {link.icon && <img src={typeof link.icon === 'string' ? link.icon : link.icon.href} alt={link.name} class="w-6 h-6" />}
-            {link.name}
-          </h3>
-            
-          </a>
-        ))}
-        
-        
+      <div class="hidden md:flex items-center gap-2">
+        <ThemeToggle />
+        <div class="grid grid-cols-3 rounded-full bg-syoro/10 dark:bg-syoro/10">
+          <!-- Garden Dropdown Button -->
+          <button 
+            id="desktop-menu-button"
+            class="flex items-center text-xl font-medium text-syoro rounded-full hover:bg-syoro/10 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-syoro/20 dark:focus:ring-gray-600 transition-all uppercase hover:scale-95 px-5">
+            Garden
+            <svg  class="ml-2 -mr-1 w-4 h-4 flex-shrink-0 transition-transform duration-200" id="desktop-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </button>
+          <!-- Additional Links -->
+          {additionalLinks.map((link) => (
+            <a 
+              href={link.href}
+              class="flex-1 min-w-0 flex items-center justify-center px-5 py-2 text-syoro rounded-full uppercase hover:scale-95 transition-all hover:bg-syoro/10">
+              <h3 class="font-sans font-medium text-xl">
+                {link.icon && <img src={typeof link.icon === 'string' ? link.icon : link.icon.href} alt={link.name} class="w-6 h-6" />}
+                {link.name}
+              </h3>
+            </a>
+          ))}
+        </div>
+
+        <!-- Work with me contact dropdown (desktop) -->
+        <div class="relative" id="contact-button">
+          <div class="bg-link rounded-full p-2">
+            <button 
+              id="about-menu-button"
+              class="flex items-center text-xl font-medium text-white rounded-full hover:bg-syoro/10 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-link/20  transition-all uppercase hover:scale-95 px-5">
+              Work with me
+              <svg  class="ml-2 -mr-1 w-4 h-4 flex-shrink-0 transition-transform duration-200" id="about-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </button>
+          </div>
+          <div 
+            id="about-dropdown" 
+            class="hidden absolute right-0 mt-2 w-56 shadow-lg rounded-xl transform bg-backgroundcolor scale-95 pointer-events-none transition-all duration-200 ease-out border backdrop-blur-md z-50"
+          >
+            <div class="">
+              <a
+                href="https://www.linkedin.com/in/ruwaizrazak"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="p-4 text-xl font-medium text-konpeki hover:bg-konpeki/10 rounded-t-xl flex gap-2"
+              >
+              <svg class="contact-icon w-6 h-6" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path class="contact-icon-symbol" fill="currentColor" d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+              </svg>
+                LinkedIn
+              </a>
+              <a
+                href="mailto:hello@ruwaizrazak.com"
+                class="group flex gap-2 hover:gap-4 transition-all duration-200 p-4 text-xl font-medium text-konpeki  hover:bg-konpeki/10"
+              >
+              <svg class="contact-icon w-6 h-6 transition-all duration-200 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path class="contact-icon-symbol" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+                Mail me
+              </a>
+              <a
+                href="https://www.ruwaizrazak.com/ruwaizcv.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="flex gap-2 p-4 text-xl font-medium text-konpeki hover:bg-konpeki/10 rounded-b-xl"
+              >
+              <svg class="contact-icon w-6 h-6 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path class="contact-icon-diamond" fill="currentColor" d="M12,2 L22,12 L12,22 L2,12 Z" />
+              </svg>
+                Download resume
+              </a>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <!-- Mobile Menu Button (less than md) -->
-      <div class="md:hidden">
+      <!-- Mobile: Theme toggle + menu button -->
+      <div class="md:hidden flex items-center gap-2">
+        <ThemeToggle />
         <button 
           id="mobile-menu-button"
-          class="inline-flex items-center justify-center p-2 rounded-md text-link hover:text-gray-500 hover:bg-yellow-50 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-yellow-100 transition-colors"
+          class="inline-flex items-center justify-center p-2 rounded-md text-link hover:text-gray-500 hover:bg-yellow-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-yellow-100 dark:focus:ring-gray-600 transition-colors"
         >
           <svg class="h-6 w-6" id="mobile-menu-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
@@ -91,14 +147,14 @@ const {
   <!-- Desktop Dropdown Menu (md and up) -->
   <div 
     id="desktop-dropdown" 
-    class="hidden md:block absolute my-2 top-full md:w-[60%] lg:w-[50%] right-10 bg-backgroundcolor shadow-lg transform opacity-0 scale-95 transition-all duration-200 ease-out border border-card-border backdrop-blur-md"
+    class="hidden md:block absolute my-2 top-full md:w-[60%] lg:w-[50%] right-10 bg-white dark:bg-cardbg shadow-lg rounded-xl stransform opacity-0 scale-95 pointer-events-none transition-all duration-200 ease-out border border-card-border backdrop-blur-md z-50"
   >
     <div class="w-[90%] mx-auto py-6">
       <div class="grid grid-cols-2 lg:gap-2 xl:gap-4">
         {menuItems.map((item) => (
           <a 
             href={item.href}
-            class="group p-4 rounded-lg hover:scale-95 hover:border border-card-border ease-in-out transition-all block duration-200"
+            class="group p-4 rounded-lg hover:scale-95 hover:border border-card-border ease-in-out transition-all block duration-200 hover:bg-yellow-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-yellow-100 dark:focus:ring-gray-600"
           >
             <div class="flex items-center space-x-4">
               {item.icon && (
@@ -137,7 +193,7 @@ const {
     <div class="flex items-end justify-end p-4 border-b">
       <button 
         id="mobile-close-button"
-        class="p-2 rounded-md text-konpeki hover:text-gray-500 hover:bg-yellow-50 transition-colors"
+        class="p-2 rounded-md text-konpeki hover:text-gray-500 hover:bg-yellow-50 dark:hover:bg-gray-700 transition-colors"
       >
         <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -150,7 +206,7 @@ const {
       {additionalLinks.map((link) => (
         <a 
           href={link.href}
-          class="flex items-center px-4 py-3 text-konpeki hover:scale-95 hover:text-indigo-600 transition-colors duration-200 border-b border-gray-100"
+          class="flex items-center px-4 py-3 text-konpeki hover:scale-95 hover:text-indigo-600 transition-colors duration-200 border-b border-gray-100 dark:border-card-border"
         >
           {link.icon && (
             <img src={typeof link.icon === 'string' ? link.icon : link.icon.href} alt={link.name} class="w-6 h-6 mr-3" />
@@ -163,7 +219,7 @@ const {
       ))}
       
       <!-- Separator -->
-      <div class="border-t border-gray-200 my-2"></div>
+      <div class="border-t border-gray-200 dark:border-card-border my-2"></div>
       
       <!-- Garden Menu Items -->
       <div class="px-4 py-2">
@@ -172,7 +228,7 @@ const {
       {menuItems.map((item) => (
         <a 
           href={item.href}
-          class="flex items-center px-4 py-3 text-konpeki hover:bg-yellow-50 hover:text-indigo-600 transition-colors duration-200"
+          class="flex items-center px-4 py-3 text-konpeki hover:bg-yellow-50 dark:hover:bg-gray-700 hover:text-indigo-600 transition-colors duration-200"
         >
           {item.icon && (
             <img src={typeof item.icon === 'string' ? item.icon : item.icon.href} alt={item.name} class="w-6 h-6 mr-3" />
@@ -185,6 +241,42 @@ const {
           </div>
         </a>
       ))}
+
+      <!-- Separator -->
+      <div class="border-t border-gray-200 dark:border-card-border my-2"></div>
+
+      <!-- About / Connect section in mobile -->
+      <div class="px-4 py-2">
+        <h3 class="text-md font-semibold text-gray-400 uppercase tracking-wider">Contact</h3>
+      </div>
+      <a 
+        href="https://www.linkedin.com/in/ruwaizrazak"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="flex items-center px-4 py-3 text-konpeki hover:bg-yellow-50 dark:hover:bg-gray-700 hover:text-indigo-600 transition-colors duration-200"
+      >
+        <div class="flex-1">
+          <div class="font-medium">LINKED IN</div>
+        </div>
+      </a>
+      <a 
+        href="mailto:hello@ruwaizrazak.com"
+        class="flex items-center px-4 py-3 text-konpeki hover:bg-yellow-50 dark:hover:bg-gray-700 hover:text-indigo-600 transition-colors duration-200"
+      >
+        <div class="flex-1">
+          <div class="font-medium">Mail me</div>
+        </div>
+      </a>
+      <a 
+        href="https://www.ruwaizrazak.com/ruwaizcv.pdf"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="flex items-center px-4 py-3 text-konpeki hover:bg-yellow-50 dark:hover:bg-gray-700 hover:text-indigo-600 transition-colors duration-200"
+      >
+        <div class="flex-1">
+          <div class="font-medium">Download resume</div>
+        </div>
+      </a>
     </div>
   </div>
 </nav>
@@ -195,6 +287,11 @@ const {
     const desktopButton = document.getElementById('desktop-menu-button');
     const desktopDropdown = document.getElementById('desktop-dropdown');
     const desktopChevron = document.getElementById('desktop-chevron');
+
+    // About dropdown (desktop)
+    const aboutButton = document.getElementById('about-menu-button');
+    const aboutDropdown = document.getElementById('about-dropdown');
+    const aboutChevron = document.getElementById('about-chevron');
 
     // Prevent double-initialization
     if (desktopButton && (desktopButton as any).dataset?.initialized === 'true') {
@@ -210,12 +307,12 @@ const {
       isDesktopOpen = !isDesktopOpen;
 
       if (isDesktopOpen) {
-        desktopDropdown?.classList.remove('hidden', 'opacity-0', 'scale-95');
-        desktopDropdown?.classList.add('opacity-100', 'scale-100');
+        desktopDropdown?.classList.remove('hidden', 'opacity-0', 'scale-95', 'pointer-events-none');
+        desktopDropdown?.classList.add('opacity-100', 'scale-100', 'pointer-events-auto');
         desktopChevron?.classList.add('rotate-180');
       } else {
-        desktopDropdown?.classList.add('opacity-0', 'scale-95');
-        desktopDropdown?.classList.remove('opacity-100', 'scale-100');
+        desktopDropdown?.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
+        desktopDropdown?.classList.remove('opacity-100', 'scale-100', 'pointer-events-auto');
         desktopChevron?.classList.remove('rotate-180');
         setTimeout(() => {
           if (!isDesktopOpen) {
@@ -231,7 +328,35 @@ const {
       }
     }
 
+    let isAboutOpen = false;
+
+    function toggleAboutDropdown() {
+      isAboutOpen = !isAboutOpen;
+
+      if (isAboutOpen) {
+        aboutDropdown?.classList.remove('hidden', 'opacity-0', 'scale-95', 'pointer-events-none');
+        aboutDropdown?.classList.add('opacity-100', 'scale-100', 'pointer-events-auto');
+        aboutChevron?.classList.add('rotate-180');
+      } else {
+        aboutDropdown?.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
+        aboutDropdown?.classList.remove('opacity-100', 'scale-100', 'pointer-events-auto');
+        aboutChevron?.classList.remove('rotate-180');
+        setTimeout(() => {
+          if (!isAboutOpen) {
+            aboutDropdown?.classList.add('hidden');
+          }
+        }, 200);
+      }
+    }
+
+    function closeAboutDropdown() {
+      if (isAboutOpen) {
+        toggleAboutDropdown();
+      }
+    }
+
     desktopButton?.addEventListener('click', toggleDesktopDropdown);
+    aboutButton?.addEventListener('click', toggleAboutDropdown);
 
     // Close dropdown when clicking outside
     document.addEventListener('click', (event) => {
@@ -244,6 +369,16 @@ const {
         !desktopDropdown.contains(target)
       ) {
         closeDesktopDropdown();
+      }
+
+      if (
+        target instanceof Node &&
+        aboutButton &&
+        aboutDropdown &&
+        !aboutButton.contains(target) &&
+        !aboutDropdown.contains(target)
+      ) {
+        closeAboutDropdown();
       }
     });
 
@@ -299,6 +434,7 @@ const {
         closeMobileSidebar();
       } else {
         closeDesktopDropdown();
+        closeAboutDropdown();
       }
     });
   }

@@ -1,44 +1,33 @@
-
 ---
 import BaseHead from '../../components/BaseHead.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
-import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
+import WorkCard from '../../components/WorkCard.astro';
 import { getCollection } from 'astro:content';
-import IndexLayout from '../../layouts/IndexLayout.astro';
+import { SITE_TITLE } from '../../consts';
+import { ClientRouter } from 'astro:transitions';
 
-// Fetch all collections
-const [works] = await Promise.all([
-  getCollection('works', ({ data }) => data.publish === true)
-]);
-
-// Combine and sort all posts
-const allworks = [
-  ...works.map(post => ({
-    ...post,
-    collection: 'works',
-    url: `/works/${post.slug}/` // Add explicit URL formatting
-  }))
-].sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
-
-// Get unique tags from all posts
-const allTags = ['all', ...new Set(allworks.flatMap(post => post.data.tags || []))].sort();
-const collections = ['all', 'notes', 'essays', 'works', 'books'];
+const works = await getCollection('works', ({ data }) => data.publish);
 ---
 
-<IndexLayout
-  title="Works"
-  description="These are more like a glimpse of the work I've done. They're not meant to be a full-length essay, but rather a snapshot of my work at a particular point in time. They're also not meant to be a complete account of my life, but rather a glimpse into my work and my process."
-  posts={allworks}
-  tags={allTags}
-  collections={collections}
-/>
-
-<style>
-	.masonry-grid {
-		column-gap: 1rem;
-	}
-	.break-inside-avoid {
-		break-inside: avoid;
-	}
-</style>
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <BaseHead title={`Works | ${SITE_TITLE}`} description="Selected product and design work." />
+    <ClientRouter />
+  </head>
+  <body class="footer-reveal bg-backgroundcolor">
+    <div class="footer-reveal-content px-20">
+      <Header />
+      <main class="w-full mx-auto px-6 sm:px-10 pb-24 pt-8 sm:pt-16">
+        <h1 class="text-syoro dark:text-syoro font-sans text-3xl sm:text-4xl font-bold mb-10">Works</h1>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+          {works.map((entry) => (
+            <WorkCard entry={entry} />
+          ))}
+        </div>
+      </main>
+    </div>
+    <Footer />
+  </body>
+</html>

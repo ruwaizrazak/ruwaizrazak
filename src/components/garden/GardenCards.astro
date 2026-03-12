@@ -1,0 +1,76 @@
+---
+import NoteCard from '../NoteCard.astro';
+import EssayCard from '../EssayCard.astro';
+
+interface Props {
+  posts: any[];
+}
+const { posts } = Astro.props;
+---
+
+<section class="garden-cards-section px-5 md:px-10 pb-40">
+  <div class="card-masonry columns-1 md:columns-2 lg:columns-3 2xl:columns-4 gap-6">
+    {posts?.map((post) => (
+      <div
+        class="garden-card-item post-item break-inside-avoid mb-6 card-reveal"
+        data-tags={post.data.tags?.join(' ')}
+        data-collection={post.collection}
+      >
+        {post.collection === 'essays' ? (
+          <EssayCard
+            title={post.data.title}
+            description={post.data.description || ''}
+            pubDate={post.data.pubDate}
+            url={`/essays/${post.id}/`}
+            heroImage={post.data.heroImage}
+            maturity={post.data.maturity}
+          />
+        ) : (
+          <NoteCard
+            title={post.data.title}
+            description={post.data.description || ''}
+            pubDate={post.data.pubDate}
+            url={`/${post.collection}/${post.id}/`}
+            maturity={post.data.maturity}
+          />
+        )}
+      </div>
+    ))}
+  </div>
+</section>
+
+<style is:global>
+  .card-reveal {
+    transition: opacity 0.15s ease;
+  }
+</style>
+
+<script>
+  function initCardReveal() {
+    const cards = document.querySelectorAll<HTMLElement>('.card-reveal');
+    if (!cards.length) return;
+
+    function updateOpacities() {
+      const vh = window.innerHeight;
+      cards.forEach((card) => {
+        const rect = card.getBoundingClientRect();
+        const cardCenter = rect.top + rect.height / 2;
+
+        if (cardCenter <= vh / 2) {
+          card.style.opacity = '1';
+        } else if (cardCenter >= vh) {
+          card.style.opacity = '0.8';
+        } else {
+          const t = (cardCenter - vh / 2) / (vh / 2);
+          card.style.opacity = String(1 - 0.4 * t);
+        }
+      });
+    }
+
+    updateOpacities();
+    window.addEventListener('scroll', updateOpacities, { passive: true });
+  }
+
+  document.addEventListener('DOMContentLoaded', initCardReveal);
+  document.addEventListener('astro:page-load', initCardReveal);
+</script>

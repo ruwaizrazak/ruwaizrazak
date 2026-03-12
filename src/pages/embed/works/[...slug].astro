@@ -1,0 +1,43 @@
+---
+import { type CollectionEntry, getCollection } from 'astro:content';
+import { render } from 'astro:content';
+import ExternalLink from '../../../components/mdxComponents/ExternalLink.astro';
+import BaseHead from '../../../components/BaseHead.astro';
+import Image from '../../../components/mdxComponents/Image.astro';
+import { proseClasses } from '../../../utils/proseClasses';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('works', ({ data }) => data.publish);
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: post,
+  }));
+}
+
+type Props = CollectionEntry<'works'>;
+const post = Astro.props;
+const { Content } = await render(post);
+const { title, description, pubDate, updatedDate, heroImage } = post.data;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead title={title} description={description} />
+    <style>
+      body { margin: 0; padding: 0; background: var(--color-backgroundcolor, #fafafa); }
+    </style>
+  </head>
+  <body class="bg-backgroundcolor">
+    <article class={`${proseClasses} mx-auto px-6 py-8`}>
+      <h1 class="text-konpeki font-serif">{title}</h1>
+      <p class="text-syoro italic text-lg">{description}</p>
+      {heroImage && (
+        <div class="my-8">
+          <Image src={heroImage} alt="" class="w-full h-auto object-cover rounded-lg" loading="eager" />
+        </div>
+      )}
+      <Content components={{ a: ExternalLink }} />
+    </article>
+  </body>
+</html>

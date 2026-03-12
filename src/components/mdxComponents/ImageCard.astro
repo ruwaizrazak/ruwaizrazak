@@ -1,0 +1,182 @@
+---
+interface Props {
+  src: string;
+  alt: string;
+  heading: string;
+  description?: string;
+}
+
+const { src, alt, heading, description = '' } = Astro.props;
+const uniqueId = `image-card-${Math.random().toString(36).slice(2, 11)}`;
+---
+
+<div
+  class="image-card relative overflow-hidden rounded-2xl min-h-[20rem] cursor-pointer bg-cardbg hover:animate-shiver hover:scale-105 transition-all duration-200 ease-in-out"
+  data-image-card-trigger={uniqueId}
+  role="button"
+  tabindex={0}
+  aria-label={`Open ${heading} in lightbox`}
+>
+  <img
+    src={src}
+    alt={alt}
+    loading="lazy"
+    class="image-card-img absolute inset-0 w-full h-full object-cover"
+  />
+  <div class="image-card-overlay absolute inset-0 z-[1]" aria-hidden="true" />
+  <div class="relative z-[2] p-6 flex flex-col justify-end min-h-full">
+    <h3 class="text-2xl font-sans font-medium text-syoro">{heading}</h3>
+  </div>
+</div>
+
+<!-- Lightbox -->
+<div
+  id={uniqueId}
+  class="image-card-lightbox fixed inset-0 backdrop-blur-xl bg-white/95 z-50 hidden items-center justify-center p-4 px-20"
+  data-image-card-lightbox
+  aria-hidden="true"
+>
+  <div class="image-card-panel w-full max-w-5xl max-h-[100vh] flex flex-col items-center justify-center relative" data-image-card-panel>
+    <button
+      type="button"
+      class="absolute -top-5 right-0 z-10 text-white bg-red-400 rounded-full p-3 hover:text-gray-300 transition-colors cursor-pointer group"
+      aria-label="Close"
+      data-image-card-close
+    >
+      <svg class="w-8 h-8 group-hover:rotate-180 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+    <div class="w-full flex flex-col gap-10 items-center max-h-[100vh] text-left">
+      <img
+        src={src}
+        alt={alt}
+        class="w-full md:w-[80%] max-h-[90vh] object-contain rounded-lg shadow-2xl"
+      />
+      <div class="text-syoro mt-4 w-full text-center">
+        <h3 class="text-4xl font-sans font-bold">{heading}</h3>
+        {description && <p class="text-2xl text-syoro font-serif mt-4">{description}</p>}
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .image-card-img {
+    mask-image: linear-gradient(to top, transparent 0%, black 50%);
+    -webkit-mask-image: linear-gradient(to top, transparent 0%, black 50%);
+  }
+  .image-card-overlay {
+    background: linear-gradient(
+      to bottom,
+      transparent 0%,
+      transparent 90%,
+      #f1f1f1 100%
+    );
+  }
+
+ 
+  
+  @media (prefers-reduced-motion: reduce) {
+    .image-card:hover {
+      animation: none;
+    }
+  }
+
+  /* Lightbox: scale-up panel (WorkCard-style easing) */
+  .image-card-lightbox {
+    transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .image-card-lightbox[aria-hidden="true"] {
+    opacity: 0;
+  }
+  .image-card-panel {
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .image-card-lightbox,
+    .image-card-panel {
+      transition-duration: 0.01ms;
+    }
+  }
+</style>
+
+<script define:vars={{ uniqueId }}>
+  if (typeof window !== 'undefined') {
+    const trigger = document.querySelector(`[data-image-card-trigger="${uniqueId}"]`);
+    const lightbox = document.getElementById(uniqueId);
+    const closeBtn = lightbox?.querySelector('[data-image-card-close]');
+    const panel = lightbox?.querySelector('[data-image-card-panel]');
+
+    // Move lightbox to body so it isn't clipped by overflow/transform ancestors
+    if (lightbox && lightbox.parentNode !== document.body) {
+      document.body.appendChild(lightbox);
+    }
+
+    const prefersReducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function openLightbox() {
+      if (!lightbox || !panel) return;
+
+      const rect = trigger.getBoundingClientRect();
+      const originX = rect.left + rect.width / 2;
+      const originY = rect.top + rect.height / 2;
+
+      panel.style.transformOrigin = `${originX}px ${originY}px`;
+      panel.style.transform = 'scale(0.2)';
+      panel.style.opacity = '0';
+      lightbox.style.opacity = '0';
+      lightbox.setAttribute('aria-hidden', 'false');
+      lightbox.classList.remove('hidden');
+      lightbox.classList.add('flex');
+      document.body.style.overflow = 'hidden';
+
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          lightbox.style.opacity = '1';
+          panel.style.transform = 'scale(1)';
+          panel.style.opacity = '1';
+          const duration = prefersReducedMotion() ? 0 : 350;
+          setTimeout(() => {
+            lightbox.style.opacity = '';
+            panel.style.transform = '';
+            panel.style.transformOrigin = '';
+            panel.style.opacity = '';
+          }, duration);
+        });
+      });
+    }
+
+    function closeLightbox() {
+      if (!lightbox || !panel) return;
+      lightbox.setAttribute('aria-hidden', 'true');
+      panel.style.transform = 'scale(0.98)';
+      panel.style.opacity = '0';
+
+      const duration = prefersReducedMotion() ? 0 : 250;
+      setTimeout(() => {
+        lightbox.classList.add('hidden');
+        lightbox.classList.remove('flex');
+        document.body.style.overflow = '';
+        panel.style.transform = '';
+        panel.style.opacity = '';
+        if (trigger instanceof HTMLElement) trigger.focus();
+      }, duration);
+    }
+
+    trigger?.addEventListener('click', openLightbox);
+    trigger?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        openLightbox();
+      }
+    });
+    closeBtn?.addEventListener('click', closeLightbox);
+    lightbox?.addEventListener('click', (e) => {
+      if (e.target === lightbox) closeLightbox();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && lightbox?.classList.contains('flex')) closeLightbox();
+    });
+  }
+</script>

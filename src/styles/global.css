@@ -7,9 +7,11 @@
 @plugin "@tailwindcss/typography";
 @config "./tailwind.config.js";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --font-serif: "IBM Plex Serif",serif;
-  --font-sans: "Sofia Sans Condensed",sans-serif;
+  --font-sans: "Saira Condensed",sans-serif;
   --font-mono: "IBM Plex Mono",monospace;
   --font-handwriting: "Caveat",cursive;
 
@@ -24,14 +26,48 @@
   --color-card-border:#FAF3E5;
   --color-syoro:#003535;
   --color-konpeki:#004A8F;
-  --color-backgroundcolor:#fafbfc;
+  --color-backgroundcolor:#ffffff;
   --color-link:#1A86FF;
+  --color-cursor: #003535;
+  --color-cursor-text: #ffffff;
+
+  --animate-shiver: shiver-animation 0.5s ease-in-out infinite;
+}
+
+@keyframes shiver-animation {
+  0%, 100% {
+    transform: translate(0, 0);
+    box-shadow: none;
+  }
+  25% {
+    transform: translate(-2px, -2px);
+    box-shadow: 4px 4px #00000003;
+  }
+  50% {
+    transform: translate(2px, 2px);
+    box-shadow: -4px -4px #00000003;
+  }
+  75% {
+    transform: translate(-2px, 2px);
+    box-shadow: 4px 4px #00000003;
+  }
+}
+
+@layer theme {
+  .dark {
+    --color-backgroundcolor: #1a1a1a;
+    --color-syoro: #e0e8e8;
+    --color-konpeki: #7eb8e8;
+    --color-cardbg: #2a2a2a;
+    --color-card-border: #3a3a3a;
+    --color-link: #6bb3ff;
+    --color-text-primary: #e0e8e8;
+    --color-cursor: #e0e8e8;
+    --color-cursor-text: #1a1a1a;
+  }
 }
 
 
-p {
-  color: inherit;
-}
 
 
 
@@ -70,7 +106,7 @@ pre>code {
 }
 
 blockquote {
-  border-left: 4px solid var(--accent);
+  border-left: 4px solid var(--color-konpeki);
   padding: 0 0 0 20px;
   margin: 0px;
   font-size: 1.333em;
@@ -106,6 +142,79 @@ hr {
   }
 }
 
+/* Footer reveal: main content scrolls over sticky footer */
+.footer-reveal .footer-reveal-content {
+  position: relative;
+  z-index: 1;
+  background-color: var(--color-backgroundcolor);
+}
+
+.footer-reveal footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 0;
+}
+
+/* Work card → full page scale-up view transition */
+@keyframes work-scale-in {
+  from {
+    transform: scale(0.92);
+    opacity: 0.9;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Custom cursor — desktop only */
+@media (pointer: fine) {
+  *, *::before, *::after {
+    cursor: none !important;
+  }
+}
+
+#custom-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0;
+}
+
+#custom-cursor .cursor-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transform: translate(-50%, -50%);
+}
+
+#custom-cursor .cursor-morph-svg {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+}
+
+#custom-cursor .cursor-label {
+  position: absolute;
+  z-index: 1;
+  white-space: nowrap;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-cursor-text);
+  opacity: 0;
+  pointer-events: none;
+}
+
 .sr-only {
   border: 0;
   padding: 0;
@@ -123,3 +232,4 @@ hr {
   /* added line to stop words getting smushed together (as they go onto separate lines and some screen readers do not understand line feeds as a space */
   white-space: nowrap;
 }
+

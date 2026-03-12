@@ -4,14 +4,10 @@ import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
 import { getCollection } from 'astro:content';
-import Main from '../../components/Main.astro';
-import H1 from '../../components/mdxComponents/H1.astro';
-import H2 from '../../components/mdxComponents/H2.astro';
-import P from '../../components/mdxComponents/P.astro';
-import NoteMain from '../../components/NoteMain.astro';
-import GradientHeading from '../../components/mdxComponents/gradientHeading.astro';
-import Link from '../../components/mdxComponents/Link.astro';
 import { render } from 'astro:content';
+import CustomCursor from '../../components/CustomCursor.astro';
+import NotePostHero from '../../components/NotePostHero.astro';
+import { proseClasses } from '../../utils/proseClasses';
 
 const livePosts = await getCollection('live', ({ data }) => data.publish === true);
 const sortedPosts = livePosts.sort((a, b) => {
@@ -24,30 +20,30 @@ const nowPost = sortedPosts[0];
 const thenPosts = sortedPosts.slice(1);
 const nowContent = nowPost ? await render(nowPost) : null;
 const thenContents = await Promise.all(thenPosts.map(post => render(post)));
+
+const liveProseClasses = `${proseClasses} prose-a:text-link prose-a:underline prose-a:hover:line-through prose-a:underline-offset-8`;
 ---
 
 <!doctype html>
 <html lang="en">
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+		<CustomCursor />
 	</head>
-	<body class="bg-backgroundcolor">
-		<Header />
-		<main class="w-full sm:w-[90%] lg:w-[90%] xl:w-[80%] 2xl:w-[70%] mx-auto">
-			<div class="mt-20">
-				<div class="flex flex-col gap-4">
-					<a href="/" class="inline-block z-1">
-						<div class="flex items-center gap-2 group not-prose">
-							<img src="/icons/backArrow.svg" class="w-8 h-auto group-hover:rotate-20 transition-all" alt="Back" />
-							<span class="uppercase font-sans font-medium text-lg">Back to Index</span>
-						</div>
-					</a>
-				</div>
-				<GradientHeading size="xl">Now</GradientHeading>
-				<p class="text-lg sm:text-xl mt-2 font-serif italic">Whats happening or rather what am I doing currently?</p>
-        <hr class="w-full my-8 border-stone-100">
+	<body class="footer-reveal bg-backgroundcolor">
+		<div class="footer-reveal-content">
+		
+		<main class="px-20">
+			<Header />
+			<NotePostHero
+				title="Now"
+				description="Whats happening or rather what am I doing currently?"
+				pubDate={new Date(nowPost.data.date)}
+				tags={[]}
+			/>
+			<div class="note-main-wrapper pt-20 relative z-10 bg-backgroundcolor w-screen max-w-[100vw] ml-[calc(50%-50vw)]">
 				{nowPost && nowContent && (
-					<div class="pb-20">
+					<div class="pb-20 w-full sm:w-[90%] lg:w-[90%] xl:w-[80%] 2xl:w-[70%] mx-auto px-20">
 						<div class="flex flex-col gap-4">
 							<div class="flex items-center gap-4">
 								<span class="shrink-0">
@@ -55,32 +51,31 @@ const thenContents = await Promise.all(thenPosts.map(post => render(post)));
 										<div class="w-full h-full rounded-4xl bg-konpeki"></div>
 									</div>
 								</span>
-								<h2 class="text-5xl">{nowPost.data.Month}</h2>
+								<h2 class="text-5xl text-syoro">{nowPost.data.Month}</h2>
 							</div>
 						</div>
-						<p class="mx-12 text-xl mt-2 mb-5 font-sans">{nowPost.data.OneLiner}</p>
-						<div class="mx-12 prose-neutral prose-lg max-w-3xl prose-headings:font-sans prose-p:font-serif prose-p:text-syoro prose-img:w-[95%] prose-img:aspect-auto prose-headings:text-konpeki prose-h4:uppercase prose-h3:uppercase prose-strong:text-pink-500 prose-h5:uppercase prose-h4:font-bold prose-h5:font-bold prose-blockquote:font-handwriting prose-blockquote:leading-auto prose-ul:font-serif prose-li:font-serif prose-ul:list-disc prose-ol:list-decimal prose-blockquote:text-yellow-600 prose-blockquote:italic text-base md:text-lg prose-h1:mt-10 md:prose-h1:mt-14 prose-h2:mt-8 md:prose-h2:mt-10 prose-h3:mt-6 md:prose-h3:mt-8 prose-h4:mt-3 md:prose-h4:mt-3 prose-headings:mb-5 prose-a:text-link prose-a:underline prose-a:hover:line-through prose-a:underline-offset-8">
+						<p class="mx-12 text-xl mt-2 mb-5 font-sans text-syoro">{nowPost.data.OneLiner}</p>
+						<div class={`mx-12 ${liveProseClasses}`}>
 							<nowContent.Content />
 						</div>
 					</div>
 				)}
 				{thenPosts.length > 0 && (
 					<>
-						<GradientHeading size="xl" className="mt-0">Then ...</GradientHeading>
-						<p class="text-lg sm:text-xl mt-2">In hindsight...</p>
+						
 						<hr class="w-full my-8 border-stone-100">
-						<div class="space-y-8">
+						<div class="space-y-8 pb-20 w-full sm:w-[90%] lg:w-[90%] xl:w-[80%] 2xl:w-[70%] mx-auto px-20">
+							<h1 class="text-7xl text-syoro">Then ...</h1>
 							{thenPosts.map((post, index) => {
 								const Content = thenContents[index]?.Content;
 								return (
 									<div class="border-b-2 border-stone-100">
 										<div class="flex items-center gap-4">
 											<div class="h-8 w-8 rounded-4xl border-4 border-konpeki"></div>
-											</span>
-											<h2 class="text-5xl">{post.data.Month}</h2>
+											<h2 class="text-5xl text-syoro">{post.data.Month}</h2>
 										</div>
-										<p class="mx-12 text-xl mt-2 mb-5 font-sans">{post.data.OneLiner}</p>
-										<div class="mx-12 prose-neutral prose-lg max-w-3xl prose-headings:font-sans prose-p:font-serif prose-p:text-syoro prose-img:w-[95%] prose-img:aspect-auto prose-headings:text-konpeki prose-h4:uppercase prose-h3:uppercase prose-strong:text-pink-500 prose-h5:uppercase prose-h4:font-bold prose-h5:font-bold prose-blockquote:font-handwriting prose-blockquote:leading-auto prose-ul:font-serif prose-li:font-serif prose-ul:list-disc prose-ol:list-decimal prose-blockquote:text-yellow-600 prose-blockquote:italic text-base md:text-lg prose-h1:mt-10 md:prose-h1:mt-14 prose-h2:mt-8 md:prose-h2:mt-10 prose-h3:mt-6 md:prose-h3:mt-8 prose-h4:mt-3 md:prose-h4:mt-3 prose-headings:mb-5 prose-a:text-link prose-a:underline prose-a:hover:line-through prose-a:underline-offset-8">
+										<p class="mx-12 text-xl mt-2 mb-5 font-sans text-syoro">{post.data.OneLiner}</p>
+										<div class={`mx-12 ${liveProseClasses}`}>
 											{Content && <Content />}
 										</div>
 									</div>
@@ -91,6 +86,14 @@ const thenContents = await Promise.all(thenPosts.map(post => render(post)));
 				)}
 			</div>
 		</main>
+		</div>
 		<Footer />
+		<!-- Scroll animations: hero overlap, fade-out, and zoom -->
+		<script>
+			import { initNotePostAnimations } from '../../scripts/note-post-animations';
+
+			document.addEventListener('astro:page-load', initNotePostAnimations);
+			document.addEventListener('DOMContentLoaded', initNotePostAnimations);
+		</script>
 	</body>
 </html>

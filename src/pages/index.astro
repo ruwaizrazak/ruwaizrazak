@@ -2,74 +2,15 @@
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import IntroSection from '../components/IntroSection.astro';
+import SelectedWorksSection from '../components/SelectedWorksSection.astro';
+
+import CustomCursor from '../components/CustomCursor.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
-import Link  from '../components/mdxComponents/Link.astro';
 import { getCollection } from 'astro:content';
-import GardenLink from '../components/GardenLink.astro';
-import GradientHeading from '../components/mdxComponents/gradientHeading.astro';
-import GradientLine from '../components/mdxComponents/gradientLine.astro';
-import EssayCard from '../components/EssayCard.astro';
-import NoteCard from '../components/NoteCard.astro';
-import WorkCard from '../components/WorkCard.astro';
-import BookCard from '../components/BookCard.astro';
 import { ClientRouter } from "astro:transitions";
-import Button from '../components/Button.astro';
-import Tooltip from '../components/tooltip.astro';
 
-import ProfileCard from '../components/ProfileCard/ProfileCard.tsx';
-
-
-// Get 10 featured posts from each collection
-// Helper function to standardize slug creation across collections
-function createStandardSlug(post: any) {
-  const filename = post.id.split('/').pop().replace(/\.[^.]+$/, '');
-  return filename.toLowerCase();
-}
-
-// Helper function to sort by date
-function sortByDateDesc(a: any, b: any) {
-  const dateA = new Date(a.data.pubDate);
-  const dateB = new Date(b.data.pubDate);
-  return dateB.valueOf() - dateA.valueOf();
-}
-
-// Get featured and published posts from each collection
-const notes = (await getCollection('notes', ({ data }) => data.publish === true))
-  .filter(post => post.data.featured === true && post.data.pubDate)
-  .map(post => ({
-    ...post,
-    slug: createStandardSlug(post)
-  }))
-  .sort(sortByDateDesc)
-  .slice(0, 4);
-
-const essays = (await getCollection('essays'))
-  .filter(post => (
-    post.data.publish === true &&
-    post.data.featured === true &&
-    post.data.pubDate
-  ))
-  .map(post => ({
-    ...post,
-    slug: createStandardSlug(post)
-  }))
-  .sort(sortByDateDesc)
-  .slice(0, 10);
-
-
-
-const works = (await getCollection('works', ({ data }) => data.publish === true))
-  .filter(post => post.data.featured === true && post.data.pubDate)
-  .map(post => ({
-    ...post,
-    slug: createStandardSlug(post)
-  }))
-  .sort(sortByDateDesc)
-  .slice(0, 10);
-
-
-
-
+const works = await getCollection('works', ({ data }) => data.publish);
 ---
 
 <!doctype html>
@@ -77,200 +18,41 @@ const works = (await getCollection('works', ({ data }) => data.publish === true)
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
         <ClientRouter />
-            <script>
-      import { create } from '@lottiefiles/lottie-interactivity';
-      import lottie from 'lottie-web';
-    </script>
 	</head>
-	<body class="bg-backgroundcolor">
-		<Header />
-		<main class="w-full sm:w-[90%] lg:w-[90%] xl:w-[80%] 2xl:w-[70%] mx-auto">
-      <!--Hero Section -->
-      <div class="mx-auto justify-between grid grid-cols-1 md:grid-cols-2 gap-10">
-        <div class="sm:w-full md:w-2xl mt-10">
-          <p class="w-full text-xl font-serif">
-            
-            <span id="greetingSpan" class="text-3xl uppercase text-konpeki">
-                ഹലോ
-            </span>,
-          
+	<body class="footer-reveal bg-backgroundcolor">
+		<!--
+			Entrance animation gate (is:inline — must run synchronously before first
+			paint to prevent FOUC. Module scripts are deferred, so this cannot be
+			an import). Adds 'animate-in' on first visit or 'returned-from-work'
+			when navigating back from a work page.
+		-->
+		<script is:inline>
+			(function applyIndexEntrance() {
+				var fromWork = document.referrer.indexOf('/works/') !== -1 || sessionStorage.getItem('skipIndexAnimations') === '1';
+				var target = document.body;
+				if (fromWork) {
+					target.classList.add('returned-from-work');
+					sessionStorage.removeItem('skipIndexAnimations');
+				} else {
+					target.classList.add('animate-in');
+				}
+			})();
+		</script>
 
-            <br><br> I'm <strong>Ruwaiz</strong>. A Designer who learns and writes on weekends.
-            
-            <br><br>I'm an User Experience Design with 7+ years experience in building games with <Link href="https://nordeus.com">Nordeus</Link>, <Link href="https://www.zynga.com">Zynga</Link>, and Glu Mobile (now acquired by EA ).<Link href="/about">Get a glimpse of that career here.</Link>
-            
-            <br><br>I'm also an advocate for fedeverse, data literacy, programming and knowledge sharing.</p>
+		<!-- Re-apply entrance classes after view-transition page swaps (module script) -->
+		<script>
+			import { ensureIndexEntrance } from '../scripts/index-entrance';
+			document.addEventListener('astro:page-load', ensureIndexEntrance);
+			requestAnimationFrame(() => { requestAnimationFrame(ensureIndexEntrance); });
+		</script>
 
-          <h4 class="text-xl uppercase text-gray-500 mt-10">Garden</h4>
-          <ul>
-
-            <li><GardenLink
-              href="/essays"
-              title="Essays"
-              description="Refined, long written opiniated documents."
-            /></li>
-            <li><GardenLink
-              href="/notes"
-              title="Notes"
-              description="Not refined, incomplete, but a starting point."
-            /></li>
-            <li><GardenLink
-              href="/series"
-              title="Series"
-              description="Episodal writings, less refined, more detailed"
-            /></li>
-            <li><GardenLink
-              href="/garden"
-              title="Everything"
-              description="Contains everything I've written."
-            /></li>
-            <li class="mt-5">---</li>
-            <li><GardenLink
-              href="/about"
-              title="About"
-              description="What am I?"
-            /></li>
-            <li><GardenLink
-              href="/live"
-              title="Live"
-              description="Shares a glimpse of whats happening."
-            /></li>
-
-          </ul>
-        </div>
-        <div class="hidden xl:flex justify-end">
-          <!--svg goes here -->
-          <svg width="100%" height="900" viewBox="0 0 582 1021" fill="none" xmlns="http://www.w3.org/2000/svg" class="opacity-90">
-            <path d="M299.481 0V329.5C300.647 348.333 288.9 369.58 270.48 388C262.48 396 116.642 337 139.481 285C162.32 233 270.48 298.3 270.48 449.5C276.5 530.5 190.981 489.5 139.481 492C50.4804 496.321 4.97693 619.5 152.479 663C233.5 686.894 328.477 596 313.979 492C299.481 388 378.81 358.468 477.479 367C570 375 585.479 449.2 545.479 492C510.312 517.333 431.579 548.8 397.979 472C395.979 451.5 406.779 414.4 465.979 430C539.979 449.5 505.979 582.5 489.479 590C472.979 597.5 395.64 632.865 381.979 553C368.979 477 307.979 308 139.481 472C87.9788 522.127 137.479 556.7 241.479 559.5C320.979 553 331.979 600 344.479 631.5C371.479 667.5 419.479 730.5 489.479 675.5C559.479 620.5 467.479 522.5 330.479 553C248.479 510.5 259.979 402.973 102.979 405C-19 406.575 17.0001 487 38.9787 530.5C51.2959 576 183.313 616.052 214.5 641.5C263.521 681.5 216 737.5 136 740.5C56 743.5 47.8099 699.239 87.9788 648.5C114.5 615 139.481 604.465 198.979 600.5C266.5 596 299.481 614.708 299.481 671C299.481 729.5 299.481 926 299.481 1021" stroke="url(#paint0_linear_203_524)" stroke-width="31" class="path-animation"/>
-            <defs>
-              <linearGradient id="paint0_linear_203_524" x1="293.018" y1="0" x2="293.018" y2="1021" gradientUnits="userSpaceOnUse">
-                <stop stop-color="#1E1E1E"/>
-                <stop offset="1" stop-color="#324084"/>
-              </linearGradient>
-            </defs>
-          </svg>
-        </div>
-        </div>
-        
-        <!-- Selected Works -->
-        <div class="mx-auto mt-20">
-          <div class="flex items-center gap-4">
-            <GradientHeading size="lg" className='font-medium sm:whitespace-nowrap'>Selected Works</GradientHeading>
-            <GradientLine angle={45} startPercentage={20} endPercentage={80} className="h-[60px] w-[80%]" direction='rtl'/>
-          </div>
-          <div class="lg:flex gap-10 text-lg md:text-xl mt-10 w-full justify-between text-syoro items-center pr-10">
-            <div class="w-full lg:w-[60%] text-syoro font-serif items-center">
-              <p> While I can't share what I did at my previous companies, I can give a glimpse on my process and the project I worked on. <br> <br>Check out my resume if you are interested to know more about my career experience.</p>
-              <div class="flex-col my-10 space-x-5 xs:align-center xs:w-full">
-                <Button href="mailto:hello@ruwaizrazak.com" variant='primary'>
-                  Mail Me
-                </Button>
-                <Button href="/ruwaizcv.pdf" target={'_blank'}>
-                  Download CV
-                </Button>
-              </div>
-            </div>
-            
-              <div class="w-full xl:w-[40%] flex gap-10 mt-10 lg:mt-0 justify-center">
-                <WorkCard
-                  title="At Zynga"
-                  period="2019-2024"
-                  heroImage="/index/zynga.png"
-                  url="/works/zynga"
-                />
-
-                <WorkCard
-                  title="At Glu"
-                  period="2018-2019"
-                  heroImage="/index/glu.png"
-                  url="/works/deerhunter2018"
-                />
-              </div>
-          </div>
-        </div>
-        <div class="mx-auto mt-20">
-          <div class="flex items-center gap-4">
-            <GradientLine angle={45} startPercentage={20} endPercentage={80} className="h-[60px] w-[80%]" />
-            <GradientHeading size="lg" className='font-medium sm:whitespace-nowrap text-right'>Snippets From Garden</GradientHeading>
-
-
-          </div>
-          <!--surface all the contents from essays here -->
-          <div class="block sm:flex gap-5 mt-5" id="garden">
-            <div id="essays" class="sm:w-[70%]">
-              <a class="justify-center sm:justify-start flex items-center gap-2 hover:text-link transition-colors" href="/essays">
-                <img src="/icons/essays.svg" alt="Essays icon" class="w-6 h-auto">
-                <h3 class="text-3xl uppercase font-medium font-sans ">Essays</h3>
-                <img src="/icons/rightarrow.svg" alt="Right arrow" width="10px" class="rotate-90 sm:rotate-0">
-              </a>
-              <p class="text-center sm:text-left text-lg md:text-xl font-serif">Essays are more refined, long written documents which are opinionated and have a message to deliver.</p>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mt-5">
-                {essays.map((essay) => (
-                  <div class="group rounded-lg overflow-hidden transition-all">
-                    <EssayCard
-                    title={essay.data.title || 'Untitled'}
-                    description={essay.data.description || ''}
-                    pubDate={essay.data.pubDate}
-                    heroImage={essay.data.heroImage}
-                     url={`/essays/${essay.slug}`}
-                    imageHeight="h-32"
-                    maturity={essay.data.maturity}
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div id="notes" class="w-full sm:w-[30%] mt-5 sm:mt-0">
-              <div>
-                <a class="justify-center sm:justify-start flex items-center gap-2 hover:text-link transition-colors" href="/notes">
-                  <img src="/icons/notes.svg" alt="Notes icon" class="w-8 h-auto">
-                  <h3 class="text-3xl uppercase font-medium">Notes</h3>
-                  <img src="/icons/rightarrow.svg" alt="Right arrow" width="10px" class="rotate-90 sm:rotate-0">
-              </a>
-              <p class="text-center sm:text-left text-lg md:text-xl font-serif">Short, Unrefined, Vague documents.</p>
-              </div>
-<div class="grid grid-cols-1 gap-2 mt-5">
-  {notes.filter(note => note.data.pubDate).map((note) => (
-    <NoteCard
-      title={note.data.title || 'Untitled'}
-      description={note.data.description || ''}
-      pubDate={note.data.pubDate}
-      url={`/notes/${note.slug}`}
-      maturity={note.data.maturity}
-    />
-  ))}
-</div>
-</div>
-
-
+		<main class="footer-reveal-content w-full px-6 md:px-12 lg:px-20">
+      <Header />
+      <IntroSection />
+      <SelectedWorksSection works={works} />
 		</main>
+
 		<Footer />
-    <script>
-      const greetings = ['hello', 'ഹലോ'];
-      let currentIndex = 0;
-      const span = document.getElementById('greetingSpan');
-
-      function cycleGreeting() {
-          currentIndex = (currentIndex + 1) % greetings.length;
-          if (span) {
-            span.textContent = greetings[currentIndex];
-          }
-      }
-
-      // Change greeting every 1.5 seconds
-      setInterval(cycleGreeting, 1500);
-  </script>
+		<CustomCursor />
 	</body>
 </html>
-
-<style>
-.plane-path {
-  stroke-dasharray: 180;
-  stroke-dashoffset: 180;
-  transition: stroke-dashoffset 0.7s cubic-bezier(0.4,0,0.2,1);
-}
-.group:hover .plane-path {
-  stroke-dashoffset: 0;
-}
-</style>
-

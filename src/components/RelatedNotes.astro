@@ -1,0 +1,76 @@
+---
+import { getCollection } from 'astro:content';
+import NoteCard from './NoteCard.astro';
+
+interface Props {
+  currentTags: string[];
+  currentTitle: string;
+}
+
+const { currentTags, currentTitle } = Astro.props;
+const allNotes = await getCollection('notes', ({ data }) => data.publish === true);
+const relatedNotes = allNotes
+  .filter(note => note.data.title !== currentTitle)
+  .filter(note => note.data.tags?.some(tag => currentTags.includes(tag)))
+  .slice(0, 8);
+---
+
+{relatedNotes.length > 0 && (
+  <section class="related-notes-section text-center bg-black/5 my-20 shadow-[inset_0_2px_8px_rgba(0,0,0,0.15),inset_0_-2px_8px_rgba(0,0,0,0.15)]">
+    <div class="related-reveal overflow-hidden" style="height: 0">
+      <div class="mt-20 mb-10">
+        <h2 class="text-syoro font-sans text-3xl mb-8 mx-auto">Also related to...</h2>
+        <div class="relative">
+          <button
+            class="related-arrow related-arrow-left absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-10 h-10 items-center justify-center bg-backgroundcolor border border-syoro/20 hover:border-syoro/50 transition-colors"
+            style="display: none;"
+            aria-label="Scroll left"
+          >
+            &larr;
+          </button>
+          <button
+            class="related-arrow related-arrow-right absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-10 h-10 items-center justify-center bg-backgroundcolor border border-syoro/20 hover:border-syoro/50 transition-colors"
+            style="display: none;"
+            aria-label="Scroll right"
+          >
+            &rarr;
+          </button>
+
+          <div class="related-scroll flex gap-6 justify-center overflow-x-auto snap-x snap-mandatory pb-4 -mx-4 px-4" style="-webkit-overflow-scrolling: touch; scrollbar-width: none;">
+            {relatedNotes.map(note => (
+              <div class="related-card snap-start shrink-0 w-[280px] sm:w-[320px]">
+                <NoteCard
+                  title={note.data.title}
+                  description={note.data.description}
+                  pubDate={note.data.pubDate}
+                  url={`/notes/${note.id}/`}
+                  maturity={note.data.maturity}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+)}
+
+<style is:global>
+  .related-scroll::-webkit-scrollbar {
+    display: none;
+  }
+  .related-card {
+    opacity: 0;
+  }
+</style>
+
+<script>
+  import { initRelatedNotes } from '../scripts/related-notes';
+
+  document.addEventListener('astro:page-load', initRelatedNotes);
+  if (document.readyState === 'complete') {
+    initRelatedNotes();
+  } else {
+    window.addEventListener('load', initRelatedNotes);
+  }
+</script>

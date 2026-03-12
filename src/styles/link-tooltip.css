@@ -1,0 +1,62 @@
+/*
+ * Global tooltip styles for link previews.
+ *
+ * These must be global (not scoped) because tippy.js appends tooltip
+ * elements to <body>, outside any Astro component's scope boundary.
+ * Imported alongside tippy.js/dist/tippy.css in the tooltip init script.
+ */
+
+.link-tooltip {
+  padding: 0.25rem 0;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+
+.link-tooltip-header {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.link-tooltip-header svg {
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+
+.link-tooltip-title {
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.link-tooltip-description {
+  margin: 0.375rem 0 0;
+  opacity: 0.85;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.link-tooltip-footer {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  margin-top: 0.5rem;
+  padding-top: 0.375rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  font-size: 0.75rem;
+}
+
+.link-tooltip-footer img {
+  flex-shrink: 0;
+  border-radius: 2px;
+}
+
+.link-tooltip-url {
+  opacity: 0.65;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
