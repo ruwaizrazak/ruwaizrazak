@@ -1,6 +1,8 @@
 ---
 import type { HTMLAttributes } from 'astro/types';
 import ExternalLink from '../externallink.astro';
+import { fetchOgData } from '../../utils/ogFetcher';
+import { resolveInternalLink } from '../../utils/resolveInternalLink';
 
 type Props = HTMLAttributes<'a'>;
 
@@ -8,10 +10,70 @@ const { href, class: className, ...props } = Astro.props;
 const pathname = Astro.url.pathname.replace(import.meta.env.BASE_URL, '');
 const subpath = pathname.match(/[^\/]+/g);
 const isActive = href === pathname || href === '/' + (subpath?.[0] || '');
-const isExternal = href?.startsWith('http');
+const hrefStr = typeof href === 'string' ? href : '';
+const isExternal = hrefStr.startsWith('http');
+
+// Skip tooltip for anchors, mailto, tel
+const skipTooltip = !hrefStr || hrefStr.startsWith('#') || hrefStr.startsWith('mailto:') || hrefStr.startsWith('tel:');
+
+let tooltipTitle: string | null = null;
+let tooltipDesc: string | null = null;
+
+if (!skipTooltip) {
+  if (isExternal) {
+    const og = await fetchOgData(hrefStr);
+    tooltipTitle = og.title;
+    tooltipDesc = og.description;
+  } else {
+    const internal = await resolveInternalLink(hrefStr);
+    if (internal) {
+      tooltipTitle = internal.title;
+      tooltipDesc = internal.description;
+    }
+  }
+}
+
+const hasTooltip = !skipTooltip && !!(tooltipTitle || tooltipDesc);
+
+let favicon = '';
+let displayUrl = '';
+if (hasTooltip && isExternal) {
+  try {
+    const parsed = new URL(hrefStr);
+    favicon = 'https://www.google.com/s2/favicons?domain=' + parsed.hostname + '&sz=16';
+    displayUrl = parsed.hostname;
+  } catch (_e) {
+    displayUrl = hrefStr;
+  }
+} else if (hasTooltip) {
+  favicon = '/favicon.ico';
+  displayUrl = hrefStr;
+}
+
+// Build tooltip HTML using string concat to avoid Astro compiler issues with template literal HTML
+let tooltipHTML = '';
+if (hasTooltip) {
+  const extSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>';
+  const intSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>';
+  const icon = isExternal ? extSvg : intSvg;
+
+  tooltipHTML = '<div class="link-tooltip">';
+  if (tooltipTitle) {
+    tooltipHTML += '<div class="link-tooltip-header">' + icon + '<span class="link-tooltip-title">' + tooltipTitle + '</span></div>';
+  }
+  if (tooltipDesc) {
+    tooltipHTML += '<p class="link-tooltip-description">' + tooltipDesc + '</p>';
+  }
+  tooltipHTML += '<div class="link-tooltip-footer"><img src="' + favicon + '" width="14" height="14" alt="" /><span class="link-tooltip-url">' + displayUrl + '</span></div>';
+  tooltipHTML += '</div>';
+}
 ---
 
-<span class="link-container">
+<span
+  class="link-container"
+  data-link-tooltip={hasTooltip ? '' : undefined}
+  data-tippy-content={hasTooltip ? tooltipHTML : undefined}
+>
   <a
     href={href}
     class:list={[
@@ -30,6 +92,29 @@ const isExternal = href?.startsWith('http');
     </span>}
   </a>
 </span>
+
+<script>
+  import tippy from 'tippy.js';
+  import 'tippy.js/dist/tippy.css';
+
+  function initLinkTooltips() {
+    document.querySelectorAll<HTMLElement>('[data-link-tooltip]').forEach((el) => {
+      if ((el as any)._tippy) return;
+      tippy(el, {
+        allowHTML: true,
+        interactive: true,
+        delay: [300, 100],
+        maxWidth: 320,
+        placement: 'top',
+        arrow: true,
+        appendTo: document.body,
+      });
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', initLinkTooltips);
+  document.addEventListener('astro:page-load', initLinkTooltips);
+</script>
 
 <style>
   .link-container {
@@ -82,7 +167,7 @@ const isExternal = href?.startsWith('http');
     content: "";
     transform-origin: 50% 100%;
     background: var(--color-link);
-    transition: 
+    transition:
       clip-path 0.3s cubic-bezier(0.2, 1, 0.8, 1),
       transform 0.3s cubic-bezier(0.2, 1, 0.8, 1),
       background-color 0.3s ease;
@@ -152,7 +237,7 @@ const isExternal = href?.startsWith('http');
     .external-icon {
       transition: none !important;
     }
-    
+
     .styled-link:hover .link-text {
       transform: none;
     }
@@ -167,5 +252,61 @@ const isExternal = href?.startsWith('http');
     .styled-link:focus {
       outline-color: var(--focus-color-dark, lightblue);
     }
+  }
+
+  /* Tooltip styles (global — tippy appends to body) */
+  :global(.link-tooltip) {
+    padding: 0.25rem 0;
+    font-size: 0.8125rem;
+    line-height: 1.4;
+  }
+
+  :global(.link-tooltip-header) {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+  }
+
+  :global(.link-tooltip-header svg) {
+    flex-shrink: 0;
+    opacity: 0.7;
+  }
+
+  :global(.link-tooltip-title) {
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  :global(.link-tooltip-description) {
+    margin: 0.375rem 0 0;
+    opacity: 0.85;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  :global(.link-tooltip-footer) {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    margin-top: 0.5rem;
+    padding-top: 0.375rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    font-size: 0.75rem;
+  }
+
+  :global(.link-tooltip-footer img) {
+    flex-shrink: 0;
+    border-radius: 2px;
+  }
+
+  :global(.link-tooltip-url) {
+    opacity: 0.65;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 </style>
