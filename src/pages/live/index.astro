@@ -51,10 +51,10 @@ const liveProseClasses = `${proseClasses} prose-a:text-link prose-a:underline pr
 										<div class="w-full h-full rounded-4xl bg-konpeki"></div>
 									</div>
 								</span>
-								<h2 class="text-5xl">{nowPost.data.Month}</h2>
+								<h2 class="text-5xl text-syoro">{nowPost.data.Month}</h2>
 							</div>
 						</div>
-						<p class="mx-12 text-xl mt-2 mb-5 font-sans bg-white">{nowPost.data.OneLiner}</p>
+						<p class="mx-12 text-xl mt-2 mb-5 font-sans text-syoro">{nowPost.data.OneLiner}</p>
 						<div class={`mx-12 ${liveProseClasses}`}>
 							<nowContent.Content />
 						</div>
@@ -65,16 +65,16 @@ const liveProseClasses = `${proseClasses} prose-a:text-link prose-a:underline pr
 						
 						<hr class="w-full my-8 border-stone-100">
 						<div class="space-y-8 pb-20 w-full sm:w-[90%] lg:w-[90%] xl:w-[80%] 2xl:w-[70%] mx-auto px-20">
-							<h1 class="text-7xl">Then ...</h1>
+							<h1 class="text-7xl text-syoro">Then ...</h1>
 							{thenPosts.map((post, index) => {
 								const Content = thenContents[index]?.Content;
 								return (
 									<div class="border-b-2 border-stone-100">
 										<div class="flex items-center gap-4">
 											<div class="h-8 w-8 rounded-4xl border-4 border-konpeki"></div>
-											<h2 class="text-5xl">{post.data.Month}</h2>
+											<h2 class="text-5xl text-syoro">{post.data.Month}</h2>
 										</div>
-										<p class="mx-12 text-xl mt-2 mb-5 font-sans">{post.data.OneLiner}</p>
+										<p class="mx-12 text-xl mt-2 mb-5 font-sans text-syoro">{post.data.OneLiner}</p>
 										<div class={`mx-12 ${liveProseClasses}`}>
 											{Content && <Content />}
 										</div>
