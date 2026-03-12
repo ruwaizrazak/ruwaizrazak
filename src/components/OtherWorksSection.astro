@@ -1,7 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import WorkCard from './WorkCard.astro';
-
+import WorkCardCompact from './WorkCardCompact.astro';
 interface Props {
   currentSlug: string;
 }
@@ -25,10 +25,10 @@ const otherWorks = (await getCollection('works', ({ data }) => data.publish)).fi
           <p class="text-2xl text-syoro">Here are some of the other works I can share with you.</p>
         </div>
       </div>
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-10">
         {otherWorks.map((entry, i) => (
           <div class="other-works-card" data-other-works-card>
-            <WorkCard entry={entry} />
+            <WorkCardCompact title={entry.data.title} role={entry.data.role} company={entry.data.company} duration={entry.data.duration} heroImage={entry.data.heroImage} url={`/works/${entry.id}`} />
           </div>
         ))}
       </div>
