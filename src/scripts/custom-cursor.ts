@@ -1,7 +1,7 @@
 import gsap from 'gsap';
 import { interpolate } from 'flubber';
 
-type CursorState = 'default' | 'text' | 'button' | 'work-card' | 'essay-card';
+type CursorState = 'default' | 'text' | 'button' | 'work-card' | 'essay-card' | 'image-card';
 type IconState = 'default' | 'text' | 'pointer';
 
 const TEXT_TAGS = new Set([
@@ -175,11 +175,15 @@ function setState(newState: CursorState): void {
       break;
 
     case 'work-card':
-      morphToPill('See Case Study');
+      morphToPill('Read more...');
       break;
 
     case 'essay-card':
       morphToPill('Read Essay');
+      break;
+
+    case 'image-card':
+      morphToPill('view image');
       break;
   }
 }
@@ -217,6 +221,10 @@ function handleMouseOver(e: MouseEvent): void {
     setState('essay-card');
     return;
   }
+  if (target.closest('.image-card')) {
+    setState('image-card');
+    return;
+  }
 
   if (target.closest('a, button, [role="button"]')) {
     setState('button');
@@ -242,6 +250,10 @@ function handleMouseOut(e: MouseEvent): void {
     setState('default');
     return;
   }
+  if (target.closest('.image-card') && (!related || !related.closest?.('.image-card'))) {
+    setState('default');
+    return;
+  }
 
   const buttonEl = target.closest('a, button, [role="button"]');
   if (buttonEl && (!related || !related.closest('a, button, [role="button"]'))) {
@@ -254,7 +266,7 @@ function handleMouseOut(e: MouseEvent): void {
   }
 
   if (isTextElement(target)) {
-    if (related && (related.closest?.('.work-card-container') || related.closest?.('.essay-card-link'))) return;
+    if (related && (related.closest?.('.work-card-container') || related.closest?.('.essay-card-link') || related.closest?.('.image-card'))) return;
     if (related && related.closest?.('a, button, [role="button"]')) return;
     if (related && isTextElement(related)) return;
     setState('default');
