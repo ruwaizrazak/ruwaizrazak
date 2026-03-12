@@ -281,7 +281,7 @@ function onMouseMove(e: MouseEvent): void {
     hasMoved = true;
     curX = mouseX;
     curY = mouseY;
-    gsap.set(cursor, { x: curX, y: curY });
+    cursor.style.transform = `translate(${curX}px, ${curY}px)`;
     gsap.to(cursor, { opacity: 1, duration: 0.3 });
   }
 
@@ -290,10 +290,10 @@ function onMouseMove(e: MouseEvent): void {
 
 function tick(): void {
   if (!cursor || !hasMoved) return;
-  const speed = 0.15;
+  const speed = 0.45;
   curX += (mouseX - curX) * speed;
   curY += (mouseY - curY) * speed;
-  gsap.set(cursor, { x: curX, y: curY });
+  cursor.style.transform = `translate(${curX}px, ${curY}px)`;
 }
 
 function onDocumentLeave(): void {
