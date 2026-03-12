@@ -7,6 +7,7 @@ import { getCollection } from 'astro:content';
 import { render } from 'astro:content';
 import CustomCursor from '../../components/CustomCursor.astro';
 import NotePostHero from '../../components/NotePostHero.astro';
+import { proseClasses } from '../../utils/proseClasses';
 
 const livePosts = await getCollection('live', ({ data }) => data.publish === true);
 const sortedPosts = livePosts.sort((a, b) => {
@@ -20,7 +21,7 @@ const thenPosts = sortedPosts.slice(1);
 const nowContent = nowPost ? await render(nowPost) : null;
 const thenContents = await Promise.all(thenPosts.map(post => render(post)));
 
-const proseClasses = `prose prose-neutral prose-lg dark:prose-invert max-w-3xl prose-headings:font-sans prose-p:font-serif prose-p:text-syoro prose-p:leading-relaxed prose-img:w-[95%] prose-img:aspect-auto prose-headings:text-syoro prose-h1:text-5xl md:prose-h1:text-6xl prose-h1:font-medium prose-h2:text-4xl md:prose-h2:text-5xl prose-h2:font-medium prose-h3:text-3xl md:prose-h3:text-4xl prose-h4:text-2xl md:prose-h4:text-3xl prose-h4:font-medium prose-h5:text-xl md:prose-h5:text-2xl prose-h5:font-medium prose-strong:text-syoro prose-strong:font-bold prose-blockquote:font-handwriting prose-blockquote:italic prose-blockquote:text-konpeki prose-blockquote:border-konpeki prose-blockquote:text-2xl prose-blockquote:leading-relaxed prose-blockquote:pl-6 prose-ul:font-serif prose-li:font-serif prose-ul:list-disc prose-ol:list-decimal text-lg md:text-xl prose-h1:mt-10 md:prose-h1:mt-20 prose-h2:mt-8 md:prose-h2:mt-16 prose-h3:mt-6 md:prose-h3:mt-12 prose-h4:mt-3 md:prose-h4:mt-6 prose-headings:mb-6 prose-a:text-link prose-a:underline prose-a:hover:line-through prose-a:underline-offset-8`;
+const liveProseClasses = `${proseClasses} prose-a:text-link prose-a:underline prose-a:hover:line-through prose-a:underline-offset-8`;
 ---
 
 <!doctype html>
@@ -54,7 +55,7 @@ const proseClasses = `prose prose-neutral prose-lg dark:prose-invert max-w-3xl p
 							</div>
 						</div>
 						<p class="mx-12 text-xl mt-2 mb-5 font-sans bg-white">{nowPost.data.OneLiner}</p>
-						<div class={`mx-12 ${proseClasses}`}>
+						<div class={`mx-12 ${liveProseClasses}`}>
 							<nowContent.Content />
 						</div>
 					</div>
@@ -74,7 +75,7 @@ const proseClasses = `prose prose-neutral prose-lg dark:prose-invert max-w-3xl p
 											<h2 class="text-5xl">{post.data.Month}</h2>
 										</div>
 										<p class="mx-12 text-xl mt-2 mb-5 font-sans">{post.data.OneLiner}</p>
-										<div class={`mx-12 ${proseClasses}`}>
+										<div class={`mx-12 ${liveProseClasses}`}>
 											{Content && <Content />}
 										</div>
 									</div>

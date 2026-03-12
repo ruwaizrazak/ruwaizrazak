@@ -6,13 +6,14 @@ import Link from '../components/mdxComponents/Link.astro';
 import CareerTimeline from '../components/CareerTimeline.astro';
 import ToSinglePost from '../components/mdxComponents/ToSinglePost.astro';
 import Button from '../components/Button.astro';
+import { proseClasses } from '../utils/proseClasses';
 ---
 
 <Layout
 	title="Curious, Multidisciplinary Designer"
 	description="Lorem ipsum dolor sit amet"
 >
-    <section class="prose dark:prose-invert mx-auto prose-p:font-serif prose-p:text-syoro prose-p:text-xl">
+    <section class={`${proseClasses} mx-auto`}>
       <p>I started building before I knew what design was.</p>  
 
 <p>In school, while others were memorizing formulas, I was opening up Blogspot templates and pulling them apart. I didn’t know the word “UX.” I didn’t know there were people whose careers revolved around interaction and systems. I only knew that if I changed a few lines of HTML, the page transformed. A sidebar disappeared. A header shifted. Colors obeyed. It felt close to magic — not mystical, but procedural. You typed something. The world responded.</p>
