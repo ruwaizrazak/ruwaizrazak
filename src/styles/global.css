@@ -203,6 +203,7 @@ hr {
 
 #custom-cursor .cursor-label {
   position: absolute;
+  z-index: 1;
   white-space: nowrap;
   font-family: var(--font-sans);
   font-size: 14px;
