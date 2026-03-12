@@ -25,9 +25,7 @@ const { title, description } = Astro.props;
     
     <Main>
       <Header />
-      <div class="prose dark:prose-invert lg:max-w max-w-none">
-        <slot />
-      </div>
+      <slot />
     </Main>
     <Footer />
     <CustomCursor />
