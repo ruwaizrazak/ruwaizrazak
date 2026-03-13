@@ -1,6 +1,7 @@
 ---
 import NoteCard from '../NoteCard.astro';
 import EssayCard from '../EssayCard.astro';
+import PlaygroundCard from '../PlaygroundCard.astro';
 
 interface Props {
   posts: any[];
@@ -22,6 +23,15 @@ const { posts } = Astro.props;
             description={post.data.description || ''}
             pubDate={post.data.pubDate}
             url={`/essays/${post.id}/`}
+            heroImage={post.data.heroImage}
+            maturity={post.data.maturity}
+          />
+        ) : post.collection === 'playground' ? (
+          <PlaygroundCard
+            title={post.data.title}
+            description={post.data.description || ''}
+            pubDate={post.data.pubDate}
+            url={`/playground/${post.id}/`}
             heroImage={post.data.heroImage}
             maturity={post.data.maturity}
           />

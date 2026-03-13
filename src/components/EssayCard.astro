@@ -42,21 +42,23 @@ const maturityIcon = maturity ? getMaturityIcon(maturity) : null;
         class={`w-full ${imageHeight} aspect-square object-cover rounded-lg mb-4`}
       />
     )}
-    <div class="flex gap-2 mb-2 items-center">
-      <img src="/icons/essays.svg" alt="tree icon" class="w-5">
-      <h5 class="text-lg text-konpeki opacity-80 uppercase ">Essays</h5>
+    <div class="flex gap-2 mb-0 items-center">
+      <h5 class="text-sm text-konpeki uppercase font-sans tracking-widest">Essays</h5>
     </div>
-    <h3 class="uppercase sm:capitalize text-2xl mb-4 md:text-2xl font-medium lg:text-3xl text-syoro group-hover:text-link font-serif">{title}</h3>
-    {description && <p class="text-base md:text-lg lg:text-xl text-syoro mb-4 font-serif">{description}</p>}
-    <div class="text-base mt-4 opacity-50 uppercase flex items-center gap-2">
+    <h3 class="font-serif text-xl md:text-2xl lg:text-3xl leading-tight text-syoro group-hover:text-link mb-4 font-medium">{title}</h3>
+    {description && <p class="font-serif text-syoro/90 mb-4">{description}</p>}
+    <div class="text-sm font-sans text-syoro/40 mt-4 flex items-center gap-2">
       {formattedDate}
       {maturity && (
-        <div class="absolute right-3 flex items-center gap-2 px-2 py-1">
-          {maturityIcon && (
-            <img src={maturityIcon} alt={`${maturity} maturity`} class="w-4 h-4" />
-          )}
-          <span class="text-base uppercase text-syoro font-sans">{maturity}</span>
-        </div>
+        <>
+          <span>·</span>
+          <div class="flex items-center gap-1">
+            {maturityIcon && (
+              <img src={maturityIcon} alt={`${maturity} maturity`} class="w-4 h-4" />
+            )}
+            <span class="text-xs font-sans uppercase tracking-wide text-syoro/50">{maturity}</span>
+          </div>
+        </>
       )}
     </div>
   </a>

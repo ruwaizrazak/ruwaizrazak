@@ -88,6 +88,14 @@ const seriesPosts = defineCollection({
   }),
 });
 
+const playground = defineCollection({
+  loader: glob({
+    base: './src/content/playground',
+    pattern: '**/*.{md,mdx}',
+  }),
+  schema: baseSchema,
+});
+
 const live = defineCollection({
   loader: glob({
     base: './src/content/live',
@@ -105,6 +113,7 @@ export const collections = {
   essays,
   notes,
   works,
+  playground,
   live,
   series,
   seriesPosts, // Posts inside each series folder (filters will exclude index files in pages)
