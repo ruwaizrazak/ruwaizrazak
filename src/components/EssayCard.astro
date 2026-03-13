@@ -32,12 +32,9 @@ const maturityIcon = maturity ? getMaturityIcon(maturity) : null;
 ---
 
 <div class="group rounded-lg overflow-hidden hover:scale-95 transition-all duration-200 py-5">
-  <a href={url} class="essay-card-link block p-5 bg-cardbg rounded-xl border-1 border-card-border shadow-xs group-hover:shadow-none relative">
+  <a href={url} class="essay-card-link block p-5 bg-syoro/5 rounded-xl border-1 border-card-border shadow-xs group-hover:shadow-none relative">
     
-    <div class="flex gap-2 mb-2 items-center">
-      <img src="/icons/essays.svg" alt="tree icon" class="w-5">
-      <h5 class="text-lg text-syoro opacity-80 uppercase ">Essays</h5>
-    </div>
+    
     {heroImage && (
       <img
         src={heroImage}
@@ -45,7 +42,11 @@ const maturityIcon = maturity ? getMaturityIcon(maturity) : null;
         class={`w-full ${imageHeight} aspect-square object-cover rounded-lg mb-4`}
       />
     )}
-    <h3 class="uppercase sm:capitalize text-2xl mb-2 md:text-2xl font-medium lg:text-3xl text-konpeki group-hover:text-link font-sans">{title}</h3>
+    <div class="flex gap-2 mb-2 items-center">
+      <img src="/icons/essays.svg" alt="tree icon" class="w-5">
+      <h5 class="text-lg text-konpeki opacity-80 uppercase ">Essays</h5>
+    </div>
+    <h3 class="uppercase sm:capitalize text-2xl mb-4 md:text-2xl font-medium lg:text-3xl text-syoro group-hover:text-link font-serif">{title}</h3>
     {description && <p class="text-base md:text-lg lg:text-xl text-syoro mb-4 font-serif">{description}</p>}
     <div class="text-base mt-4 opacity-50 uppercase flex items-center gap-2">
       {formattedDate}

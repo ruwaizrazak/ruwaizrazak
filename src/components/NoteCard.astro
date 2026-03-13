@@ -32,10 +32,10 @@ const maturityIcon = maturity ? getMaturityIcon(maturity) : null;
     
     <div class="flex gap-2 py-2">
       <img src="/icons/notes.svg" alt="seed icon" class="w-6 h-auto">
-      <h5 class="text-base text-syoro font-medium opacity-80 uppercase">Notes</h5>
+      <h5 class="text-base text-konpeki font-medium opacity-80 uppercase">Notes</h5>
     </div>
     
-    <h3 class="uppercase sm:capitalize text-lg md:text-xl lg:text-2xl text-konpeki group-hover:text-link font-sans font-medium mb-2">{title}</h3>
+    <h3 class="uppercase sm:capitalize text-lg md:text-2xl lg:text-3xl text-syoro group-hover:text-link font-serif font-medium mb-4">{title}</h3>
     {description && <p class="text-base md:text-lg text-syoro mb-4 font-serif">{description}</p>}
     <div class="text-base text-syoro opacity-50 mt-2 uppercase flex items-center gap-2">
       {formattedDate}
