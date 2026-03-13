@@ -1,0 +1,46 @@
+---
+interface Props {
+  post: {
+    id: string;
+    data: {
+      title: string;
+      description: string;
+      excerpt?: string;
+      tags: string[];
+      seriesOrder?: number;
+      pubDate: Date;
+    };
+  };
+}
+
+const { post } = Astro.props;
+---
+
+<a href={`/series/${post.id}`} class="block p-5 rounded-xl border border-card-border hover:bg-syoro/5 transition-all duration-200 cursor-pointer">
+  <div class="flex items-center gap-3 mb-3">
+    <span class="text-xs font-sans uppercase tracking-widest text-konpeki">
+      Part {post.data.seriesOrder}
+    </span>
+    <span class="text-xs text-syoro/40">·</span>
+    <span class="text-xs font-sans text-syoro/40">{post.data.pubDate.toLocaleDateString()}</span>
+  </div>
+
+  <h2 class="font-serif text-xl md:text-2xl lg:text-3xl leading-tight text-syoro group-hover:text-link mb-4 font-medium">
+    {post.data.title}
+  </h2>
+  <p class="font-serif text-syoro/90 mb-4">{post.data.description}</p>
+
+  {post.data.excerpt && (
+    <p class="font-serif text-syoro/70 italic mb-4">"{post.data.excerpt}..."</p>
+  )}
+
+  {post.data.tags.length > 0 && (
+    <div class="flex flex-wrap items-center gap-2 mb-2">
+      {post.data.tags.map((tag: string) => (
+        <span class="px-2 py-1 text-xs font-sans uppercase tracking-wide text-syoro/50 border border-card-border">
+          {tag}
+        </span>
+      ))}
+    </div>
+  )}
+</a>
