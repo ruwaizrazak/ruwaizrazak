@@ -10,8 +10,6 @@ import { initGrassCanvas, sizeGrassCanvas, drawGrass } from './grassCanvas';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const BASE_HEIGHT = 220;
-const BASE_B = 110;
 const BASE_CHAR_HEIGHT = 50;
 const IDLE_FRAME = 2; // 0–8: which sprite frame to show when not scrolling
 const RUN_THRESHOLD = 250; // px — distance above which character runs
@@ -19,7 +17,7 @@ const WALK_SPEED = 100;    // px/s
 const RUN_SPEED = 250;     // px/s
 
 function getScale(): number {
-  return Math.min(BASE_HEIGHT, window.innerHeight * 0.5) / BASE_HEIGHT;
+  return Math.min(220, window.innerHeight * 0.5) / 220;
 }
 
 export function initGarden() {
@@ -34,25 +32,18 @@ export function initGarden() {
   const grassCtx = grassCanvas ? initGrassCanvas(grassCanvas) : null;
 
   let s = getScale();
-  let bMax = BASE_B * s;
   let charHeight = BASE_CHAR_HEIGHT * s;
-  let stripCurveB = bMax;
+  const stripCurveB = 0; // flat baseline — no oval animation
 
   function applyScale() {
     s = getScale();
-    bMax = BASE_B * s;
     charHeight = BASE_CHAR_HEIGHT * s;
     if (strip) {
       strip.style.setProperty('--garden-scale', String(s));
-      // Update strip dimensions when not mid-scroll
-      const introTrigger = ScrollTrigger.getById('intro-strip');
-      if (!introTrigger || introTrigger.progress === 0) {
-        stripCurveB = bMax;
-        gsap.set(strip, {
-          height: BASE_HEIGHT * s,
-          borderRadius: `50% 50% 0 0 / ${bMax}px ${bMax}px 0 0`,
-        });
-      }
+      gsap.set(strip, {
+        height: 30,
+        borderRadius: 0,
+      });
     }
   }
 
@@ -68,11 +59,12 @@ export function initGarden() {
 
   if (strip) {
     applyScale();
-    repositionAll();
 
     if (grassCanvas && grassCtx) {
       sizeGrassCanvas(grassCanvas, grassCtx, strip.offsetWidth, s);
     }
+
+    repositionAll();
 
     window.addEventListener('resize', () => {
       applyScale();
@@ -85,7 +77,7 @@ export function initGarden() {
 
   if (character && strip) {
     character.style.setProperty('--idle-frame', String(IDLE_FRAME));
-    gsap.set(character, { x: 30, y: curveY(20 + 30, strip.offsetWidth, bMax) - charHeight });
+    gsap.set(character, { x: 30, y: curveY(20 + 30, strip.offsetWidth, 0) - charHeight });
   }
 
   // Sticky bar: fades in when cards section enters viewport center
@@ -105,35 +97,6 @@ export function initGarden() {
     });
   }
 
-  // Strip shrinks + curve flattens as user scrolls through intro
-  ScrollTrigger.create({
-    id: 'intro-strip',
-    trigger: '.intro-section',
-    start: 'top top',
-    end: 'bottom top',
-    scrub: true,
-    onUpdate(self) {
-      const p = self.progress;
-      const baseH = BASE_HEIGHT * s;
-      const minH = 30;
-      stripCurveB = bMax * (1 - p);
-
-      gsap.set('.garden-strip', {
-        height: baseH - (baseH - minH) * p,
-        borderRadius: `${50 * (1 - p)}% ${50 * (1 - p)}% 0 0 / ${bMax * (1 - p)}px ${bMax * (1 - p)}px 0 0`,
-      });
-
-      gsap.set('.garden-description', { opacity: 1 - p });
-
-      repositionAll();
-
-      if (character && strip) {
-        const charX = 20 + (gsap.getProperty(character, 'x') as number);
-        gsap.set(character, { y: curveY(charX, strip.offsetWidth, stripCurveB) - charHeight });
-      }
-    },
-  });
-
   // Character walks toward scroll-defined target position
   if (character) {
     let walkTween: gsap.core.Tween | null = null;
@@ -146,8 +109,6 @@ export function initGarden() {
         const p = self.progress;
         const vw = window.innerWidth;
         const targetX = 10 + p * (vw - 110);
-        const introTrigger = ScrollTrigger.getById('intro-strip');
-        const b = introTrigger ? bMax * (1 - introTrigger.progress) : bMax;
 
         const currentX = gsap.getProperty(character, 'x') as number;
         const distance = Math.abs(targetX - currentX);
@@ -169,7 +130,7 @@ export function initGarden() {
           ease: 'none',
           onUpdate() {
             const cx = gsap.getProperty(character, 'x') as number;
-            gsap.set(character, { y: curveY(20 + cx, vw, b) - charHeight });
+            gsap.set(character, { y: curveY(20 + cx, vw, 0) - charHeight });
           },
           onComplete() {
             character.dataset.motion = 'idle';

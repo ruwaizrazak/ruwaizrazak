@@ -124,13 +124,11 @@ import H3 from './mdxComponents/H3.astro';
       setupTOC();
     }
 
+    import { initOnLoad } from '../utils/initOnLoad';
     if (document.readyState !== 'loading') {
       init();
-    } else {
-      document.addEventListener('DOMContentLoaded', init);
     }
-
-    document.addEventListener('astro:page-load', init);
+    initOnLoad(init);
   })();
 </script>
 </div>

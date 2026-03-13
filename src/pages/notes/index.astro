@@ -1,25 +1,11 @@
 
 ---
-import BaseHead from '../../components/BaseHead.astro';
-import Header from '../../components/Header.astro';
-import Footer from '../../components/Footer.astro';
-import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
-import { getCollection } from 'astro:content';
+import { SITE_TITLE, SITE_DESCRIPTION, DEFAULT_COLLECTIONS } from '../../consts';
+import { getPublishedAndSorted, extractUniqueTags } from '../../utils/collections';
 import IndexLayout from '../../layouts/IndexLayout.astro';
 
-// Fetch all collections
-const [notes] = await Promise.all([
-  getCollection('notes', ({ data }) => data.publish === true)
-]);
-
-// Combine and sort all posts
-const allNotes = [
-  ...notes.map(post => ({ ...post, collection: 'notes' }))
-].sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
-
-// Get unique tags from all posts
-const allTags = ['all', ...new Set(allNotes.flatMap(post => post.data.tags || []))].sort();
-const collections = ['all', 'notes', 'essays', 'casestudies', 'books'];
+const allNotes = await getPublishedAndSorted('notes');
+const allTags = extractUniqueTags(allNotes);
 ---
 
 <IndexLayout
@@ -27,7 +13,7 @@ const collections = ['all', 'notes', 'essays', 'casestudies', 'books'];
   description="Notes are notes. They are not refined, might be incomplete, or just plain wrong. But they sure are a starting point for me to think about."
   posts={allNotes}
   tags={allTags}
-  collections={collections}
+  collections={DEFAULT_COLLECTIONS}
   icon="/icons/notes.svg"
 />
 

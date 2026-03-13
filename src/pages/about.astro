@@ -145,6 +145,6 @@ const experience = [
 
 <script>
 	import { initWorkExperienceScroll } from '../scripts/work-experience-scroll';
-	document.addEventListener('DOMContentLoaded', initWorkExperienceScroll);
-	document.addEventListener('astro:page-load', initWorkExperienceScroll);
+	import { initOnLoad } from '../utils/initOnLoad';
+	initOnLoad(initWorkExperienceScroll);
 </script>

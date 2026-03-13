@@ -28,8 +28,8 @@ const { items = [] } = Astro.props as Props;
         <div class="relative flex items-start">
           <div class={`absolute left-3 w-10 h-10 rounded-full border-4 shadow-lg z-10 ${item.present ? 'bg-konpeki border-indigo-200' : 'bg-white border-konpeki'}`}></div>
           <div class="ml-16 transition-shadow">
-            <h3 class="text-3xl font-bold text-konpeki font-sans mb-2 mt-1">{item.role} at <Link href={item.url}>{item.company}</Link></h3>
-            <p class="text-syoro font-semibold font-sans text-xl mb-2 -mt-2 uppercase"> {item.period}</p>
+            <h3 class="font-bold text-konpeki font-sans mb-2 mt-1">{item.role} at <Link href={item.url}>{item.company}</Link></h3>
+            <p class="text-syoro font-semibold font-sans mb-2 -mt-2 uppercase"> {item.period}</p>
             {Array.isArray(item.description) ? (
               <ul class="text-syoro font-serif text-lg md:w-full lg:w-2/3 list-disc pl-6 space-y-1">
                 {item.description.map((point) => (

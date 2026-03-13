@@ -1,0 +1,21 @@
+---
+// Extracted from 4 card components where this 8-line maturity icon + label block was duplicated.
+
+import type { Maturity } from '../types';
+import { getMaturityIcon } from '../utils/maturityIcons';
+
+interface Props {
+  maturity: Maturity;
+  iconClass?: string;
+  textClass?: string;
+}
+
+const { maturity, iconClass = 'w-4 h-4', textClass = 'text-base font-sans uppercase tracking-wide text-syoro/50' } = Astro.props;
+const maturityIcon = getMaturityIcon(maturity);
+---
+
+<span>·</span>
+<div class="flex items-center gap-1">
+  <img src={maturityIcon} alt={`${maturity} maturity`} class={iconClass} />
+  <span class={textClass}>{maturity}</span>
+</div>

@@ -6,14 +6,14 @@ import Link from "../../components/mdxComponents/Link.astro"
 import { getStaticPathsForCollection } from '../../utils/collections';
 
 export async function getStaticPaths() {
-	return getStaticPathsForCollection('essays');
+	return getStaticPathsForCollection('playground');
 }
-type Props = CollectionEntry<'essays'>;
+type Props = CollectionEntry<'playground'>;
 
 const post = Astro.props;
 const { Content } = await render(post);
 ---
 
-<NotesPost {...post.data} collection="essays" icon="/icons/essays.svg">
+<NotesPost {...post.data} collection="playground" icon="/icons/playground.svg">
 	<Content components={{ a: Link }} />
 </NotesPost>

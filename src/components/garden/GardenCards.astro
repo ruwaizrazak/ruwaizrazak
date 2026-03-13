@@ -1,11 +1,12 @@
 ---
-import NoteCard from '../NoteCard.astro';
-import EssayCard from '../EssayCard.astro';
+import ContentCard from '../ContentCard.astro';
 
 interface Props {
   posts: any[];
 }
 const { posts } = Astro.props;
+
+const cardVariantCollections = new Set(['essays', 'playground']);
 ---
 
 <section class="garden-cards-section px-5 md:px-10 pb-40">
@@ -16,24 +17,16 @@ const { posts } = Astro.props;
         data-tags={post.data.tags?.join(' ')}
         data-collection={post.collection}
       >
-        {post.collection === 'essays' ? (
-          <EssayCard
-            title={post.data.title}
-            description={post.data.description || ''}
-            pubDate={post.data.pubDate}
-            url={`/essays/${post.id}/`}
-            heroImage={post.data.heroImage}
-            maturity={post.data.maturity}
-          />
-        ) : (
-          <NoteCard
-            title={post.data.title}
-            description={post.data.description || ''}
-            pubDate={post.data.pubDate}
-            url={`/${post.collection}/${post.id}/`}
-            maturity={post.data.maturity}
-          />
-        )}
+        <ContentCard
+          title={post.data.title}
+          description={post.data.description || ''}
+          pubDate={post.data.pubDate}
+          url={`/${post.collection}/${post.id}/`}
+          heroImage={cardVariantCollections.has(post.collection) ? post.data.heroImage : undefined}
+          maturity={post.data.maturity}
+          collection={post.collection}
+          variant={cardVariantCollections.has(post.collection) ? 'card' : 'compact'}
+        />
       </div>
     ))}
   </div>
@@ -46,6 +39,8 @@ const { posts } = Astro.props;
 </style>
 
 <script>
+  import { initOnLoad } from '../../utils/initOnLoad';
+
   function initCardReveal() {
     const cards = document.querySelectorAll<HTMLElement>('.card-reveal');
     if (!cards.length) return;
@@ -71,6 +66,5 @@ const { posts } = Astro.props;
     window.addEventListener('scroll', updateOpacities, { passive: true });
   }
 
-  document.addEventListener('DOMContentLoaded', initCardReveal);
-  document.addEventListener('astro:page-load', initCardReveal);
+  initOnLoad(initCardReveal);
 </script>

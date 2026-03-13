@@ -1,24 +1,11 @@
 ---
-import { getCollection } from 'astro:content';
+import { getMultiCollectionPosts, extractUniqueTags } from '../../utils/collections';
 import IndexLayout from '../../layouts/IndexLayout.astro';
 
-
 export async function getStaticPaths() {
+  const { getMultiCollectionPosts } = await import('../../utils/collections');
 
-  const [notes, essays, works, books] = await Promise.all([
-    getCollection('notes', ({ data }) => data.publish === true),
-    getCollection('essays', ({ data }) => data.publish === true),
-    getCollection('works', ({ data }) => data.publish === true),
-    getCollection('books', ({ data }) => data.publish === true)
-  ]);
-
-  const allPosts = [
-    ...notes.map(post => ({ ...post, collection: 'notes' })),
-    ...essays.map(post => ({ ...post, collection: 'essays' })),
-    ...works.map(post => ({ ...post, collection: 'works' })),
-    ...books.map(post => ({ ...post, collection: 'books' }))
-  ];
-
+  const allPosts = await getMultiCollectionPosts(['notes', 'essays', 'works', 'books']);
   const uniqueTags = [...new Set(allPosts.flatMap(post => post.data.tags || []))];
 
   return uniqueTags.map(tag => ({
@@ -32,7 +19,6 @@ export async function getStaticPaths() {
 }
 
 const { tag, posts, collections } = Astro.props;
-
 const allTags = ['all', ...new Set(posts.flatMap(post => post.data.tags || []))].sort();
 ---
 

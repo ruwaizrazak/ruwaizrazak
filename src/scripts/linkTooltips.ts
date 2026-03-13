@@ -26,7 +26,5 @@ function initLinkTooltips() {
   });
 }
 
-// Standard page load
-document.addEventListener('DOMContentLoaded', initLinkTooltips);
-// Astro view-transitions / client-side navigation
-document.addEventListener('astro:page-load', initLinkTooltips);
+import { initOnLoad } from '../utils/initOnLoad';
+initOnLoad(initLinkTooltips);

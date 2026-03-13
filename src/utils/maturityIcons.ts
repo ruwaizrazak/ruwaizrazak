@@ -1,5 +1,7 @@
+import type { Maturity } from '../types';
+
 export const getMaturityIcon = (
-  maturity: 'seed' | 'plant' | 'tree' = 'seed'
+  maturity: Maturity = 'seed'
 ): string => {
   const iconMap = {
     seed: '/icons/seed.svg',

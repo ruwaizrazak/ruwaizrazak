@@ -4,17 +4,13 @@ import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
 import { getCollection } from 'astro:content';
-import Main from '../../components/Main.astro';
-import P from '../../components/mdxComponents/P.astro';
-import NoteMain from '../../components/NoteMain.astro';
-import Link from '../../components/mdxComponents/Link.astro';
-import Tag from '../../components/Tag.astro';
-import { render } from 'astro:content';
+import NotePostHero from '../../components/NotePostHero.astro';
+import SeriesCard from '../../components/SeriesCard.astro';
+import CustomCursor from '../../components/CustomCursor.astro';
 
 // Get all published series, sorted by order or lastUpdated
 const allSeries = await getCollection('series', ({ data }) => data.publish);
 const sortedSeries = allSeries.sort((a, b) => {
-  // Sort by manual order first, then by lastUpdated
   if (a.data.order && b.data.order) {
     return a.data.order - b.data.order;
   }
@@ -36,7 +32,7 @@ const seriesWithPosts = sortedSeries.map(series => {
       if (ao !== bo) return ao - bo;
       return new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime();
     });
-  
+
   return {
     ...series,
     posts
@@ -51,110 +47,38 @@ const seriesWithPosts = sortedSeries.map(series => {
 	</head>
 	<body class="footer-reveal bg-backgroundcolor">
 		<div class="footer-reveal-content">
-		<Header />
-		<main class="w-full sm:w-[90%] mx-auto">
-			<div class="mt-20">
-				<div class="flex flex-col gap-4">
-					<a href="/" class="inline-block z-1">
-						<div class="flex items-center gap-2 group not-prose">
-							<img src="/icons/backArrow.svg" class="w-8 h-auto group-hover:rotate-20 transition-all" alt="Back" />
-							<span class="uppercase font-sans font-medium text-lg">Back to Index</span>
-						</div>
-					</a>
-				</div>
-				
-				<h1>Series</h1>
-				<p class="text-lg sm:text-xl mt-0 font-serif italic">Explore content organized by series and themes</p>
-				
-				<hr class="w-full my-8 border-stone-100">
-				
-				{/* Display series with their posts */}
+
+		<main class="px-20">
+			<Header />
+			<NotePostHero
+				title="Series"
+				description="Explore content organized by series and themes"
+				pubDate={sortedSeries[0]?.data.lastUpdated ?? new Date()}
+				tags={[]}
+			/>
+			<div class="note-main-wrapper pt-20 relative z-10 bg-backgroundcolor w-screen max-w-[100vw] ml-[calc(50%-50vw)]">
+				<div class="w-full mx-auto px-20">
+
 				{seriesWithPosts.map((series) => (
-					<div class="mb-12 border border-stone-200 dark:border-card-border rounded-lg p-6">
-						<div class="flex items-center gap-4 mb-6">
-							
-							<div>
-								<h1>{series.data.title}</h1>
-								<p class="text-stone-600 mt-2 text-lg w-3/4">{series.data.description}</p>
-							</div>
-						</div>
-						
-						{/* Series metadata */}
-						<div class="flex items-center gap-4 mb-6 text-sm text-stone-500">
-							<span>Started: {series.data.startedDate.toLocaleDateString()}</span>
-							<span>•</span>
-							<span>Last updated: {series.data.lastUpdated.toLocaleDateString()}</span>
-							<span>•</span>
-							<span>{series.posts.length} posts</span>
-						</div>
-						
-						{/* Series posts */}
-						{series.posts.length > 0 ? (
-							<div class="space-y-4">
-								<h3 class="text-lg font-semibold text-stone-700 mb-4">Posts in this series:</h3>
-								<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-									{series.posts.map((post, index) => (
-										<a href={`/series/${post.id}`} class="block p-5 bg-cardbg rounded-xl border-1 border-stone-100 dark:border-card-border hover:bg-yellow-50 dark:hover:bg-gray-700 transition-all duration-200 hover:shadow-md hover:scale-[1.02] cursor-pointer">
-											{/* Post header */}
-											<div class="flex items-center gap-3 mb-3">
-												<span class="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full uppercase">
-													Part {post.data.seriesOrder}
-												</span>
-												<span class="text-xs text-stone-400">•</span>
-												<span class="text-xs text-stone-500">{post.data.pubDate.toLocaleDateString()}</span>
-											</div>
-											
-											{/* Post title and description */}
-											<h2 class="font-semibold mb-0 text-2xl md:text-2xl lg:text-3xl uppercase text-konpeki">
-												{post.data.title}
-											</h4>
-											<p class="text-lg text-syoro mb-3 font-sans">{post.data.description}</p>
-											
-											{/* Post excerpt */}
-											{post.data.excerpt && (
-												<p class="text-konpeki text-lg italic mb-3 font-serif">"{post.data.excerpt}..."</p>
-											)}
-											
-											{/* Tags */}
-											{post.data.tags.length > 0 && (
-												<div class="flex flex-wrap items-center gap-2 mb-">
-													{post.data.tags.map((tag: string) => (
-														<span class="px-2 py-1 text-syoro text-xs border border-card-border">
-															{tag}
-														</span>
-													))}
-												</div>
-											)}
-											
-											{/* Hover indicator */}
-											<div class="text-right mt-4">
-												<span class="text-blue-600 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
-													Read post →
-												</span>
-											</div>
-										</a>
-									))}
-								</div>
-							</div>
-						) : (
-							<div class="text-center py-8 text-stone-500">
-								<p>No posts in this series yet.</p>
-							</div>
-						)}
-					</div>
+					<SeriesCard series={series} />
 				))}
-				
-				{/* Show message if no series content */}
+
 				{seriesWithPosts.length === 0 && (
 					<div class="text-center py-12">
-						<p class="text-stone-500 text-lg">No series content available yet.</p>
-						<p class="text-stone-400 mt-2">Check back soon for organized content series!</p>
+						<p class="text-syoro/50 text-lg">No series content available yet.</p>
+						<p class="text-syoro/50 mt-2">Check back soon for organized content series!</p>
 					</div>
 				)}
+				</div>
 			</div>
 		</main>
 		</div>
 		<Footer />
+		<script>
+			import { initNotePostAnimations } from '../../scripts/note-post-animations';
+			import { initOnLoad } from '../../utils/initOnLoad';
+			initOnLoad(initNotePostAnimations);
+		</script>
+		<CustomCursor />
 	</body>
 </html>
- 

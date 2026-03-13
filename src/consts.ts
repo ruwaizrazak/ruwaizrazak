@@ -1,6 +1,62 @@
-// Place any global data in this file.
-// You can import this data from anywhere in your site by using the `import` keyword.
+// Centralized constants — GA_ID, collection arrays, and social link data
+// were previously scattered across individual pages and components.
+// DEFAULT_COLLECTIONS: used by notes, series index pages
+// GARDEN_COLLECTIONS: used by garden index (includes playground, excludes casestudies)
 
 export const SITE_TITLE = 'Ruwaiz Razak';
 export const SITE_DESCRIPTION =
   'Ruwaiz Razaks personal website and knwoledge management system.';
+
+export const GA_ID = 'G-75GYY3Y3H3';
+
+export const DEFAULT_COLLECTIONS = ['all', 'notes', 'essays', 'casestudies', 'books'];
+export const GARDEN_COLLECTIONS = ['all', 'notes', 'essays', 'books', 'playground'];
+
+export const SOCIAL_LINKS = [
+  {
+    href: 'mailto:ruwaizrazak@gmail.com',
+    label: 'Email',
+    rel: 'noopener noreferrer',
+    class: 'u-email contact-link',
+    diamondPath: 'M12,2 L22,12 L12,22 L2,12 Z',
+    symbolFill: 'stroke' as const,
+    symbolPath: 'M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z',
+  },
+  {
+    href: 'https://www.linkedin.com/in/ruwaizrazak/',
+    label: 'LinkedIn',
+    rel: 'noopener noreferrer',
+    class: 'contact-link',
+    diamondPath: 'M12,2 L22,12 L12,22 L2,12 Z',
+    symbolFill: 'fill' as const,
+    symbolPath: 'M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z',
+  },
+  {
+    href: 'https://github.com/ruwaizrazak',
+    label: 'GitHub',
+    rel: 'me noopener noreferrer',
+    class: 'contact-link',
+    diamondPath: 'M12,2 L22,12 L12,22 L2,12 Z',
+    symbolFill: 'fill' as const,
+    symbolPath: 'M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z',
+  },
+  {
+    href: 'https://mastodon.social/@ruwaizrazak',
+    label: 'Mastodon',
+    rel: 'me noopener noreferrer',
+    class: 'u-url contact-link',
+    diamondPath: 'M12,2 L22,12 L12,22 L2,12 Z',
+    symbolFill: 'fill' as const,
+    symbolPath: 'M10.13,0c-1.48.02-2.8.11-3.97.27-1.29.18-2.31.45-3.06.81l-.33.2c-.25.16-.51.37-.76.61-.35.34-.65.72-.91,1.15-.33.54-.59,1.13-.76,1.78-.22.76-.33,1.6-.33,2.51v.9c0,1.25,0,2.22.02,2.9.05,1.84.19,3.37.43,4.59.3,1.55.8,2.8,1.48,3.76.8,1.09,1.86,1.81,3.2,2.17,1.74.47,3.41.67,5.02.59.73-.05,1.43-.15,2.1-.29.48-.11.92-.25,1.31-.41l.45-.2-.1-1.83-.53.15c-.45.1-.9.18-1.36.24-.65.1-1.27.13-1.86.1-.84-.02-1.48-.07-1.91-.17-.69-.13-1.22-.37-1.6-.73-.46-.41-.74-.99-.84-1.76-.03-.23-.05-.46-.05-.71l.6.15c.49.1,1.01.18,1.55.24.76.11,1.51.19,2.22.22.67.03,1.4.02,2.2-.05.51-.03,1.21-.11,2.1-.22s1.74-.36,2.56-.73c.78-.37,1.43-.82,1.95-1.33s.82-1.03.92-1.55c.14-.73.25-1.62.31-2.66.06-.75.1-1.54.12-2.37v-1c0-.91-.11-1.75-.33-2.51-.18-.65-.43-1.24-.76-1.78-.25-.42-.56-.81-.91-1.15-.24-.24-.49-.45-.76-.61-.19-.13-.3-.2-.33-.2-.73-.36-1.74-.63-3.03-.81-1.18-.16-2.5-.25-3.97-.27h-.07ZM6.98,3.78c1.16,0,2.03.46,2.6,1.37l.57.95.57-.95c.57-.91,1.44-1.37,2.6-1.37,1,0,1.81.35,2.41,1.05s.91,1.65.91,2.86v5.83h-2.27v-5.66c0-1.2-.49-1.81-1.46-1.81-1.1,0-1.65.72-1.65,2.15v3.1h-2.25v-3.1c0-1.43-.55-2.15-1.65-2.15-.97,0-1.46.6-1.46,1.81v5.66h-2.27v-5.83c0-1.2.3-2.16.91-2.86.61-.7,1.41-1.05,2.41-1.05Z',
+    svgClass: 'contact-icon w-6 h-6 flex-shrink',
+  },
+  {
+    href: 'https://bsky.app/profile/ruwaizrazak.com',
+    label: 'Bluesky',
+    rel: 'me noopener noreferrer',
+    class: 'contact-link',
+    diamondPath: 'M12,2 L22,12 L12,22 L2,12 Z',
+    symbolFill: 'fill' as const,
+    symbolPath: 'M12 10.8c-1.087-2.114-4.046-6.053-6.798-7.995C2.566.944 1.561 1.266.902 1.565.139 1.908 0 3.08 0 3.768c0 .69.378 5.65.6 6.453.784 2.834 3.465 3.628 5.916 3.322-3.3.413-6.22 1.972-2.09 6.886C9.2 25.296 11.1 19.1 12 16.958c.9 2.142 2.4 8.203 7.575 3.471 4.088-4.871 1.209-6.473-2.091-6.886 2.451.306 5.132-.488 5.916-3.322.222-.804.6-5.763.6-6.453 0-.688-.139-1.86-.902-2.203-.659-.3-1.664-.62-4.3 1.24C16.046 4.748 13.087 8.687 12 10.8Z',
+  },
+];

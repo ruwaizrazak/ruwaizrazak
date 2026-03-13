@@ -36,7 +36,7 @@ const { src, title = "YouTube video player" } = Astro.props;
       el.dataset.videoBreakoutInited = '1';
 
       // 16:9 height for full viewport width
-      let initialHeightPx = 0.7 * window.innerWidth;
+      let initialHeightPx = 0.5625 * window.innerWidth;
       let ticking = false;
 
       function updateHeight() {

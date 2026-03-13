@@ -58,7 +58,7 @@ const sortedTags = [...tags.filter(tag => tag !== 'all').sort()];
     });
   }
 
-  document.addEventListener('DOMContentLoaded', init);
-  document.addEventListener('astro:page-load', init);
+  import { initOnLoad } from '../utils/initOnLoad';
+  initOnLoad(init);
   window.addEventListener('pageshow', init);
 </script>
