@@ -1,14 +1,9 @@
 ---
-import { getCollection } from 'astro:content';
+import { getPublishedAndSorted, extractUniqueTags } from '../../utils/collections';
 import IndexLayout from '../../layouts/IndexLayout.astro';
 
-const playground = await getCollection('playground', ({ data }) => data.publish === true);
-
-const allPosts = [
-  ...playground.map(post => ({ ...post, collection: 'playground' }))
-].sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
-
-const allTags = ['all', ...new Set(allPosts.flatMap(post => post.data.tags || []))].sort();
+const allPosts = await getPublishedAndSorted('playground');
+const allTags = extractUniqueTags(allPosts);
 ---
 
 <IndexLayout

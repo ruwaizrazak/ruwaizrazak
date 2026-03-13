@@ -76,8 +76,8 @@ const seriesWithPosts = sortedSeries.map(series => {
 		<Footer />
 		<script>
 			import { initNotePostAnimations } from '../../scripts/note-post-animations';
-			document.addEventListener('astro:page-load', initNotePostAnimations);
-			document.addEventListener('DOMContentLoaded', initNotePostAnimations);
+			import { initOnLoad } from '../../utils/initOnLoad';
+			initOnLoad(initNotePostAnimations);
 		</script>
 		<CustomCursor />
 	</body>

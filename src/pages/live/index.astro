@@ -91,9 +91,8 @@ const liveProseClasses = `${proseClasses} prose-a:text-link prose-a:underline pr
 		<!-- Scroll animations: hero overlap, fade-out, and zoom -->
 		<script>
 			import { initNotePostAnimations } from '../../scripts/note-post-animations';
-
-			document.addEventListener('astro:page-load', initNotePostAnimations);
-			document.addEventListener('DOMContentLoaded', initNotePostAnimations);
+			import { initOnLoad } from '../../utils/initOnLoad';
+			initOnLoad(initNotePostAnimations);
 		</script>
 	</body>
 </html>

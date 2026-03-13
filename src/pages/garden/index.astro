@@ -1,30 +1,10 @@
 ---
-import BaseHead from '../../components/BaseHead.astro';
-import Header from '../../components/Header.astro';
-import Footer from '../../components/Footer.astro';
-import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
-import { getCollection } from 'astro:content';
+import { GARDEN_COLLECTIONS } from '../../consts';
+import { getMultiCollectionPosts, extractUniqueTags } from '../../utils/collections';
 import IndexLayout from '../../layouts/IndexLayout.astro';
 
-// Fetch all collections
-const [notes, essays, books, playground] = await Promise.all([
-  getCollection('notes', ({ data }) => data.publish === true),
-  getCollection('essays', ({ data }) => data.publish === true),
-  getCollection('books', ({ data }) => data.publish === true),
-  getCollection('playground', ({ data }) => data.publish === true)
-]);
-
-// Combine and sort all posts (works excluded from garden)
-const allPosts = [
-  ...notes.map(post => ({ ...post, collection: 'notes' })),
-  ...essays.map(post => ({ ...post, collection: 'essays' })),
-  ...books.map(post => ({ ...post, collection: 'books' })),
-  ...playground.map(post => ({ ...post, collection: 'playground' }))
-].sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
-
-// Get unique tags from all posts
-const allTags = ['all', ...new Set(allPosts.flatMap(post => post.data.tags || []))].sort();
-const collections = ['all', 'notes', 'essays', 'books', 'playground'];
+const allPosts = await getMultiCollectionPosts(['notes', 'essays', 'books', 'playground']);
+const allTags = extractUniqueTags(allPosts);
 ---
 
 <IndexLayout
@@ -32,7 +12,7 @@ const collections = ['all', 'notes', 'essays', 'books', 'playground'];
   description="In a nutshell, a garden can be comprised of Essays, Books and imperfect Notes along with whatever resources I find interesting and felt might be useful at a later stage."
   posts={allPosts}
   tags={allTags}
-  collections={collections}
+  collections={GARDEN_COLLECTIONS}
   showCollections={true}
   icon="/icons/garden.svg"
 />
