@@ -55,6 +55,6 @@ const href = `/works/${slug}`;
 <script>
   import { initWorkCardAnimations } from '../scripts/work-card-animations';
 
-  document.addEventListener('DOMContentLoaded', initWorkCardAnimations);
-  document.addEventListener('astro:page-load', initWorkCardAnimations);
+  import { initOnLoad } from '../utils/initOnLoad';
+  initOnLoad(initWorkCardAnimations);
 </script>

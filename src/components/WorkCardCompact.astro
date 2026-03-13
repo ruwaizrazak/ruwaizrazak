@@ -28,9 +28,9 @@ const { title, role, company, duration, heroImage, url } = Astro.props;
       {title}
     </h3>
     {role && (
-      <p class="text-base font-sans text-syoro/60 dark:text-white/40 uppercase">{role}</p>
+      <p class="text-lg font-sans text-syoro/60 dark:text-white/40 uppercase">{role}</p>
     )}
-    <p class="text-sm font-sans font-semibold text-syoro/40 dark:text-white/30 uppercase tracking-wide">
+    <p class="text-base font-sans font-semibold text-syoro/40 dark:text-white/30 uppercase tracking-wide">
       {company} · {duration}
     </p>
   </div>
