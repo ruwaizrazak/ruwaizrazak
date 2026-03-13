@@ -8,7 +8,7 @@ import remarkWikiLink from '@portaljs/remark-wiki-link';
 import lottie from 'astro-integration-lottie';
 export default defineConfig({
   output: 'static',
-  site: 'https://example.com',
+  site: 'https://ruwaizrazak.com',
   integrations: [
     mdx({
       remarkPlugins: [

@@ -2,7 +2,7 @@
 // Import the global.css file here so that it is included on
 // all pages through the use of the <BaseHead /> component.
 import '../styles/global.css';
-import { SITE_TITLE } from '../consts';
+import { SITE_TITLE, GA_ID } from '../consts';
 interface Props {
 	title: string;
 	description: string;
@@ -30,6 +30,15 @@ const { title, description, image = '/blog-placeholder-1.jpg' } = Astro.props;
   })();
 </script>
 <meta name="fediverse:creator" content="@ruwaizrazak@mastodon.social">
+
+<!-- IndieWeb: identity verification for IndieAuth -->
+<link rel="me" href="https://mastodon.social/@ruwaizrazak" />
+<link rel="me" href="https://bsky.app/profile/ruwaizrazak.com" />
+
+<!-- Webmention endpoints (webmention.io) -->
+<link rel="webmention" href="https://webmention.io/ruwaizrazak.com/webmention" />
+<link rel="pingback" href="https://webmention.io/ruwaizrazak.com/xmlrpc" />
+
 <link rel="icon" type="image/ico" href="/favicon.ico" />
 <link rel="sitemap" href="/sitemap-index.xml" />
 <link
@@ -68,11 +77,11 @@ const { title, description, image = '/blog-placeholder-1.jpg' } = Astro.props;
 <meta property="twitter:image" content={new URL(image, Astro.url)} />
 
 <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-75GYY3Y3H3"></script>
-<script>
+<script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}></script>
+<script define:vars={{ GA_ID }}>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
 
-  gtag('config', 'G-75GYY3Y3H3');
+  gtag('config', GA_ID);
 </script>
