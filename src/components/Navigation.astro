@@ -440,7 +440,7 @@ const {
   }
 
   // Initialize on traditional and Astro transitions
-  document.addEventListener('DOMContentLoaded', initializeNavigation);
-  document.addEventListener('astro:page-load', initializeNavigation);
+  import { initOnLoad } from '../utils/initOnLoad';
+  initOnLoad(initializeNavigation);
   window.addEventListener('pageshow', initializeNavigation);
 </script>
