@@ -1,6 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
-import NoteCard from './NoteCard.astro';
+import ContentCard from './ContentCard.astro';
 
 interface Props {
   currentTags: string[];
@@ -39,12 +39,14 @@ const relatedNotes = allNotes
           <div class="related-scroll flex gap-6 justify-center overflow-x-auto snap-x snap-mandatory pb-4 -mx-4 px-4" style="-webkit-overflow-scrolling: touch; scrollbar-width: none;">
             {relatedNotes.map(note => (
               <div class="related-card snap-start shrink-0 w-[280px] sm:w-[320px]">
-                <NoteCard
+                <ContentCard
                   title={note.data.title}
                   description={note.data.description}
                   pubDate={note.data.pubDate}
                   url={`/notes/${note.id}/`}
                   maturity={note.data.maturity}
+                  collection="notes"
+                  variant="compact"
                 />
               </div>
             ))}

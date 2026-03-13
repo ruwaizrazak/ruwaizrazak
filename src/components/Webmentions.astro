@@ -1,0 +1,241 @@
+---
+interface Props {
+  url: string;
+}
+
+const { url } = Astro.props;
+---
+
+<div class="webmentions-container" data-page-url={url}>
+  <!-- Populated client-side -->
+</div>
+
+<script>
+  function initWebmentions() {
+    document.querySelectorAll<HTMLDivElement>('.webmentions-container').forEach(async (container) => {
+      const pageUrl = container.dataset.pageUrl;
+      if (!pageUrl) return;
+
+      // Avoid re-initializing
+      if (container.dataset.loaded === 'true') return;
+      container.dataset.loaded = 'true';
+
+      try {
+        const res = await fetch(
+          `https://webmention.io/api/mentions.jf2?target=${encodeURIComponent(pageUrl)}&per-page=200`
+        );
+        if (!res.ok) return;
+
+        const data = await res.json();
+        const mentions = data.children || [];
+        if (mentions.length === 0) return;
+
+        const likes: any[] = [];
+        const reposts: any[] = [];
+        const replies: any[] = [];
+
+        for (const m of mentions) {
+          switch (m['wm-property']) {
+            case 'like-of':
+              likes.push(m);
+              break;
+            case 'repost-of':
+              reposts.push(m);
+              break;
+            case 'in-reply-to':
+            case 'mention-of':
+              replies.push(m);
+              break;
+          }
+        }
+
+        let html = '';
+
+        // Likes
+        if (likes.length > 0) {
+          html += `
+            <div class="wm-section">
+              <h3 class="wm-heading">${likes.length} Like${likes.length !== 1 ? 's' : ''}</h3>
+              <div class="wm-avatars">
+                ${likes.map((l) => {
+                  const photo = l.author?.photo || '';
+                  const name = l.author?.name || 'Anonymous';
+                  const authorUrl = l.author?.url || '#';
+                  return photo
+                    ? `<a href="${authorUrl}" target="_blank" rel="noopener noreferrer" title="${name}"><img src="${photo}" alt="${name}" class="wm-avatar" loading="lazy" /></a>`
+                    : `<a href="${authorUrl}" target="_blank" rel="noopener noreferrer" title="${name}"><span class="wm-avatar wm-avatar-fallback">${name.charAt(0)}</span></a>`;
+                }).join('')}
+              </div>
+            </div>`;
+        }
+
+        // Reposts
+        if (reposts.length > 0) {
+          html += `
+            <div class="wm-section">
+              <h3 class="wm-heading">${reposts.length} Repost${reposts.length !== 1 ? 's' : ''}</h3>
+              <div class="wm-avatars">
+                ${reposts.map((r) => {
+                  const photo = r.author?.photo || '';
+                  const name = r.author?.name || 'Anonymous';
+                  const authorUrl = r.author?.url || '#';
+                  return photo
+                    ? `<a href="${authorUrl}" target="_blank" rel="noopener noreferrer" title="${name}"><img src="${photo}" alt="${name}" class="wm-avatar" loading="lazy" /></a>`
+                    : `<a href="${authorUrl}" target="_blank" rel="noopener noreferrer" title="${name}"><span class="wm-avatar wm-avatar-fallback">${name.charAt(0)}</span></a>`;
+                }).join('')}
+              </div>
+            </div>`;
+        }
+
+        // Replies
+        if (replies.length > 0) {
+          html += `
+            <div class="wm-section">
+              <h3 class="wm-heading">${replies.length} Repl${replies.length !== 1 ? 'ies' : 'y'}</h3>
+              <div class="wm-replies">
+                ${replies.map((r) => {
+                  const photo = r.author?.photo || '';
+                  const name = r.author?.name || 'Anonymous';
+                  const authorUrl = r.author?.url || '#';
+                  const content = r.content?.text || r.content?.html || '';
+                  const date = r.published ? new Date(r.published).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : '';
+                  const sourceUrl = r.url || r['wm-source'] || '#';
+                  return `
+                    <div class="wm-reply">
+                      <div class="wm-reply-meta">
+                        ${photo
+                          ? `<img src="${photo}" alt="${name}" class="wm-avatar" loading="lazy" />`
+                          : `<span class="wm-avatar wm-avatar-fallback">${name.charAt(0)}</span>`}
+                        <div>
+                          <a href="${authorUrl}" target="_blank" rel="noopener noreferrer" class="wm-reply-author">${name}</a>
+                          ${date ? `<time class="wm-reply-date">${date}</time>` : ''}
+                        </div>
+                      </div>
+                      ${content ? `<p class="wm-reply-content">${content.length > 300 ? content.slice(0, 300) + '…' : content}</p>` : ''}
+                      <a href="${sourceUrl}" target="_blank" rel="noopener noreferrer" class="wm-reply-source">View original</a>
+                    </div>`;
+                }).join('')}
+              </div>
+            </div>`;
+        }
+
+        if (html) {
+          container.innerHTML = `<div class="wm-wrapper">${html}</div>`;
+        }
+      } catch {
+        // Silently fail — webmentions are non-critical
+      }
+    });
+  }
+
+  import { initOnLoad } from '../utils/initOnLoad';
+  initOnLoad(initWebmentions);
+</script>
+
+<style>
+  .wm-wrapper {
+    max-width: 65ch;
+    margin: 3rem auto 0;
+    padding: 0 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .wm-heading {
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-konpeki);
+    margin-bottom: 0.75rem;
+  }
+
+  .wm-avatars {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+
+  .wm-avatar {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 9999px;
+    object-fit: cover;
+    border: 1px solid var(--color-card-border);
+  }
+
+  .wm-avatar-fallback {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-syoro);
+    color: var(--color-backgroundcolor);
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .wm-replies {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .wm-reply {
+    padding: 1rem;
+    border: 1px dashed var(--color-card-border);
+    border-radius: 0.75rem;
+    background: var(--color-cardbg);
+  }
+
+  .wm-reply-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .wm-reply-author {
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-syoro);
+    text-decoration: none;
+  }
+
+  .wm-reply-author:hover {
+    color: var(--color-link);
+  }
+
+  .wm-reply-date {
+    display: block;
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    color: var(--color-syoro);
+    opacity: 0.5;
+  }
+
+  .wm-reply-content {
+    font-family: var(--font-serif);
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: var(--color-syoro);
+    opacity: 0.9;
+    margin: 0;
+  }
+
+  .wm-reply-source {
+    display: inline-block;
+    margin-top: 0.5rem;
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    color: var(--color-link);
+    text-decoration: none;
+  }
+
+  .wm-reply-source:hover {
+    text-decoration: underline;
+  }
+</style>
