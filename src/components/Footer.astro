@@ -1,5 +1,4 @@
 ---
-import Link from './mdxComponents/Link.astro';
 import Button from './Button.astro';
 
 ---
@@ -56,24 +55,18 @@ import Button from './Button.astro';
       return;
     }
 
-    const END_THRESHOLD = 100;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            section.classList.add('contact-section-visible');
+          }
+        });
+      },
+      { threshold: 0.2, rootMargin: '0px 0px -50px 0px' }
+    );
 
-    function checkAtEnd() {
-      if (!section) return;
-      const { scrollY, innerHeight } = window;
-      const scrollHeight = document.documentElement.scrollHeight;
-      if (scrollY + innerHeight >= scrollHeight - END_THRESHOLD) {
-        section.classList.add('contact-section-visible');
-        window.removeEventListener('scroll', onScroll);
-      }
-    }
-
-    function onScroll() {
-      checkAtEnd();
-    }
-
-    checkAtEnd();
-    window.addEventListener('scroll', onScroll, { passive: true });
+    observer.observe(section);
   }
 
   function initContactIconMorph() {
