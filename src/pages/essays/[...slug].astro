@@ -3,18 +3,10 @@ import { type CollectionEntry, getCollection } from 'astro:content';
 import { render } from 'astro:content';
 import NotesPost from '../../layouts/notesPost.astro';
 import Link from "../../components/mdxComponents/Link.astro"
+import { getStaticPathsForCollection } from '../../utils/collections';
 
 export async function getStaticPaths() {
-	const posts = await getCollection('essays');
-	return posts.map((post) => {
-		const parts = post.id.split('/');
-		const last = parts.length > 0 ? parts[parts.length - 1] : '';
-		const filename = typeof last === 'string' ? last.replace(/\.[^.]+$/, '') : '';
-		return {
-			params: { slug: filename.toLowerCase() },
-			props: post,
-		};
-	});
+	return getStaticPathsForCollection('essays');
 }
 type Props = CollectionEntry<'essays'>;
 
