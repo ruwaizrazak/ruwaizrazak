@@ -1,55 +1,48 @@
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { createScrubReveal } from '../utils/scrubReveal';
 gsap.registerPlugin(ScrollTrigger);
 
 export function initRelatedNotes() {
-  const section = document.querySelector('.related-notes-section');
+  const section = document.querySelector('.related-notes-section') as HTMLElement;
   const reveal = document.querySelector('.related-reveal') as HTMLElement;
   const container = document.querySelector('.related-scroll') as HTMLElement;
-  const cards = gsap.utils.toArray('.related-card');
+  const cards = gsap.utils.toArray('.related-card') as HTMLElement[];
   const leftBtn = document.querySelector('.related-arrow-left') as HTMLElement;
   const rightBtn = document.querySelector('.related-arrow-right') as HTMLElement;
   if (!section || !reveal || !container) return;
-  if ((section as HTMLElement).dataset.relatedInited === '1') return;
-  (section as HTMLElement).dataset.relatedInited = '1';
 
-  // Temporarily make cards visible to measure true height
-  (cards as HTMLElement[]).forEach(c => { c.style.opacity = '1'; });
-  reveal.style.height = 'auto';
-  const fullHeight = reveal.offsetHeight;
-  reveal.style.height = '0px';
-  (cards as HTMLElement[]).forEach(c => { c.style.opacity = '0'; });
+  // Card pop-in timeline (built before reveal so it can be triggered)
+  const cardTl = gsap.timeline({ paused: true });
 
-  // Height reveal as section approaches viewport (scrubs = reverses naturally)
-  gsap.to(reveal, {
-    height: fullHeight,
-    ease: 'none',
-    scrollTrigger: {
-      trigger: section,
-      start: 'top 90%',
-      end: 'top 50%',
-      scrub: true,
+  const fullHeight = createScrubReveal({
+    section,
+    reveal,
+    initFlag: 'relatedInited',
+    start: 'top 90%',
+    end: 'top 50%',
+    beforeMeasure: () => cards.forEach(c => { c.style.opacity = '1'; }),
+    afterMeasure: () => cards.forEach(c => { c.style.opacity = '0'; }),
+    onRevealed: (h) => {
+      reveal.style.height = 'auto';
+      cardTl.play();
+    },
+    onHidden: (h) => {
+      reveal.style.height = h + 'px';
+      cardTl.reverse();
     },
   });
+  if (fullHeight === null) return;
 
   // Card pop-in with reverse support
-  const cardTl = gsap.timeline({
-    paused: true,
-    onComplete() { reveal.style.height = 'auto'; },
-    onReverseComplete() { reveal.style.height = fullHeight + 'px'; },
-  });
+  cardTl.eventCallback('onComplete', () => { reveal.style.height = 'auto'; });
+  cardTl.eventCallback('onReverseComplete', () => { reveal.style.height = fullHeight + 'px'; });
+
   const shuffled = [...cards].sort(() => Math.random() - 0.5);
   cardTl.fromTo(shuffled,
     { opacity: 0, scale: 0.8, y: 20 },
     { opacity: 1, scale: 1, y: 0, duration: 0.4, stagger: 0.12, ease: 'back.out(1.4)' }
   );
-
-  ScrollTrigger.create({
-    trigger: section,
-    start: 'top 50%',
-    onEnter: () => cardTl.play(),
-    onLeaveBack: () => cardTl.reverse(),
-  });
 
   // Smart arrow visibility based on overflow
   function updateArrows() {

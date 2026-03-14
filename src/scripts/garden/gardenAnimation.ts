@@ -1,83 +1,39 @@
 import gsap from 'gsap';
 import ScrollTrigger from 'gsap/ScrollTrigger';
-import {
-  curveY,
-  positionPlantsAlongCurve,
-  positionTreesAlongCurve,
-  positionFlowersAlongCurve,
-} from './curveUtils';
-import { initGrassCanvas, sizeGrassCanvas, drawGrass } from './grassCanvas';
+import { curveY } from './curveUtils';
+import { setupGardenStrip, BASE_CHAR_HEIGHT, IDLE_FRAME } from './gardenSetup';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const BASE_CHAR_HEIGHT = 50;
-const IDLE_FRAME = 2; // 0–8: which sprite frame to show when not scrolling
 const RUN_THRESHOLD = 250; // px — distance above which character runs
 const WALK_SPEED = 100;    // px/s
 const RUN_SPEED = 250;     // px/s
-
-function getScale(): number {
-  return Math.min(220, window.innerHeight * 0.5) / 220;
-}
 
 export function initGarden() {
   if (!document.querySelector('.garden-body')) return;
 
   ScrollTrigger.getAll().forEach(st => st.kill());
 
-  const strip = document.querySelector('.garden-strip') as HTMLElement;
+  const container = document.querySelector('.garden-strip')?.parentElement;
+  if (!container) return;
+
+  const handle = setupGardenStrip({
+    container,
+    curveB: 0,
+    positionPlants: true,
+  });
+  if (!handle) return;
+
+  const { strip } = handle;
   const character = document.querySelector('.character') as HTMLElement;
   const stickyBar = document.getElementById('garden-sticky-bar');
-  const grassCanvas = document.querySelector('.grass-canvas') as HTMLCanvasElement;
-  const grassCtx = grassCanvas ? initGrassCanvas(grassCanvas) : null;
-
-  let s = getScale();
-  let charHeight = BASE_CHAR_HEIGHT * s;
-  const stripCurveB = 0; // flat baseline — no oval animation
-
-  function applyScale() {
-    s = getScale();
-    charHeight = BASE_CHAR_HEIGHT * s;
-    if (strip) {
-      strip.style.setProperty('--garden-scale', String(s));
-      gsap.set(strip, {
-        height: 30,
-        borderRadius: 0,
-      });
-    }
-  }
-
-  function repositionAll() {
-    if (!strip) return;
-    positionPlantsAlongCurve(strip, stripCurveB);
-    positionTreesAlongCurve(strip, stripCurveB);
-    positionFlowersAlongCurve(strip, stripCurveB);
-    if (grassCanvas && grassCtx) {
-      drawGrass(grassCanvas, grassCtx, strip.offsetWidth, stripCurveB, s);
-    }
-  }
-
-  if (strip) {
-    applyScale();
-
-    if (grassCanvas && grassCtx) {
-      sizeGrassCanvas(grassCanvas, grassCtx, strip.offsetWidth, s);
-    }
-
-    repositionAll();
-
-    window.addEventListener('resize', () => {
-      applyScale();
-      if (grassCanvas && grassCtx) {
-        sizeGrassCanvas(grassCanvas, grassCtx, strip.offsetWidth, s);
-      }
-      repositionAll();
-    });
-  }
 
   if (character && strip) {
     character.style.setProperty('--idle-frame', String(IDLE_FRAME));
-    gsap.set(character, { x: 30, y: curveY(20 + 30, strip.offsetWidth, 0) - charHeight });
+    gsap.set(character, {
+      x: 30,
+      y: curveY(20 + 30, strip.offsetWidth, 0) - handle.charHeight(),
+    });
   }
 
   // Sticky bar: fades in when cards section enters viewport center
@@ -130,7 +86,7 @@ export function initGarden() {
           ease: 'none',
           onUpdate() {
             const cx = gsap.getProperty(character, 'x') as number;
-            gsap.set(character, { y: curveY(20 + cx, vw, 0) - charHeight });
+            gsap.set(character, { y: curveY(20 + cx, vw, 0) - handle.charHeight() });
           },
           onComplete() {
             character.dataset.motion = 'idle';

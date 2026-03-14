@@ -1,138 +1,104 @@
 ---
-import Button from './Button.astro';
 import { SOCIAL_LINKS } from '../consts';
+import Link from './mdxComponents/Link.astro';
 
+const PAGE_LINKS = [
+  { href: '/', label: 'Home' },
+  { href: '/garden', label: 'Garden' },
+  { href: '/about', label: 'About' },
+  { href: '/works', label: 'Works' },
+  { href: '/series', label: 'Series' },
+  { href: '/playground', label: 'Playground' },
+  { href: '/live', label: 'Live' },
+];
 ---
 
+<section id="Contact" class="bg-syoro/10 text-syoro py-20 w-screen ml-[calc(50%-50vw)]">
+  <div class="mx-auto w-full py-12 px-20 md:py-16 md:px-12 lg:px-20 flex ">
+    <div class="flex flex-col md:flex-row w-full justify-between">
+      <!-- Left: Quote + tagline -->
+      <div>
+        <h2 class="font-serif text-2xl max-w-xl italic font-normal leading-snug mb-8 md:text-3xl">Let's get in touch if you are intrigued about my work or just want to say hi!</h2>
+        <div class="h-card">
+          <span class="p-name" hidden>Ruwaiz Razak</span>
+          <h3 class="font-handwriting text-xl font-bold uppercase tracking-widest text-syoro/70 mb-5">Say Hi</h3>
+          <ul class="list-none flex flex-row gap-3 p-0 m-0 w-full">
+            {SOCIAL_LINKS.map((link) => (
+              <li>
+                <Link href={link.href} target="_blank" rel={link.rel} class={`${link.class} inline-flex flex-row items-center gap-[0.6rem] whitespace-nowrap font-sans text-base font-normal no-underline transition-colors duration-200`} data-diamond={link.diamondPath} data-symbol={link.symbolPath}>
+                  <svg class="contact-icon w-[1.125rem] h-[1.125rem] shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path class="contact-icon-path" fill="currentColor" d={link.diamondPath} />
+                  </svg>
+                  <div class="w-full">{link.label}</div>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+        
+      </div>
 
-<div class="contact-section-reveal border-syoro bg-white dark:bg-stone-900 rounded-xl px-10 flex flex-col mt-8 opacity-0" id="Contact">
-  <div class="w-full px-10 pt-10">
-    <h1 class="text-syoro font-serif text-2xl md:text-4xl w-full sm:w-2/3 md:w-[40%]">Let's get in touch if you are intrigued about my work or just want to say hi!</h1>
-    <Button href="/about" variant="primary" class="text-backgroundcolor font-sans text-lg uppercase mt-10">Contact me</Button>
-  </div>
+      
 
-  <div class="h-card flex flex-row items-center gap-5 w-full mt-5 mb-2 px-10 py-10 bg-white dark:bg-stone-950 rounded-xl flex-wrap">
-    <span class="p-name" hidden>Ruwaiz Razak</span>
-    {SOCIAL_LINKS.map((link) => (
-      <a href={link.href} target="_blank" rel={link.rel} class={link.class}>
-        <svg class={link.svgClass || 'contact-icon w-6 h-6 flex-shrink-0'} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-          <path class="contact-icon-diamond" fill="currentColor" d={link.diamondPath} />
-          {link.symbolFill === 'stroke' ? (
-            <path class="contact-icon-symbol" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d={link.symbolPath} />
-          ) : (
-            <path class="contact-icon-symbol" fill="currentColor" d={link.symbolPath} />
-          )}
-        </svg>
-        <span>{link.label}</span>
-      </a>
-    ))}
+      <!-- Right: Page links -->
+      <div class="justify-self-end">
+        <ul class="list-none grid grid-cols-3 gap-3 p-0 m-0">
+          {PAGE_LINKS.map((link) => (
+            <li>
+              <Link href={link.href} title={`Go to ${link.label}`} class="text-syoro font-sans font-normal no-underline transition-colors duration-200 hover:text-white text-xl">{link.label}</Link>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
   </div>
-</div>
+</section>
 
 
 <script>
   import gsap from 'gsap';
-
-  function initContactSectionReveal() {
-    const section = document.getElementById('Contact');
-    if (!section) return;
-
-    if (document.body.classList.contains('returned-from-work') || document.documentElement.classList.contains('returned-from-work')) {
-      section.classList.add('contact-section-visible');
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            section.classList.add('contact-section-visible');
-          }
-        });
-      },
-      { threshold: 0.2, rootMargin: '0px 0px -50px 0px' }
-    );
-
-    observer.observe(section);
-  }
+  import { interpolate } from 'flubber';
+  import { initOnLoad } from '../utils/initOnLoad';
 
   function initContactIconMorph() {
     const links = document.querySelectorAll('.contact-link');
-    const duration = 0.35;
-    const ease = 'power2.inOut';
 
     links.forEach((link) => {
-      const diamond = link.querySelector('.contact-icon-diamond');
-      const symbol = link.querySelector('.contact-icon-symbol');
-      if (!diamond || !symbol) return;
+      const path = link.querySelector('.contact-icon-path') as SVGPathElement | null;
+      if (!path) return;
+
+      const diamondD = (link as HTMLElement).dataset.diamond;
+      const symbolD = (link as HTMLElement).dataset.symbol;
+      if (!diamondD || !symbolD) return;
+
+      // Single interpolator — toSymbol(0) = diamond, toSymbol(1) = symbol
+      const morph = interpolate(diamondD, symbolD, { maxSegmentLength: 10 });
+      let activeTween: gsap.core.Tween | null = null;
+      const progress = { t: 0 };
 
       link.addEventListener('mouseenter', () => {
-        gsap.to(diamond, { opacity: 0, duration, ease });
-        gsap.to(symbol, { opacity: 1, duration, ease });
+        if (activeTween) activeTween.kill();
+        activeTween = gsap.to(progress, {
+          t: 1,
+          duration: 0.4 * (1 - progress.t),
+          ease: 'power2.inOut',
+          onUpdate: () => path.setAttribute('d', morph(progress.t)),
+        });
       });
 
       link.addEventListener('mouseleave', () => {
-        gsap.to(diamond, { opacity: 1, duration, ease });
-        gsap.to(symbol, { opacity: 0, duration, ease });
+        if (activeTween) activeTween.kill();
+        activeTween = gsap.to(progress, {
+          t: 0,
+          duration: 0.4 * progress.t,
+          ease: 'power2.inOut',
+          onUpdate: () => path.setAttribute('d', morph(progress.t)),
+        });
       });
     });
   }
 
-  function init() {
-    initContactSectionReveal();
+  initOnLoad(() => {
     initContactIconMorph();
-  }
-
-  import { initOnLoad } from '../utils/initOnLoad';
-  initOnLoad(init);
+  });
 </script>
-
-<style>
-  .contact-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: var(--color-syoro);
-    font-family: var(--font-sans);
-    font-size: 1.125rem;
-    font-weight: 500;
-    text-transform: uppercase;
-    text-decoration: none;
-    white-space: nowrap;
-    transition: opacity 0.2s ease;
-  }
-
-  .contact-link:hover {
-    opacity: 0.8;
-  }
-
-  .contact-icon {
-    display: block;
-    position: relative;
-  }
-
-  .contact-icon-diamond {
-    opacity: 1;
-  }
-
-  .contact-icon-symbol {
-    opacity: 0;
-  }
-
-  .contact-section-reveal {
-    transform: translateY(-40px);
-    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-  }
-
-  .contact-section-reveal.contact-section-visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  /* When returning from work page, show section immediately (html + body for view-transition swap) */
-  :global(html.returned-from-work) .contact-section-reveal,
-  :global(body.returned-from-work) .contact-section-reveal {
-    opacity: 1;
-    transform: translateY(0);
-  }
-</style>
