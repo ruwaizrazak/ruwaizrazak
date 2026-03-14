@@ -25,3 +25,6 @@ pnpm-debug.log*
 
 # Pixelfed auto-deploy
 current_feed.xml
+
+# git worktrees
+.worktrees/
