@@ -24,13 +24,13 @@ const PAGE_LINKS = [
           <h3 class="font-handwriting text-xl font-bold uppercase tracking-widest text-syoro/70 mb-5">Say Hi</h3>
           <ul class="list-none flex flex-row gap-3 p-0 m-0 w-full">
             {SOCIAL_LINKS.map((link) => (
-              <li>
-                <Link href={link.href} target="_blank" rel={link.rel} class={`${link.class} inline-flex flex-row items-center gap-[0.6rem] whitespace-nowrap font-sans text-base font-normal no-underline transition-colors duration-200`} data-diamond={link.diamondPath} data-symbol={link.symbolPath}>
+              <li class="list-none">
+                <a href={link.href} target="_blank" rel={link.rel} class={`${link.class} inline-flex flex-row items-center gap-[0.6rem] whitespace-nowrap font-sans text-xl font-normal no-underline transition-colors duration-200`} data-diamond={link.diamondPath} data-symbol={link.symbolPath}>
                   <svg class="contact-icon w-[1.125rem] h-[1.125rem] shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                     <path class="contact-icon-path" fill="currentColor" d={link.diamondPath} />
                   </svg>
                   <div class="w-full">{link.label}</div>
-                </Link>
+                </a>
               </li>
             ))}
           </ul>

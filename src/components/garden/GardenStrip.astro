@@ -7,6 +7,27 @@ const { posts } = Astro.props;
 const treeSrcs = [
   '/siteAssets/trees/Tree1.svg',
   '/siteAssets/trees/Tree2.svg',
+  '/siteAssets/trees/Tree3.svg',
+  '/siteAssets/trees/Tree4.svg',
+  '/siteAssets/trees/Tree5.svg',
+  '/siteAssets/trees/Tree6.svg',
+  '/siteAssets/trees/Tree7.svg',
+  '/siteAssets/trees/Tree8.svg',
+  '/siteAssets/trees/Tree9.svg',
+  '/siteAssets/trees/Tree11.svg',
+  '/siteAssets/trees/Tree12.svg',
+  '/siteAssets/trees/Tree13.svg',
+  '/siteAssets/trees/Tree14.svg',
+  '/siteAssets/trees/Tree15.svg',
+  '/siteAssets/trees/Tree16.svg',
+  '/siteAssets/trees/Tree17.svg',
+  '/siteAssets/trees/Tree18.svg',
+  '/siteAssets/trees/Tree19.svg',
+  '/siteAssets/trees/Tree20.svg',
+  '/siteAssets/trees/Tree21.svg',
+  '/siteAssets/trees/Tree22.svg',
+  '/siteAssets/trees/Tree23.svg',
+  '/siteAssets/trees/Tree24.svg',
 ];
 const flowerSrcs = [
   '/siteAssets/trees/flower/flower1.svg',
@@ -20,6 +41,11 @@ function treeVisibility(i: number): string {
   if (i < 6) return 'hidden lg:block';
   return 'hidden xl:block';
 }
+
+// Random tree index per slot (fixed at build time)
+const treeIndices = [0, 1, 2, 3, 4, 5, 6, 7].map(
+  () => Math.floor(Math.random() * treeSrcs.length)
+);
 ---
 
 <div
@@ -29,7 +55,7 @@ function treeVisibility(i: number): string {
   <!-- Trees: tallest layer, behind everything -->
   {[0,1,2,3,4,5,6,7].map((i) => (
     <img
-      src={treeSrcs[i % treeSrcs.length]}
+      src={treeSrcs[treeIndices[i]]}
       class={"tree-item absolute z-[0] pointer-events-none " + treeVisibility(i)}
       data-index={String(i)}
       style={`left: 0; top: 0; height: calc(60px * var(--garden-scale, 1)); width: auto; transform: translate(-50%, -100%);`}
