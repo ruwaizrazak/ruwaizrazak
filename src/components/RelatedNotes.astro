@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import ContentCard from './ContentCard.astro';
+import DotNav from './DotNav.astro';
 
 interface Props {
   currentTags: string[];
@@ -20,25 +21,10 @@ const relatedNotes = allNotes
     <div class="related-reveal overflow-hidden" style="height: 0">
       <div class="mt-20 mb-10">
         <h2 class="text-syoro font-sans text-3xl mb-8 mx-auto">Also related to...</h2>
-        <div class="relative">
-          <button
-            class="related-arrow related-arrow-left absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-10 h-10 items-center justify-center bg-backgroundcolor border border-syoro/20 hover:border-syoro/50 transition-colors"
-            style="display: none;"
-            aria-label="Scroll left"
-          >
-            &larr;
-          </button>
-          <button
-            class="related-arrow related-arrow-right absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-10 h-10 items-center justify-center bg-backgroundcolor border border-syoro/20 hover:border-syoro/50 transition-colors"
-            style="display: none;"
-            aria-label="Scroll right"
-          >
-            &rarr;
-          </button>
-
-          <div class="related-scroll flex gap-6 justify-center overflow-x-auto snap-x snap-mandatory pb-4 -mx-4 px-4" style="-webkit-overflow-scrolling: touch; scrollbar-width: none;">
+        <div class="relative overflow-hidden">
+          <div class="related-track flex gap-6 pb-4 -mx-4 px-4">
             {relatedNotes.map(note => (
-              <div class="related-card snap-start shrink-0 w-[280px] sm:w-[320px]">
+              <div class="related-card shrink-0 w-[280px] sm:w-[320px]">
                 <ContentCard
                   title={note.data.title}
                   description={note.data.description}
@@ -52,15 +38,18 @@ const relatedNotes = allNotes
             ))}
           </div>
         </div>
+        <DotNav
+          id="related-nav"
+          count={relatedNotes.length}
+          showArrows={true}
+          class="flex items-center justify-center gap-3 mt-6 mx-auto"
+        />
       </div>
     </div>
   </section>
 )}
 
 <style is:global>
-  .related-scroll::-webkit-scrollbar {
-    display: none;
-  }
   .related-card {
     opacity: 0;
   }

@@ -235,6 +235,138 @@ hr {
   pointer-events: none;
 }
 
+/* Dot nav morph: collapsed circle → expanded pill */
+#carousel-nav {
+  max-width: 40px;
+  padding: 0.5rem;
+  overflow: hidden;
+  transition: max-width 0.5s cubic-bezier(0.25, 0.1, 0.25, 1),
+              padding 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+#carousel-nav.dots-visible {
+  max-width: 300px;
+  padding: 1rem;
+}
+
+/* Carousel track transition */
+#carousel-track {
+  transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+/* Each slide: responsive width (mobile-first) */
+.carousel-slide {
+  width: 85%;          /* sm default: 1 card + peek */
+  padding: 0 0.75rem;
+}
+@media (min-width: 768px) {
+  .carousel-slide { width: 50%; }
+}
+@media (min-width: 1024px) {
+  .carousel-slide { width: 33.333%; }
+}
+
+/* Card within slide — inactive dimmed, active full */
+.carousel-slide .work-card {
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  opacity: 0.4;
+  transform: scale(0.95);
+}
+.carousel-slide.active-group .work-card {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Dot nav: small circle by default */
+.dot-nav-dot {
+  position: relative;
+  width: 8px;
+  height: 8px;
+  border-radius: 4px;
+  background: var(--color-cursor-text);
+  opacity: 0.4;
+  border: none;
+  padding: 0;
+  overflow: hidden;
+  cursor: pointer;
+  transition: width 0.3s ease, opacity 0.3s ease;
+}
+
+/* Active dot expands into pill */
+.dot-nav-dot.active {
+  width: 40px;
+  opacity: 0.8;
+}
+
+/* Progress fill inside active dot */
+.dot-nav-progress {
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 0%;
+  background: var(--color-cursor-text);
+  border-radius: 4px;
+}
+
+.dot-nav-dot:not(.active) .dot-nav-progress {
+  display: none;
+}
+
+/* Play/pause button */
+.dot-nav-playpause {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1.5px solid var(--color-cursor-text);
+  opacity: 0.4;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  color: var(--color-cursor-text);
+}
+.dot-nav-playpause:hover { opacity: 1; }
+
+/* Dot nav arrows */
+.dot-nav-arrow {
+  border-radius: 9999px;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--color-cursor-text) 30%, transparent);
+  color: var(--color-cursor-text);
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.dot-nav-arrow:hover {
+  background: color-mix(in srgb, var(--color-cursor-text) 50%, transparent);
+}
+
+/* Dot nav dots container */
+.dot-nav-dots {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Related notes track transition */
+.related-track {
+  transition: transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  #carousel-track { transition: none; }
+  #carousel-nav { transition: none; }
+  .carousel-slide .work-card { transition: none; opacity: 1 !important; transform: none !important; }
+  .dot-nav-dot { transition: none; }
+  .dot-nav-arrow { transition: none; }
+  .related-track { transition: none; }
+}
+
 .sr-only {
   border: 0;
   padding: 0;

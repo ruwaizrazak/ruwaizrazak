@@ -2,6 +2,8 @@
 import Layout from '../layouts/AboutLayout.astro';
 import WorkCardCompact from '../components/WorkCardCompact.astro';
 import { getCollection } from 'astro:content';
+import CustomCursor from '../components/CustomCursor.astro';
+import DotNav from '../components/DotNav.astro';
 
 const works = await getCollection('works', ({ data }) => data.publish === true);
 
@@ -68,7 +70,7 @@ const experience = [
 		<div class="flex flex-col md:flex-row gap-10 md:gap-16 items-start">
 			<div class="flex-1 flex flex-col gap-6">
 				<h1 class="text-3xl md:text-4xl font-serif text-syoro max-w-[80%]">
-					<span class="text-konpeki">Hi, I'm Ruwaiz.</span> 
+					<span class="text-konpeki">Hi, I'm Ruwaiz.</span>
 					<br>I design systems, interfaces, and interactions that help people stay engaged over time.
 				</h1>
 				<div class="flex flex-col gap-4 mt-4 max-w-[80%] text-xl">
@@ -98,28 +100,47 @@ const experience = [
 		<h2 class="text-xl font-sans font-semibold text-syoro dark:text-white/60 uppercase tracking-widest mb-8">
 			Work Experience
 		</h2>
-		<div id="work-cards" class="flex flex-col md:flex-row md:flex-nowrap gap-0 md:overflow-visible border-t border-syoro/20 dark:border-white/20">
-			{experience.map((item, i) => (
-				<div class={`p-6 md:min-w-[280px] lg:min-w-1/3 md:flex-shrink-0 md:flex-1 border-syoro/20 dark:border-white/20 hover:scale-105 hover:min-w-1/2.9 hover:bg-konpeki/10 transition-all duration-200 ease-in-out ${i > 0 ? '' : ''}`}>
-					<div class="flex flex-col gap-1 mb-4">
-						<h2 class="text-2xl font-sans text-syoro dark:text-white uppercase leading-snug">
-							{item.role}
-						</h2>
-						<h3 class="text-xl font-sans font-semibold text-syoro/60 dark:text-white/40 uppercase">
-							{item.company} | {item.period}
-						</h3>
+
+		<!-- Carousel viewport — breaks out of Main's px-20 for edge peek -->
+		<div id="carousel-viewport" class="relative overflow-hidden -mx-20 px-20">
+			<!-- Sliding track -->
+			<div id="carousel-track" class="flex">
+				{experience.map((item, i) => (
+					<div class="carousel-slide flex-shrink-0" data-slide-index={i}>
+						<div class="work-card p-6 rounded-2xl border border-syoro/10 dark:border-white/10">
+							<div class="card-header flex flex-col gap-1 mb-4">
+								<h2 class="text-2xl font-sans text-syoro dark:text-white uppercase leading-snug">
+									{item.role}
+								</h2>
+								<h3 class="text-xl font-sans font-semibold text-syoro/60 dark:text-white/40 uppercase">
+									{item.company} | {item.period}
+								</h3>
+							</div>
+							<div class="card-body">
+								<ul class="space-y-2">
+									{item.bullets.map((bullet) => (
+										<li class="text-xl font-serif text-syoro/80 dark:text-white/60 leading-relaxed flex gap-2">
+											<span class="text-syoro/40 dark:text-white/30 mt-1 flex-shrink-0">·</span>
+											<span>{bullet}</span>
+										</li>
+									))}
+								</ul>
+							</div>
+						</div>
 					</div>
-					<ul class="space-y-2">
-						{item.bullets.map((bullet) => (
-							<li class="text-xl font-serif text-syoro/80 dark:text-white/60 leading-relaxed flex gap-2">
-								<span class="text-syoro/40 dark:text-white/30 mt-1 flex-shrink-0">·</span>
-								<span>{bullet}</span>
-							</li>
-						))}
-					</ul>
-				</div>
-			))}
+				))}
+			</div>
 		</div>
+
+		<!-- Dot nav + play/pause -->
+		<DotNav
+			id="carousel-nav"
+			count={experience.length}
+			showArrows={true}
+			showPlayPause={true}
+			showProgress={true}
+			class="flex items-center justify-center gap-3 mt-6 bg-syoro rounded-2xl sticky bottom-0 mx-auto"
+		/>
 	</section>
 
 	<!-- Selected Works Section -->
@@ -141,10 +162,11 @@ const experience = [
 			))}
 		</div>
 	</section>
+	<CustomCursor />
 </Layout>
 
 <script>
-	import { initWorkExperienceScroll } from '../scripts/work-experience-scroll';
+	import { initWorkExperienceCarousel } from '../scripts/work-experience-carousel';
 	import { initOnLoad } from '../utils/initOnLoad';
-	initOnLoad(initWorkExperienceScroll);
+	initOnLoad(initWorkExperienceCarousel);
 </script>

@@ -1,0 +1,44 @@
+---
+interface Props {
+  id: string;
+  count: number;
+  showArrows?: boolean;
+  showPlayPause?: boolean;
+  showProgress?: boolean;
+  class?: string;
+}
+
+const {
+  id,
+  count,
+  showArrows = true,
+  showPlayPause = false,
+  showProgress = false,
+  class: className,
+} = Astro.props;
+
+const dots = Array.from({ length: count }, (_, i) => i);
+---
+
+<div id={id} class:list={["dot-nav", className]} data-dot-count={count}>
+  <div class="dot-nav-dots">
+    {showArrows && (
+      <button class="dot-nav-arrow dot-nav-prev" aria-label="Previous">
+        <span aria-hidden="true">&larr;</span>
+      </button>
+    )}
+    {dots.map((i) => (
+      <button class="dot-nav-dot" data-dot-index={i} aria-label={`Page ${i + 1}`}>
+        {showProgress && <span class="dot-nav-progress" />}
+      </button>
+    ))}
+    {showArrows && (
+      <button class="dot-nav-arrow dot-nav-next" aria-label="Next">
+        <span aria-hidden="true">&rarr;</span>
+      </button>
+    )}
+  </div>
+  {showPlayPause && (
+    <button class="dot-nav-playpause" aria-label="Pause auto-play" />
+  )}
+</div>
