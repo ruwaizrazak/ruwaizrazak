@@ -2,7 +2,7 @@
 import BaseHead from '../../components/BaseHead.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
-import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
+import { SITE_TITLE, SITE_DESCRIPTION, SERIES_HERO_IMAGE } from '../../consts';
 import { getCollection } from 'astro:content';
 import NotePostHero from '../../components/NotePostHero.astro';
 import SeriesCard from '../../components/SeriesCard.astro';
@@ -54,6 +54,7 @@ const seriesWithPosts = sortedSeries.map(series => {
 				title="Series"
 				description="Explore content organized by series and themes"
 				pubDate={sortedSeries[0]?.data.lastUpdated ?? new Date()}
+				heroImage={SERIES_HERO_IMAGE}
 				tags={[]}
 			/>
 			<div class="note-main-wrapper pt-20 relative z-10 bg-backgroundcolor w-screen max-w-[100vw] ml-[calc(50%-50vw)]">

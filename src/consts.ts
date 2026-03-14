@@ -9,6 +9,8 @@ export const SITE_DESCRIPTION =
 
 export const GA_ID = 'G-75GYY3Y3H3';
 
+export const SERIES_HERO_IMAGE = 'https://i.imgur.com/XF2FhWO.png';
+
 export const DEFAULT_COLLECTIONS = ['all', 'notes', 'essays', 'casestudies', 'books'];
 export const GARDEN_COLLECTIONS = ['all', 'notes', 'essays', 'books', 'playground'];
 
