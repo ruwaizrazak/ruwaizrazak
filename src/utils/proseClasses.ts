@@ -28,5 +28,5 @@ export const proseClasses = [
   // Lists
   'prose-ul:font-serif prose-li:font-serif prose-ul:list-disc prose-ol:list-decimal',
   // Font size
-  'text-lg md:text-xl',
+  'text-lg md:text-xl xl:text-2xl',
 ].join(' ');

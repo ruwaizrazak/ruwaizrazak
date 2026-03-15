@@ -43,7 +43,7 @@ const workTransitionStyle = transitionName
       />
 
       <!-- Main content wrapper: overlaps hero on scroll (see note-post-animations.ts) -->
-      <div class="note-main-wrapper relative z-10 bg-backgroundcolor w-screen max-w-[100vw] ml-[calc(50%-50vw)]">
+      <div class="note-main-wrapper relative z-10 bg-backgroundcolor">
         <NoteMain>
           <slot />
         </NoteMain>
@@ -52,8 +52,9 @@ const workTransitionStyle = transitionName
         <RelatedNotes currentTags={tags} currentTitle={title} />
       </div>
     </main>
-    <Footer />
     <CustomCursor />
+    <Footer />
+    
 
     <!-- Scroll animations: hero overlap, fade-out, and zoom (see note-post-animations.ts) -->
     <script>

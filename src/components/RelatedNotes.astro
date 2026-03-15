@@ -22,7 +22,7 @@ const relatedNotes = allNotes
       <div class="mt-20 mb-10">
         <h2 class="text-syoro font-sans text-3xl mb-8 mx-auto">Also related to...</h2>
         <div class="relative overflow-hidden">
-          <div class="related-track flex gap-6 pb-4 -mx-4 px-4 justify-center">
+          <div class="related-track flex flex-wrap gap-6 pb-4 -mx-4 px-4 justify-center">
             {relatedNotes.map(note => (
               <div class="related-card shrink-0 w-[280px] sm:w-[320px]">
                 <ContentCard
