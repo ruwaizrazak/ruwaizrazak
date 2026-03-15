@@ -35,21 +35,24 @@ const {
 
 <nav class={`relative z-50 ${className}`}>
   <div>
-    <div class="flex justify-between items-center h-16">
+    <div class="flex flex-row justify-between items-center h-16">
       
       <!-- Logo -->
-      <div class="flex-shrink-0">
+      <div class="flex-shrink-0 flex flex-row items-center gap-2">
+        
         <a href={logoHref} 
         data-astro-prefetch
         onclick="sessionStorage.setItem('skipIndexAnimations','1')">
             <h4 class="text-3xl font-medium font-handwriting text-syoro">{logoText}</h4>
           
         </a>
+        <ThemeToggle />
       </div>
+      
 
       <!-- Desktop Menu Buttons (md and up) -->
       <div class="hidden md:flex items-center gap-2">
-        <ThemeToggle />
+
         <div class="grid grid-cols-3 rounded-full bg-syoro/10 dark:bg-syoro/10">
           <!-- Garden Dropdown Button -->
           <button 
@@ -65,8 +68,15 @@ const {
             <a 
               href={link.href}
               class="flex-1 min-w-0 flex items-center justify-center px-5 py-2 text-syoro rounded-full uppercase hover:scale-95 transition-all hover:bg-syoro/10">
-              <h3 class="font-sans font-medium text-xl">
-                {link.icon && <img src={typeof link.icon === 'string' ? link.icon : link.icon.href} alt={link.name} class="w-6 h-6" />}
+              <h3 class="font-sans font-medium text-xl flex items-center gap-2">
+                {link.icon && (
+                  <span
+                    class="flex-shrink-0 w-6 h-6 inline-block"
+                    style={`background-color: var(--color-syoro); mask: url(${typeof link.icon === 'string' ? link.icon : link.icon.href}) center/contain no-repeat; -webkit-mask: url(${typeof link.icon === 'string' ? link.icon : link.icon.href}) center/contain no-repeat;`}
+                    role="img"
+                    aria-label={link.name}
+                  />
+                )}
                 {link.name}
               </h3>
             </a>
@@ -80,9 +90,11 @@ const {
               id="about-menu-button"
               class="flex items-center text-xl font-medium text-white rounded-full hover:bg-syoro/10 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-link/20  transition-all uppercase hover:scale-95 px-5">
               Work with me
-              <svg  class="ml-2 -mr-1 w-4 h-4 flex-shrink-0 transition-transform duration-200" id="about-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-              </svg>
+              <span class="text-syoro">
+                <svg class="ml-2 -mr-1 w-4 h-4 flex-shrink-0 transition-transform duration-200" id="about-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+              </span>
             </button>
           </div>
           <div 
@@ -96,18 +108,22 @@ const {
                 rel="noopener noreferrer"
                 class="p-4 text-xl font-medium text-konpeki hover:bg-konpeki/10 rounded-t-xl flex gap-2"
               >
-              <svg class="contact-icon w-6 h-6" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path class="contact-icon-symbol" fill="currentColor" d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-              </svg>
+                <span class="text-syoro">
+                  <svg class="contact-icon w-6 h-6" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path class="contact-icon-symbol" fill="currentColor" d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+                  </svg>
+                </span>
                 LinkedIn
               </a>
               <a
                 href="mailto:hello@ruwaizrazak.com"
                 class="group flex gap-2 hover:gap-4 transition-all duration-200 p-4 text-xl font-medium text-konpeki  hover:bg-konpeki/10"
               >
-              <svg class="contact-icon w-6 h-6 transition-all duration-200 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path class="contact-icon-symbol" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-              </svg>
+                <span class="text-syoro flex-shrink-0">
+                  <svg class="contact-icon w-6 h-6 transition-all duration-200" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path class="contact-icon-symbol" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                </span>
                 Mail me
               </a>
               <a
@@ -116,9 +132,11 @@ const {
                 rel="noopener noreferrer"
                 class="flex gap-2 p-4 text-xl font-medium text-konpeki hover:bg-konpeki/10 rounded-b-xl"
               >
-              <svg class="contact-icon w-6 h-6 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path class="contact-icon-diamond" fill="currentColor" d="M12,2 L22,12 L12,22 L2,12 Z" />
-              </svg>
+                <span class="text-syoro flex-shrink-0">
+                  <svg class="contact-icon w-6 h-6" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path class="contact-icon-diamond" fill="currentColor" d="M12,2 L22,12 L12,22 L2,12 Z" />
+                  </svg>
+                </span>
                 Download resume
               </a>
             </div>
@@ -128,12 +146,11 @@ const {
 
       <!-- Mobile: Theme toggle + menu button -->
       <div class="md:hidden flex items-center gap-2">
-        <ThemeToggle />
         <button 
           id="mobile-menu-button"
-          class="inline-flex items-center justify-center p-2 rounded-md text-link hover:text-gray-500 hover:bg-yellow-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-yellow-100 dark:focus:ring-gray-600 transition-colors"
+          class="inline-flex items-center justify-center p-2 rounded-md text-syoro hover:text-gray-500 hover:bg-yellow-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-yellow-100 dark:focus:ring-gray-600 transition-colors"
         >
-          <svg class="h-6 w-6" id="mobile-menu-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg class="h-6 w-6" id="mobile-menu-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
           </svg>
           <svg class="h-6 w-6 hidden" id="mobile-close-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -158,10 +175,15 @@ const {
           >
             <div class="flex items-center space-x-4">
               {item.icon && (
-                <div class="flex-shrink-0">
-                  <img src={typeof item.icon === 'string' ? item.icon : item.icon.href} alt={item.name} class="w-8 h-8" />
-                </div>
-              )}
+  <div class="flex-shrink-0">
+    <span
+      class="block w-8 h-8"
+      style={`background-color: var(--color-syoro); mask: url(${typeof item.icon === 'string' ? item.icon : item.icon.href}) center/contain no-repeat; -webkit-mask: url(${typeof item.icon === 'string' ? item.icon : item.icon.href}) center/contain no-repeat;`}
+      role="img"
+      aria-label={item.name}
+    />
+  </div>
+)}
               <div class="flex-1">
                 <h3 class="text-lg font-medium font-sans uppercase text-konpeki group-hover:text-link transition-colors">
                   {item.name}
@@ -193,7 +215,7 @@ const {
     <div class="flex items-end justify-end p-4 border-b">
       <button 
         id="mobile-close-button"
-        class="p-2 rounded-md text-konpeki hover:text-gray-500 hover:bg-yellow-50 dark:hover:bg-gray-700 transition-colors"
+        class="p-2 rounded-md text-syoro hover:text-gray-500 hover:bg-yellow-50 dark:hover:bg-gray-700 transition-colors"
       >
         <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -209,8 +231,15 @@ const {
           class="flex items-center px-4 py-3 text-konpeki hover:scale-95 hover:text-indigo-600 transition-colors duration-200 border-b border-gray-100 dark:border-card-border"
         >
           {link.icon && (
-            <img src={typeof link.icon === 'string' ? link.icon : link.icon.href} alt={link.name} class="w-6 h-6 mr-3" />
-          )}
+  <span class="flex-shrink-0 mr-3">
+    <span
+      class="block w-6 h-6"
+      style={`background-color: var(--color-syoro); mask: url(${typeof link.icon === 'string' ? link.icon : link.icon.href}) center/contain no-repeat; -webkit-mask: url(${typeof link.icon === 'string' ? link.icon : link.icon.href}) center/contain no-repeat;`}
+      role="img"
+      aria-label={link.name}
+    />
+  </span>
+)}
           <div class="flex-1">
             <div class="font-medium font-serif">{link.name}</div>
             <div class="text-sm text-gray-500">{link.description}</div>
@@ -231,8 +260,15 @@ const {
           class="flex items-center px-4 py-3 text-konpeki hover:bg-yellow-50 dark:hover:bg-gray-700 hover:text-indigo-600 transition-colors duration-200"
         >
           {item.icon && (
-            <img src={typeof item.icon === 'string' ? item.icon : item.icon.href} alt={item.name} class="w-6 h-6 mr-3" />
-          )}
+  <span class="flex-shrink-0 mr-3">
+    <span
+      class="block w-6 h-6"
+      style={`background-color: var(--color-syoro); mask: url(${typeof item.icon === 'string' ? item.icon : item.icon.href}) center/contain no-repeat; -webkit-mask: url(${typeof item.icon === 'string' ? item.icon : item.icon.href}) center/contain no-repeat;`}
+      role="img"
+      aria-label={item.name}
+    />
+  </span>
+)}
           <div class="flex-1">
             <div class="font-medium">{item.name}</div>
             {item.description && (
