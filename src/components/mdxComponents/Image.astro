@@ -1,29 +1,258 @@
 ---
 import type { HTMLAttributes } from 'astro/types';
 
-type Props = HTMLAttributes<'img'>;
+type Props = HTMLAttributes<'img'> & {
+  title?: string;
+  description?: string;
+};
 
 const {
   src,
   alt,
   width = 300,
   height = 150,
-  class: className = "w-full",
+  class: className = 'w-full',
+  title,
+  description,
   ...props
 } = Astro.props;
+
+const uniqueId = `image-lightbox-${Math.random().toString(36).slice(2, 11)}`;
 ---
+
 <img
   src={src}
   alt={alt}
   width={width}
   height={height}
-  class:list={["object-cover", className]}
+  class:list={['object-cover cursor-pointer hover:scale-[1.02] transition-transform duration-200', className]}
+  data-image-trigger={uniqueId}
   {...props}
 />
+
+<!-- Lightbox -->
+<div
+  id={uniqueId}
+  class="image-lightbox fixed inset-0 backdrop-blur-xl bg-white/95 z-50 hidden items-center justify-center p-4 px-20"
+  data-image-lightbox
+  aria-hidden="true"
+>
+  <div class="image-panel w-full max-w-5xl max-h-[100vh] flex flex-col items-center justify-center relative" data-image-panel>
+    <button
+      type="button"
+      class="absolute -top-5 right-0 z-10 text-white bg-red-400 rounded-full p-3 hover:text-gray-300 transition-colors cursor-pointer group"
+      aria-label="Close"
+      data-image-close
+    >
+      <svg class="w-8 h-8 group-hover:rotate-180 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+    <div class="w-full flex flex-col gap-4 items-center max-h-[100vh] text-left">
+
+      <!-- Zoomable image container -->
+      <div
+        class="zoom-container w-full md:w-[80%] overflow-hidden rounded-lg relative select-none"
+        data-zoom-container
+      >
+        <img
+          src={src}
+          alt={alt}
+          class="w-full max-h-[80vh] object-contain rounded-lg shadow-2xl block"
+          data-zoom-image
+        />
+      </div>
+
+      <!-- Zoom slider -->
+      <div class="flex items-center gap-3 md:w-[1/3]">
+        <span class="font-sans text-lg text-syoro shrink-0">1×</span>
+        <input
+          type="range"
+          min="100"
+          max="400"
+          value="100"
+          step="4"
+          class="flex-1 accent-konpeki cursor-pointer"
+          data-zoom-slider
+          aria-label="Zoom level"
+        />
+        <span class="font-sans text-lg text-syoro w-8 text-right shrink-0">4×</span>
+        <button
+          type="button"
+          class="font-sans text-lg text-konpeki border border-konpeki rounded px-2 py-1 shrink-0 hidden hover:bg-konpeki hover:text-white transition-colors"
+          data-zoom-reset
+          aria-label="Reset zoom"
+        >Reset</button>
+      </div>
+
+      {(title || description) && (
+        <div class="text-syoro w-full text-center mt-2">
+          {title && <h3 class="text-4xl font-sans font-bold">{title}</h3>}
+          {description && <p class="text-2xl text-syoro font-serif mt-4">{description}</p>}
+        </div>
+      )}
+    </div>
+  </div>
+</div>
 
 <style>
   img {
     height: auto;
     border-radius: 8px;
   }
+
+  [data-zoom-image] {
+    transform-origin: center center;
+    will-change: transform;
+  }
+
+  .image-lightbox {
+    transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .image-lightbox[aria-hidden='true'] {
+    opacity: 0;
+  }
+  .image-panel {
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .image-lightbox,
+    .image-panel {
+      transition-duration: 0.01ms;
+    }
+  }
 </style>
+
+<script define:vars={{ uniqueId }}>
+  if (typeof window !== 'undefined') {
+    const trigger = document.querySelector(`[data-image-trigger="${uniqueId}"]`);
+    const lightbox = document.getElementById(uniqueId);
+    const closeBtn = lightbox?.querySelector('[data-image-close]');
+    const panel = lightbox?.querySelector('[data-image-panel]');
+    const lightboxImg = lightbox?.querySelector('[data-zoom-image]');
+    const zoomContainer = lightbox?.querySelector('[data-zoom-container]');
+    const zoomSlider = lightbox?.querySelector('[data-zoom-slider]');
+    const zoomLabel = lightbox?.querySelector('[data-zoom-label]');
+    const zoomReset = lightbox?.querySelector('[data-zoom-reset]');
+
+    if (lightbox && lightbox.parentNode !== document.body) {
+      document.body.appendChild(lightbox);
+    }
+
+    const prefersReducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // --- Zoom state ---
+    let zoom = 1, panX = 0, panY = 0;
+    let isDragging = false, dragStartX = 0, dragStartY = 0, panStartX = 0, panStartY = 0;
+
+    function applyTransform() {
+      if (!lightboxImg || !zoomContainer) return;
+      lightboxImg.style.transform = `scale(${zoom}) translate(${panX / zoom}px, ${panY / zoom}px)`;
+      lightboxImg.style.transition = isDragging ? 'none' : 'transform 0.15s ease';
+      zoomContainer.style.cursor = zoom > 1 ? (isDragging ? 'grabbing' : 'grab') : 'default';
+      if (zoomReset) zoomReset.classList.toggle('hidden', zoom <= 1);
+    }
+
+    function resetZoom() {
+      zoom = 1; panX = 0; panY = 0;
+      if (zoomSlider) zoomSlider.value = '100';
+      if (zoomLabel) zoomLabel.textContent = '1×';
+      applyTransform();
+    }
+
+    zoomSlider?.addEventListener('input', (e) => {
+      zoom = Number(e.target.value) / 100;
+      if (zoom === 1) { panX = 0; panY = 0; }
+      if (zoomLabel) zoomLabel.textContent = `${zoom.toFixed(1)}×`;
+      applyTransform();
+    });
+
+    zoomReset?.addEventListener('click', resetZoom);
+
+    zoomContainer?.addEventListener('mousedown', (e) => {
+      if (zoom <= 1) return;
+      isDragging = true;
+      dragStartX = e.clientX; dragStartY = e.clientY;
+      panStartX = panX; panStartY = panY;
+      applyTransform();
+      e.preventDefault();
+    });
+    window.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      panX = panStartX + (e.clientX - dragStartX);
+      panY = panStartY + (e.clientY - dragStartY);
+      applyTransform();
+    });
+    window.addEventListener('mouseup', () => {
+      if (!isDragging) return;
+      isDragging = false;
+      applyTransform();
+    });
+
+    // --- Lightbox open/close ---
+    function openLightbox() {
+      if (!lightbox || !panel) return;
+      resetZoom();
+
+      const rect = trigger.getBoundingClientRect();
+      const originX = rect.left + rect.width / 2;
+      const originY = rect.top + rect.height / 2;
+
+      panel.style.transformOrigin = `${originX}px ${originY}px`;
+      panel.style.transform = 'scale(0.2)';
+      panel.style.opacity = '0';
+      lightbox.style.opacity = '0';
+      lightbox.setAttribute('aria-hidden', 'false');
+      lightbox.classList.remove('hidden');
+      lightbox.classList.add('flex');
+      document.body.style.overflow = 'hidden';
+
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          lightbox.style.opacity = '1';
+          panel.style.transform = 'scale(1)';
+          panel.style.opacity = '1';
+          const duration = prefersReducedMotion() ? 0 : 350;
+          setTimeout(() => {
+            lightbox.style.opacity = '';
+            panel.style.transform = '';
+            panel.style.transformOrigin = '';
+            panel.style.opacity = '';
+          }, duration);
+        });
+      });
+    }
+
+    function closeLightbox() {
+      if (!lightbox || !panel) return;
+      lightbox.setAttribute('aria-hidden', 'true');
+      panel.style.transform = 'scale(0.98)';
+      panel.style.opacity = '0';
+
+      const duration = prefersReducedMotion() ? 0 : 250;
+      setTimeout(() => {
+        lightbox.classList.add('hidden');
+        lightbox.classList.remove('flex');
+        document.body.style.overflow = '';
+        panel.style.transform = '';
+        panel.style.opacity = '';
+        if (trigger instanceof HTMLElement) trigger.focus();
+      }, duration);
+    }
+
+    trigger?.addEventListener('click', openLightbox);
+    trigger?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        openLightbox();
+      }
+    });
+    closeBtn?.addEventListener('click', closeLightbox);
+    lightbox?.addEventListener('click', (e) => {
+      if (e.target === lightbox) closeLightbox();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && lightbox?.classList.contains('flex')) closeLightbox();
+    });
+  }
+</script>

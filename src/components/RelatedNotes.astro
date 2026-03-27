@@ -1,5 +1,5 @@
 ---
-import { getCollection } from 'astro:content';
+import { getMultiCollectionPosts } from '../utils/collections';
 import ContentCard from './ContentCard.astro';
 import DotNav from './DotNav.astro';
 
@@ -9,8 +9,8 @@ interface Props {
 }
 
 const { currentTags, currentTitle } = Astro.props;
-const allNotes = await getCollection('notes', ({ data }) => data.publish === true);
-const relatedNotes = allNotes
+const allPosts = await getMultiCollectionPosts(['notes', 'essays']);
+const relatedNotes = allPosts
   .filter(note => note.data.title !== currentTitle)
   .filter(note => note.data.tags?.some(tag => currentTags.includes(tag)))
   .slice(0, 8);
@@ -29,10 +29,10 @@ const relatedNotes = allNotes
                   title={note.data.title}
                   description={note.data.description}
                   pubDate={note.data.pubDate}
-                  url={`/notes/${note.id}/`}
+                  url={`/${note.collection}/${note.id}/`}
                   maturity={note.data.maturity}
-                  collection="notes"
-                  variant="compact"
+                  collection={note.collection}
+                  variant={note.collection === 'essays' ? 'card' : 'compact'}
                 />
               </div>
             ))}
