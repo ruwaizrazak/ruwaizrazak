@@ -4,7 +4,7 @@
 - Astro 5 static site (SSG) deployed on Vercel
 - Stack: Astro + React 19 + Tailwind CSS 4 + GSAP + MDX
 - Site URL: https://ruwaizrazak.com
-- Content: 6 collections (essays, notes, works, series, live, playground)
+- Content: 7 collections (essays, notes, works, series, seriesPosts, live, playground)
 
 ## Commands
 - `npm run dev` — local dev server
@@ -27,6 +27,8 @@
 - Minimize bundle size: avoid importing entire libraries when only a function is needed
 - Prefer CSS animations/transitions over JS animations where possible (GSAP for complex sequences only)
 - Use Astro's `<Image />` component for automatic image optimization when adding new images
+- Remote image domains must be authorized in `astro.config.mjs` under `image.domains` (e.g. `i.imgur.com` is already added)
+- The custom `Image.astro` MDX component uses Astro's `<Image />` for the thumbnail; the lightbox stays as raw `<img>` for full-res zoom/pan
 - Keep View Transitions performant — avoid animating layout-triggering properties
 
 ## Commenting Guidelines (Learning-Oriented)
@@ -49,26 +51,25 @@ Example:
 - All pages must use `BaseHead.astro` for meta tags (title, description, canonical, OG, Twitter Card)
 - Every content page needs a unique `title` and `description` — never leave defaults
 - Use semantic HTML: `<article>`, `<nav>`, `<main>`, `<section>`, `<header>`, `<footer>`
-- Add JSON-LD structured data for articles (BlogPosting), person (ProfilePage), and breadcrumbs
+- JSON-LD is implemented: `BaseHead.astro` always emits `WebSite`+`Person` schema; pass a `schema` prop for page-specific types (e.g. `BlogPosting` in `notesPost.astro`)
 - Internal links should use descriptive anchor text (not "click here")
 - Images must have descriptive `alt` attributes
 - Ensure heading hierarchy is correct (one `<h1>` per page, sequential `<h2>`→`<h3>`)
 - Keep the sitemap integration active (`@astrojs/sitemap`)
-- RSS feed at `/rss.xml` — ensure it references the correct collections
+- RSS feed at `/rss.xml` covers `essays` + `notes` collections, sorted by `pubDate` desc
 - Use `rel="noopener noreferrer"` on external links (already handled by `Link.astro`)
 - Preconnect to external origins used for fonts/analytics
 
 ## Key Files
-- `src/components/BaseHead.astro` — SEO meta tags, fonts, analytics
+- `src/components/BaseHead.astro` — SEO meta tags, JSON-LD (WebSite+Person), fonts, analytics; accepts optional `schema` prop for page-specific JSON-LD
 - `src/content.config.ts` — content collection schemas
 - `src/consts.ts` — site-wide constants (SITE_TITLE, SITE_DESCRIPTION, GA_ID)
 - `src/types.ts` — shared TypeScript types
 - `src/utils/collections.ts` — content fetching & filtering helpers
 - `src/styles/global.css` — design tokens, theme, Tailwind config
-- `astro.config.mjs` — integrations, site URL, plugins
+- `astro.config.mjs` — integrations, site URL, plugins, image domain allowlist
+- `src/components/mdxComponents/Image.astro` — custom image component with lightbox + zoom; uses Astro `<Image />` for thumbnail optimization
+- `src/layouts/notesPost.astro` — layout for notes + essays; injects BlogPosting JSON-LD
+- `src/pages/rss.xml.js` — RSS feed (essays + notes)
+- `public/robots.txt` — crawler directives
 
-## Known Issues
-- RSS feed (`src/pages/rss.xml.js`) references non-existent 'blog' collection — needs fixing
-- Typo in `src/consts.ts`: SITE_DESCRIPTION has "knwoledge" instead of "knowledge"
-- No JSON-LD structured data yet — should be added to BaseHead or layouts
-- No `robots.txt` in `/public` — should be added for crawler guidance
