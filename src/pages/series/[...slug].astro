@@ -3,9 +3,7 @@ import { getCollection, render } from 'astro:content';
 import BaseHead from '../../components/BaseHead.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
-import Image from '../../components/mdxComponents/Image.astro';
-import Tag from '../../components/Tag.astro';
-import NoteMain from '../../components/NoteMain.astro';
+import NotesPost from '../../layouts/notesPost.astro';
 
 export async function getStaticPaths() {
   const seriesIndexes = await getCollection('series', ({ data }) => data.publish);
@@ -57,168 +55,71 @@ const relatedParts = kind === 'part' && activePart
   : [];
 
 const seoTitle = activePart ? `${activePart.data.title} · ${seriesDoc?.data.title ?? ''}` : seriesDoc?.data.title ?? 'Series';
+
+// Render the active part content in frontmatter so it's available in the template
+const renderResult = activePart ? await render(activePart) : null;
+const Content = renderResult?.Content;
 ---
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <BaseHead title={seoTitle} description={seriesDoc?.data.description ?? ''} />
-  </head>
-  <body class="footer-reveal bg-backgroundcolor">
-    <div class="footer-reveal-content">
-    <Header />
-    <main class="w-full sm:w-[90%] mx-auto">
-      <div class="mt-20">
-        <a href="/series" class="inline-block z-1">
-          <div class="flex items-center gap-2 group not-prose">
-            <img src="/icons/backArrow.svg" class="w-8 h-auto group-hover:rotate-20 transition-all" alt="Back" />
-            <span class="uppercase font-sans font-medium text-lg">Back to Series</span>
-          </div>
-        </a>
+{kind === 'part' && activePart && Content ? (
+  <NotesPost
+    title={activePart.data.title}
+    description={activePart.data.description}
+    pubDate={activePart.data.pubDate}
+    updatedDate={activePart.data.updatedDate}
+    heroImage={activePart.data.heroImage}
+    tags={activePart.data.tags ?? []}
+  >
+    <Content />
+  </NotesPost>
+) : (
+  <html lang="en">
+    <head>
+      <BaseHead title={seoTitle} description={seriesDoc?.data.description ?? ''} />
+    </head>
+    <body class="footer-reveal bg-backgroundcolor">
+      <div class="footer-reveal-content">
+      <Header />
+      <main class="w-full sm:w-[90%] mx-auto">
+        <div class="mt-20">
+          <a href="/series" class="inline-block z-1">
+            <div class="flex items-center gap-2 group not-prose">
+              <img src="/icons/backArrow.svg" class="w-8 h-auto group-hover:rotate-20 transition-all" alt="Back" />
+              <span class="uppercase font-sans font-medium text-lg">Back to Series</span>
+            </div>
+          </a>
 
-        {kind === 'series' && seriesDoc && (
-          <section class="mt-8">
-            <h1>{seriesDoc.data.title}</h1>
-            <p class="text-lg sm:text-xl mt-0 font-serif italic">{seriesDoc.data.description}</p>
-            <hr class="w-full my-8 border-stone-100" />
+          {seriesDoc && (
+            <section class="mt-8">
+              <h1>{seriesDoc.data.title}</h1>
+              <p class="text-lg sm:text-xl mt-0 font-serif italic">{seriesDoc.data.description}</p>
+              <hr class="w-full my-8 border-stone-100" />
 
-            {allParts.length > 0 ? (
-              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {allParts.map((post) => (
-                  <a href={`/series/${post.id}`} class="block p-5 bg-cardbg rounded-xl border-1 border-stone-100 dark:border-card-border hover:bg-yellow-50 dark:hover:bg-gray-700 transition-all duration-200 hover:shadow-md hover:scale-[1.02] cursor-pointer">
-                    <div class="flex items-center gap-3 mb-3">
-                      {post.data.seriesOrder && (
-                        <span class="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full uppercase">Part {post.data.seriesOrder}</span>
-                      )}
-                      <span class="text-xs text-stone-400">•</span>
-                      <span class="text-xs text-stone-500">{post.data.pubDate.toLocaleDateString()}</span>
-                    </div>
-                    <h2 class="font-semibold mb-0 text-3xl uppercase text-konpeki">{post.data.title}</h2>
-                    <p class="text-lg text-syoro mb-3 font-sans">{post.data.description}</p>
-                  </a>
-                ))}
-              </div>
-            ) : (
-              <div class="text-center py-8 text-stone-500"><p>No posts in this series yet.</p></div>
-            )}
-          </section>
-        )}
-
-        {kind === 'part' && activePart && (
-          await (async () => {
-            const { Content } = await render(activePart);
-            const data = activePart.data;
-            return (
-              <section class="w-full sm:w-[90%] mx-auto pb-20">
-                <div class="flex flex-col gap-4 mt-2">
-                  <div class="flex items-center gap-3 mx-auto my-0 text-sm text-stone-600">
-                    <span class="px-2 py-1 bg-stone-100 text-stone-700 rounded-full uppercase">{seriesDoc?.data.title ?? ParentSeriesTitlePretty}</span>
-                    {typeof data.seriesOrder === 'number' && (
-                      <span class="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full uppercase">Part {data.seriesOrder}</span>
-                    )}
-                    
-                  </div>
-
-                  <div class="md:w-3/4 items-center gap-2 flex w-full mx-auto">
-                    <h1>{data.title}</h1>
-                  </div>
-
-                  <p class="text-syoro w-full md:w-[80%] md:mx-auto text-center text-lg md:text-xl italic font-serif">{data.description}</p>
-
-                  <div class="flex items-center gap-2 text-syoro mx-auto mb-4 uppercase font-sans text-lg">
-                    <time datetime={data.pubDate.toISOString()}>
-                      Published: {data.pubDate.toLocaleDateString('en-us', { year: 'numeric', month: 'short', day: 'numeric' })}
-                    </time>
-                    {data.updatedDate && (
-                      <>
-                        <span>•</span>
-                        <time datetime={data.updatedDate.toISOString()}>
-                          Updated: {data.updatedDate.toLocaleDateString('en-us', { year: 'numeric', month: 'short', day: 'numeric' })}
-                        </time>
-                      </>
-                    )}
-                  </div>
-
-                  {data.tags && data.tags.length > 0 && (
-                    <div class="flex flex-wrap gap-2 items-center mx-auto">
-                      {data.tags.map((tag: string) => (
-                        <Tag tag={tag.toLowerCase()} />
-                      ))}
-                    </div>
-                  )}
-
-                  <div class="w-[40%] mx-auto h-px bg-gray-300 my-6"></div>
-                </div>
-
-                {data.heroImage && (
-                  <div class="hero-image w-full mt-8">
-                    <Image src={data.heroImage} alt="" class="w-full h-auto object-cover rounded-lg" loading="eager" />
-                  </div>
-                )}
-
-                <NoteMain>
-                  <Content />
-                </NoteMain>
-
-                {relatedParts.length > 0 && (
-                  <div class="mt-16 pt-12 border-t border-stone-200 dark:border-card-border">
-                    <div class="space-y-4">
-                      <h3 class="text-lg font-semibold text-stone-700 mb-4">Posts in this series:</h3>
-                      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {relatedParts.map((post) => (
-                          <a href={`/series/${post.id}`} class="group block p-5 bg-cardbg rounded-xl border-1 border-stone-100 dark:border-card-border hover:bg-yellow-50 dark:hover:bg-gray-700 transition-all duration-200 hover:shadow-md hover:scale-[1.02] cursor-pointer">
-                            {/* Post header */}
-                            <div class="flex items-center gap-3 mb-3">
-                              <span class="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full uppercase">
-                                Part {post.data.seriesOrder}
-                              </span>
-                              <span class="text-xs text-stone-400">•</span>
-                              <span class="text-xs text-stone-500">{post.data.pubDate.toLocaleDateString()}</span>
-                            </div>
-                            
-                            {/* Post title and description */}
-                            <h2 class="font-semibold mb-0 text-2xl md:text-2xl lg:text-3xl uppercase text-konpeki">
-                              {post.data.title}
-                            </h2>
-                            <p class="text-lg text-syoro mb-3 font-sans">{post.data.description}</p>
-                            
-                            {/* Post excerpt */}
-                            {post.data.excerpt && (
-                              <p class="text-konpeki text-lg italic mb-3 font-serif">"{post.data.excerpt}..."</p>
-                            )}
-                            
-                            {/* Tags */}
-                            {post.data.tags && post.data.tags.length > 0 && (
-                              <div class="flex flex-wrap items-center gap-2">
-                                {post.data.tags.map((tag: string) => (
-                                  <span class="px-2 py-1 text-syoro text-xs border border-card-border">
-                                    {tag}
-                                  </span>
-                                ))}
-                              </div>
-                            )}
-                            
-                            {/* Hover indicator */}
-                            <div class="text-right mt-4">
-                              <span class="text-blue-600 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
-                                Read post →
-                              </span>
-                            </div>
-                          </a>
-                        ))}
+              {allParts.length > 0 ? (
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {allParts.map((post) => (
+                    <a href={`/series/${post.id}`} class="block p-5 bg-cardbg rounded-xl border-1 border-stone-100 dark:border-card-border hover:bg-yellow-50 dark:hover:bg-gray-700 transition-all duration-200 hover:shadow-md hover:scale-[1.02] cursor-pointer">
+                      <div class="flex items-center gap-3 mb-3">
+                        {post.data.seriesOrder && (
+                          <span class="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full uppercase">Part {post.data.seriesOrder}</span>
+                        )}
+                        <span class="text-xs text-stone-400">•</span>
+                        <span class="text-xs text-stone-500">{post.data.pubDate.toLocaleDateString()}</span>
                       </div>
-                    </div>
-                  </div>
-                )}
-              </section>
-            );
-          })()
-        )}
+                      <h2 class="font-semibold mb-0 text-3xl uppercase text-konpeki">{post.data.title}</h2>
+                      <p class="text-lg text-syoro mb-3 font-sans">{post.data.description}</p>
+                    </a>
+                  ))}
+                </div>
+              ) : (
+                <div class="text-center py-8 text-stone-500"><p>No posts in this series yet.</p></div>
+              )}
+            </section>
+          )}
+        </div>
+      </main>
       </div>
-    </main>
-    </div>
-    <Footer />
-  </body>
-</html>
-
-<!-- Series header and posts list here -->
+      <Footer />
+    </body>
+  </html>
+)}

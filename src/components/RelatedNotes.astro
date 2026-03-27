@@ -65,4 +65,12 @@ const relatedNotes = allPosts
   } else {
     window.addEventListener('load', initRelatedNotes);
   }
+
+  // Flag clicks from RelatedNotes so the destination page uses slide transition
+  document.addEventListener('click', (e) => {
+    const card = (e.target as Element).closest('.related-notes-section a');
+    if (card) {
+      sessionStorage.setItem('nav-from-related', '1');
+    }
+  }, true);
 </script>

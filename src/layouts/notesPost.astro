@@ -26,6 +26,19 @@ const workTransitionStyle = transitionName
     <BaseHead title={title} description={description} />
     <ClientRouter />
     {workTransitionStyle && <style is:global set:html={workTransitionStyle} />}
+    <script is:inline>
+      if (sessionStorage.getItem('nav-from-related') === '1') {
+        sessionStorage.removeItem('nav-from-related');
+        var s = document.createElement('style');
+        s.textContent = '\
+          @keyframes slide-in-from-right { from { transform: translateX(100%); } to { transform: translateX(0); } }\
+          @keyframes slide-out-to-left { from { transform: translateX(0); opacity: 1; } to { transform: translateX(-30%); opacity: 0; } }\
+          ::view-transition-new(root) { animation: slide-in-from-right 0.4s cubic-bezier(0.32, 0.72, 0, 1); }\
+          ::view-transition-old(root) { animation: slide-out-to-left 0.4s cubic-bezier(0.32, 0.72, 0, 1); }\
+        ';
+        document.head.appendChild(s);
+      }
+    </script>
   </head>
   <body class="footer-reveal bg-backgroundcolor">
     <main class="w-full sm:w-[90%] mx-auto" transition:name={transitionName}>

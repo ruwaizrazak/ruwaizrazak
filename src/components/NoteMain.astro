@@ -1,82 +1,23 @@
 ---
 import { proseClasses } from '../utils/proseClasses';
+import TocSidebar from './toc/TocSidebar.astro';
+import TocMobile from './toc/TocMobile.astro';
 ---
 
 <div class="note-layout mx-auto flex relative w-full max-w-6xl">
-
-  <!-- TOC Sidebar (desktop > md) -->
-  <aside
-    class="toc-sidebar hidden md:block md:w-56 lg:w-64 shrink-0 pl-4 relative"
-    aria-label="Table of contents"
-  >
-    <div class="toc-panel sticky top-24 max-h-[80vh] overflow-y-auto pr-4 py-10">
-      <p class="text-xs uppercase tracking-widest font-sans text-syoro/40 mb-4">On this page</p>
-      <nav>
-        <ul id="toc-list" class="space-y-1 list-none p-0 m-0"></ul>
-      </nav>
-    </div>
-  </aside>
-
-  <!-- Mobile edge tab (fixed to viewport left edge) -->
-  <button
-    class="toc-tab fixed left-0 top-1/2 -translate-y-1/2 z-50 md:hidden
-           bg-backgroundcolor border border-syoro/20 rounded-r-lg
-           px-1 py-4 flex flex-col items-center gap-1 shadow-sm"
-    aria-label="Open table of contents"
-    data-toc-toggle
-  >
-    <svg class="w-4 h-4 text-syoro" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-        d="M4 6h16M4 12h10M4 18h7" />
-    </svg>
-  </button>
-
-  <!-- Mobile drawer backdrop -->
-  <div
-    class="toc-backdrop fixed inset-0 z-40 bg-black/40 hidden md:hidden"
-    data-toc-backdrop
-  ></div>
-
-  <!-- Mobile drawer panel -->
-  <div
-    class="toc-drawer fixed inset-y-0 left-0 z-50 w-64 bg-backgroundcolor
-           shadow-2xl -translate-x-full transition-transform duration-300 ease-in-out md:hidden
-           flex flex-col p-6"
-    data-toc-drawer
-    aria-hidden="true"
-  >
-    <div class="flex items-center justify-between mb-6">
-      <p class="text-xs uppercase tracking-widest font-sans text-syoro/40">On this page</p>
-      <button
-        class="text-syoro/60 hover:text-syoro transition-colors"
-        aria-label="Close table of contents"
-        data-toc-close
-      >
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      </button>
-    </div>
-    <nav class="overflow-y-auto flex-1">
-      <ul id="toc-list-mobile" class="space-y-1 list-none p-0 m-0"></ul>
-    </nav>
-  </div>
+  <TocSidebar />
+  <TocMobile />
 
   <!-- Article -->
   <article class={`${proseClasses} py-20 px-10 md:px-12 lg:px-20 w-full min-w-0`}>
     <slot />
   </article>
-
 </div>
 
 <style>
   .note-layout:not([data-has-toc]) .toc-sidebar,
   .note-layout:not([data-has-toc]) .toc-tab {
     display: none;
-  }
-
-  [data-toc-drawer] {
-    will-change: transform;
   }
 </style>
 
@@ -95,13 +36,16 @@ import { proseClasses } from '../utils/proseClasses';
       a.textContent = heading.textContent ?? '';
       (a as HTMLElement).dataset.tocLink = id;
 
-      const isH3 = heading.tagName === 'H3';
+      const tag = heading.tagName;
+      const indent = tag === 'H3' ? 'pl-4' : tag === 'H2' ? 'pl-2' : '';
+      const weight = tag === 'H1' ? 'text-syoro/70 hover:text-syoro font-semibold' :
+                     tag === 'H2' ? 'text-syoro/70 hover:text-syoro font-medium' :
+                                    'text-syoro/50 hover:text-syoro';
       a.className = [
         'block font-sans text-sm leading-snug transition-colors duration-150 py-0.5',
-        isH3
-          ? 'pl-4 text-syoro/50 hover:text-syoro'
-          : 'text-syoro/70 hover:text-syoro font-medium',
-      ].join(' ');
+        indent,
+        weight,
+      ].filter(Boolean).join(' ');
 
       a.addEventListener('click', (e) => {
         e.preventDefault();
@@ -127,8 +71,8 @@ import { proseClasses } from '../utils/proseClasses';
     if (backdropEl && backdropEl.parentNode !== document.body) document.body.appendChild(backdropEl);
     if (drawerEl && drawerEl.parentNode !== document.body) document.body.appendChild(drawerEl);
 
-    // Collect H2/H3, assign IDs if missing
-    const rawHeadings = Array.from(article.querySelectorAll('h2, h3'));
+    // Collect H1/H2/H3, assign IDs if missing
+    const rawHeadings = Array.from(article.querySelectorAll('h1, h2, h3'));
     rawHeadings.forEach((h) => {
       if (!h.id) {
         h.id = (h.textContent ?? '')
