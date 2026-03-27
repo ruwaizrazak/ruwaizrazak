@@ -8,6 +8,9 @@ import remarkWikiLink from '@portaljs/remark-wiki-link';
 import lottie from 'astro-integration-lottie';
 export default defineConfig({
   output: 'static',
+  image: {
+    domains: ['i.imgur.com'],
+  },
   site: 'https://ruwaizrazak.com',
   integrations: [
     mdx({

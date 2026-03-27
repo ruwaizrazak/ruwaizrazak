@@ -1,10 +1,19 @@
 ---
-import type { HTMLAttributes } from 'astro/types';
+// LEARN: Astro's <Image /> from astro:assets optimizes images at build time —
+// converting to webp/avif and setting proper width/height to prevent CLS
+import { Image as AstroImage } from 'astro:assets';
 
-type Props = HTMLAttributes<'img'> & {
+interface Props {
+  src: string;
+  alt?: string;
+  width?: number;
+  height?: number;
+  class?: string;
   title?: string;
   description?: string;
-};
+  loading?: 'lazy' | 'eager';
+  [key: string]: any;
+}
 
 const {
   src,
@@ -20,9 +29,9 @@ const {
 const uniqueId = `image-lightbox-${Math.random().toString(36).slice(2, 11)}`;
 ---
 
-<img
+<AstroImage
   src={src}
-  alt={alt}
+  alt={alt || ''}
   width={width}
   height={height}
   class:list={['object-cover cursor-pointer hover:scale-[1.02] transition-transform duration-200', className]}
