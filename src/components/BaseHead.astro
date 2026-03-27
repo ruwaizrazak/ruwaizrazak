@@ -7,11 +7,40 @@ interface Props {
 	title: string;
 	description: string;
 	image?: string;
+	// LEARN: Optional JSON-LD for page-specific structured data (e.g. BlogPosting).
+	// BaseHead always emits a WebSite+Person schema; this adds a second block.
+	schema?: Record<string, unknown>;
 }
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
-const { title, description, image = '/blog-placeholder-1.jpg' } = Astro.props;
+const { title, description, image = '/blog-placeholder-1.jpg', schema } = Astro.props;
+
+// LEARN: JSON-LD helps search engines understand who owns the site (Person)
+// and what it is (WebSite), improving rich results and Knowledge Graph entries
+const siteSchema = {
+	'@context': 'https://schema.org',
+	'@graph': [
+		{
+			'@type': 'WebSite',
+			'@id': `${Astro.site}#website`,
+			url: Astro.site,
+			name: SITE_TITLE,
+		},
+		{
+			'@type': 'Person',
+			'@id': `${Astro.site}#person`,
+			name: 'Ruwaiz Razak',
+			url: Astro.site,
+			sameAs: [
+				'https://mastodon.social/@ruwaizrazak',
+				'https://bsky.app/profile/ruwaizrazak.com',
+				'https://www.linkedin.com/in/ruwaizrazak/',
+				'https://github.com/ruwaizrazak',
+			],
+		},
+	],
+};
 ---
 
 <!-- Global Metadata -->
@@ -48,6 +77,10 @@ const { title, description, image = '/blog-placeholder-1.jpg' } = Astro.props;
 	href={new URL('rss.xml', Astro.site)}
 />
 <meta name="generator" content={Astro.generator} />
+
+<!-- JSON-LD structured data -->
+<script type="application/ld+json" set:html={JSON.stringify(siteSchema)} />
+{schema && <script type="application/ld+json" set:html={JSON.stringify(schema)} />}
 
 <!-- Font preloads -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
