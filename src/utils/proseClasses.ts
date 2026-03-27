@@ -2,7 +2,7 @@
 
 export const proseClasses = [
   // Base
-  'prose prose-neutral prose-lg dark:prose-invert max-w-3xl',
+  'prose prose-neutral prose-lg dark:prose-invert max-w-4xl',
   // Paragraphs
   'prose-p:font-serif prose-p:text-syoro prose-p:leading-relaxed',
   // Headings
@@ -18,13 +18,13 @@ export const proseClasses = [
   'prose-h3:mt-6 md:prose-h3:mt-12',
   'prose-h4:mt-3 md:prose-h4:mt-6',
   // Images
-  'prose-img:w-[95%] prose-img:aspect-auto',
+  'prose-img:w-full prose-img:aspect-auto',
   // Strong
   'prose-strong:text-syoro prose-strong:font-bold',
   // Blockquotes
-  'prose-blockquote:font-handwriting prose-blockquote:italic',
+  'prose-blockquote:font-serif prose-blockquote:medium',
   'prose-blockquote:text-konpeki prose-blockquote:border-konpeki',
-  'prose-blockquote:text-2xl prose-blockquote:leading-relaxed prose-blockquote:pl-6',
+  'prose-blockquote:text-lg prose-blockquote:leading-[1.5] prose-blockquote:pl-6',
   // Lists
   'prose-ul:font-serif prose-li:font-serif prose-ul:list-disc prose-ol:list-decimal',
   // Font size

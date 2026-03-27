@@ -4,7 +4,7 @@ description: 'Building aids in games which teaches without telling'
 pubDate: 'Mar 27 2026'
 updatedDate: 'Mar 27 2026'
 heroImage: '/essays/aids/GOTHero.jpeg'
-tags: ['design']
+tags: ['design','behavioural design','game deconstruction']
 featured: false
 maturity: 'tree'
 publish: true
@@ -18,7 +18,6 @@ import TargetAudience from '../../components/mdxComponents/targetedAudience.astr
 import SideBySide from '../../components/mdxComponents/sideBySide.astro';
 import SideNote from '../../components/mdxComponents/SideNote.astro';
 import References from '../../components/mdxComponents/references.astro';
-import ImageCard from '../../components/mdxComponents/ImageCard.astro';
 
 
 ## Argument
@@ -32,7 +31,7 @@ The best game designers solved this quietly, not with tutorials, tooltips, but w
 
 I read Daniel Kahneman's *Thinking Fast and Slow* when I was getting started in my career as a user experience designer and loved his take on how human thinking works, which introduced System 1 and System 2, terms originally coined by Keith Stanovich and Richard West.[^1]
 
-> "System 1 operates automatically and quickly, with little or no effort and no sense of voluntary control. System 2 allocates attention to the effortful mental activities that demand it, including complex computations. The operations of System 2 are often associated with the subjective experience of agency, choice, and concentration." — Daniel Kahneman, *Thinking, Fast and Slow*
+> System 1 operates automatically and quickly, with little or no effort and no sense of voluntary control. System 2 allocates attention to the effortful mental activities that demand it, including complex computations. The operations of System 2 are often associated with the subjective experience of agency, choice, and concentration. — Daniel Kahneman, *Thinking, Fast and Slow*
 
 While designing experiences in games, I started noticing the same principles at work in the games I love. The way a game communicates with you changes entirely depending on whether you're in danger or not.
 
@@ -40,7 +39,7 @@ When you have space to think, it gives you information to process. When you don'
 
 But knowing *how* to deliver information is half the problem. The other half is knowing *how much*. Too little, and the game becomes hostile. Too much and it becomes patronising. This is where [Csikszentmihalyi's](https://positivepsychology.com/mihaly-csikszentmihalyi-father-of-flow/) (pronounced CHEEKS-ent-mee-high) flow comes in.
 
-> "Where one's skills are adequate to cope with the challenges at hand, in a goal directed, rule-bound action system that provides clear clues as to how one is performing." — Mihály Csíkszentmihályi
+> Where one's skills are adequate to cope with the challenges at hand, in a goal directed, rule-bound action system that provides clear clues as to how one is performing. — Mihály Csíkszentmihályi 
 
 Flow exists in a narrow channel between anxiety and boredom. A new player without enough guidance tips into anxiety. The game feels impossible, unreadable, hostile. An experienced player with too much guidance tips into boredom as the game is telling them things they know.
 
@@ -60,11 +59,9 @@ What works in one won't in the other. An aid that lives gently in the world duri
 
 Single player games are the cleaner laboratory. The game is in control of everything; pacing, camera, context. More elegant choices become possible as nothing else is competing for user’s attention. Can you imagine a multiplayer game pausing to ask you to press triangle? A single player game can.
 
-<ImageCard
+<Image
     src="/essays/aids/hitTriangle.jpeg"
     alt="Asking to hit triangle when you are in a fight"
-    heading="Ghost of Tsushima"
-    description="Asking to hit triangle when you are in a fight"
   />
 
 Before we get to the harder problem of multiplayer, it helps to see what aid design looks like when conditions are ideal.
@@ -76,11 +73,9 @@ In most open world games, RDR2 being my personal pain point, I find myself openi
 
 Ghost of Tsushima covers it with the guiding wind. Summoned by swiping up on the trackpad, the wind guides you toward your objective. And as you grow into the game, you learn the environment and use the wind less and less.
 
-<ImageCard
+<Image
     src="/essays/aids/GOTguidingwinds.jpeg"
     alt="Guiding winds appears when user requires navigational aid"
-    heading="Ghost of Tsushima, Guiding winds"
-    description="Guiding winds appears when user requires navigational aid"
   />
 
 The same philosophy runs through the health bar, which appears when the protagonist unsheathes the sword, and the contextual controls that surface depending on the situation. Information tied to the state that makes it meaningful. The aid lives in the world, reveals itself when necessary, and hides when not.
@@ -103,19 +98,15 @@ In multiplayer, all of that is a privilege the designer doesn't have. Five thing
 In FC 26, a functionality called Trainer exists to aid the players. A quiet list of toggles, Pass Receiver Indicator, Shot Target, Directed Runs Indicator, Switch Indicator, Defending Trainer, Movement Indicator, Button Hints. It looks like a settings menu.
 
 It is a map of everything you don't yet know. Each toggle represents a skill not yet internalized. The game doesn't tell you which level you're at, it hands you the controls and lets you declare it yourself.
-<ImageCard
+<Image
     src="/essays/aids/FCTrainer.webp"
     alt="Trainer mode in FC 26"
-    heading="FC 26, Trainer mode"
-    description="Trainer mode in FC 26 allows users to toggle on and off different aids to help them learn the game"
   />
 
 The action buttons are displayed around the player controlling the ball. Not in a corner. Not in a HUD strip. Around the player. Where your eyes already are. That one decision, anchoring information to where attention already lives is crucial for the success of the trainer mode.
-<ImageCard
+<Image
     src="/essays/aids/FCtraineroverlay.jpeg"
     alt="Trainer mode in FC 26"
-    heading="FC 26, Trainer mode"
-    description="Trainer mode in FC 26 allows users to toggle on and off different aids to help them learn the game"
   />
 But the trainer is built for players who are new to the controls entirely. Where as the Rush mode lives inside Ultimate Team, and most Ultimate Team players have been playing this franchise for years. They understand football. They know what a defensive gap is. They know when they should press. Their challenge isn't knowledge, it's pace.
 
@@ -123,20 +114,16 @@ Rush compresses the game into a smaller pitch, fewer players, faster transitions
 
 The Defensive Gap overlay is the most visually assertive. It appears and states one fact: this space is undefended. The directional chevrons work differently.
 
-<ImageCard
+<Image
     src="/essays/aids/FCrushDefensivegap.webp"
     alt="Defensive gap overlay in FC 26"
-    heading="FC 26, Defensive gap overlay"
-    description="Defensive gap overlay in FC 26 shows you where the defensive gap is"
   />
 
 Where the defensive gap tells you *where*, the chevrons tell you *which way things are moving*. Orange arrows communicating the momentum of the collapse rather than just its location. Not "there is a problem" but "this is the direction the problem is heading."
 
-<ImageCard
+<Image
     src="/essays/aids/FCrushchevron.webp"
     alt="Directional chevrons in FC 26"
-    heading="FC 26, Directional chevrons"
-    description="Directional chevrons in FC 26 show you the direction of the collapse"
   />
 
 FC 26 paints the pitch. Ghost of Tsushima bends the grass. The goal is the same, guide the player without breaking the experience. One lays information over the world. The other weaves it into the world. Neither is wrong. They're solutions built for different cognitive contexts.
@@ -150,40 +137,32 @@ When you land a shot,the crosshair confirming the hit.Damage numbers float off t
 
 Neither requires looking away from the action — the crosshair is already where your eyes are, and the damage numbers appear at the point of impact, which is also where your eyes are. Add the thin red directional line on the screen edge when you're being shot at, and you have three separate pieces of combat information — hit confirmation, damage value, incoming fire direction — all delivered within the frame your attention already occupies. In a game where the margin between alive and dead is a second, that economy of eye travel is everything.
 
-<ImageCard
+<Image
     src="/essays/aids/Codmcrosshair.webp"
     alt="CODM, Crosshair"
-    heading="CODM, Crosshair"
-    description="The Crosshair in CODM have a simple aid that helps the player confirm their shot"
   />
 
 The sound visualizer is a different aid, Footsteps, gunshots, nearby movement — rendered as directional indicators on screen, a visual translation of spatial audio. It started as an accessibility feature for players who can't rely on headphones or have hearing differences. Competitive players adopted it almost immediately as a core tactical tool. A new player uses it to know someone is nearby. A veteran uses it to triangulate exactly where, from what angle, closing at what speed. Same indicator. Completely different depth of read. The best aids don't just serve the player who needs them most — they grow with the player who masters them.
 
-<ImageCard
+<Image
     src="/essays/aids/Codmaudio.webp"
     alt="Sound visualizer in CODM"
-    heading="CODM, Sound visualizer"
-    description="Sound visualizer in CODM shows you the direction of the incoming fire and other auditory feedbacks."
   />
 
 There's a third type of aid in CODM worth mentioning, though it barely looks like one. When a vehicle takes enough damage, it catches fire. Flames mean it's about to explode — move away. The information is embedded in the world itself rather than displayed as an overlay. Even here, in a chaotic multiplayer environment, the game finds a moment to let the world speak.
 
-<ImageCard
+<Image
     src="/essays/aids/Codmvehicle.webp"
     alt="Vehicle in CODM"
-    heading="CODM, Vehicle"
-    description="When a vehicle takes enough damage, it catches fire. Flames mean it's about to explode — move away."
   />
 
 
 ### Fortnite — The Aid That Rewards Both Skill Levels
 
 Fortnite's weak point indicator is almost insultingly simple. Swing your pickaxe at a structure and a glowing dot appears. Hit the dot and you do double damage. Miss it and you don't.
-<ImageCard
+<Image
     src="/essays/aids/Fortniteweakpoint.jpg"
     alt="Weak point indicator in Fortnite"
-    heading="Fortnite, Weak point indicator"
-    description="When you swing your pickaxe at a structure and a glowing dot appears. Hit the dot and you do double damage. Miss it and you don't."
   />
 For a new player this is a tutorial that never announces itself as one. You notice the dot, try to hit it, notice hitting it feels different, faster, more satisfying. You learn resource gathering through instinct rather than instruction. For an experienced player, the dot becomes a metronome. Hit, move, hit, move, a rhythm that separates efficient harvesting from slow. The indicator never changes. What changes is what you do with it.
 
@@ -195,11 +174,9 @@ This is what it looks like when an aid genuinely transcends its original audienc
 Zarya's energy indicator in Overwatch doesn't live in a corner. It wraps around the crosshair — the one place a player's eyes never leave in a fast-paced shooter. Subtle enough to disappear into peripheral awareness during calm moments, prominent enough to register the instant it matters. No eye travel required. The information exists in the same visual space as the action itself.
 
 
-<ImageCard
+<Image
     src="/essays/aids/Overwatchzarya.jpeg"
     alt="Zarya's energy indicator in Overwatch"
-    heading="Overwatch, Zarya's energy indicator"
-    description="Zarya's energy indicator in Overwatch doesn't live in a corner. It wraps around the crosshair — the one place a player's eyes never leave in a fast-paced shooter."
   />
 It's a small decision. But it's the same decision running through everything in this essay, information anchored to attention, not assigned to a screen region and hoped for.
 
@@ -214,11 +191,9 @@ The trainer system exists for the player who is new to the FC world, who isn't s
 
 For that player, everything on is the right starting point. The game lays out the full picture in pieces: here is who to pass to, here is when to shoot, here is which player to switch to. Each toggle is a concept not yet understood. The goal is to turn them off one by one as the understanding underneath each one becomes instinct.
 
-<ImageCard
+<Image
     src="/essays/aids/FCTrainer.webp"
     alt="Rush mode in FC 26"
-    heading="FC 26, Rush mode"
-    description="Rush mode in FC 26 is a fast-paced mode that allows users to play football at a faster pace"
   />
 
 But this is a relatively small audience within FC 26 Rush. Rush lives inside Ultimate Team and most Ultimate Team players have been playing this franchise for years.
@@ -235,20 +210,16 @@ They know what a defensive gap looks like. They just can't find it fast enough. 
 
 This is where the spatial overlays do their real work.The overlays aren't teaching you what a gap is or what an opportunity looks like. They're surfacing those things before your pace-adjusted football brain can locate them itself.
 
-<ImageCard
+<Image
     src="/essays/aids/FCrushDefensivegap.webp"
     alt="Defensive gap overlay in FC 26"
-    heading="FC 26, Defensive gap overlay"
-    description="Defensive gap overlay in FC 26 shows you where the defensive gap is"
   />
 
 Similarly, the chevrons are showing you the direction of the collapse at a speed your eyes can process before your tactical reading catches up.
 
-<ImageCard
+<Image
     src="/essays/aids/FCrushchevron.webp"
     alt="Directional chevrons in FC 26"
-    heading="FC 26, Directional chevrons"
-    description="Directional chevrons in FC 26 show you the direction of the collapse"
   />
 
 These are pace adaptation tools, not football education tools. And that distinction matters for how long they stay useful. The trainer system fades when a player learns the fundamentals, and at their will.
