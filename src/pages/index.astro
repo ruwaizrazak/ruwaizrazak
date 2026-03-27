@@ -11,6 +11,9 @@ import { getCollection } from 'astro:content';
 import { ClientRouter } from "astro:transitions";
 
 const works = await getCollection('works', ({ data }) => data.publish);
+// LEARN: getCollection order is not guaranteed — sort by id to match the
+// numeric file-name prefixes (01Farmville3, 02EmpiresAndAllies, 03DeerHunter2018)
+works.sort((a, b) => a.id.localeCompare(b.id));
 ---
 
 <!doctype html>
