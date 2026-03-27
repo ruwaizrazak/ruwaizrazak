@@ -6,14 +6,21 @@ import DotNav from './DotNav.astro';
 interface Props {
   currentTags: string[];
   currentTitle: string;
+  seriesPosts?: any[];
 }
 
-const { currentTags, currentTitle } = Astro.props;
-const allPosts = await getMultiCollectionPosts(['notes', 'essays']);
-const relatedNotes = allPosts
-  .filter(note => note.data.title !== currentTitle)
-  .filter(note => note.data.tags?.some(tag => currentTags.includes(tag)))
-  .slice(0, 8);
+const { currentTags, currentTitle, seriesPosts } = Astro.props;
+
+const relatedNotes = seriesPosts && seriesPosts.length > 0
+  ? seriesPosts.map(post => ({
+      ...post,
+      collection: 'seriesPosts' as const,
+      url: `/series/${post.id}/`,
+    }))
+  : (await getMultiCollectionPosts(['notes', 'essays']))
+      .filter(note => note.data.title !== currentTitle)
+      .filter(note => note.data.tags?.some(tag => currentTags.includes(tag)))
+      .slice(0, 8);
 ---
 
 {relatedNotes.length > 0 && (
@@ -29,7 +36,7 @@ const relatedNotes = allPosts
                   title={note.data.title}
                   description={note.data.description}
                   pubDate={note.data.pubDate}
-                  url={`/${note.collection}/${note.id}/`}
+                  url={note.collection === 'seriesPosts' ? `/series/${note.id}/` : `/${note.collection}/${note.id}/`}
                   maturity={note.data.maturity}
                   collection={note.collection}
                   variant={note.collection === 'essays' ? 'card' : 'compact'}
