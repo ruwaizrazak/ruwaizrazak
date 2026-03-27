@@ -20,11 +20,29 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site).href;
 const workTransitionStyle = transitionName
   ? `::view-transition-new(${transitionName}){animation:work-scale-in .4s cubic-bezier(.32,.72,0,1)}`
   : '';
+
+// LEARN: BlogPosting schema tells Google this is an article, enabling
+// rich results (date, author) in search — dateModified improves freshness signals
+const blogPostingSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: title,
+  description,
+  datePublished: pubDate.toISOString(),
+  dateModified: (updatedDate ?? pubDate).toISOString(),
+  url: canonicalURL,
+  ...(heroImage && { image: new URL(heroImage, Astro.site).href }),
+  author: {
+    '@type': 'Person',
+    name: 'Ruwaiz Razak',
+    url: Astro.site,
+  },
+};
 ---
 
 <html lang="en" class="scroll-smooth">
   <head>
-    <BaseHead title={title} description={description} />
+    <BaseHead title={title} description={description} schema={blogPostingSchema} />
     <ClientRouter />
     {workTransitionStyle && <style is:global set:html={workTransitionStyle} />}
     <script is:inline>
