@@ -33,6 +33,7 @@ const relatedNotes = allPosts
                   maturity={note.data.maturity}
                   collection={note.collection}
                   variant={note.collection === 'essays' ? 'card' : 'compact'}
+                  transitionName={`card-${note.collection}-${note.id}`}
                 />
               </div>
             ))}

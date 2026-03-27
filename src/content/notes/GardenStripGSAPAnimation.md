@@ -8,13 +8,13 @@ maturity: 'seed'
 publish: false
 ---
 
-# How I Animated the Garden Strip with GSAP
+## How I Animated the Garden Strip with GSAP
 
 If you've scrolled through this site, you've probably noticed the black strip at the bottom with grass, trees, flowers, and a tiny character that walks around. That whole thing is powered by GSAP and a fair amount of math I didn't know I'd need.
 
 This post is me documenting what I learned while building it, the concepts, the gotchas, and the code that makes it tick. I'm writing this mostly for future me, but if you're trying to learn GSAP or build something similar, I hope this helps.
 
-## What is GSAP?
+### What is GSAP?
 
 GSAP (GreenSock Animation Platform) is a JavaScript animation library. Think of it as a way to move things on screen with precise control over timing, easing, and sequencing. It's been around for a long time and it's battle tested.
 
@@ -30,7 +30,7 @@ gsap.set('.box', { x: 100, opacity: 0.5 });
 gsap.to('.box', { x: 300, duration: 1, ease: 'power2.out' });
 ```
 
-### gsap.set() — The Teleport
+#### gsap.set() — The Teleport
 
 `gsap.set()` is like saying "put this here, right now." No transition, no animation. It just moves the element instantly.
 
@@ -46,7 +46,7 @@ gsap.set(character, { x: 100, y: 50 });
 character.style.transform = 'translate(100px, 50px)';
 ```
 
-### gsap.to() — The Animation
+#### gsap.to() — The Animation
 
 `gsap.to()` says "go from wherever you are now, to these values, over this duration."
 
@@ -68,7 +68,7 @@ The `ease` parameter is worth understanding. It controls the *feel* of the motio
 
 The naming pattern: `power1` is gentle, `power4` is dramatic. The suffix (`.in`, `.out`, `.inOut`) controls which end gets the easing. I think of `.out` as "ease into the landing" — the end is smooth.
 
-### gsap.to() returns a Tween
+#### gsap.to() returns a Tween
 
 This is important and I didn't realize it at first. `gsap.to()` returns a *tween object* that you can control:
 
@@ -83,7 +83,7 @@ tween.progress(); // how far along (0 to 1)
 
 I used `tween.kill()` heavily in the character movement. Every time the scroll target changes, I kill the old tween and create a new one. Without this, you'd have two animations fighting over the same element, and it looks terrible.
 
-### gsap.getProperty() — Reading Current Values
+#### gsap.getProperty() — Reading Current Values
 
 When GSAP is animating something, you need GSAP to tell you where it currently is:
 
@@ -93,7 +93,7 @@ const currentX = gsap.getProperty(character, 'x') as number;
 
 This gives you the live value mid-animation. If the character is tweening from x=100 to x=400 and you check halfway, you'd get ~250. This is essential for calculating distances, which I'll get to in the character section.
 
-## ScrollTrigger: Tying Animation to Scroll
+### ScrollTrigger: Tying Animation to Scroll
 
 This is where things got exciting for me. GSAP has a plugin called ScrollTrigger that lets you fire or drive animations based on scroll position.
 
@@ -104,7 +104,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 You always need to register plugins before using them. I forgot this once and spent an embarrassing amount of time wondering why nothing worked. GSAP doesn't throw an error, it just silently does nothing.
 
-### Understanding start and end
+#### Understanding start and end
 
 Every ScrollTrigger needs to know *when* to activate. That's what `start` and `end` define:
 
@@ -138,7 +138,7 @@ So `start: 'top center'` fires when you scroll enough that the top edge of `.som
 
 You can also use pixel offsets: `start: 'top 80%'` means "when the top of the trigger reaches 80% down the viewport."
 
-### Two Flavors of ScrollTrigger
+#### Two Flavors of ScrollTrigger
 
 There are two fundamentally different ways to use ScrollTrigger, and confusing them caused me bugs. Let me be explicit:
 
@@ -211,7 +211,7 @@ onUpdate(self) {
 }
 ```
 
-### scrub: true vs scrub: 1
+#### scrub: true vs scrub: 1
 
 There's a subtle but useful difference:
 
@@ -220,7 +220,7 @@ There's a subtle but useful difference:
 
 I used `scrub: true` for the strip morphing (I wanted it to feel locked to scroll) and initially used `scrub: 1` for the character (to add slight lag). But later I removed scrub entirely for the character and went with a different approach, which I'll explain below.
 
-### Referencing ScrollTriggers by ID
+#### Referencing ScrollTriggers by ID
 
 You can give a ScrollTrigger an `id` and reference it from elsewhere. This was essential for my setup because two ScrollTriggers need to share state:
 
@@ -239,11 +239,11 @@ const b = introTrigger ? B_MAX * (1 - introTrigger.progress) : B_MAX;
 
 The character's ScrollTrigger reads the intro trigger's progress to know how flat the curve currently is. Without this, the character wouldn't know the curve shape and would float in the wrong position.
 
-## The Elliptical Curve Math
+### The Elliptical Curve Math
 
 The garden strip has an elliptical curve at the top. Everything, the trees, flowers, grass, and character, needs to sit *on* this curve. The math is simpler than it looks.
 
-### How an Ellipse Works
+#### How an Ellipse Works
 
 An ellipse is like a squished circle. It has two radii: horizontal (`a`) and vertical (`b`). In our case, `a` is half the strip width (so the curve spans the full screen) and `b` controls how tall the bump is.
 
@@ -279,7 +279,7 @@ b = 110 (start of page):           b = 0 (after scrolling):
   /               \
 ```
 
-### Positioning Elements on the Curve
+#### Positioning Elements on the Curve
 
 Once you have `curveY()`, placing elements is straightforward:
 
@@ -303,11 +303,11 @@ The spacing formula `(i + 1) / (n + 1)` distributes elements evenly *with paddin
 
 The `translate(-50%, -100%)` is a CSS trick to anchor elements from their bottom-center point. Without it, the top-left corner of each tree would be on the curve, making everything look like it's floating above the line instead of growing from it.
 
-## The Character: Walk, Run, and Idle
+### The Character: Walk, Run, and Idle
 
 This is the part that went through the most iterations and where I learned the most. The character is a CSS sprite sheet with two rows: walk cycle (top) and run cycle (bottom), each with 9 frames.
 
-### How Sprite Sheets Work
+#### How Sprite Sheets Work
 
 A sprite sheet is a single image containing all animation frames side by side. Instead of loading 9 separate images and swapping them, you load one image and shift which portion is visible. It's like a film strip — you move the strip behind a window to show different frames.
 
@@ -326,7 +326,7 @@ The container acts as the window:
 
 `background-size: 900% 200%` is the key. It means "make the background image 9 times wider and 2 times taller than the container." Since the container is 28.2px wide, the image becomes 253.8px wide — and since the sheet has 9 frames, each frame ends up exactly 28.2px wide in the container. Same logic vertically: 2 rows at 50px each = 100px.
 
-### Why steps() Matters
+#### Why steps() Matters
 
 CSS has an `animation-timing-function` called `steps()` that was basically designed for sprite sheets:
 
@@ -357,7 +357,7 @@ Frame: |--|--|--|--|--|--|--|--|--|
 
 Each step snaps `background-position-x` by exactly one frame width. Frame 0 at 0px, frame 1 at -28.2px, frame 2 at -56.4px, and so on.
 
-### The Percentage Trap (A Bug That Taught Me a Lot)
+#### The Percentage Trap (A Bug That Taught Me a Lot)
 
 I initially wrote the keyframe like this:
 
@@ -397,7 +397,7 @@ The fix: use pixel values. They mean exactly what they say.
 
 Now each of the 9 steps is exactly 28.2px. Every frame lands perfectly.
 
-### Two Rows: Walk and Run
+#### Two Rows: Walk and Run
 
 The sprite sheet has two rows. The walk cycle is on top (y = 0) and the run cycle is below (y = -50px, since each row is 50px tall).
 
@@ -429,7 +429,7 @@ The run animation plays faster (0.6s vs 1s) because, well, running is faster tha
 }
 ```
 
-### Data Attributes as State
+#### Data Attributes as State
 
 I'm using HTML data attributes to manage character state:
 
@@ -462,7 +462,7 @@ character.dataset.facingRight = 'false'; // flips sprite
 
 I like this pattern because it creates a clean separation. JS handles the logic ("should the character walk or run?"), CSS handles the visuals ("what does walking look like?"). Neither needs to know the details of the other.
 
-### The Idle Frame
+#### The Idle Frame
 
 When the character isn't moving, I show a specific frame from the walk row. This is controlled via a CSS custom property:
 
@@ -480,7 +480,7 @@ character.style.setProperty('--idle-frame', String(IDLE_FRAME));
 
 The math: frame 2 at 28.2px per frame = `2 * -28.2 = -56.4px`. That shifts the background to show the third frame. Using a CSS variable means I can change the idle pose from JS without touching the stylesheet.
 
-### Walk vs Run: Distance-Based Decision
+#### Walk vs Run: Distance-Based Decision
 
 This is the part where `gsap.set()` and `gsap.to()` work together, each doing what it's best at.
 
@@ -567,17 +567,17 @@ Let me highlight the patterns that took me a while to internalize:
 
 **Why `gsap.set()` for Y but `gsap.to()` for X?** Because X is the thing being animated over time (the walk). Y is a *derived* value — it's always a function of X and the curve. You don't animate Y independently; you *calculate* it from the current X and set it immediately.
 
-## Procedural Grass with Canvas
+### Procedural Grass with Canvas
 
 The grass isn't an image, it's drawn procedurally on a `<canvas>` element. Each blade follows the curve and uses seeded randomness so it looks the same every frame.
 
-### Why Canvas Instead of SVG or Images?
+#### Why Canvas Instead of SVG or Images?
 
 I initially used an SVG for the grass. The problem was, the grass needed to follow an elliptical curve that changes shape during scroll. A static SVG can't do that. I'd need to regenerate the SVG on every scroll frame, which is awkward.
 
 Canvas is built for this — you clear it and redraw every frame. It's fast and gives you full control over each blade's shape, position, and color.
 
-### Seeded Randomness
+#### Seeded Randomness
 
 Here's a trick that was new to me. Grass blades need to look random (different heights, angles, widths), but if you use `Math.random()`, you'd get different blades on every redraw. During scroll, the grass would shimmer and flicker chaotically because each frame generates new random values.
 
@@ -610,7 +610,7 @@ for (let x = 0; x < stripWidth; x += 4) {
 
 The blade at x=100 always has the same height, lean, and width, whether it's the first draw or the hundredth. The numbers `13.7`, `47.3`, `127.1`, `43758.5453` are just magic constants that produce well-distributed outputs — they're common in shader programming.
 
-### Drawing Each Blade
+#### Drawing Each Blade
 
 Each blade is a leaf-like shape using quadratic bezier curves:
 
@@ -635,7 +635,7 @@ A `quadraticCurveTo` takes a control point and an end point. The control point "
 
 The `baseY` comes from `curveY()`, so blades grow from the elliptical curve's surface. The angle comes from `curveNormalAngle()`, which calculates the perpendicular direction at that point on the curve. This means blades at the edges of the strip lean outward, not just straight up — it looks far more natural.
 
-### DPI Scaling
+#### DPI Scaling
 
 One gotcha with Canvas: on retina displays, everything looks blurry unless you account for device pixel ratio:
 
@@ -653,7 +653,7 @@ export function sizeGrassCanvas(canvas, ctx, stripWidth) {
 
 The trick: make the canvas element larger (by dpr multiplier), but display it at the normal size via CSS. Then scale the drawing context so your drawing code uses the same coordinates as before. On a 2x display, the canvas is actually 2x the pixels, giving you sharp rendering.
 
-## Cleanup and Re-initialization
+### Cleanup and Re-initialization
 
 Because this site uses Astro's View Transitions, pages don't fully reload. That means old ScrollTriggers persist and pile up. Every time you navigate to a new page and back, a new set of triggers would be added on top of the old ones.
 
@@ -681,7 +681,7 @@ window.addEventListener('pageshow', init);              // browser back/forward
 
 Each event covers a different way the user might arrive at the page. `DOMContentLoaded` is the classic one. `astro:page-load` is Astro-specific, it fires after a view transition completes. `pageshow` catches the case where the browser restores a page from its back-forward cache.
 
-## Putting It All Together
+### Putting It All Together
 
 Here's the full flow of what happens when you scroll through this site:
 
@@ -695,7 +695,7 @@ Here's the full flow of what happens when you scroll through this site:
 
 5. **Scrolling backward** → Same logic but `facingRight` becomes `false`, the sprite flips via `scaleX(-1)`, and the character walks/runs left.
 
-## What I Learned
+### What I Learned
 
 Building this taught me a few things that I think apply beyond just this project:
 

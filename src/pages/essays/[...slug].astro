@@ -14,6 +14,6 @@ const post = Astro.props;
 const { Content } = await render(post);
 ---
 
-<NotesPost {...post.data} collection="essays" icon="/icons/essays.svg">
+<NotesPost {...post.data} collection="essays" icon="/icons/essays.svg" transitionName={`card-essays-${post.id}`}>
 	<Content components={{ a: Link }} />
 </NotesPost>

@@ -26,6 +26,7 @@ const cardVariantCollections = new Set(['essays', 'playground']);
           maturity={post.data.maturity}
           collection={post.collection}
           variant={post.collection === 'essays' ? 'wide' : cardVariantCollections.has(post.collection) ? 'card' : 'compact'}
+          transitionName={`card-${post.collection}-${post.id}`}
         />
       </div>
     ))}
@@ -33,9 +34,6 @@ const cardVariantCollections = new Set(['essays', 'playground']);
 </section>
 
 <style is:global>
-  .card-reveal {
-    transition: opacity 0.15s ease;
-  }
   .essay-full-row {
     grid-column: 1 / -1;
   }
@@ -43,33 +41,8 @@ const cardVariantCollections = new Set(['essays', 'playground']);
 
 <script>
   import { initOnLoad } from '../../utils/initOnLoad';
-
-  function initCardReveal() {
-    const cards = document.querySelectorAll<HTMLElement>('.card-reveal');
-    if (!cards.length) return;
-
-    function updateOpacities() {
-      const vh = window.innerHeight;
-      cards.forEach((card) => {
-        const rect = card.getBoundingClientRect();
-        const cardCenter = rect.top + rect.height / 2;
-
-        if (cardCenter <= vh / 2) {
-          card.style.opacity = '1';
-        } else if (cardCenter >= vh) {
-          card.style.opacity = '0.8';
-        } else {
-          const t = (cardCenter - vh / 2) / (vh / 2);
-          card.style.opacity = String(1 - 0.4 * t);
-        }
-      });
-    }
-
-    updateOpacities();
-    window.addEventListener('scroll', updateOpacities, { passive: true });
-  }
-
-  initOnLoad(initCardReveal);
+  import { initGardenCardAnimations } from '../../scripts/garden/gardenCardAnimations';
+  initOnLoad(initGardenCardAnimations);
 
   function updateEssayWidths() {
     const grid = document.querySelector<HTMLElement>('.card-masonry');

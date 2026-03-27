@@ -15,6 +15,7 @@ export interface ContentCardProps {
   maturity?: Maturity;
   collection?: string;
   variant?: 'card' | 'compact' | 'wide';
+  transitionName?: string;
 }
 
 export interface SocialLinkData {

@@ -6,6 +6,7 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
 import { getCollection } from 'astro:content';
 import { render } from 'astro:content';
 import CustomCursor from '../../components/CustomCursor.astro';
+import { ClientRouter } from 'astro:transitions';
 import NotePostHero from '../../components/NotePostHero.astro';
 import { proseClasses } from '../../utils/proseClasses';
 
@@ -25,9 +26,10 @@ const liveProseClasses = `${proseClasses} prose-a:text-link prose-a:underline pr
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" transition:animate="fade">
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+		<ClientRouter />
 		<CustomCursor />
 	</head>
 	<body class="footer-reveal bg-backgroundcolor">

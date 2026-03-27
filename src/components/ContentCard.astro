@@ -18,6 +18,7 @@ const {
   maturity,
   collection,
   variant = 'card',
+  transitionName,
 } = Astro.props;
 
 const formattedDate = formatDate(pubDate);
@@ -36,7 +37,7 @@ const isWide = variant === 'wide';
 ---
 
 {isCompact ? (
-  <div class="group hover:scale-95 transition-all duration-200">
+  <div class="group hover:scale-95 transition-all duration-200" transition:name={transitionName}>
     <a href={url} class="block p-5 border-b-1 bg-backgroundcolor border-syoro border-opacity-10 border-dashed relative">
       <div class="flex gap-2 py-2 items-center">
         <h5 class="text-sm text-konpeki uppercase font-sans tracking-widest">{label}</h5>
@@ -50,17 +51,19 @@ const isWide = variant === 'wide';
     </a>
   </div>
 ) : isWide ? (
-  <div class="group rounded-lg overflow-hidden hover:scale-95 transition-all duration-200 py-5 h-full">
-    <a href={url} class="bg-syoro/5 rounded-lg border-1 border-card-border shadow-xs group-hover:shadow-none relative flex flex-col md:flex-row overflow-hidden h-full">
+  <div class="group hover:scale-95 transition-all duration-200 py-5" transition:name={transitionName}>
+    <a href={url} class="bg-syoro/5 rounded-lg border-1 border-card-border shadow-xs group-hover:shadow-none relative flex flex-col md:flex-row overflow-hidden">
       {heroImage && (
-        <img
-          src={heroImage}
-          alt={title}
-          class="w-full h-48 md:h-full md:w-1/2 lg:w-2/3 object-cover !rounded-none"
-        />
+        <div class="w-full md:w-1/2 lg:w-2/3 shrink-0 grow-0 overflow-hidden">
+          <img
+            src={heroImage}
+            alt={title}
+            class="garden-card-image w-full h-full object-cover"
+          />
+        </div>
       )}
-      <div class="w-full md:w-1/2 p-5 flex flex-col justify-between">
-        <div>
+      <div class="flex-1 min-w-0 p-5 flex flex-col justify-between">
+        <div class="mx-auto">
           <h3 class="font-serif text-xl md:text-xl lg:text-2xl leading-tight text-syoro group-hover:text-link mb-4 font-medium">{title}</h3>
           {description && <p class="font-serif text-syoro/90 mb-4">{description}</p>}
         </div>
@@ -72,13 +75,13 @@ const isWide = variant === 'wide';
     </a>
   </div>
 ) : (
-  <div class="group rounded-lg overflow-hidden hover:scale-95 transition-all duration-200 py-5">
+  <div class="group rounded-lg overflow-hidden hover:scale-95 transition-all duration-200 py-5" transition:name={transitionName}>
     <a href={url} class="essay-card-link block p-5 bg-syoro/5 rounded-xl border-1 border-card-border shadow-xs group-hover:shadow-none relative">
       {heroImage && (
         <img
           src={heroImage}
           alt={title}
-          class={`w-full ${imageHeight} aspect-square object-cover rounded-lg mb-4`}
+          class={`garden-card-image w-full ${imageHeight} aspect-square object-cover rounded-lg mb-4`}
         />
       )}
       <div class="flex gap-2 mb-0 items-center">

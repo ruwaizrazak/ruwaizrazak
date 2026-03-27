@@ -56,12 +56,39 @@ export function initializeFilters() {
   });
 
   function filterPosts() {
+    let showIndex = 0;
+
     posts.forEach(post => {
       const postCollection = post.dataset.collection;
       const postTags = post.dataset.tags ? post.dataset.tags.split(' ') : [];
       const matchesCollection = currentCollection === 'all' || postCollection === currentCollection;
       const matchesTag = currentTag === 'all' || postTags.includes(currentTag);
-      post.style.display = matchesCollection && matchesTag ? 'block' : 'none';
+
+      if (matchesCollection && matchesTag) {
+        post.style.display = 'block';
+        post.style.transition = 'none';
+        post.style.opacity = '0';
+        post.style.transform = 'translateY(8px)';
+
+        const delay = showIndex * 40;
+        showIndex++;
+
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            post.style.transition = `opacity 0.3s ease ${delay}ms, transform 0.3s ease ${delay}ms`;
+            post.style.opacity = '1';
+            post.style.transform = 'translateY(0)';
+          });
+        });
+      } else {
+        post.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
+        post.style.opacity = '0';
+        post.style.transform = 'translateY(8px)';
+
+        setTimeout(() => {
+          post.style.display = 'none';
+        }, 200);
+      }
     });
   }
 

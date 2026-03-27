@@ -6,6 +6,7 @@ import Main from '../components/Main.astro';
 import Link from '../components/mdxComponents/Link.astro';
 import ContentCard from '../components/ContentCard.astro';
 import CustomCursor from '../components/CustomCursor.astro';
+import { ClientRouter } from 'astro:transitions';
 
 interface Props {
   title: string;
@@ -16,9 +17,10 @@ const { title, description } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" transition:animate="fade">
   <head>
     <BaseHead title={title} description={description} />
+    <ClientRouter />
   </head>
   <body class="footer-reveal bg-backgroundcolor">
     
