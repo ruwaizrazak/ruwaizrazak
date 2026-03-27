@@ -5,7 +5,7 @@
 
 export const SITE_TITLE = 'Ruwaiz Razak';
 export const SITE_DESCRIPTION =
-  'Ruwaiz Razaks personal website and knwoledge management system.';
+  'Ruwaiz Razaks personal website and knowledge management system.';
 
 export const GA_ID = 'G-75GYY3Y3H3';
 
