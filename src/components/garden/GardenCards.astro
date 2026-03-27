@@ -10,10 +10,10 @@ const cardVariantCollections = new Set(['essays', 'playground']);
 ---
 
 <section class="garden-cards-section px-5 md:px-10 pb-40">
-  <div class="card-masonry columns-1 md:columns-2 lg:columns-3 2xl:columns-4 gap-6">
+  <div class="card-masonry grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6">
     {posts?.map((post) => (
       <div
-        class="garden-card-item post-item break-inside-avoid mb-6 card-reveal"
+        class={`garden-card-item post-item mb-6 card-reveal${post.collection === 'essays' ? ' md:col-span-2 lg:col-span-3 2xl:col-span-3' : ''}`}
         data-tags={post.data.tags?.join(' ')}
         data-collection={post.collection}
       >
@@ -25,7 +25,7 @@ const cardVariantCollections = new Set(['essays', 'playground']);
           heroImage={cardVariantCollections.has(post.collection) ? post.data.heroImage : undefined}
           maturity={post.data.maturity}
           collection={post.collection}
-          variant={cardVariantCollections.has(post.collection) ? 'card' : 'compact'}
+          variant={post.collection === 'essays' ? 'wide' : cardVariantCollections.has(post.collection) ? 'card' : 'compact'}
         />
       </div>
     ))}
@@ -35,6 +35,9 @@ const cardVariantCollections = new Set(['essays', 'playground']);
 <style is:global>
   .card-reveal {
     transition: opacity 0.15s ease;
+  }
+  .essay-full-row {
+    grid-column: 1 / -1;
   }
 </style>
 
@@ -67,4 +70,44 @@ const cardVariantCollections = new Set(['essays', 'playground']);
   }
 
   initOnLoad(initCardReveal);
+
+  function updateEssayWidths() {
+    const grid = document.querySelector<HTMLElement>('.card-masonry');
+    if (!grid) return;
+
+    const cards = Array.from(grid.querySelectorAll<HTMLElement>('.garden-card-item'));
+    const visibleCards = cards.filter(c => c.style.display !== 'none');
+
+    cards.forEach(c => c.classList.remove('essay-full-row'));
+
+    visibleCards.forEach((card, index) => {
+      if (card.dataset.collection !== 'essays') return;
+      const nextCard = visibleCards[index + 1];
+      const nextIsNonEssay = nextCard?.dataset.collection !== 'essays';
+      if (!nextCard || !nextIsNonEssay) {
+        card.classList.add('essay-full-row');
+      }
+    });
+  }
+
+  function initEssayWidths() {
+    const grid = document.querySelector('.card-masonry');
+    if (!grid) return;
+
+    updateEssayWidths();
+
+    const observer = new MutationObserver((mutations) => {
+      const hasDisplayChange = mutations.some((m) => {
+        if (m.attributeName !== 'style') return false;
+        const oldDisplay = (m.oldValue ?? '').match(/display:\s*([^;]+)/)?.[1]?.trim();
+        const newDisplay = (m.target as HTMLElement).style.display;
+        return oldDisplay !== newDisplay;
+      });
+      if (hasDisplayChange) updateEssayWidths();
+    });
+
+    observer.observe(grid, { subtree: true, attributeFilter: ['style'], attributeOldValue: true });
+  }
+
+  initOnLoad(initEssayWidths);
 </script>

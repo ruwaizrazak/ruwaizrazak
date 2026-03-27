@@ -14,7 +14,7 @@ export interface ContentCardProps {
   imageHeight?: string;
   maturity?: Maturity;
   collection?: string;
-  variant?: 'card' | 'compact';
+  variant?: 'card' | 'compact' | 'wide';
 }
 
 export interface SocialLinkData {

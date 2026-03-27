@@ -32,6 +32,7 @@ const collectionLabels: Record<string, string> = {
 const label = collection ? collectionLabels[collection] || collection : '';
 
 const isCompact = variant === 'compact';
+const isWide = variant === 'wide';
 ---
 
 {isCompact ? (
@@ -45,6 +46,28 @@ const isCompact = variant === 'compact';
       <div class="text-base font-sans text-syoro/40 mt-2 flex items-center gap-2">
         {formattedDate}
         {maturity && <MaturityBadge maturity={maturity} iconClass="w-4 h-auto" />}
+      </div>
+    </a>
+  </div>
+) : isWide ? (
+  <div class="group rounded-lg overflow-hidden hover:scale-95 transition-all duration-200 py-5 h-full">
+    <a href={url} class="bg-syoro/5 rounded-lg border-1 border-card-border shadow-xs group-hover:shadow-none relative flex flex-col md:flex-row overflow-hidden h-full">
+      {heroImage && (
+        <img
+          src={heroImage}
+          alt={title}
+          class="w-full h-48 md:h-full md:w-1/2 lg:w-2/3 object-cover !rounded-none"
+        />
+      )}
+      <div class="w-full md:w-1/2 p-5 flex flex-col justify-between">
+        <div>
+          <h3 class="font-serif text-xl md:text-xl lg:text-2xl leading-tight text-syoro group-hover:text-link mb-4 font-medium">{title}</h3>
+          {description && <p class="font-serif text-syoro/90 mb-4">{description}</p>}
+        </div>
+        <div class="text-base font-sans text-syoro/40 flex items-center gap-2">
+          {formattedDate}
+          {maturity && <MaturityBadge maturity={maturity} />}
+        </div>
       </div>
     </a>
   </div>
