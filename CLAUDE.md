@@ -31,6 +31,13 @@
 - The custom `Image.astro` MDX component uses Astro's `<Image />` for the thumbnail; the lightbox stays as raw `<img>` for full-res zoom/pan
 - Keep View Transitions performant — avoid animating layout-triggering properties
 
+## Modularization Rules
+- Client-side scripts belong in `src/scripts/` as named modules exporting an init function (e.g., `initTOC()`, `initHeroScrollHeight()`)
+- Wire init functions in components using `initOnLoad()` from `src/utils/initOnLoad.ts` — never manually duplicate `DOMContentLoaded` + `astro:page-load` listeners
+- Reusable MDX layout patterns belong in `src/components/mdxComponents/` as Astro components (e.g., `WorkSection.astro`, `WorkImageGrid.astro`) — MDX files should import components, not duplicate Tailwind classes
+- Keep inline `<script>` blocks in `.astro` files to ≤10 lines — if logic grows beyond that, extract to `src/scripts/`
+- One module per feature is fine when concerns share state; don't over-split into files that need to pass context between each other
+
 ## Commenting Guidelines (Learning-Oriented)
 When modifying code, add concise comments that help the user learn:
 - Explain **why** a change was made, not just what changed
