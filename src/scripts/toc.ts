@@ -1,0 +1,123 @@
+/**
+ * Table of contents: list building, mobile drawer, and scroll-spy.
+ * Extracted from NoteMain.astro to match the src/scripts/ module pattern.
+ */
+
+function buildTOCList(
+  container: HTMLElement,
+  headings: Element[],
+  onLinkClick: (() => void) | null
+) {
+  container.innerHTML = '';
+  headings.forEach((heading) => {
+    const id = heading.id;
+    const li = document.createElement('li');
+    const a = document.createElement('a');
+    a.href = `#${id}`;
+    a.textContent = heading.textContent ?? '';
+    (a as HTMLElement).dataset.tocLink = id;
+
+    const tag = heading.tagName;
+    const indent = tag === 'H3' ? 'pl-4' : tag === 'H2' ? 'pl-2' : '';
+    const weight = tag === 'H1' ? 'text-syoro/70 hover:text-syoro font-semibold' :
+                   tag === 'H2' ? 'text-syoro/70 hover:text-syoro font-medium' :
+                                  'text-syoro/50 hover:text-syoro';
+    a.className = [
+      'block font-sans text-sm leading-snug transition-colors duration-150 py-0.5',
+      indent,
+      weight,
+    ].filter(Boolean).join(' ');
+
+    a.addEventListener('click', (e) => {
+      e.preventDefault();
+      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+      if (onLinkClick) onLinkClick();
+    });
+
+    li.appendChild(a);
+    container.appendChild(li);
+  });
+}
+
+export function initTOC() {
+  const article = document.querySelector('.note-layout article');
+  if (!article) return;
+
+  // Move fixed elements to <body> to escape GSAP transform stacking context
+  const tab = document.querySelector('.toc-tab');
+  const drawerEl = document.querySelector('[data-toc-drawer]');
+  const backdropEl = document.querySelector('[data-toc-backdrop]');
+  if (tab && tab.parentNode !== document.body) document.body.appendChild(tab);
+  if (backdropEl && backdropEl.parentNode !== document.body) document.body.appendChild(backdropEl);
+  if (drawerEl && drawerEl.parentNode !== document.body) document.body.appendChild(drawerEl);
+
+  // Collect H1/H2/H3, assign IDs if missing
+  const rawHeadings = Array.from(article.querySelectorAll('h1, h2, h3'));
+  rawHeadings.forEach((h) => {
+    if (!h.id) {
+      h.id = (h.textContent ?? '')
+        .toLowerCase()
+        .replace(/\s+/g, '-')
+        .replace(/[^\w-]/g, '');
+    }
+  });
+  const headings = rawHeadings.filter((h) => h.id);
+  if (headings.length === 0) return;
+
+  // Mark layout as having a TOC (shows sidebar + edge tab)
+  document.querySelector('.note-layout')?.setAttribute('data-has-toc', '');
+
+  // Build desktop TOC
+  const desktopList = document.getElementById('toc-list');
+  if (desktopList) buildTOCList(desktopList, headings, null);
+
+  // Build mobile TOC
+  const mobileList = document.getElementById('toc-list-mobile');
+  const drawer = document.querySelector('[data-toc-drawer]') as HTMLElement | null;
+  const backdrop = document.querySelector('[data-toc-backdrop]') as HTMLElement | null;
+  const toggleBtn = document.querySelector('[data-toc-toggle]');
+  const closeBtn = document.querySelector('[data-toc-close]');
+
+  function openDrawer() {
+    drawer?.classList.remove('-translate-x-full');
+    drawer?.setAttribute('aria-hidden', 'false');
+    backdrop?.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeDrawer() {
+    drawer?.classList.add('-translate-x-full');
+    drawer?.setAttribute('aria-hidden', 'true');
+    backdrop?.classList.add('hidden');
+    document.body.style.overflow = '';
+  }
+
+  if (mobileList) buildTOCList(mobileList, headings, closeDrawer);
+
+  toggleBtn?.addEventListener('click', openDrawer);
+  closeBtn?.addEventListener('click', closeDrawer);
+  backdrop?.addEventListener('click', closeDrawer);
+
+  // Scroll spy via IntersectionObserver
+  function setActive(id: string) {
+    document.querySelectorAll('[data-toc-link]').forEach((a) => {
+      const el = a as HTMLElement;
+      const isActive = el.dataset.tocLink === id;
+      el.classList.toggle('!text-syoro', isActive);
+      el.classList.toggle('font-semibold', isActive);
+    });
+  }
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      const visible = entries.filter((e) => e.isIntersecting);
+      if (visible.length === 0) return;
+      const top = visible.reduce((a, b) =>
+        a.boundingClientRect.top < b.boundingClientRect.top ? a : b
+      );
+      setActive(top.target.id);
+    },
+    { rootMargin: '0px 0px -60% 0px', threshold: 0 }
+  );
+
+  headings.forEach((h) => observer.observe(h));
+}
