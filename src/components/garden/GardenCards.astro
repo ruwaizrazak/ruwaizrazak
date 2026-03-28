@@ -9,7 +9,7 @@ const { posts } = Astro.props;
 const cardVariantCollections = new Set(['essays', 'playground']);
 ---
 
-<section class="garden-cards-section px-5 md:px-10 pb-40">
+<section class="garden-cards-section pb-40">
   <div class="card-masonry grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6">
     {posts?.map((post) => (
       <div
