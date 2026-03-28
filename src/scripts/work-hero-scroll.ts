@@ -8,7 +8,9 @@ export function initHeroScrollHeight() {
   if (!hero || hero.dataset.heroScrollInited === '1') return;
   hero.dataset.heroScrollInited = '1';
 
-  let initialHeightPx = 0.8 * window.innerHeight;
+  // LEARN: Match the CSS breakpoint — 50vh below 768px, 80vh at md+.
+  const isMobile = window.innerWidth < 768;
+  let initialHeightPx = (isMobile ? 0.5 : 0.8) * window.innerHeight;
   let ticking = false;
   const maxBlurPx = 8;
 
@@ -35,7 +37,8 @@ export function initHeroScrollHeight() {
   }
 
   function onResize() {
-    initialHeightPx = 0.8 * window.innerHeight;
+    const mobile = window.innerWidth < 768;
+    initialHeightPx = (mobile ? 0.5 : 0.8) * window.innerHeight;
     updateHeight();
   }
 

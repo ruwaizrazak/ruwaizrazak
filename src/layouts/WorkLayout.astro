@@ -64,7 +64,7 @@ const workTransitionStyle = transitionName
             <Image
               src={phoneImage}
               alt=""
-              class="relative z-10 w-1/2 h-auto object-cover mx-auto -mt-50"
+              class="relative z-10 w-3/4 md:w-1/2 h-auto object-cover mx-auto -mt-24 md:-mt-50"
               loading="eager"
             />
           )}
@@ -124,12 +124,23 @@ const workTransitionStyle = transitionName
 
 <style>
   #hero-image {
-    height: 80vh; /* fallback before script runs */
-    background-attachment: fixed;
+    /* LEARN: Mobile gets 50vh to avoid hero dominating small screens;
+       md+ keeps the immersive 80vh. Script mirrors these breakpoints. */
+    height: 50vh;
+    background-attachment: scroll;
     background-position: center;
     animation: scale-up-hero .8s cubic-bezier(0.4, 0.2, 0.2, 1) forwards;
     transform: scale(1);
     opacity: 0.93;
+  }
+
+  /* LEARN: background-attachment:fixed is broken on iOS Safari / mobile Chrome,
+     so we only enable it on md+ where it works reliably. */
+  @media (min-width: 768px) {
+    #hero-image {
+      height: 80vh;
+      background-attachment: fixed;
+    }
   }
 
   @keyframes scale-up-hero {
