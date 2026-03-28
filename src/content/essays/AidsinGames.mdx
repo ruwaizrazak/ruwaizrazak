@@ -13,49 +13,40 @@ publish: true
 import Link from '../../components/mdxComponents/Link.astro';
 
 import Image from '../../components/mdxComponents/Image.astro';
-import ImagesLeft from '../../components/mdxComponents/ImagesLeft.astro';
-import TargetAudience from '../../components/mdxComponents/targetedAudience.astro';
-import SideBySide from '../../components/mdxComponents/sideBySide.astro';
-import SideNote from '../../components/mdxComponents/SideNote.astro';
 import References from '../../components/mdxComponents/references.astro';
 
+Games always had a teaching problem. The player needs to learn, but pausing the game to teach will break the experience. 
 
-## Argument
-
-Games have always had a teaching problem. The player needs to learn, but stopping the game to teach them will break what makes it worth playing. 
-
-The best game designers solved this quietly, not with tutorials, tooltips, but with aids that speak to the instinct rather than the intellect, that surface when needed and disappear when not, and that measure their own success by how quickly they become unnecessary.
+The best game designers solved this quietly, not with tutorials, tooltips, but with aids that speak to the instinct rather than the intellect, aids surfaces when needed and disappears when not, and the measure of their own success is evaluated by how quickly they becomes unnecessary.
 
 
-## Theoretical Framework
+# Theoretical Framework
 
-I read Daniel Kahneman's *Thinking Fast and Slow* when I was getting started in my career as a user experience designer and loved his take on how human thinking works, which introduced System 1 and System 2, terms originally coined by Keith Stanovich and Richard West.[^1]
+I read Daniel Kahneman's *Thinking Fast and Slow* when I was getting started in my career as a user experience designer and loved his take on how human thinking works, which introduced me to System 1 and System 2, terms originally coined by Keith Stanovich and Richard West.[^1] It's a framework I've reached for constantly since I was designing tournament for Deer Hunter, the challenge was surfacing a lost multiplier to the user in without asking them to stop and process, which required System 1.
 
 > System 1 operates automatically and quickly, with little or no effort and no sense of voluntary control. System 2 allocates attention to the effortful mental activities that demand it, including complex computations. The operations of System 2 are often associated with the subjective experience of agency, choice, and concentration. — Daniel Kahneman, *Thinking, Fast and Slow*
 
-While designing experiences in games, I started noticing the same principles at work in the games I love. The way a game communicates with you changes entirely depending on whether you're in danger or not.
+While designing experiences in games, I started noticing the same principles at work in the games I loved. The way a game communicates with you changes entirely depending on whether you're in danger or not.
 
-When you have space to think, it gives you information to process. When you don't, it triggers a reflex instead. That distinction between aids that ask you to read and aids that ask you to react is the difference between System 2 and System 1 design. In a high-adrenaline situation, anything that asks for System 2 is a failure.
+When you as a user have space to think, the game provides information to process. But when you don't, it triggers a reflex. That distinction between aids that ask you to read and aids that ask you to react is the difference between System 2 and System 1. In a high-adrenaline situation, anything that asks for System 2 is a failure.
 
-But knowing *how* to deliver information is half the problem. The other half is knowing *how much*. Too little, and the game becomes hostile. Too much and it becomes patronising. This is where [Csikszentmihalyi's](https://positivepsychology.com/mihaly-csikszentmihalyi-father-of-flow/) (pronounced CHEEKS-ent-mee-high) flow comes in.
+But knowing *how* to deliver information is half the problem. The other half is knowing *how much*. If the game provides too little information way early, and the game becomes an enigma. Too much and it becomes patronising. This is where [Csikszentmihalyi's](https://positivepsychology.com/mihaly-csikszentmihalyi-father-of-flow/) (pronounced CHEEKS-ent-mee-high) flow comes in.
 
 > Where one's skills are adequate to cope with the challenges at hand, in a goal directed, rule-bound action system that provides clear clues as to how one is performing. — Mihály Csíkszentmihályi 
 
 Flow exists in a narrow channel between anxiety and boredom. A new player without enough guidance tips into anxiety. The game feels impossible, unreadable, hostile. An experienced player with too much guidance tips into boredom as the game is telling them things they know.
 
-Aid systems are flow management tools. Their job is to hold each player in their personal channel, and that channel evolves along with the player.
-
-Which means the best aids are never meant to be permanent. They exist the way scaffolding exists on a building under construction, holding things in place until the structure can stand on its own, then quietly disappearing. The goal was never the aid. The goal was always to make the aid unnecessary.
+Aid systems are flow management tools. Their job is to hold each player in their personal channel, and that channel evolves along with the player. Which means the best aids are never meant to be permanent. They exist the way scaffolding exists on a building under construction, holding things in place until the structure can stand on its own, then not. The goal was never the aid. The goal was always to make the aid unnecessary.
 
 
-## Two Contexts, One Problem
+# Two Contexts, One Problem
 
 There are two distinct moments where aids do their work. The first is when the player has space, exploring, navigating, breathing between encounters. The second is when they don't, in a football match, mid-firefight, half a second to decide. These two contexts demand different design responses.
 
 What works in one won't in the other. An aid that lives gently in the world during exploration would be invisible during combat. An aid bold enough to register during combat would shatter immersion during exploration. The games that get this right treat them as separate problems with separate solutions and the transition between the two states is itself a design decision.
 
 
-## Section 1: The Ideal — Single Player Sets the Stage
+# Section 1: The Ideal — Single Player Sets the Stage
 
 Single player games are the cleaner laboratory. The game is in control of everything; pacing, camera, context. More elegant choices become possible as nothing else is competing for user’s attention. Can you imagine a multiplayer game pausing to ask you to press triangle? A single player game can.
 
@@ -67,7 +58,7 @@ Single player games are the cleaner laboratory. The game is in control of everyt
 Before we get to the harder problem of multiplayer, it helps to see what aid design looks like when conditions are ideal.
 
 
-### Ghost of Tsushima and Hellblade — Two Versions of Invisible
+## Ghost of Tsushima and Hellblade — Two Versions of Invisible
 
 In most open world games, RDR2 being my personal pain point, I find myself opening the map a dozen times to confirm I'm heading in the right direction, especially during the early stages.
 
@@ -80,37 +71,35 @@ Ghost of Tsushima covers it with the guiding wind. Summoned by swiping up on the
 
 The same philosophy runs through the health bar, which appears when the protagonist unsheathes the sword, and the contextual controls that surface depending on the situation. Information tied to the state that makes it meaningful. The aid lives in the world, reveals itself when necessary, and hides when not.
 
-
 In Hellblade: Senua's Sacrifice, the voices that narrate Senua's psychosis also function as a combat warning system. "Watch out" is a dodge prompt that never feels like one. Information delivered through the story itself, indistinguishable from fiction. Zero screen real estate. Zero eye travel. I'm in absolute awe of it.[^2]
 
 
-### The Turn
+## The Turn
 
 In single player, the game controls the pace, the camera, the moment. The aid can be as subtle or as prominent as needed because nothing else is competing for attention.
 
 In multiplayer, all of that is a privilege the designer doesn't have. Five things are happening simultaneously. The pace is set by other players, every moment is precious, and that's where the elegant solutions of single player start to break down, and new ones have to be invented.
 
 
-## Section 2: The Stress Test — Multiplayer
+# Section 2: The Stress Test — Multiplayer
 
-### FC 26 Rush — A System That Knows What You Need Before You Do
+## FC 26 Rush — A System That Knows What You Need Before You Do
 
-In FC 26, a functionality called Trainer exists to aid the players. A quiet list of toggles, Pass Receiver Indicator, Shot Target, Directed Runs Indicator, Switch Indicator, Defending Trainer, Movement Indicator, Button Hints. It looks like a settings menu.
-
-It is a map of everything you don't yet know. Each toggle represents a skill not yet internalized. The game doesn't tell you which level you're at, it hands you the controls and lets you declare it yourself.
+In FC 26, a functionality called Trainer exists to aid the players. A list of toggles, Pass Receiver Indicator, Shot Target, Directed Runs Indicator, Switch Indicator, Defending Trainer, Movement Indicator, Button Hints. It looks like a settings menu, but what it is, is a map of everything you don't yet know. Each toggle represents a skill not yet learned. The game allows you to set your own learning, master each at your own pace and then allows you to remove them.
 <Image
     src="/essays/aids/FCTrainer.webp"
     alt="Trainer mode in FC 26"
   />
 
-The action buttons are displayed around the player controlling the ball. Not in a corner. Not in a HUD strip. Around the player. Where your eyes already are. That one decision, anchoring information to where attention already lives is crucial for the success of the trainer mode.
+I also loved how the action buttons are displayed around the player controlling the ball. Not in a corner, Not in a HUD, but around the player, where the eyes already are. That one decision, anchoring information to where attention already lives is crucial for the success of the trainer mode.
 <Image
     src="/essays/aids/FCtraineroverlay.jpeg"
     alt="Trainer mode in FC 26"
   />
+
 But the trainer is built for players who are new to the controls entirely. Where as the Rush mode lives inside Ultimate Team, and most Ultimate Team players have been playing this franchise for years. They understand football. They know what a defensive gap is. They know when they should press. Their challenge isn't knowledge, it's pace.
 
-Rush compresses the game into a smaller pitch, fewer players, faster transitions, tighter margins. A player who has spent years reading a full eleven-a-side match suddenly finds their football brain operating just behind the tempo. They know what a gap looks like. They just can't find it fast enough. This is where the in-match spatial overlays do their real work.
+Rush compresses the game into a smaller pitch, fewer players, faster transitions, tighter margins. A player who has spent years reading a full XI match suddenly finds their football brain operating just behind the tempo. They know what a gap looks like. They just can't find it fast enough. This is where the in-match spatial overlays do their real work.
 
 The Defensive Gap overlay is the most visually assertive. It appears and states one fact: this space is undefended. The directional chevrons work differently.
 
@@ -126,38 +115,21 @@ Where the defensive gap tells you *where*, the chevrons tell you *which way thin
     alt="Directional chevrons in FC 26"
   />
 
-FC 26 paints the pitch. Ghost of Tsushima bends the grass. The goal is the same, guide the player without breaking the experience. One lays information over the world. The other weaves it into the world. Neither is wrong. They're solutions built for different cognitive contexts.
+As a defender in Rush, depending on how high you are on the field, the camera could give you almost no information of what happens in the other goal box. You're watching your half while the ball is at the other end, and by the time the attack organises, you're already reacting late. The chevrons close that gap ,not by showing you where the space is, you'll see that when the attackers arrive, but by showing you that the tides have turned before they get there.
 
+FC 26 uses an overlay, Ghost of Tsushima uses wind (I'm not forgetting you, little Inari Shrine Fox). The goal is the same, guide the player without breaking the experience. One lays information over the world. The other weaves it into the world. Neither is wrong. They're solutions built for different cognitive contexts.
 
-### Call of Duty Mobile — Information at the Speed of Reaction
+There's a third tier that doesn't fully exist yet. But I think it should.
 
-CODM doesn't have the luxury of subtlety. The game moves at a pace where information that arrives a beat too late arrives too late to matter.
+The idea is this: the system watches your inputs, identifies a decision that didn't work, and surfaces the right option the next time the same situation occurs. Not after the mistake, but before the next attempt.
 
-When you land a shot,the crosshair confirming the hit.Damage numbers float off the target telling you how hard..
+Prospective correction rather than retrospective feedback. You reach the box, you panic and pass when you should have shot, and the next time you find yourself in that position, the game surfaces the shoot prompt once, not to embarrass you, but to remind you.
 
-Neither requires looking away from the action — the crosshair is already where your eyes are, and the damage numbers appear at the point of impact, which is also where your eyes are. Add the thin red directional line on the screen edge when you're being shot at, and you have three separate pieces of combat information — hit confirmation, damage value, incoming fire direction — all delivered within the frame your attention already occupies. In a game where the margin between alive and dead is a second, that economy of eye travel is everything.
+The honest problem with this is that intent is genuinely hard to read from inputs alone. In football, passing instead of shooting isn't always wrong. Sometimes it's exactly the right call. A system that can't distinguish a poor decision from an unconventional one will nudge you away from creativity as readily as it nudges you away from mistakes. That's a hard problem and I don't think anyone has cleanly solved it yet.
 
-<Image
-    src="/essays/aids/Codmcrosshair.webp"
-    alt="CODM, Crosshair"
-  />
+The most respectful aid is one that trusts you learned something, and speaks up when the evidence suggests you haven't. And whatever form it eventually takes, player override has to remain essential. Even this, the most considered, least intrusive version of guidance must be something you can turn off.
 
-The sound visualizer is a different aid, Footsteps, gunshots, nearby movement — rendered as directional indicators on screen, a visual translation of spatial audio. It started as an accessibility feature for players who can't rely on headphones or have hearing differences. Competitive players adopted it almost immediately as a core tactical tool. A new player uses it to know someone is nearby. A veteran uses it to triangulate exactly where, from what angle, closing at what speed. Same indicator. Completely different depth of read. The best aids don't just serve the player who needs them most — they grow with the player who masters them.
-
-<Image
-    src="/essays/aids/Codmaudio.webp"
-    alt="Sound visualizer in CODM"
-  />
-
-There's a third type of aid in CODM worth mentioning, though it barely looks like one. When a vehicle takes enough damage, it catches fire. Flames mean it's about to explode — move away. The information is embedded in the world itself rather than displayed as an overlay. Even here, in a chaotic multiplayer environment, the game finds a moment to let the world speak.
-
-<Image
-    src="/essays/aids/Codmvehicle.webp"
-    alt="Vehicle in CODM"
-  />
-
-
-### Fortnite — The Aid That Rewards Both Skill Levels
+## Fortnite — The Aid That Rewards Both Skill Levels
 
 Fortnite's weak point indicator is almost insultingly simple. Swing your pickaxe at a structure and a glowing dot appears. Hit the dot and you do double damage. Miss it and you don't.
 <Image
@@ -169,80 +141,9 @@ For a new player this is a tutorial that never announces itself as one. You noti
 This is what it looks like when an aid genuinely transcends its original audience. It isn't simplified for beginners and hidden from veterans. It's the same thing for both of them, and both are better for it.
 
 
-### Overwatch — Putting Information Where Eyes Already Are
+# Closing
 
-Zarya's energy indicator in Overwatch doesn't live in a corner. It wraps around the crosshair — the one place a player's eyes never leave in a fast-paced shooter. Subtle enough to disappear into peripheral awareness during calm moments, prominent enough to register the instant it matters. No eye travel required. The information exists in the same visual space as the action itself.
-
-
-<Image
-    src="/essays/aids/Overwatchzarya.jpeg"
-    alt="Zarya's energy indicator in Overwatch"
-  />
-It's a small decision. But it's the same decision running through everything in this essay, information anchored to attention, not assigned to a screen region and hoped for.
-
-
-## Section 3: The Player Journey — How Aids Should Evolve
-
-The novice/expert split cuts across both contexts. But it's not simply about turning aids off as you improve. It's more nuanced than that. The same game can be guiding a beginner and confirming a veteran's read at the same time, through the same aid.
-
-### Tier 1: Full Trainer Mode — Early Journey
-
-The trainer system exists for the player who is new to the FC world, who isn't sure how to pass, shoot, or even when to celebrate after scoring.
-
-For that player, everything on is the right starting point. The game lays out the full picture in pieces: here is who to pass to, here is when to shoot, here is which player to switch to. Each toggle is a concept not yet understood. The goal is to turn them off one by one as the understanding underneath each one becomes instinct.
-
-<Image
-    src="/essays/aids/FCTrainer.webp"
-    alt="Rush mode in FC 26"
-  />
-
-But this is a relatively small audience within FC 26 Rush. Rush lives inside Ultimate Team and most Ultimate Team players have been playing this franchise for years.
-
-They understand football, They know what a defensive gap is. They know when they should be pressing. The trainer mode at its most comprehensive is available to them, but it's not where their challenge lies.
-
-### Tier 2: Contextual Spatial Aids — Mid Journey
-
-For the majority of Rush players, the problem isn't football knowledge, It's pace.
-
-Rush compresses the game into smaller pitch, fewer players, faster transitions and tighter margins. A player who has spent years reading a full eleven match suddenly finds their football brain operating behind the tempo.
-
-They know what a defensive gap looks like. They just can't find it fast enough. They know they should be pressing. They just can't process when.
-
-This is where the spatial overlays do their real work.The overlays aren't teaching you what a gap is or what an opportunity looks like. They're surfacing those things before your pace-adjusted football brain can locate them itself.
-
-<Image
-    src="/essays/aids/FCrushDefensivegap.webp"
-    alt="Defensive gap overlay in FC 26"
-  />
-
-Similarly, the chevrons are showing you the direction of the collapse at a speed your eyes can process before your tactical reading catches up.
-
-<Image
-    src="/essays/aids/FCrushchevron.webp"
-    alt="Directional chevrons in FC 26"
-  />
-
-These are pace adaptation tools, not football education tools. And that distinction matters for how long they stay useful. The trainer system fades when a player learns the fundamentals, and at their will.
-
-Unlike what I stated as the ideal behavior of the aids, the FC 26 spacial overlays aren't getting faded even though the user is good at it, but probably because an overlay that confirms something you already see costs almost nothing. One that interrupts your flow costs everything.
-
-### Tier 3: Error-Informed Nudges — Late Journey
-
-The third tier doesn't fully exist yet. But I think it should.
-
-The idea is this: the system watches your inputs, identifies a decision that didn't work, and surfaces the right option the next time the same situation occurs. Not after the mistake, but before the next attempt.
-
-Prospective correction rather than retrospective feedback. You reach the box, you panic and pass when you should have shot, and the next time you find yourself in that position, the game surfaces the shoot prompt once, not to embarrass you, but to remind you.
-
-The honest problem with this is that intent is genuinely hard to read from inputs alone. In football, passing instead of shooting isn't always wrong. Sometimes it's exactly the right call. A system that can't distinguish a poor decision from an unconventional one will nudge you away from creativity as readily as it nudges you away from mistakes. That's a hard problem and I don't think anyone has cleanly solved it yet.
-
-The most respectful aid is one that trusts you learned something, and speaks up when the evidence suggests you haven't. And whatever form it eventually takes, player override has to remain essential. Even this, the most considered, least intrusive version of guidance must be something you can turn off.
-
-## Closing
-
-The best teachers I've encountered, in classrooms, games, design shares one instinct. They are always building toward the moment they're no longer needed. Not because the subject gets easier, but because the student gets better. The goal was never to be indispensable. The goal was always to make themselves unnecessary.
-
-Good aid design works the same way. The guiding wind fades not because Tsushima removes it, but because you stop needing it. The trainer toggles get turned off not because the game asks you to, but because the information they carried has become instinct. The best aids don't announce their departure. They just quietly stop having anything new to say. And when that happens, when the player looks up and realises the screen is a little emptier than it used to be, and doesn't miss what's gone, that's when the design worked.
+Good aid design should be unnoticable, when its not required. The guiding wind fades not because Tsushima removes it, but because you stop needing it. The best aids don't announce their departure. They just quietly stop having anything new to say. And when that happens, when the player looks up and realises the screen is a little emptier than it used to be, and doesn't miss what's gone, that's when the design just works.
 
 
 

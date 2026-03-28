@@ -12,20 +12,24 @@ export default defineConfig({
     domains: ['i.imgur.com'],
   },
   site: 'https://ruwaizrazak.com',
+  // LEARN: Top-level markdown config applies to both .md and .mdx files
+  // (MDX inherits via extendMarkdownConfig: true), so wikilinks work everywhere
+  markdown: {
+    remarkPlugins: [
+      [
+        remarkWikiLink,
+        {
+          hrefTemplate: (permalink) => `/${permalink}`,
+          pageResolver: (name) => [
+            name.replace(/\s+/g, '-').toLowerCase(),
+          ],
+          aliasDivider: '|',
+        },
+      ],
+    ],
+  },
   integrations: [
     mdx({
-      remarkPlugins: [
-        [
-          remarkWikiLink,
-          {
-            hrefTemplate: (permalink) => `/${permalink}`,
-            pageResolver: (name) => [
-              name.replace(/\s+/g, '-').toLowerCase(),
-            ],
-            aliasDivider: '|',
-          },
-        ],
-      ],
       extendMarkdownConfig: true,
       smartypants: true,
       gfm: true,
