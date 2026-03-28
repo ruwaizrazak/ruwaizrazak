@@ -13,41 +13,28 @@ appStoreUrl: "https://apps.apple.com/us/app/farmville-3-farm-animals/id843506607
 playStoreUrl: "https://play.google.com/store/apps/details?id=com.zynga.farmville3&hl=en"
 publish: true
 ---
-import ImagesLeft from "../../components/mdxComponents/ImagesLeft.astro";
-import ToSinglePost from "../../components/mdxComponents/ToSinglePost.astro";
-import SideNote from "../../components/mdxComponents/SideNote.astro";
+import WorkSection from "../../components/mdxComponents/WorkSection.astro";
+import WorkImageGrid from "../../components/mdxComponents/WorkImageGrid.astro";
 import AppStoreBadge from "../../components/AppStoreBadge.astro";
 import GooglePlayBadge from "../../components/GooglePlayBadge.astro";
 import VideoBreakout from "../../components/VideoBreakout.astro";
 import Image from "../../components/mdxComponents/Image.astro";
 
-
-<div class="w-full grid grid-cols-1 lg:grid-cols-4 justify-between gap-4 my-10 md:my-20 py-10 md:py-0">
-  <div class="col-span-1">
-    <h2 class="text-3xl md:text-5xl font-sans border-l-2 border-syoro pl-4">Overview</h2>
+<WorkSection title="Overview">
+  <p>Farmville 3 is a mobile game that is a sequel to the popular Farmville game. I was part of the team that built the game from softlaunch, then carried to full launch and to live operations.</p>
+  <div class="flex flex-row my-10 gap-4">
+    <AppStoreBadge href="https://apps.apple.com/us/app/farmville-3-farm-animals/id843506607" />
+    <GooglePlayBadge href="https://play.google.com/store/apps/details?id=com.zynga.farmville3&hl=en" />
   </div>
-  <div class="col-span-1 lg:col-span-3 lg:col-start-2">
-    <p class="text-xl sm:text-2xl md:text-3xl">Farmville 3 is a mobile game that is a sequel to the popular Farmville game. I was part of the team that built the game from softlaunch, then carried to full launch and to live operations.</p>
-    <div class="flex flex-row my-10 gap-4">
-      <AppStoreBadge href="https://apps.apple.com/us/app/farmville-3-farm-animals/id843506607" />
-      <GooglePlayBadge href="https://play.google.com/store/apps/details?id=com.zynga.farmville3&hl=en" />
-    </div>
-  </div>
-</div>
+</WorkSection>
 
 <VideoBreakout src="https://www.youtube-nocookie.com/embed/lgnY0QYqAfE?si=FfJmZJcKRKHGnKOB&mute=1&rel=0" />
 
-<div class="my-20">
-  <div class="w-full grid grid-cols-1 lg:grid-cols-4 justify-between gap-4 my-20 py-10 md:py-0">
-    <div class="col-span-1">
-      <h2 class="text-3xl md:text-5xl font-sans border-l-2 border-syoro pl-4">Player-facing Systems</h2>
-    </div>
-      <div class="col-span-1 lg:col-span-3 lg:col-start-2">
-    <p class="text-xl sm:text-2xl md:text-3xl">Few in-game systems illustrating the types of player-facing systems I contributed to.</p>
-    </div>
-  </div>
-</div>
-<div class="w-full grid grid-cols-1 lg:grid-cols-2 justify-between gap-10 py-5 md:py-0 rounded-2xl">
+<WorkSection title="Player-facing Systems">
+  <p>Few in-game systems illustrating the types of player-facing systems I contributed to.</p>
+</WorkSection>
+
+<WorkImageGrid>
   <Image
     src="/works/fv3/fv3Progression1.jpg"
     alt="Progression & Motivation Systems"
@@ -72,4 +59,4 @@ import Image from "../../components/mdxComponents/Image.astro";
     title="Using Progressive Disclosure to avoid overwhelming."
     description="In a game with lots of features, it is important to not overwhelm the users with too many options at once. Progressive disclosure helps to reveal the options gradually as the user progresses through the game."
   />
-</div>
+</WorkImageGrid>

@@ -14,37 +14,27 @@ publish: true
 
 import VideoBreakout from "../../components/VideoBreakout.astro";
 import Image from "../../components/mdxComponents/Image.astro";
+import WorkSection from "../../components/mdxComponents/WorkSection.astro";
+import WorkImageGrid from "../../components/mdxComponents/WorkImageGrid.astro";
+import WorkClosingText from "../../components/mdxComponents/WorkClosingText.astro";
 
-<div class="w-full grid grid-cols-1 lg:grid-cols-4 justify-between gap-4 my-20 py-10 md:py-0">
-  <div class="col-span-1">
-    <h2 class="text-5xl font-sans border-l-2 border-syoro pl-4">Overview</h2>
-  </div>
-  <div class="col-span-1 lg:col-span-3 lg:col-start-2">
-    <p class="text-2xl">
-      Deer Hunter 2018 is a live mobile hunting game built around progression depth and event-driven engagement. 
-      As the first UX designer in the studio, I helped embed UX into the product roadmap while addressing onboarding drop-off and veteran player stagnation.
-    </p>
-  </div>
-</div>
+<WorkSection title="Overview">
+  <p>
+    Deer Hunter 2018 is a live mobile hunting game built around progression depth and event-driven engagement.
+    As the first UX designer in the studio, I helped embed UX into the product roadmap while addressing onboarding drop-off and veteran player stagnation.
+  </p>
+</WorkSection>
 
 <VideoBreakout src="https://www.youtube-nocookie.com/embed/mFpyR9rbf04?si=b2wvitZFpgJGML-J?rel=0" />
 
-<div class="my-20">
-  <div class="w-full grid grid-cols-1 lg:grid-cols-4 justify-between gap-4 my-20 py-10 md:py-0">
-    <div class="col-span-1">
-      <h2 class="text-5xl font-sans border-l-2 border-syoro pl-4">Retention & Engagement Systems</h2>
-    </div>
-    <div class="col-span-1 lg:col-span-3 lg:col-start-2">
-      <p class="text-2xl">
-        Selected systems illustrating onboarding optimization and long-term engagement initiatives. 
-        Certain implementation specifics are abstracted due to confidentiality.
-      </p>
-    </div>
-  </div>
-</div>
+<WorkSection title="Retention & Engagement Systems">
+  <p>
+    Selected systems illustrating onboarding optimization and long-term engagement initiatives.
+    Certain implementation specifics are abstracted due to confidentiality.
+  </p>
+</WorkSection>
 
-<div class="w-full grid grid-cols-1 lg:grid-cols-2 justify-between gap-10 py-20 md:py-0 rounded-2xl p-10">
-
+<WorkImageGrid>
   <Image
     src="/works/dh/dHShooting.jpg"
     alt="Onboarding Funnel Optimization"
@@ -58,14 +48,12 @@ import Image from "../../components/mdxComponents/Image.astro";
     title="Tournament-Based Engagement"
     description="Introduced competitive event systems designed to re-activate veteran players and reduce stagnation. Structured progression fairness to avoid pay-to-win perception while reinforcing skill-based motivation."
   />
+</WorkImageGrid>
 
-</div>
-
-<div class="my-20 font-serif text-syoro mx-auto">
-<p class="text-2xl">
-As the studio’s first UX, I established UX integration within the roadmap pipeline, partnering closely with product and engineering to ensure experience decisions were aligned with engagement metrics and live performance.
-
-<br/>
-As the only UX designer in the studio, I was also collaboratiing with other products within the studio along with Deer Hunter's core team.
-</p>
-</div>
+<WorkClosingText>
+  <p>
+    As the studio's first UX, I established UX integration within the roadmap pipeline, partnering closely with product and engineering to ensure experience decisions were aligned with engagement metrics and live performance.
+    <br/>
+    As the only UX designer in the studio, I was also collaboratiing with other products within the studio along with Deer Hunter's core team.
+  </p>
+</WorkClosingText>

@@ -31,16 +31,16 @@ const workTransitionStyle = transitionName
       <main transition:name={transitionName} class="!p-0">
         <!-- Title + metadata header -->
         <div>
-          <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between mt-20 mb-10 p-0">
-            <h1 class="text-syoro dark:text-syoro font-sans text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold leading-none max-w-3xl">
+          <div class="flex flex-col gap-4 md:flex-row md:items-start md:justify-between mt-20 mb-10 p-0">
+            <h1 class="text-syoro dark:text-syoro font-sans text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold leading-none max-w-4xl">
               {title} <span class="font-normal">| {company}</span>
             </h1>
-            <div class="flex flex-col items-start md:items-end gap-1 my-auto">
+            <div class="flex flex-col items-start md:items-end gap-1 my-auto text-left sm:text-right">
               {role && (
-                <p class="text-syoro dark:text-syoro font-sans text-base sm:text-xl md:text-3xl">{role}</p>
+                <p class="text-syoro dark:text-syoro font-sans text-2xl sm:text-xl md:text-2xl lg:text-3xl">{role}</p>
               )}
               {duration && (
-                <p class="text-syoro dark:text-syoro font-sans text-base sm:text-lg md:text-2xl uppercase">{duration}</p>
+                <p class="text-syoro dark:text-syoro font-sans text-xl sm:text-lg md:text-xl  lg:text-2xl uppercase">{duration}</p>
               )}
               
             </div>

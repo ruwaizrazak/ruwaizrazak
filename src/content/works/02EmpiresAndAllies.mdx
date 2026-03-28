@@ -14,37 +14,26 @@ publish: true
 
 import VideoBreakout from "../../components/VideoBreakout.astro";
 import Image from "../../components/mdxComponents/Image.astro";
-import ToSinglePost from "../../components/mdxComponents/ToSinglePost.astro";
+import WorkSection from "../../components/mdxComponents/WorkSection.astro";
+import WorkImageGrid from "../../components/mdxComponents/WorkImageGrid.astro";
+import WorkClosingText from "../../components/mdxComponents/WorkClosingText.astro";
 
-<div class="w-full grid grid-cols-1 lg:grid-cols-4 justify-between gap-4 my-20 py-10 md:py-0">
-  <div class="col-span-1">
-    <h2 class="text-3xl md:text-5xl font-sans border-l-2 border-syoro pl-4">Overview</h2>
-  </div>
-  <div class="col-span-1 lg:col-span-3 lg:col-start-2">
-    <p class="text-xl sm:text-2xl md:text-3xl">
-      Empires & Allies was a real-time strategy mobile game built around competitive play, alliance coordination, and long-term progression systems. 
-      I contributed across feature design, usability optimization, and systemic clarity within a live product environment.
-    </p>
-  </div>
-</div>
+<WorkSection title="Overview">
+  <p>
+    Empires & Allies was a real-time strategy mobile game built around competitive play, alliance coordination, and long-term progression systems.
+    I contributed across feature design, usability optimization, and systemic clarity within a live product environment.
+  </p>
+</WorkSection>
 
 <VideoBreakout src="https://www.youtube-nocookie.com/embed/xp8sWWBayTQ?rel=0" />
 
-<div class="my-20">
-  <div class="w-full grid grid-cols-1 lg:grid-cols-4 justify-between gap-4 my-20 py-10 md:py-0">
-    <div class="col-span-1">
-      <h2 class="text-3xl md:text-5xl font-sans border-l-2 border-syoro pl-4">Live Systems & Retention</h2>
-    </div>
-    <div class="col-span-1 lg:col-span-3 lg:col-start-2">
-      <p class="text-xl sm:text-2xl md:text-3xl">
-        Few live systems and retention frameworks reflecting the types of engagement and monetization architectures I contributed to. Specific implementation details are omitted due to confidentiality.
-      </p>
-    </div>
-  </div>
-</div>
+<WorkSection title="Live Systems & Retention">
+  <p>
+    Few live systems and retention frameworks reflecting the types of engagement and monetization architectures I contributed to. Specific implementation details are omitted due to confidentiality.
+  </p>
+</WorkSection>
 
-<div class="w-full grid grid-cols-1 lg:grid-cols-2 justify-between gap-10 md:py-0 rounded-2xl">
-
+<WorkImageGrid>
   <Image
     src="/works/Ena/veteranuserretention.webp"
     alt="Strategy Progression Systems"
@@ -72,9 +61,8 @@ import ToSinglePost from "../../components/mdxComponents/ToSinglePost.astro";
     title="Live Operations & Cadence Ownership"
     description="Owned event cadence and feature release rhythm within live operations, aligning design decisions with engagement metrics and revenue monitoring."
   />
-</div>
-<div class="my-10 md:my-20 font-serif text-syoro mx-auto">
-<p class="text-xl sm:text-2xl md:text-3xl">Alongside retention and monetization systems, I also optimized the UX production pipeline within Unity by introducing modular UI structures and clearer implementation patterns, enabling faster iteration and more efficient live feature rollouts.</p>
-</div>
+</WorkImageGrid>
 
-
+<WorkClosingText>
+  <p>Alongside retention and monetization systems, I also optimized the UX production pipeline within Unity by introducing modular UI structures and clearer implementation patterns, enabling faster iteration and more efficient live feature rollouts.</p>
+</WorkClosingText>

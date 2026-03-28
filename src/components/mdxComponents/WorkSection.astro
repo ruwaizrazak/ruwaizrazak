@@ -1,0 +1,18 @@
+---
+// LEARN: Encapsulates the repeating 1/4 + 3/4 section pattern used in works pages,
+// so new works get consistent typography and spacing without copy-pasting Tailwind classes.
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<div class="w-full grid grid-cols-1 lg:grid-cols-4 justify-between gap-4 my-10 md:my-20 py-10 md:py-0">
+  <div class="col-span-1">
+    <h2 class="text-3xl md:text-5xl font-sans border-l-2 border-syoro pl-4">{title}</h2>
+  </div>
+  <div class="col-span-1 lg:col-span-3 lg:col-start-2 text-xl sm:text-2xl md:text-3xl">
+    <slot />
+  </div>
+</div>
