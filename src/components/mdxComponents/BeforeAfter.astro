@@ -1,0 +1,48 @@
+---
+// LEARN: BeforeAfter provides semantic side-by-side comparison with labels.
+// Replaces the generic sideBySide.astro for case studies where the comparison direction matters.
+import Image from './Image.astro';
+
+interface ComparisonItem {
+  src: string;
+  caption?: string;
+}
+
+interface Props {
+  before: ComparisonItem;
+  after: ComparisonItem;
+}
+
+const { before, after } = Astro.props;
+---
+
+<div class="before-after my-10 md:my-16">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+    <div class="flex flex-col gap-3">
+      <span class="font-sans text-xs uppercase tracking-widest text-syoro/50 dark:text-syoro/40">
+        Before
+      </span>
+      <div class="rounded-lg overflow-hidden bg-syoro/5 dark:bg-syoro/10">
+        <Image src={before.src} alt={before.caption || 'Before'} />
+      </div>
+      {before.caption && (
+        <p class="font-serif text-sm md:text-base text-syoro/60 dark:text-syoro/50 leading-snug">
+          {before.caption}
+        </p>
+      )}
+    </div>
+    <div class="flex flex-col gap-3">
+      <span class="font-sans text-xs uppercase tracking-widest text-konpeki dark:text-konpeki">
+        After
+      </span>
+      <div class="rounded-lg overflow-hidden bg-syoro/5 dark:bg-syoro/10">
+        <Image src={after.src} alt={after.caption || 'After'} />
+      </div>
+      {after.caption && (
+        <p class="font-serif text-sm md:text-base text-syoro/60 dark:text-syoro/50 leading-snug">
+          {after.caption}
+        </p>
+      )}
+    </div>
+  </div>
+</div>

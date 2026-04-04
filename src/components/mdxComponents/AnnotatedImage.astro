@@ -1,0 +1,49 @@
+---
+// LEARN: AnnotatedImage overlays numbered markers on an image for design decision callouts.
+// On mobile, markers collapse to a numbered list below the image for readability.
+import Image from './Image.astro';
+
+interface Annotation {
+  x: number;  // percentage from left (0-100)
+  y: number;  // percentage from top (0-100)
+  label: string;
+}
+
+interface Props {
+  src: string;
+  alt?: string;
+  annotations: Annotation[];
+}
+
+const { src, alt = '', annotations } = Astro.props;
+---
+
+<div class="annotated-image my-10 md:my-16">
+  {/* Image with overlay markers (hidden on mobile) */}
+  <div class="relative rounded-lg overflow-hidden">
+    <Image src={src} alt={alt} />
+    {annotations.map((ann, i) => (
+      <div
+        class="annotation-marker hidden md:flex absolute w-6 h-6 -translate-x-1/2 -translate-y-1/2 rounded-full bg-konpeki text-white font-sans text-xs font-bold items-center justify-center shadow-md cursor-default z-10"
+        style={`left: ${ann.x}%; top: ${ann.y}%;`}
+        title={ann.label}
+      >
+        {i + 1}
+      </div>
+    ))}
+  </div>
+
+  {/* Legend — always visible, serves as the primary reference on mobile */}
+  <ol class="mt-4 space-y-2">
+    {annotations.map((ann, i) => (
+      <li class="flex items-start gap-3">
+        <span class="flex-shrink-0 w-6 h-6 rounded-full bg-konpeki text-white font-sans text-xs font-bold flex items-center justify-center mt-0.5">
+          {i + 1}
+        </span>
+        <span class="font-serif text-base md:text-lg text-syoro/80 dark:text-syoro/70 leading-snug">
+          {ann.label}
+        </span>
+      </li>
+    ))}
+  </ol>
+</div>
