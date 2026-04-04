@@ -1,9 +1,16 @@
 ---
 import Layout from '../layouts/AboutLayout.astro';
 import WorkCardCompact from '../components/WorkCardCompact.astro';
+import StickyExperience from '../components/StickyExperience.astro';
 import { getCollection } from 'astro:content';
 import CustomCursor from '../components/CustomCursor.astro';
-import DotNav from '../components/DotNav.astro';
+import Link from '../components/mdxComponents/Link.astro';
+import { proseClasses } from '../utils/proseClasses';
+import GardenPreview from '../components/GardenPreview.astro';
+import { getPublishedAndSorted } from '../utils/collections';
+
+// LEARN: Homepage garden strip is essays-only; notes stay on /garden
+const gardenPosts = (await getPublishedAndSorted('essays')).slice(0, 3);
 
 const works = await getCollection('works', ({ data }) => data.publish === true);
 
@@ -11,162 +18,180 @@ const experience = [
   {
     role: 'Senior UX Designer',
     company: 'Nordeus',
-    period: '2024 – Current',
+    period: '2024 – Present',
+	website:'https://www.nordeus.com',
+	image:'/works/nordeus.jpeg',
     bullets: [
-      'Building features with cross-functional teams',
-      'Emphasizing accessibility and data-informed solutions',
-      'Maintaining cross-team design documentation to ensure seamless collaboration',
+      'Maintaining cross-team design documentation to ensure seamless collaborations.',
+      'Collaborating with cross-functional teams and UX researchers to ensure accessibility, usability, and data informed solutions at every stage of development.',
+      'Currently building something cool with the team.',
     ],
   },
   {
     role: 'Senior UX Designer',
     company: 'Zynga',
     period: '2023 – 2024',
+	website:'https://www.zynga.com',
+	image:'/works/zynga.jpeg',
     bullets: [
-      'Redesigned navigation and first-time user experience',
-      'Mentored junior staff, conducted A/B testing',
-      'Maintaining cross-team design documentation to ensure seamless collaboration',
+      'Redesigned navigation and FTUE to improve new-user retention.',
+      'Mentored two junior designers through their first shipped features',
+      'Presented design strategies to stakeholders and collaborated across disciplines',
     ],
   },
   {
     role: 'UX Designer',
     company: 'Zynga',
     period: '2021 – 2023',
+	website:'https://www.zynga.com',
+	image:'/works/zynga.jpeg',
     bullets: [
-      "Transitioned Farmville 3's UX end-to-end",
-      'Revamped ad flows, built design systems in Figma and Unity',
-      'Maintaining cross-team design documentation to ensure seamless collaboration',
+      'Designed experience at Farmville 3 from softlaunch through live operations',
+      'Built the design system in Figma and mirrored it in Unity prefabs',
+      'Redesigned ad flows that improved completion rates without hurting player sentiment',
     ],
   },
   {
     role: 'Associate UX Designer',
     company: 'Zynga',
     period: '2019 – 2021',
+	website:'https://www.zynga.com',
+	image:'/works/zynga.jpeg',
     bullets: [
-      'Feature design, competitive analysis, Unity prefabs',
-      'Collaborating with cross-functional teams and UX researchers to deliver data-informed solutions',
-      'Maintaining cross-team design documentation to ensure seamless collaboration',
+      'Designed features by conducting Competitive Analysis, UX Research and diverse design stages.',
+      'Collaborated with PMs and Game Designers, to synchronize feature alignment with business needs, market feedback and user testing',
+      'Directed Revenue KPIs and feature roadmaps as APM in 2021 Q1, under supervision',
     ],
   },
   {
     role: 'Associate UX Designer',
-    company: 'Glu Mobile',
+    company: 'Glu Mobile (Now EA)',
     period: '2018 – 2019',
+	website:'https://www.ea.com/ea-studios/slingshot-studios',
+	image:'/works/glu.jpeg',
     bullets: [
-      'Live-ops optimization, funnel analysis, usability testing',
-      'Collaborating with cross-functional teams and UX researchers to deliver data-informed solutions',
-      'Maintaining cross-team design documentation to ensure seamless collaboration',
+      'Conducted funnel analysis on user onboarding reducing churn and improving retention.',
+      'Built multiple features adhering to Agile methodology by conducting Usability Testing, User Research, creating Wireframes, Prototypes, User flows, use cases, defining VFX and SFX for features.',
+      'Facilitated multiple play tests using playtest cloud to analyze user inputs and formulated actionable reports',
+	  'Conducted both quantitative and qualitative surveys using data dashboards and survey monkey to make data informed decisions',
     ],
   },
 ];
 ---
 
 <Layout
-	title="Curious, Multidisciplinary Designer"
-	description="About Ruwaiz Razak — Designer, Learner and Builder"
+	title="About Ruwaiz Razak"
+	description="A designer who started building before he knew design existed. UX, systems thinking, data, and code."
 >
-	<!-- Hero Section -->
-	<section class="py-16 md:py-24">
-		<div class="flex flex-col md:flex-row gap-10 md:gap-16 items-start">
-			<div class="flex-1 flex flex-col gap-6">
-				<h1 class="text-3xl md:text-4xl font-serif text-syoro w-full md:max-w-[80%]">
-					<span class="text-konpeki">Hi, I'm Ruwaiz.</span>
-					<br>I design systems, interfaces, and interactions that help people stay engaged over time.
+	<!-- Hero — matches notesPost structure: #note-hero-bg + #note-hero-content for GSAP scroll animations -->
+	<section class="relative w-screen max-w-[100vw] ml-[calc(50%-50vw)] overflow-hidden mt-20 py-20">
+		<!-- Background: animated zoom from scale(1.15) → 1.0 on scroll -->
+		<div
+			id="note-hero-bg"
+			class="absolute inset-0 z-0 bg-syoro/10 dark:bg-syoro/5 bg-cover bg-center blur-sm scale-115"
+		/>
+
+		<!-- Hero content: fades out on scroll -->
+		<div id="note-hero-content" class="relative z-10 flex flex-row py-20 px-20 justify-between items-center">
+			<div>
+				<h1 class="font-sans text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold leading-none max-w-5xl mb-8 text-syoro">
+					Hi, I'm Ruwaiz.
 				</h1>
-				<div class="flex flex-col gap-4 mt-4 w-full md:max-w-[80%] text-xl">
-					<p class="text-syoro dark:text-white/80 font-serif leading-relaxed">
-						Before I knew design as a discipline, I was teaching myself HTML, building websites, and learning by making. That instinct never left. I still see code as a way to turn ideas into something real.
+				<p class="font-serif text-3xl w-full lg:w-3/4 mb-8">
+					I design and optimize systems that improve onboarding, retention, and longterm user motivation.
+				</p>
+			</div>
+			<img
+				src="/about/ruwaiz1.jpg"
+				alt="Ruwaiz Razak"
+				class="w-100 h-auto rounded-2xl object-cover"
+			/>
+		</div>
+	</section>
+
+	<!-- LEARN: .note-main-wrapper slides up 120px over the hero on scroll (GSAP in note-post-animations.ts).
+	     bg-backgroundcolor gives it a solid background so it covers the hero as it overlaps. -->
+	<div class="note-main-wrapper relative z-10 bg-backgroundcolor">
+		<!-- Intro -->
+		<div class="note-layout mx-auto flex relative w-full max-w-7xl">
+			<article class={`${proseClasses} py-20 px-10 md:px-12 lg:px-20 w-full mx-auto`}>
+				<p>I started building websites as a teenager, before I knew "design" was a thing one could do for a living. That instinct, wanting to make something and see it work never really went away.</p>
+				<p>Today I design player facing systems at <Link href="http://www.nordeus.com">Nordeus</Link>, onboarding, retention, live engagement by being at the intersection of behavioural systems, interaction design, and research.</p>
+			</article>
+		</div>
+
+		<!-- Work Experience — sticky stacking cards -->
+		<section class="py-5 md:py-10 px-6 md:px-12 lg:px-20">
+			<h2 class="text-xl font-sans font-semibold text-syoro dark:text-white/60 uppercase tracking-widest md:col-span-2">
+				Work Experience
+			</h2>
+			<StickyExperience entries={experience} />
+		</section>
+
+		<!-- A Little History -->
+		<section class="note-layout mx-auto flex relative w-full max-w-7xl">
+			<div class={`${proseClasses} px-10 md:px-12 lg:px-20 w-full mx-auto`}>
+				<h2>
+					A Little History
+				</h2>
+				<div class="flex flex-col gap-5 font-serif text-syoro/90 dark:text-white/80 leading-relaxed">
+					<p>
+						It started in 2009. A classmate mentioned he was building a website and suddenly it felt like something I could do too. I spent weeks on no-code builders like webs.com, webspot.com, whatever I could find before discovering Blogspot to built a car blog called "onthewheels.in" in my regional language. 
+						
+						I remember staring at the screen the first time something I made was live on the internet. That feeling hasn't gone away.
 					</p>
-					<p class="text-syoro dark:text-white/80 font-serif leading-relaxed py-5">
-						Today, I work across product design, shaping onboarding, retention, live systems, and experiences.
+					<p>
+						From there it was Bootstrap, then Jekyll, then a long stretch of learning how to learn, reading documentation instead of watching tutorials, picking up Sass and templating languages by building things that probably should've stayed private. Im writing about this whole journey in <Link href="/series/portfolio-to-garden/">From Portfolio to Garden</Link> — tracing how a teenager's car blog eventually became this site, built from scratch in Astro.
 					</p>
-					<p class="text-syoro dark:text-white/80 font-serif leading-relaxed">
-						I'm drawn to the layer beneath the screen: the system, the motivation, and the clarity that makes an interaction work. My practice often sits between design, strategy, data, and prototyping, because some ideas only become clear once they are tested.
+					<p>
+						I'm from India, grew up between languages and cultures, and that background shows up in how I think about design. Im always aware that what feels obvious to one person can be completely invisible to another.
 					</p>
 				</div>
 			</div>
-			<div class="w-full md:w-[40%] flex-shrink-0">
-				<img
-					src="/about/ruwaiz1.jpg"
-					alt="Ruwaiz Razak"
-					class="w-full h-auto md:h-full object-contain resize-both"
-				/>
-			</div>
-		</div>
-	</section>
+		</section>
 
-	<!-- Work Experience Section -->
-	<section id="work-experience" class="mt-10 md:mt-10 mb-20">
-		<h2 class="text-xl font-sans font-semibold text-syoro dark:text-white/60 uppercase tracking-widest mb-8">
-			Work Experience
-		</h2>
-
-		<!-- Carousel viewport — breaks out of Main's px-20 for edge peek -->
-		<div id="carousel-viewport" class="relative overflow-hidden  md:-mx-20 md:px-20">
-			<!-- Sliding track -->
-			<div id="carousel-track" class="flex">
-				{experience.map((item, i) => (
-					<div class="carousel-slide flex-shrink-0" data-slide-index={i}>
-						<div class="work-card p-6 rounded-2xl border border-syoro/10 dark:border-white/10">
-							<div class="card-header flex flex-col gap-1 mb-4">
-								<h2 class="text-2xl font-sans text-syoro dark:text-white uppercase leading-snug">
-									{item.role}
-								</h2>
-								<h3 class="text-xl font-sans font-semibold text-syoro/60 dark:text-white/40 uppercase">
-									{item.company} | {item.period}
-								</h3>
-							</div>
-							<div class="card-body">
-								<ul class="space-y-2">
-									{item.bullets.map((bullet) => (
-										<li class="text-xl font-serif text-syoro/80 dark:text-white/60 leading-relaxed flex gap-2">
-											<span class="text-syoro/40 dark:text-white/30 mt-1 flex-shrink-0">·</span>
-											<span>{bullet}</span>
-										</li>
-									))}
-								</ul>
-							</div>
-						</div>
-					</div>
+		<!-- Selected Projects -->
+		<section class="py-14 md:py-20 px-6 md:px-12 lg:px-20 mb-16">
+			<h2 class="text-xl font-sans font-semibold text-syoro dark:text-white/60 uppercase tracking-widest md:col-span-2">
+				Selected Projects
+			</h2>
+			<p class="text-lg md:text-xl font-serif text-syoro/70 dark:text-white/50 leading-relaxed mb-8">
+				Some of the work I've shipped.
+			</p>
+			<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+				{works.map(work => (
+					<WorkCardCompact
+						title={work.data.title}
+						role={work.data.role}
+						company={work.data.company}
+						duration={work.data.duration}
+						heroImage={work.data.heroImage}
+						url={`/works/${work.id}`}
+					/>
 				))}
 			</div>
-		</div>
+		</section>
+		<section class="px-6 md:px-12 lg:px-20 mb-16">
+			<GardenPreview posts={gardenPosts} />
+		</section>
+	</div>
 
-		<!-- Dot nav + play/pause -->
-		<DotNav
-			id="carousel-nav"
-			count={experience.length}
-			showArrows={true}
-			showPlayPause={true}
-			showProgress={true}
-			class="flex items-center justify-center gap-3 mt-6 bg-syoro rounded-2xl sticky bottom-0 mx-auto"
-		/>
-	</section>
-
-	<!-- Selected Works Section -->
-	<section class="mb-16">
-		<h2 class="text-xl font-sans font-semibold text-syoro dark:text-white/60 uppercase tracking-widest">
-			Selected Projects
-		</h2>
-		<p class="text-xl font-serif text-syoro/80 dark:text-white/60 leading-relaxed mb-8">Here are some of the projects I've worked on.</p>
-		<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-			{works.map(work => (
-				<WorkCardCompact
-					title={work.data.title}
-					role={work.data.role}
-					company={work.data.company}
-					duration={work.data.duration}
-					heroImage={work.data.heroImage}
-					url={`/works/${work.id}`}
-				/>
-			))}
-		</div>
-	</section>
 	<CustomCursor />
 </Layout>
 
+<!-- LEARN: Same scroll animations as notesPost — hero overlap, fade, and zoom.
+     Reuses the existing GSAP script rather than duplicating animation logic. -->
 <script>
-	import { initWorkExperienceCarousel } from '../scripts/work-experience-carousel';
+	import { initNotePostAnimations } from '../scripts/note-post-animations';
 	import { initOnLoad } from '../utils/initOnLoad';
-	initOnLoad(initWorkExperienceCarousel);
+	initOnLoad(initNotePostAnimations);
 </script>
+
+<style>
+	/* LEARN: Breaks out of the parent Main component's px-20 padding
+	   so the main wrapper spans the full viewport width — same technique as notesPost.astro */
+	.note-main-wrapper {
+		width: 100vw;
+		margin-left: calc((100% - 100vw) / 2);
+	}
+</style>
