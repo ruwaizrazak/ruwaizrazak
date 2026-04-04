@@ -1,6 +1,6 @@
 ---
 title: "Farmville 3"
-description: "Designed and validated player-facing systems that improved Early User Retention, Engagement, long-term engagement by partnering with product managers, engineers, and data analysts."
+description: "Joined during softlaunch and build experiences through full launch and into live operations, shaping player facing systems across progression, engagement, and contextual guidance."
 pubDate: "2024-06-09"
 company: "Zynga"
 duration: "July 2021 - Jan 2024"
@@ -11,6 +11,7 @@ heroImage: "/works/fv3/fv33.jpg"
 phoneImage: "/works/fv3/farmvillephone.png"
 appStoreUrl: "https://apps.apple.com/us/app/farmville-3-farm-animals/id843506607"
 playStoreUrl: "https://play.google.com/store/apps/details?id=com.zynga.farmville3&hl=en"
+narrativeTitle: "Designing Systems That Give Players Direction"
 publish: true
 ---
 import WorkSection from "../../components/mdxComponents/WorkSection.astro";
@@ -19,44 +20,106 @@ import AppStoreBadge from "../../components/AppStoreBadge.astro";
 import GooglePlayBadge from "../../components/GooglePlayBadge.astro";
 import VideoBreakout from "../../components/VideoBreakout.astro";
 import Image from "../../components/mdxComponents/Image.astro";
+import ProjectOverview from "../../components/mdxComponents/ProjectOverview.astro";
+import Callout from "../../components/mdxComponents/Callout.astro";
+import SideNote from "../../components/mdxComponents/SideNote.astro";
 
-<WorkSection title="Overview">
-  <p>Farmville 3 is a mobile game that is a sequel to the popular Farmville game. I was part of the team that built the game from softlaunch, then carried to full launch and to live operations.</p>
+<WorkSection>
+  Farmville 3 is a farming simulation game, the third in the Farmville franchise that helped define the casual mobile genre. I joined the team during softlaunch and stayed through full launch and into live operations, building player facing experiences across the product. 
+  <br />
+  A game like Farmville ships a lot of systems over its lifetime. Events, progression tracks, seasonal content, tutorials, store layouts, social features. My work sat at the intersection different player journeys and how do players understand what's available, what matters during that journey, and where the game goes from here?
+
   <div class="flex flex-row my-10 gap-4">
-    <AppStoreBadge href="https://apps.apple.com/us/app/farmville-3-farm-animals/id843506607" />
-    <GooglePlayBadge href="https://play.google.com/store/apps/details?id=com.zynga.farmville3&hl=en" />
-  </div>
+  <AppStoreBadge href="https://apps.apple.com/us/app/farmville-3-farm-animals/id843506607" />
+  <GooglePlayBadge href="https://play.google.com/store/apps/details?id=com.zynga.farmville3&hl=en" />
+</div>
 </WorkSection>
+
+
 
 <VideoBreakout src="https://www.youtube-nocookie.com/embed/lgnY0QYqAfE?si=FfJmZJcKRKHGnKOB&mute=1&rel=0" />
 
-<WorkSection title="Player-facing Systems">
-  <p>Few in-game systems illustrating the types of player-facing systems I contributed to.</p>
+
+
+<WorkSection title="Design Approach">
+  The principle that guided most of my work on FV3 was a simple one: *direction over pressure.*
+
+  In games with deep feature sets, there's a temptation to push players toward engagement through urgency — countdown timers, limited offers, fear of missing out. That works, but it erodes trust over time. We took a different approach: make the journey visible. If players can see where they are and where the game goes next, they're more likely to stay because they *want* to, not because they feel they have to.
+
+  <Callout type="insight">
+    The best engagement systems are the ones players dont notice. If the system feels like a nudge, it's already too much. The goal is clarity, not persuasion.
+  </Callout>
+
+  This philosophy shaped everything from how we surfaced progression to how we timed contextual tips to how we decided what *not* to show.
+</WorkSection>
+
+<WorkSection title="Progression & Motivation Systems">
+  Progression systems were the backbone. These are the features that help players understand their current place in the game and what achieving the next milestone unlocks. Rather than a single linear track, we designed layered systems that could adapt to where a player was in their lifecycle.
+<br />
+  For early players, the focus was on immediate clarity, short loops, visible rewards, guided next steps. For players deeper into the game, we shifted toward longer arcs and personal goals. The system needed to feel like it grew with the player, not like it was the same tutorial on repeat.
 </WorkSection>
 
 <WorkImageGrid>
   <Image
     src="/works/fv3/fv3Progression1.jpg"
-    alt="Progression & Motivation Systems"
+    alt="Progression and motivation systems in Farmville 3"
     title="Progression Systems"
-    description="Progression and motivation systems are a set of features that are designed to keep users stick to the game and keep them engaged. Motivation systems often get paired with new features and rewards to keep both early and long-term users engaged."
+    description="Layered progression and motivation systems designed to adapt to different player lifecycles, surfacing the right level of detail depending on where someone is in the game."
   />
   <Image
     src="/works/fv3/fv3tips.jpg"
-    alt="In-game Tips"
-    title="In-game instructions"
-    description="In-game tips were designed to help users to get a sense of direction in the game and to guide them through the game."
+    alt="Contextual in-game guidance"
+    title="Contextual Guidance"
+    description="In-game tips designed to provide direction at key moments — timed to appear when a player is most likely to benefit from a gentle pointer rather than discover on their own."
   />
+</WorkImageGrid>
+
+<WorkSection title="Contextual Guidance">
+  A game with as many systems as FV3 risks overwhelming players. New features appear over time, events rotate, and the map expands.
+<br />
+  We designed a contextual guidance layer that surfaced tips and suggestions based on player state. A system that understood what the player had and hadnt engaged with, and offered direction without demanding attention.
+<br />
+    The goal gradient effect shaped how we timed these interventions. People naturally accelerate toward a visible goal,so we made sure there was always a next goal in view, especially during the moments right after a big achievement when momentum is most fragile.
+
+</WorkSection>
+
+<WorkImageGrid>
   <Image
     src="/works/fv3/fv3Engagement2.jpg"
-    alt="Usage of Goal Gradient and Zeigarnik Effects"
-    title="Motivation systems to help users to stay engaged."
-    description="The system allows the users to identify their goal and their current progress towards it, helping them to identify their next steps and act accordingly"
+    alt="Motivation systems using goal gradient principles"
+    title="Motivation Systems"
+    description="Systems designed to make a player's goal and current progress visible at a glance, creating natural momentum through proximity to the next milestone."
   />
   <Image
     src="/works/fv3/fv3Engagement1.jpg"
-    alt="Progressive Disclosure"
-    title="Using Progressive Disclosure to avoid overwhelming."
-    description="In a game with lots of features, it is important to not overwhelm the users with too many options at once. Progressive disclosure helps to reveal the options gradually as the user progresses through the game."
+    alt="Uses states to let user know that they need to engage with a system"
+    title="Contextual Guidance"
+    description="Uses states to let user know that they need to engage with a system"
   />
 </WorkImageGrid>
+
+<WorkSection title="Progressive Disclosure">
+  With dozens of features, the interface couldnt show everything at once. We relied on progressive disclosure heavily to reveal options and systems gradually as the player progressed, rather than front loading complexity.
+
+  <Callout type="question"> If we are hiding features or assets behind progression, how would the user know what the game has to offer? </Callout>
+
+   We addressed this by tying feature reveals to natural progression points, unlocking a new area would introduce its associated systems in context, or when user check their curent level, they could see what features they could unlock as they evolve, or when they see something cool we show them how they could get them rather than dumping them into a settings menu.
+
+</WorkSection>
+<WorkImageGrid>
+<Image
+    src="/works/fv3/howtounlock.jpeg"
+    alt="Contextual Guidance"
+    title="Contextual Guidance"
+    loading="lazy"
+    description="In-game tips designed to provide direction at key moments, timed to appear when a player is most likely to benefit from a gentle pointer rather than discover on their own."
+  />
+  </WorkImageGrid>
+
+<WorkSection title="Working Together">
+  None of this was designed in isolation. Game designers owned the system logic and content curves. I worked with them on the information hierarchy, interaction pattern, what gets surfaced, where, and at what priority. 
+  <br />
+  Engineering flagged feasibility constraints early, which shaped how dynamic the contextual systems could be. PMs helped prioritize which systems to invest in and to set up experiements to test the metrics. 
+  <br />
+  The work was iterative in the truest sense. Ship, observe, adjust.  
+</WorkSection>

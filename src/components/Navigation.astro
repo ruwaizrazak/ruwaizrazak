@@ -57,7 +57,7 @@ const {
           <!-- Garden Dropdown Button -->
           <button 
             id="desktop-menu-button"
-            class="flex items-center text-xl font-medium text-syoro rounded-full hover:bg-syoro/10 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-syoro/20 dark:focus:ring-gray-600 transition-all uppercase hover:scale-95 px-5">
+            class="flex items-center text-xl font-medium text-syoro rounded-full hover:bg-blue-50 dark:hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-50 dark:focus:ring-blue-600 transition-all uppercase hover:scale-95 px-5">
             Garden
             <svg  class="ml-2 -mr-1 w-4 h-4 flex-shrink-0 transition-transform duration-200" id="desktop-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
@@ -67,7 +67,7 @@ const {
           {additionalLinks.map((link) => (
             <a 
               href={link.href}
-              class="flex-1 min-w-0 flex items-center justify-center px-5 py-2 text-syoro rounded-full uppercase hover:scale-95 transition-all hover:bg-syoro/10">
+              class="flex-1 min-w-0 flex items-center justify-center px-5 py-2 text-syoro rounded-full uppercase transition-all hover:bg-blue-50 hover:text-link hover:scale-95">
               <h3 class="font-sans font-medium text-xl flex items-center gap-2">
                 {link.icon && (
                   <span
@@ -85,12 +85,12 @@ const {
 
         <!-- Work with me contact dropdown (desktop) -->
         <div class="relative" id="contact-button">
-          <div class="bg-link rounded-full p-2">
+          <div class="bg-link rounded-full">
             <button 
               id="about-menu-button"
-              class="flex items-center text-xl font-medium text-white rounded-full hover:bg-syoro/10 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-link/20  transition-all uppercase hover:scale-95 px-5">
+              class="flex items-center text-xl font-medium text-white rounded-full hover:bg-syoro/10 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-syoro/20 dark:focus:ring-gray-600 transition-all uppercase hover:scale-95 px-5 py-2">
               Work with me
-              <span class="text-syoro">
+              <span class="text-white">
                 <svg class="ml-2 -mr-1 w-4 h-4 flex-shrink-0 transition-transform duration-200" id="about-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                 </svg>
@@ -101,12 +101,13 @@ const {
             id="about-dropdown" 
             class="hidden absolute right-0 mt-2 w-56 shadow-lg rounded-xl transform bg-backgroundcolor scale-95 pointer-events-none transition-all duration-200 ease-out border backdrop-blur-md z-50"
           >
-            <div class="">
+            <div>
               <a
                 href="https://www.linkedin.com/in/ruwaizrazak"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="p-4 text-xl font-medium text-konpeki hover:bg-konpeki/10 rounded-t-xl flex gap-2"
+                data-contact="linkedin"
+                class="p-4 text-xl font-medium text-konpeki hover:bg-blue-50 hover:text-link hover:scale-95 rounded-t-xl flex gap-2 transition-all"
               >
                 <span class="text-syoro">
                   <svg class="contact-icon w-6 h-6" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -117,7 +118,8 @@ const {
               </a>
               <a
                 href="mailto:hello@ruwaizrazak.com"
-                class="group flex gap-2 hover:gap-4 transition-all duration-200 p-4 text-xl font-medium text-konpeki  hover:bg-konpeki/10"
+                data-contact="email"
+                class="group flex gap-2 hover:gap-4 transition-all duration-200 p-4 text-xl font-medium text-konpeki hover:bg-blue-50 hover:text-link hover:scale-95"
               >
                 <span class="text-syoro flex-shrink-0">
                   <svg class="contact-icon w-6 h-6 transition-all duration-200" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -130,7 +132,8 @@ const {
                 href="https://www.ruwaizrazak.com/ruwaizcv.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="flex gap-2 p-4 text-xl font-medium text-konpeki hover:bg-konpeki/10 rounded-b-xl"
+                data-contact="resume"
+                class="flex gap-2 p-4 text-xl font-medium text-konpeki hover:bg-blue-50 hover:text-link hover:scale-95 transition-all rounded-b-xl"
               >
                 <span class="text-syoro flex-shrink-0">
                   <svg class="contact-icon w-6 h-6" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -171,7 +174,7 @@ const {
         {menuItems.map((item) => (
           <a 
             href={item.href}
-            class="group p-4 rounded-lg hover:scale-95 hover:border border-card-border ease-in-out transition-all block duration-200 hover:bg-yellow-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-yellow-100 dark:focus:ring-gray-600"
+            class="group p-4 rounded-lg hover:scale-95 hover:border border-card-border ease-in-out transition-all block duration-200 hover:bg-blue-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-100 dark:focus:ring-gray-600"
           >
             <div class="flex items-center space-x-4">
               {item.icon && (
@@ -285,28 +288,31 @@ const {
       <div class="px-4 py-2">
         <h3 class="text-md font-semibold text-gray-400 uppercase tracking-wider">Contact</h3>
       </div>
-      <a 
+      <a
         href="https://www.linkedin.com/in/ruwaizrazak"
         target="_blank"
         rel="noopener noreferrer"
+        data-contact="linkedin"
         class="flex items-center px-4 py-3 text-konpeki hover:bg-yellow-50 dark:hover:bg-gray-700 hover:text-indigo-600 transition-colors duration-200"
       >
         <div class="flex-1">
           <div class="font-medium">LINKED IN</div>
         </div>
       </a>
-      <a 
+      <a
         href="mailto:hello@ruwaizrazak.com"
+        data-contact="email"
         class="flex items-center px-4 py-3 text-konpeki hover:bg-yellow-50 dark:hover:bg-gray-700 hover:text-indigo-600 transition-colors duration-200"
       >
         <div class="flex-1">
           <div class="font-medium">Mail me</div>
         </div>
       </a>
-      <a 
+      <a
         href="https://www.ruwaizrazak.com/ruwaizcv.pdf"
         target="_blank"
         rel="noopener noreferrer"
+        data-contact="resume"
         class="flex items-center px-4 py-3 text-konpeki hover:bg-yellow-50 dark:hover:bg-gray-700 hover:text-indigo-600 transition-colors duration-200"
       >
         <div class="flex-1">

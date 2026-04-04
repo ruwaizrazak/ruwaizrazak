@@ -21,11 +21,13 @@ const PAGE_LINKS = [
         <h2 class="font-serif text-2xl max-w-xl italic font-normal leading-snug mb-8 md:text-3xl">Let's get in touch if you are intrigued about my work or just want to say hi!</h2>
         <div class="h-card">
           <span class="p-name" hidden>Ruwaiz Razak</span>
+          <a href="https://ruwaizrazak.com" class="u-url" hidden></a>
+          <img src="/avatar.jpg" class="u-photo" alt="Ruwaiz Razak" hidden />
           <h3 class="font-handwriting text-xl font-bold uppercase tracking-widest text-syoro/70 mb-5">Say Hi</h3>
           <ul class="list-none flex flex-row flex-wrap gap-3 p-0 m-0 w-full">
             {SOCIAL_LINKS.map((link) => (
               <li class="list-none">
-                <a href={link.href} target="_blank" rel={link.rel} class={`${link.class} inline-flex flex-row items-center gap-[0.6rem] whitespace-nowrap font-sans text-xl font-normal no-underline transition-colors duration-200`} data-diamond={link.diamondPath} data-symbol={link.symbolPath}>
+                <a href={link.href} target="_blank" rel={link.rel} class={`${link.class} inline-flex flex-row items-center gap-[0.6rem] whitespace-nowrap font-sans text-xl font-normal no-underline transition-colors duration-200`} data-diamond={link.diamondPath} data-symbol={link.symbolPath} {...(link.label === 'LinkedIn' ? { 'data-contact': 'linkedin' } : link.label === 'Email' ? { 'data-contact': 'email' } : link.label === 'GitHub' ? { 'data-contact': 'github' } : {})}>
                   <svg class="contact-icon w-[1.125rem] h-[1.125rem] shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                     <path class="contact-icon-path" fill="currentColor" d={link.diamondPath} />
                   </svg>
@@ -59,6 +61,7 @@ const PAGE_LINKS = [
   import gsap from 'gsap';
   import { interpolate } from 'flubber';
   import { initOnLoad } from '../utils/initOnLoad';
+  import { initContactTracking } from '../scripts/analytics';
 
   function initContactIconMorph() {
     const links = document.querySelectorAll('.contact-link');
@@ -100,5 +103,6 @@ const PAGE_LINKS = [
 
   initOnLoad(() => {
     initContactIconMorph();
+    initContactTracking();
   });
 </script>

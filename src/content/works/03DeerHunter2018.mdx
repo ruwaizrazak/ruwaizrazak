@@ -1,6 +1,6 @@
 ---
 title: "Deer Hunter 2018"
-description: "Improved onboarding conversion and veteran engagement systems within a live mobile shooter through behavioral analysis and live-ops iteration."
+description: "First UX designer in the studio, built design rationale into a live mobile shooter's pipeline while working across onboarding, competitive events, and veteran engagement systems."
 pubDate: "2018-06-09"
 company: "Glu"
 duration: "Mar 2018 - July 2019"
@@ -9,51 +9,62 @@ location: "India"
 featured: true
 heroImage: "/works/dh/dhscoped.jpg"
 phoneImage: "/works/dh/dhphone.png"
+narrativeTitle: "Earning Trust Through Rationale"
 publish: true
 ---
 
-import VideoBreakout from "../../components/VideoBreakout.astro";
-import Image from "../../components/mdxComponents/Image.astro";
 import WorkSection from "../../components/mdxComponents/WorkSection.astro";
 import WorkImageGrid from "../../components/mdxComponents/WorkImageGrid.astro";
-import WorkClosingText from "../../components/mdxComponents/WorkClosingText.astro";
+import Image from "../../components/mdxComponents/Image.astro";
+import VideoBreakout from "../../components/VideoBreakout.astro";
+import Callout from "../../components/mdxComponents/Callout.astro";
 
-<WorkSection title="Overview">
-  <p>
-    Deer Hunter 2018 is a live mobile hunting game built around progression depth and event-driven engagement.
-    As the first UX designer in the studio, I helped embed UX into the product roadmap while addressing onboarding drop-off and veteran player stagnation.
-  </p>
+<WorkSection>
+  Deer Hunter 2018 is a live mobile hunting game built around progression depth and event-driven engagement. By the time I joined, the product was matured with a dedicated player base, established content pipelines, and a team that had been shipping for years.
 </WorkSection>
 
 <VideoBreakout src="https://www.youtube-nocookie.com/embed/mFpyR9rbf04?si=b2wvitZFpgJGML-J?rel=0" />
 
-<WorkSection title="Retention & Engagement Systems">
-  <p>
-    Selected systems illustrating onboarding optimization and long-term engagement initiatives.
-    Certain implementation specifics are abstracted due to confidentiality.
-  </p>
+<WorkSection title="Design Approach">
+  The principle I kept coming back to on Deer Hunter was *rationale before aesthetics.*
+  <br />
+  In a studio where design had historically meant visual execution, the shift wasnt about better screens. It was about showing the team *why* a particular direction made sense, and it included walking through the reasoning, the player context, the trade-offsbefore jumping into how it should look. Every decision I presented came with its logic attached.
+
+  <Callout type="insight">
+    Design credibility in a new environment isnt earned by delivering better pixels. Its earned by making the thinking visible, so the team have visibility over the reasoning, not just the output.
+  </Callout>
+
+  This changed how conversations happened. Instead of reviewing a screen and asking whether it looked right, the team started asking whether the approach was right.
+</WorkSection>
+
+<WorkSection title="Early Player Clarity">
+  When I joined, one of my early side project was about how new players are interacting with the system and they were dropping before the core loop clicked. The game has depth, weapon upgrades, hunting regions, event systems. But users were getting churned in the early journey before ever seeing them.
+  <br />
+  This is where I started learning the basics of data science. I spent time in Tableau dashboards, tracing where players fell off, what sessions looked like before a drop, and which early moments correlated with longer retention. The design work started before any wireframes, it started with understanding the data well enough to pitch a case for why the onboarding pipeline needed attention.
+  <br />
+  Getting the work prioritized meant presenting to stakeholders with specific observations and proposed solutions, not just flagging a problem. The onboarding redesign that followed was shaped by what the data revealed about when players lost direction, and the design focused on making the early game feel like a guided introduction to the full experience rather than a stripped-down version of it.
 </WorkSection>
 
 <WorkImageGrid>
   <Image
     src="/works/dh/dHShooting.jpg"
-    alt="Onboarding Funnel Optimization"
-    title="Onboarding Funnel Optimization"
-    description="Analyzed early drop-off points using qualitative research and behavioral metrics to refine first-session clarity, reduce friction, and improve new user retention rates."
-  />
-
-  <Image
-    src="/works/dh/dhtournament.jpg"
-    alt="Tournament-Based Engagement System"
-    title="Tournament-Based Engagement"
-    description="Introduced competitive event systems designed to re-activate veteran players and reduce stagnation. Structured progression fairness to avoid pay-to-win perception while reinforcing skill-based motivation."
+    alt="First-session hunting experience in Deer Hunter 2018"
+    title="First Session Experience"
+    description="Redesigned early player flow to surface the game's depth sooner — giving new hunters a sense of where the progression leads before they decide whether to stay."
   />
 </WorkImageGrid>
 
-<WorkClosingText>
-  <p>
-    As the studio's first UX, I established UX integration within the roadmap pipeline, partnering closely with product and engineering to ensure experience decisions were aligned with engagement metrics and live performance.
-    <br/>
-    As the only UX designer in the studio, I was also collaboratiing with other products within the studio along with Deer Hunter's core team.
-  </p>
-</WorkClosingText>
+<WorkSection title="Competitive Event Systems">
+  Beyond the base game, Deer Hunter ran rotating events that kept the live experience fresh. I worked on two competitive formats that targeted different segments of the player base.
+  <br />
+  Design direction behind these systems was to keep it tied to the core loop while maintaining the motivations systems associated to competitve events.
+</WorkSection>
+
+<WorkImageGrid>
+  <Image
+    src="/works/dh/dhtournament.jpg"
+    alt="Rifle tournament interface showing competitive brackets"
+    title="Veteran Tournament Design"
+    description="Competitive event system designed for experienced players — structured around skill-based progression rather than time investment, giving long-term hunters a reason to return."
+  />
+</WorkImageGrid>

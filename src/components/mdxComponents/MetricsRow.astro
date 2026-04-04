@@ -1,0 +1,27 @@
+---
+// LEARN: MetricsRow displays 2-4 key metrics in a scannable horizontal row.
+// Common in portfolio case studies for surfacing impact at a glance.
+interface Metric {
+  value: string;
+  label: string;
+}
+
+interface Props {
+  metrics: Metric[];
+}
+
+const { metrics } = Astro.props;
+---
+
+<div class="metrics-row grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 my-10 md:my-16 py-8 border-y border-syoro/10 dark:border-syoro/20">
+  {metrics.map((metric) => (
+    <div class="flex flex-col gap-1">
+      <span class="font-sans text-3xl md:text-4xl lg:text-5xl font-bold text-syoro dark:text-syoro leading-none">
+        {metric.value}
+      </span>
+      <span class="font-serif text-sm md:text-base text-syoro/60 dark:text-syoro/50 leading-snug mt-2">
+        {metric.label}
+      </span>
+    </div>
+  ))}
+</div>

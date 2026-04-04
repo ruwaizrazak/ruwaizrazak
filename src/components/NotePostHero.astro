@@ -1,5 +1,7 @@
 ---
 import { getMaturityIcon } from '../utils/maturityIcons';
+import PageHero from './PageHero.astro';
+
 
 interface Props {
   title: string;
@@ -13,7 +15,6 @@ interface Props {
 
 const { title, description, pubDate, updatedDate, heroImage, tags = [], maturity } = Astro.props;
 const maturityIcon = getMaturityIcon(maturity);
-const hasImage = !!heroImage;
 
 const formattedDate = pubDate.toLocaleDateString('en-us', {
   year: 'numeric',
@@ -27,64 +28,45 @@ const formattedUpdatedDate = updatedDate?.toLocaleDateString('en-us', {
 });
 ---
 
-<section class="relative w-screen max-w-[100vw] ml-[calc(50%-50vw)] overflow-hidden mt-20 py-20">
-  <!-- Background: blurred hero image or fallback color -->
-  <div
-    id="note-hero-bg"
-    class="absolute inset-0 z-0 bg-syoro/10 dark:bg-syoro/5"
-    style={hasImage
-      ? `background-image: url(${heroImage}); background-size: cover; background-position: center; filter: blur(5px); transform: scale(1.15); `
-      : ''}
-  />
-  {hasImage && <div class="absolute inset-0 z-[1] bg-black/50" />}
-
-  <!-- Content -->
-  <div id="note-hero-content" class="relative z-10 px-20 py-20">
-    <!-- Maturity + Date row -->
-    <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 mb-6">
-      <div class="flex items-center gap-2">
-        {maturityIcon && (
-          <img src={maturityIcon} class="w-5" alt="" />
-        )}
-        <span class={`uppercase text-lg font-sans ${hasImage ? 'text-white/80' : 'text-gray-600'}`}>
-          {maturity}
-        </span>
+<PageHero title={title} description={description} titleClass="p-name" descriptionClass="p-summary" class="justify-start mb-10">
+  <!-- Metadata row -->
+  <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-lg font-sans uppercase text-syoro/60 mb-4 mt-10">
+    {maturityIcon && (
+      <div class="flex items-center gap-1.5">
+        <img src={maturityIcon} class="w-4 opacity-60" alt="" />
+        <span>{maturity}</span>
       </div>
-      <div class={`uppercase font-sans text-lg ${hasImage ? 'text-white/60' : 'text-syoro'}`}>
-        <time datetime={pubDate.toISOString()}>Published: {formattedDate}</time>
-        {formattedUpdatedDate && (
-          <>
-            <span> · </span>
-            <time datetime={updatedDate!.toISOString()}>Updated: {formattedUpdatedDate}</time>
-          </>
-        )}
-      </div>
-    </div>
+    )}
+    <time datetime={pubDate.toISOString()} class="dt-published">{formattedDate}</time>
+    {formattedUpdatedDate && (
+      <span>· Updated {formattedUpdatedDate}</span>
+    )}
+  </div>
 
-    <!-- Title -->
-    <h1 class={`font-sans text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold leading-none max-w-5xl mb-8 ${hasImage ? 'text-white' : 'text-syoro'}`}>
-      {title}
-    </h1>
-
-    <!-- Description -->
-    <p class={`font-serif text-3xl pl-4 w-full lg:w-3/4 mb-8 border-l-4 ${hasImage ? 'text-white/90 border-white/30' : 'text-syoro border-syoro'}`}>
-      {description}
-    </p>
-
-    <!-- Tags -->
-    {tags.length > 0 && (
-      <div class="flex flex-wrap gap-2 items-center">
-        <span class={`text-xl font-sans uppercase ${hasImage ? 'text-white/60' : 'text-syoro/80'}`}>Covers:</span>
-        {tags.map((tag, index) => (
+  <!-- Tags -->
+  {tags.length > 0 && (
+    <div class="flex flex-wrap items-center gap-x-1 text-lg font-sans text-syoro/60">
+      {tags.map((tag, index) => (
+        <>
           <a
             href={`/tags/${tag.toLowerCase()}`}
-            class={`px-4 py-2 text-sm border transition-all duration-200 uppercase hover:-skew-x-3 hover:border-r-2 hover:border-b-2 animate-slide-in ${hasImage ? 'text-white/90 border-white/30 hover:border-white/60 bg-white/10' : 'text-gray-600 border-gray-300 hover:border-gray-400 bg-white'}`}
-            style={`animation-delay: ${index * 100}ms`}
+            class="hover:text-syoro/80 transition-colors duration-200 hover:italic"
           >
             {tag.charAt(0).toUpperCase() + tag.slice(1)}
           </a>
-        ))}
-      </div>
-    )}
-  </div>
-</section>
+          {index < tags.length - 1 && <span>·</span>}
+        </>
+      ))}
+    </div>
+  )}
+
+  <!-- Hero image, clean and simple -->
+  {heroImage && (
+    <img
+      src={heroImage}
+      alt=""
+      class="w-full mt-12 rounded"
+      loading="eager"
+    />
+  )}
+</PageHero>

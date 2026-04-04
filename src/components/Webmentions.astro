@@ -1,216 +1,335 @@
 ---
+import type { WebMention, WebMentionCache } from '../types';
+import mentions from '../data/webmentions.json';
+
 interface Props {
   url: string;
 }
 
 const { url } = Astro.props;
+const webmentions = mentions as WebMentionCache;
+
+// LEARN: Match URL with and without trailing slash to catch all mentions
+const postMentions = webmentions.children.filter((m: WebMention) => {
+  const target = m['wm-target'];
+  return (
+    target === url ||
+    target === `${url}/` ||
+    target.startsWith(`${url}?`)
+  );
+});
+
+const likesAndReposts = postMentions.filter(
+  (m: WebMention) => m['wm-property'] === 'like-of' || m['wm-property'] === 'repost-of',
+);
+
+const mentionsWithContent = postMentions
+  .filter(
+    (m: WebMention) =>
+      (m['wm-property'] === 'mention-of' || m['wm-property'] === 'in-reply-to') && m.content,
+  )
+  .sort((a: WebMention, b: WebMention) => {
+    return new Date(b['wm-received']).getTime() - new Date(a['wm-received']).getTime();
+  });
+
+// Spam domain blocklist (adapted from Maggie Appleton's list)
+const blockList = [
+  'www.aol.com', 'newstrooper.net', 'uuldesign.com', 'condepah.com', 'cashadvaa.com',
+  'neckball.com', 'chruvids.com', 'czyijiamei.com', 'cabelov.com', 'jaunenglish.com',
+  'puntvisual.com', 'solomario.com', 'digitalkoh.com', 'latribunapanama.com', 'sahafans.com',
+  'live-healthy-and-well.com', 'www.workidnap.tech', 'akkalife.com', 'ict-news-bd.com',
+  'truthrow.com', 'floodrelief2022.com', 'chapsell.com', 'unnews.site', 'www.scriptori.com',
+  'cssmixer.com', 'findvidz.com', 'starkedsf.com', 'apollonews.site', 'unnews.online',
+  'faizalpj.com', 'vimaxdeal.com', 'bynewmud.com', 'safallon.xyz', 'facecapas.com',
+  '491magazine.com', 'wow-onyx.com', 'heartjournalmagazine.com', 'momovan.com', 'bakatube.com',
+  'indiatoday.host', 'www.indiatoday.host', 'rssfeeds.cloudsite.builders', 'sharewaredepo.com',
+  'pakistanistore.pk', 'gadgetsearcher.com', 'pixallus.com', 'marketingsolution.com.au',
+  'digitalapexgroup.com', 'technologynews.biz', 'worldtech.news', 'htmltreehouse.com',
+  '1dmx.org', 'websitedesign-usa.com', 'techupd.com', 'fancyhints.com', 'techalertnews.com',
+  'buzzedly.com', 'dztechno.com', 'graphicdon.com', 'www.newsgosspis.com', 'www.digitasbuzz.in',
+  'gotutoral.com', 'wpguynews.com', 'www.klobal.net', 'www.webmastersgallery.com',
+  'pikopong.com', 'keren.link', 'ntdln.com', 'jczh.xyz', 'fullstackfeed.com',
+  'thebrandingstore.net', 'development-tools.net', 'itdirectory.my', 'engrmks.com.ng',
+  'www.xspdf.com', 'isokunoffice.club', 'dinezh.com', 'www.makemoneyupdaters.com',
+  'clicknow.in', 'nexstair.com', 'kovtonyuk.inf.ua', 'postheaven.net',
+  'www.legendstrivia.co.uk', 'squareblogs.net', 'www.fourthcity.net', 'www.engrmks.com.ng',
+  '711web.com', 'www.67nj.org', 'tipsxd.com', 'www.new.pixel-forge.ca', 'wpnewshub.com',
+  'wawas-kingdom.com', 'watchfvsslive.co', 'techfans.co.uk', 'reportwire.org',
+  'www.codeificant.com', 'wpdesigns.live', 'gigatechnews.com', 'blogs.thebitx.com',
+  'updatetech.xyz', 'neoweb4u.com', 'www.websjohn.com', 'www.webhostpolice.com',
+  'lzomedia.com', 'jateng.co', 'news.priviw.com', 'movilgadget.com', 'kitdeveloper.ru',
+  'reactjsexample.com', 'dentedreality.com.au', 'platoblockchain.net', 'aayugcreation.com',
+  'codinghindi.in', 'sayed.work', 'infos.by', 'data-science-austria.at',
+  'www.techyrack.com', 'opta.live', 'www.imoneyhub.com', 'www.askorhelp.com',
+  'www.handla.it', 'webchilli.co.za', 'indyamariejean.com', 'hnikoloski.com',
+  'www.makemoneyonlinecom.com', 'underskore.in', 'codytechs.com', 'shanuverma.com',
+  'technewzroom.com', 'fiercesite.com', 'www.essexwebhosts.com', 'tavarro.com',
+  'ecapital.news', 'i-capitals.com', 'vcodepedia.com', 'e-capitals.com', 'xlera8.com',
+  'gadgetofficials.com', 'coingenius.news', 'thenewslog.org', 'zplux.com', 'tiptipa.com',
+  'zephyrnet.com', 'secretofcss.com', 'test.designsolutions.online', 'www.prixleplusbas.xyz',
+  'www.nolisa.xyz', 'datechguru.com', 'www.cssdersleri.com', 'www.pixellyft.com',
+  'icapital.news', 'helpbuildweb.com', 'sharewarepile.com', 'www.codersjungle.com',
+  'www.monsterstudios.com.ng', 'technewsbeats.com', 'kerbco.com', 'deboramontoli.it',
+  'programming.yourworldin90seconds.com', 'programming.nichedomain.news',
+  'programming.aplus-review.com', 'programming.webcloning.com',
+  'www.sacramentowebdesigngroup.com', 'old.billionaireclubcollc.com',
+  'tecriter.wordpressarena.com', 'reddits.contractwebsites.com',
+  'pazukong.wordpress.com', 'programmer.chimpymail.com',
+];
+
+const filteredMentions = mentionsWithContent.filter((m: WebMention) => {
+  const domain = m.url.split('/')[2];
+  return !blockList.includes(domain);
+});
+
+// LEARN: Deduplicate likes by author photo+name — same person may like via multiple URLs
+const uniqueLikes = likesAndReposts.filter(
+  (like: WebMention, index: number, self: WebMention[]) =>
+    index === self.findIndex(
+      (t: WebMention) => t.author.photo === like.author.photo && t.author.name === like.author.name,
+    ),
+);
+
+function formatDate(dateStr: string) {
+  return new Date(dateStr).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  });
+}
+
+function formatContent(content: string) {
+  const cleaned = content.replace(/ruwaizrazak\.com.*/g, '');
+  return cleaned.length > 280 ? cleaned.slice(0, 280) + '…' : cleaned;
+}
+
+function mentionType(m: WebMention) {
+  if (m['wm-property'] === 'in-reply-to') return 'replied';
+  if (m['wm-property'] === 'mention-of') return 'mentioned';
+  return '';
+}
+
+const hasMentions = likesAndReposts.length > 0 || filteredMentions.length > 0;
 ---
 
-<div class="webmentions-container" data-page-url={url}>
-  <!-- Populated client-side -->
-</div>
+{hasMentions && (
+  <div class="wm-outer">
+    <div class="wm-container">
+      <h3 class="wm-title">Mentions around the web</h3>
+
+      {likesAndReposts.length > 0 && (
+        <div class="wm-likes-section">
+          <div class="wm-avatar-row">
+            {uniqueLikes.slice(0, 20).map((like: WebMention) =>
+              like.author.photo ? (
+                <div class="wm-avatar-slot">
+                  <img src={like.author.photo} alt={like.author.name} loading="lazy" />
+                </div>
+              ) : (
+                <div class="wm-avatar-slot">
+                  <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="18" cy="18" r="18" fill="var(--color-konpeki)" opacity="0.3" />
+                  </svg>
+                </div>
+              )
+            )}
+            <span class="wm-likes-count">{likesAndReposts.length} Like{likesAndReposts.length !== 1 ? 's' : ''} & Repost{likesAndReposts.length !== 1 ? 's' : ''}</span>
+          </div>
+        </div>
+      )}
+
+      {filteredMentions.length > 0 && (
+        <div class="wm-mentions-section">
+          <div class="wm-mentions-list">
+            {filteredMentions.map((m: WebMention, index: number) => (
+              <div class:list={['wm-reply', { 'wm-hidden': index >= 4 }]}>
+                {m.author.photo ? (
+                  <img src={m.author.photo} alt={m.author.name} class="wm-reply-avatar" loading="lazy" />
+                ) : (
+                  <svg class="wm-reply-avatar" width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="20" cy="20" r="20" fill="var(--color-konpeki)" opacity="0.3" />
+                  </svg>
+                )}
+                <div class="wm-reply-body">
+                  <a href={m.url} target="_blank" rel="noopener noreferrer" class="wm-reply-meta">
+                    <span class="wm-reply-author">{m.author.name || m.url.split('/')[2]}</span>
+                    <span class="wm-reply-type">{mentionType(m)}</span>
+                    <time class="wm-reply-date">{formatDate(m['wm-received'])}</time>
+                  </a>
+                  {m.content?.text && (
+                    <p class="wm-reply-content">{formatContent(m.content.text)}</p>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {filteredMentions.length > 4 && (
+            <button class="wm-show-more" data-total={filteredMentions.length}>
+              Show {filteredMentions.length - 4} more
+            </button>
+          )}
+        </div>
+      )}
+    </div>
+  </div>
+)}
 
 <script>
-  function initWebmentions() {
-    document.querySelectorAll<HTMLDivElement>('.webmentions-container').forEach(async (container) => {
-      const pageUrl = container.dataset.pageUrl;
-      if (!pageUrl) return;
+  import { initOnLoad } from '../utils/initOnLoad';
 
-      // Avoid re-initializing
-      if (container.dataset.loaded === 'true') return;
-      container.dataset.loaded = 'true';
+  function initShowMore() {
+    document.querySelectorAll<HTMLButtonElement>('.wm-show-more').forEach((btn) => {
+      if (btn.dataset.bound === 'true') return;
+      btn.dataset.bound = 'true';
 
-      try {
-        const res = await fetch(
-          `https://webmention.io/api/mentions.jf2?target=${encodeURIComponent(pageUrl)}&per-page=200`
-        );
-        if (!res.ok) return;
+      let expanded = false;
+      btn.addEventListener('click', () => {
+        const container = btn.closest('.wm-mentions-section');
+        const replies = container?.querySelectorAll('.wm-reply');
+        if (!replies) return;
 
-        const data = await res.json();
-        const mentions = data.children || [];
-        if (mentions.length === 0) return;
+        expanded = !expanded;
+        replies.forEach((reply, i) => {
+          if (i >= 4) reply.classList.toggle('wm-hidden', !expanded);
+        });
 
-        const likes: any[] = [];
-        const reposts: any[] = [];
-        const replies: any[] = [];
-
-        for (const m of mentions) {
-          switch (m['wm-property']) {
-            case 'like-of':
-              likes.push(m);
-              break;
-            case 'repost-of':
-              reposts.push(m);
-              break;
-            case 'in-reply-to':
-            case 'mention-of':
-              replies.push(m);
-              break;
-          }
-        }
-
-        let html = '';
-
-        // Likes
-        if (likes.length > 0) {
-          html += `
-            <div class="wm-section">
-              <h3 class="wm-heading">${likes.length} Like${likes.length !== 1 ? 's' : ''}</h3>
-              <div class="wm-avatars">
-                ${likes.map((l) => {
-                  const photo = l.author?.photo || '';
-                  const name = l.author?.name || 'Anonymous';
-                  const authorUrl = l.author?.url || '#';
-                  return photo
-                    ? `<a href="${authorUrl}" target="_blank" rel="noopener noreferrer" title="${name}"><img src="${photo}" alt="${name}" class="wm-avatar" loading="lazy" /></a>`
-                    : `<a href="${authorUrl}" target="_blank" rel="noopener noreferrer" title="${name}"><span class="wm-avatar wm-avatar-fallback">${name.charAt(0)}</span></a>`;
-                }).join('')}
-              </div>
-            </div>`;
-        }
-
-        // Reposts
-        if (reposts.length > 0) {
-          html += `
-            <div class="wm-section">
-              <h3 class="wm-heading">${reposts.length} Repost${reposts.length !== 1 ? 's' : ''}</h3>
-              <div class="wm-avatars">
-                ${reposts.map((r) => {
-                  const photo = r.author?.photo || '';
-                  const name = r.author?.name || 'Anonymous';
-                  const authorUrl = r.author?.url || '#';
-                  return photo
-                    ? `<a href="${authorUrl}" target="_blank" rel="noopener noreferrer" title="${name}"><img src="${photo}" alt="${name}" class="wm-avatar" loading="lazy" /></a>`
-                    : `<a href="${authorUrl}" target="_blank" rel="noopener noreferrer" title="${name}"><span class="wm-avatar wm-avatar-fallback">${name.charAt(0)}</span></a>`;
-                }).join('')}
-              </div>
-            </div>`;
-        }
-
-        // Replies
-        if (replies.length > 0) {
-          html += `
-            <div class="wm-section">
-              <h3 class="wm-heading">${replies.length} Repl${replies.length !== 1 ? 'ies' : 'y'}</h3>
-              <div class="wm-replies">
-                ${replies.map((r) => {
-                  const photo = r.author?.photo || '';
-                  const name = r.author?.name || 'Anonymous';
-                  const authorUrl = r.author?.url || '#';
-                  const content = r.content?.text || r.content?.html || '';
-                  const date = r.published ? new Date(r.published).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : '';
-                  const sourceUrl = r.url || r['wm-source'] || '#';
-                  return `
-                    <div class="wm-reply">
-                      <div class="wm-reply-meta">
-                        ${photo
-                          ? `<img src="${photo}" alt="${name}" class="wm-avatar" loading="lazy" />`
-                          : `<span class="wm-avatar wm-avatar-fallback">${name.charAt(0)}</span>`}
-                        <div>
-                          <a href="${authorUrl}" target="_blank" rel="noopener noreferrer" class="wm-reply-author">${name}</a>
-                          ${date ? `<time class="wm-reply-date">${date}</time>` : ''}
-                        </div>
-                      </div>
-                      ${content ? `<p class="wm-reply-content">${content.length > 300 ? content.slice(0, 300) + '…' : content}</p>` : ''}
-                      <a href="${sourceUrl}" target="_blank" rel="noopener noreferrer" class="wm-reply-source">View original</a>
-                    </div>`;
-                }).join('')}
-              </div>
-            </div>`;
-        }
-
-        if (html) {
-          container.innerHTML = `<div class="wm-wrapper">${html}</div>`;
-        }
-      } catch {
-        // Silently fail — webmentions are non-critical
-      }
+        const total = parseInt(btn.dataset.total || '0');
+        btn.textContent = expanded ? 'Show less' : `Show ${total - 4} more`;
+      });
     });
   }
 
-  import { initOnLoad } from '../utils/initOnLoad';
-  initOnLoad(initWebmentions);
+  initOnLoad(initShowMore);
 </script>
 
 <style>
-  .wm-wrapper {
+  .wm-outer {
     max-width: 65ch;
     margin: 3rem auto 0;
     padding: 0 1.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
   }
 
-  .wm-heading {
+  .wm-container {
+    border: 1px solid var(--color-card-border);
+    border-radius: 0.75rem;
+    background: var(--color-cardbg);
+    overflow: hidden;
+  }
+
+  .wm-title {
     font-family: var(--font-sans);
-    font-size: 0.875rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--color-konpeki);
-    margin-bottom: 0.75rem;
+    font-size: 1rem;
+    font-weight: 300;
+    color: var(--color-syoro);
+    margin: 0;
+    padding: 1.25rem 1.5rem 0.75rem;
   }
 
-  .wm-avatars {
+  /* Likes avatar row */
+  .wm-likes-section {
+    padding: 0 1.5rem 1.25rem;
+    border-bottom: 1px solid var(--color-card-border);
+  }
+
+  .wm-avatar-row {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.25rem;
-  }
-
-  .wm-avatar {
-    width: 2rem;
-    height: 2rem;
-    border-radius: 9999px;
-    object-fit: cover;
-    border: 1px solid var(--color-card-border);
-  }
-
-  .wm-avatar-fallback {
-    display: inline-flex;
     align-items: center;
-    justify-content: center;
-    background: var(--color-syoro);
-    color: var(--color-backgroundcolor);
-    font-family: var(--font-sans);
-    font-size: 0.75rem;
-    font-weight: 600;
   }
 
-  .wm-replies {
+  .wm-avatar-slot {
+    margin-left: -10px;
+    z-index: 1;
+  }
+
+  .wm-avatar-slot:first-child {
+    margin-left: 0;
+  }
+
+  .wm-avatar-slot img,
+  .wm-avatar-slot svg {
+    display: block;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 2px solid var(--color-cardbg);
+    object-fit: cover;
+  }
+
+  .wm-likes-count {
+    font-family: var(--font-sans);
+    font-size: 0.8125rem;
+    color: var(--color-syoro);
+    opacity: 0.7;
+    margin-left: 0.75rem;
+  }
+
+  /* Replies / mentions */
+  .wm-mentions-list {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
   }
 
   .wm-reply {
-    padding: 1rem;
-    border: 1px dashed var(--color-card-border);
-    border-radius: 0.75rem;
-    background: var(--color-cardbg);
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 1rem 1.5rem;
+  }
+
+  .wm-reply + .wm-reply {
+    border-top: 1px solid var(--color-card-border);
+  }
+
+  .wm-hidden {
+    display: none;
+  }
+
+  .wm-reply-avatar {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+
+  .wm-reply-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 0;
   }
 
   .wm-reply-meta {
     display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 0.5rem;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.4rem;
+    text-decoration: none;
+    color: var(--color-syoro);
+  }
+
+  .wm-reply-meta:hover .wm-reply-author {
+    color: var(--color-link);
   }
 
   .wm-reply-author {
     font-family: var(--font-sans);
     font-size: 0.875rem;
     font-weight: 600;
-    color: var(--color-syoro);
-    text-decoration: none;
+    color: var(--color-konpeki);
+    transition: color 0.15s;
   }
 
-  .wm-reply-author:hover {
-    color: var(--color-link);
+  .wm-reply-type {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    color: var(--color-syoro);
+    opacity: 0.5;
   }
 
   .wm-reply-date {
-    display: block;
     font-family: var(--font-sans);
     font-size: 0.75rem;
     color: var(--color-syoro);
@@ -226,16 +345,24 @@ const { url } = Astro.props;
     margin: 0;
   }
 
-  .wm-reply-source {
-    display: inline-block;
-    margin-top: 0.5rem;
+  /* Show more button */
+  .wm-show-more {
+    display: block;
+    width: 100%;
+    padding: 1rem;
     font-family: var(--font-sans);
-    font-size: 0.75rem;
-    color: var(--color-link);
-    text-decoration: none;
+    font-size: 0.8125rem;
+    color: var(--color-syoro);
+    opacity: 0.6;
+    background: transparent;
+    border: none;
+    border-top: 1px solid var(--color-card-border);
+    cursor: pointer;
+    transition: opacity 0.15s, background 0.15s;
   }
 
-  .wm-reply-source:hover {
-    text-decoration: underline;
+  .wm-show-more:hover {
+    opacity: 1;
+    background: var(--color-card-border);
   }
 </style>
