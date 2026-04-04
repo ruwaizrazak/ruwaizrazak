@@ -45,7 +45,7 @@ const liveProseClasses = `${proseClasses} prose-a:text-link prose-a:underline pr
 			/>
 			<div class="note-main-wrapper pt-20 relative z-10 bg-backgroundcolor w-screen max-w-[100vw] ml-[calc(50%-50vw)]">
 				{nowPost && nowContent && (
-					<div class="pb-20 w-full sm:w-[90%] lg:w-[90%] xl:w-[80%] 2xl:w-[70%] mx-auto px-20">
+					<div class="pb-20 w-full sm:w-[90%] lg:w-[90%] xl:w-[80%] 2xl:w-[70%] mx-auto px-5 md:px-20">
 						<div class="flex flex-col gap-4">
 							<div class="flex items-center gap-4">
 								<span class="shrink-0">
@@ -53,7 +53,7 @@ const liveProseClasses = `${proseClasses} prose-a:text-link prose-a:underline pr
 										<div class="w-full h-full rounded-4xl bg-konpeki"></div>
 									</div>
 								</span>
-								<h2 class="text-5xl text-syoro">{nowPost.data.Month}</h2>
+								<h2 class="text-3xl md:text-4xl lg:text-5xl text-syoro">{nowPost.data.Month}</h2>
 							</div>
 						</div>
 						<p class="mx-12 text-xl mt-2 mb-5 font-sans text-syoro">{nowPost.data.OneLiner}</p>
@@ -66,8 +66,8 @@ const liveProseClasses = `${proseClasses} prose-a:text-link prose-a:underline pr
 					<>
 						
 						<hr class="w-full my-8 border-stone-100">
-						<div class="space-y-8 pb-20 w-full sm:w-[90%] lg:w-[90%] xl:w-[80%] 2xl:w-[70%] mx-auto px-20">
-							<h1 class="text-7xl text-syoro">Then ...</h1>
+						<div class="space-y-8 pb-20 w-full sm:w-[90%] lg:w-[90%] xl:w-[80%] 2xl:w-[70%] mx-auto px-5 md:px-20">
+							<h1 class="text-3xl md:text-4xl lg:text-5xl text-syoro">Then ...</h1>
 							{thenPosts.map((post, index) => {
 								const Content = thenContents[index]?.Content;
 								return (
