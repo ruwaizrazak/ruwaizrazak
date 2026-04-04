@@ -28,7 +28,7 @@ const formattedUpdatedDate = updatedDate?.toLocaleDateString('en-us', {
 });
 ---
 
-<PageHero title={title} description={description} class="justify-start mb-10">
+<PageHero title={title} description={description} titleClass="p-name" descriptionClass="p-summary" class="justify-start mb-10">
   <!-- Metadata row -->
   <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-lg font-sans uppercase text-syoro/60 mb-4 mt-10">
     {maturityIcon && (
@@ -37,7 +37,7 @@ const formattedUpdatedDate = updatedDate?.toLocaleDateString('en-us', {
         <span>{maturity}</span>
       </div>
     )}
-    <time datetime={pubDate.toISOString()}>{formattedDate}</time>
+    <time datetime={pubDate.toISOString()} class="dt-published">{formattedDate}</time>
     {formattedUpdatedDate && (
       <span>· Updated {formattedUpdatedDate}</span>
     )}

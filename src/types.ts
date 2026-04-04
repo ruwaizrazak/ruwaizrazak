@@ -18,6 +18,38 @@ export interface ContentCardProps {
   transitionName?: string;
 }
 
+// LEARN: WebMention types follow the JF2 format from webmention.io API.
+// brid.gy bridges Bluesky/Twitter mentions into this standard format.
+export interface WebMentionAuthor {
+  type: string;
+  name: string;
+  photo: string;
+  url: string;
+}
+
+export interface WebMention {
+  type: string;
+  author: WebMentionAuthor;
+  url: string;
+  content?: { html?: string; text?: string };
+  published?: string;
+  'wm-received': string;
+  'wm-id': number;
+  'wm-source': string;
+  'wm-target': string;
+  'wm-property': 'like-of' | 'repost-of' | 'mention-of' | 'in-reply-to' | 'bookmark-of';
+  name?: string;
+  'in-reply-to'?: string;
+  'like-of'?: string;
+  'bookmark-of'?: string;
+  'mention-of'?: string;
+}
+
+export interface WebMentionCache {
+  lastFetched: string | null;
+  children: WebMention[];
+}
+
 export interface SocialLinkData {
   href: string;
   label: string;

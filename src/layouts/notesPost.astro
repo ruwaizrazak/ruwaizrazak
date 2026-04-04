@@ -76,7 +76,14 @@ const blogPostingSchema = {
       />
 
       <!-- Main content wrapper: overlaps hero on scroll (see note-post-animations.ts) -->
-      <div class="note-main-wrapper relative z-10 bg-backgroundcolor">
+      <!-- LEARN: h-entry is the microformats2 class that tells IndieWeb parsers
+           (brid.gy, webmention.io) "this is a post" — needed for webmentions to work -->
+      <div class="note-main-wrapper h-entry relative z-10 bg-backgroundcolor">
+        <a href={canonicalURL} class="u-url" hidden></a>
+        <span class="p-author h-card" hidden>
+          <a href="https://ruwaizrazak.com" class="u-url p-name">Ruwaiz Razak</a>
+          <img src="/avatar.jpg" class="u-photo" alt="" />
+        </span>
         <NoteMain>
           <slot />
         </NoteMain>
