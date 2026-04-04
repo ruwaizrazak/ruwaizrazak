@@ -21,6 +21,16 @@ export function initContactTracking() {
 }
 
 /**
+ * Fire a work_view event when a user lands on a work case study page.
+ */
+export function initWorkView() {
+  window.gtag('event', 'work_view', {
+    title: document.title,
+    path: location.pathname,
+  });
+}
+
+/**
  * Fire scroll_depth events as the reader progresses through an article.
  * Essays: 25%, 50%, 75%  ·  Notes: 50% only.
  *

@@ -98,6 +98,13 @@ const workTransitionStyle = transitionName
   </body>
 </html>
 
+<!-- Work view analytics event -->
+<script>
+  import { initWorkView } from '../scripts/analytics';
+  import { initOnLoad } from '../utils/initOnLoad';
+  initOnLoad(initWorkView);
+</script>
+
 <!-- Hero scroll height + blur effect (see work-hero-scroll.ts) -->
 <script>
   import { initHeroScrollHeight } from '../scripts/work-hero-scroll';
