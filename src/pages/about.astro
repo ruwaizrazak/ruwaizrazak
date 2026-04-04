@@ -7,6 +7,7 @@ import CustomCursor from '../components/CustomCursor.astro';
 import Link from '../components/mdxComponents/Link.astro';
 import { proseClasses } from '../utils/proseClasses';
 import GardenPreview from '../components/GardenPreview.astro';
+import PageHero from '../components/PageHero.astro';
 import { getPublishedAndSorted } from '../utils/collections';
 
 // LEARN: Homepage garden strip is essays-only; notes stay on /garden
@@ -84,23 +85,17 @@ const experience = [
 	description="A designer who started building before he knew design existed. UX, systems thinking, data, and code."
 >
 	<!-- Hero — matches notesPost structure: #note-hero-bg + #note-hero-content for GSAP scroll animations -->
-	<section class="relative w-screen max-w-[100vw] ml-[calc(50%-50vw)] overflow-hidden mt-20 py-20">
+	<section class="relative w-screen max-w-[100vw] ml-[calc(50%-50vw)] overflow-hidden">
 		<!-- Background: animated zoom from scale(1.15) → 1.0 on scroll -->
-		<div
-			id="note-hero-bg"
-			class="absolute inset-0 z-0 bg-syoro/10 dark:bg-syoro/5 bg-cover bg-center blur-sm scale-115"
-		/>
 
 		<!-- Hero content: fades out on scroll -->
-		<div id="note-hero-content" class="relative z-10 flex flex-row py-20 px-20 justify-between items-center">
-			<div>
-				<h1 class="font-sans text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold leading-none max-w-5xl mb-8 text-syoro">
-					Hi, I'm Ruwaiz.
-				</h1>
-				<p class="font-serif text-3xl w-full lg:w-3/4 mb-8">
-					I design and optimize systems that improve onboarding, retention, and longterm user motivation.
-				</p>
-			</div>
+		<div id="note-hero-content" class="flex flex-row px-20 justify-between items-center">
+			<PageHero
+				id="about-hero-text"
+				title="Hi, I'm Ruwaiz."
+				description="I design and optimize systems that improve onboarding, retention, and longterm user motivation."
+				class="!h-auto"
+			/>
 			<img
 				src="/about/ruwaiz1.jpg"
 				alt="Ruwaiz Razak"

@@ -1,0 +1,22 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  class?: string;
+  id?: string;
+}
+
+const { title, description } = Astro.props;
+---
+
+<!-- LEARN: Unified hero component — single source of truth for h1/p typography across all index and post pages.
+     Pass extras (metadata, tags, images) via the default slot. Override wrapper layout via the class prop. -->
+<section id={Astro.props.id ?? "note-hero-content"} class:list={["flex flex-col items-start justify-center py-5 my-10 md:my-20 md:py-10 lg:my-30", Astro.props.class]}>
+  <h1 class="font-sans text-5xl sm:text-6xl md:text-7xl lg:text-9xl font-medium text-syoro md:leading-16 lg:leading-26 -tracking-wider mb-5 w-full md:max-w-[12ch] -ml-2">
+    {title}
+  </h1>
+  <p class="font-serif text-2xl md:text-3xl text-syoro mt-6 max-w-4xl">
+    {description}
+  </p>
+  <slot />
+</section>

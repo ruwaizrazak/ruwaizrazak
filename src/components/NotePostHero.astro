@@ -1,5 +1,6 @@
 ---
 import { getMaturityIcon } from '../utils/maturityIcons';
+import PageHero from './PageHero.astro';
 
 
 interface Props {
@@ -27,19 +28,9 @@ const formattedUpdatedDate = updatedDate?.toLocaleDateString('en-us', {
 });
 ---
 
-<section id="note-hero-content" class="py-16 md:py-24 mb-10">
-  <!-- Title -->
-  <h1 class="font-sans text-5xl sm:text-7xl md:text-9xl font-normal text-syoro leading-none -tracking-wider md:leading-none mb-6 md:max-w-[12ch]">
-    {title}
-  </h1>
-
-  <!-- Description -->
-  <p class="font-serif text-lg sm:text-xl md:text-2xl text-syoro/90 max-w-[65ch] mb-10">
-    {description}
-  </p>
-
+<PageHero title={title} description={description} class="justify-start mb-10">
   <!-- Metadata row -->
-  <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-lg font-sans uppercase text-syoro/60 mb-4">
+  <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-lg font-sans uppercase text-syoro/60 mb-4 mt-10">
     {maturityIcon && (
       <div class="flex items-center gap-1.5">
         <img src={maturityIcon} class="w-4 opacity-60" alt="" />
@@ -78,4 +69,4 @@ const formattedUpdatedDate = updatedDate?.toLocaleDateString('en-us', {
       loading="eager"
     />
   )}
-</section>
+</PageHero>
