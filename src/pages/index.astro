@@ -4,16 +4,21 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import IntroSection from '../components/IntroSection.astro';
 import SelectedWorksSection from '../components/SelectedWorksSection.astro';
+import GardenPreview from '../components/GardenPreview.astro';
 
 import CustomCursor from '../components/CustomCursor.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 import { getCollection } from 'astro:content';
+import { getPublishedAndSorted } from '../utils/collections';
 import { ClientRouter } from "astro:transitions";
 
 const works = await getCollection('works', ({ data }) => data.publish);
 // LEARN: getCollection order is not guaranteed — sort by id to match the
 // numeric file-name prefixes (01Farmville3, 02EmpiresAndAllies, 03DeerHunter2018)
 works.sort((a, b) => a.id.localeCompare(b.id));
+
+// LEARN: Homepage garden strip is essays-only; notes stay on /garden
+const gardenPosts = (await getPublishedAndSorted('essays')).slice(0, 3);
 ---
 
 <!doctype html>
@@ -53,6 +58,7 @@ works.sort((a, b) => a.id.localeCompare(b.id));
       <Header />
       <IntroSection />
       <SelectedWorksSection works={works} />
+      <GardenPreview posts={gardenPosts} />
 		</main>
 
 		<Footer />
