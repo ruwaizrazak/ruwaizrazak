@@ -18,6 +18,11 @@ type LayoutProps = CollectionEntry<'notes'>['data'] & {
 
 const { title, description, pubDate, updatedDate, heroImage, tags = [], maturity, collection, transitionName, seriesPosts } = Astro.props as LayoutProps;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site).href;
+
+// LEARN: Derive the OG image URL from the current page path so it always
+// stays in sync. A page at /essays/my-post/ gets /og/essays/my-post.png.
+// This avoids hardcoding slugs or passing extra props through components.
+const ogImage = `/og${Astro.url.pathname.replace(/\/$/, '')}.png`;
 const workTransitionStyle = transitionName
   ? `::view-transition-new(${transitionName}){animation:work-scale-in .4s cubic-bezier(.32,.72,0,1)}`
   : '';
@@ -43,7 +48,7 @@ const blogPostingSchema = {
 
 <html lang="en" class="scroll-smooth">
   <head>
-    <BaseHead title={title} description={description} schema={blogPostingSchema} />
+    <BaseHead title={title} description={description} image={ogImage} schema={blogPostingSchema} />
     <ClientRouter />
     {workTransitionStyle && <style is:global set:html={workTransitionStyle} />}
     <script is:inline>

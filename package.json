@@ -17,6 +17,7 @@
     "@astrojs/sitemap": "^3.7.0",
     "@lottiefiles/lottie-interactivity": "^1.6.2",
     "@portaljs/remark-wiki-link": "^1.2.0",
+    "@resvg/resvg-js": "^2.6.2",
     "@tailwindcss/vite": "^4.0.7",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
@@ -31,6 +32,7 @@
     "motion": "^12.4.7",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "satori": "^0.26.0",
     "tailwindcss": "^4.0.7",
     "tippy.js": "^6.3.7",
     "xml2js": "^0.6.2"

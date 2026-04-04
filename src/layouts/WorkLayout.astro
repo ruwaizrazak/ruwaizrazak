@@ -24,6 +24,11 @@ const articleSchema = {
   author: { '@type': 'Person', name: 'Ruwaiz Razak' },
 };
 
+// LEARN: Generate the OG image path from the current page URL rather than
+// using heroImage. This ensures every work page gets a consistently branded
+// social card instead of relying on whatever the hero image happens to be.
+const ogImage = `/og${Astro.url.pathname.replace(/\/$/, '')}.png`;
+
 const workTransitionStyle = transitionName
   ? `::view-transition-new(${transitionName}){animation:work-scale-in .4s cubic-bezier(.32,.72,0,1)}`
   : '';
@@ -32,7 +37,7 @@ const workTransitionStyle = transitionName
 <!doctype html>
 <html lang="en" class="scroll-smooth">
   <head>
-    <BaseHead title={title} description={description} image={heroImage} schema={articleSchema} />
+    <BaseHead title={title} description={description} image={ogImage} schema={articleSchema} />
     <ClientRouter />
     {workTransitionStyle && <style is:global set:html={workTransitionStyle} />}
   </head>

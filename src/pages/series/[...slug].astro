@@ -56,6 +56,10 @@ const relatedParts = kind === 'part' && activePart
 
 const seoTitle = activePart ? `${activePart.data.title} · ${seriesDoc?.data.title ?? ''}` : seriesDoc?.data.title ?? 'Series';
 
+// LEARN: OG image path derived from the current page URL — works for both
+// series index pages (/series/my-series) and part pages (/series/my-series/part-1).
+const ogImage = `/og${Astro.url.pathname.replace(/\/$/, '')}.png`;
+
 // Render the active part content in frontmatter so it's available in the template
 const renderResult = activePart ? await render(activePart) : null;
 const Content = renderResult?.Content;
@@ -76,7 +80,7 @@ const Content = renderResult?.Content;
 ) : (
   <html lang="en">
     <head>
-      <BaseHead title={seoTitle} description={seriesDoc?.data.description ?? ''} />
+      <BaseHead title={seoTitle} description={seriesDoc?.data.description ?? ''} image={ogImage} />
     </head>
     <body class="footer-reveal bg-backgroundcolor">
       <div class="footer-reveal-content">
