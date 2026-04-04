@@ -52,6 +52,7 @@ const works = defineCollection({
     phoneImage: z.string().optional(),
     appStoreUrl: z.string().url().optional(),
     playStoreUrl: z.string().url().optional(),
+    narrativeTitle: z.string().optional(),
   }),
 });
 

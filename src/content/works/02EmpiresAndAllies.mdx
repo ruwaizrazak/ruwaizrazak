@@ -1,6 +1,6 @@
 ---
 title: "Empires & Allies"
-description: "Owned live engagement architecture in a competitive mobile strategy game, driving veteran retention, seasonal monetization systems, and data-informed feature optimization."
+description: "Owned live engagement architecture in a competitive mobile strategy game — designing seasonal systems, veteran-facing features, and the operational rhythm that kept the game feeling fresh."
 pubDate: "2024-06-09"
 company: "Zynga"
 duration: "July 2019 - Jan 2021"
@@ -9,60 +9,75 @@ location: "India"
 featured: true
 heroImage: "/works/Ena/empiresandallies.jpg"
 phoneImage: "/works/Ena/Enaphone.png"
+narrativeTitle: "Designing for Players Who've Already Seen Everything"
 publish: true
 ---
-
-import VideoBreakout from "../../components/VideoBreakout.astro";
-import Image from "../../components/mdxComponents/Image.astro";
 import WorkSection from "../../components/mdxComponents/WorkSection.astro";
 import WorkImageGrid from "../../components/mdxComponents/WorkImageGrid.astro";
-import WorkClosingText from "../../components/mdxComponents/WorkClosingText.astro";
+import VideoBreakout from "../../components/VideoBreakout.astro";
+import Image from "../../components/mdxComponents/Image.astro";
+import ProjectOverview from "../../components/mdxComponents/ProjectOverview.astro";
+import Callout from "../../components/mdxComponents/Callout.astro";
 
-<WorkSection title="Overview">
-  <p>
-    Empires & Allies was a real-time strategy mobile game built around competitive play, alliance coordination, and long-term progression systems.
-    I contributed across feature design, usability optimization, and systemic clarity within a live product environment.
-  </p>
+<WorkSection>
+  Empires & Allies was a real-time strategy game built around competitive play, alliance coordination, and long term progression. By the time I joined, the game was well into its live phase, a mature product with a dedicated player base who knew its systems inside out.
+  <br />
+  That's a different design challenge than building something new. The players aren't learning. They're evaluating. Every new feature, every seasonal event, every UI change gets scrutinised by people who've spent years with the game. The question wasnt "will they understand this?" it was more like "does this experience respect what our users already know?"
 </WorkSection>
-
 <VideoBreakout src="https://www.youtube-nocookie.com/embed/xp8sWWBayTQ?rel=0" />
 
-<WorkSection title="Live Systems & Retention">
-  <p>
-    Few live systems and retention frameworks reflecting the types of engagement and monetization architectures I contributed to. Specific implementation details are omitted due to confidentiality.
-  </p>
+
+<WorkSection title="Design Approach">
+  The principle I kept returning to on E&A was *depth over novelty.*
+<br />
+  In live games, there's pressure to ship new things constantly, new events, new modes, new currencies. But veteran players dont necessarily want more. They want the existing game to feel deeper, more considered, more worth their time. Novelty fades after a session. Depth is what brings someone back tomorrow.
+
+  <Callout type="insight">
+    A live game isnt a product you finish shipping. It's a relationship you maintain. The design work isnt about launching features, it's about sustaining a rhythm that makes the game feel alive without exhausting the people playing it.
+  </Callout>
+
+  This shaped how we approached everything from seasonal systems to event cadence to how much complexity we were willing to surface at once.
+</WorkSection>
+
+<WorkSection title="Veteran Engagement Systems">
+  The players who've been with a strategy game for months have already solved most of its core loops. They know the optimal build orders, the resource math, the timing windows. If the game doesnt evolve with them, it stagnates.
+  <br />
+  We designed engagement systems specifically for this lifecycle stage. The idea wasnt to add difficulty, it was to add layers. New progression system that adds to the existing ones rather than replacing them.
+  <br />
+  The battle pass structure worked well for this. It gave veteran players an objective to work toward across a season that felt distinct from the base progression. We also introduced an additional layer to the existing league tier systems to celebrate the top percentile users. The design challenge was making these systems feel like a natural extension of the game rather than a bolted-on system.
 </WorkSection>
 
 <WorkImageGrid>
   <Image
     src="/works/Ena/veteranuserretention.webp"
-    alt="Strategy Progression Systems"
-    title="Veteran User Retention Systems"
-    description="Designed systems targeting long-term players to sustain engagement beyond early lifecycle milestones. Focused on progression pacing, re-engagement triggers, and high-value cohort motivation."
+    alt="Veteran engagement systems in Empires & Allies"
+    title="Veteran Engagement"
+    description="Systems designed for long-term players — layering new progression tracks alongside existing ones so the game deepens over time rather than just widening."
   />
-
   <Image
     src="/works/Ena/battlepass.webp"
-    alt="Battle Pass: Engagement + Monetization Loop"
-    title="Battle Pass: Engagement + Monetization Loop"
-    description="Led design of a seasonal progression system aligning monetization with sustained engagement. Structured tier clarity, reward anticipation, and completion psychology to increase perceived value and retention."
+    alt="Seasonal progression system"
+    title="Seasonal Progression"
+    description="A parallel progression track structured around seasonal themes — giving veteran players a reason to engage differently each cycle without disrupting the core game loop."
   />
-
-  <Image
-    src="/works/Ena/killswitch2.jpg"
-    alt="Feature Completion Optimization"
-    title="Feature Completion Optimization"
-    description="Improved feature completion rates by refining gating logic, friction points, and progressive unlock structures. Reduced drop-off in high-value flows through behavioral iteration and data validation."
-  />
-
   <Image
     src="/works/Ena/liveevents.webp"
-    alt="Live Operations & Cadence Ownership"
-    title="Live Operations & Cadence Ownership"
-    description="Owned event cadence and feature release rhythm within live operations, aligning design decisions with engagement metrics and revenue monitoring."
+    alt="Live operations event cadence"
+    title="Live Operations"
+    description="Event cadence and seasonal timing designed to create a sustainable rhythm — intense enough to feel alive, paced enough to avoid fatigue."
+  />
+  <Image
+    src="/works/Ena/killswitch2.jpg"
+    alt="Feature clarity and progressive unlock systems"
+    title="Feature Clarity"
+    description="Refining how complex features communicate their purpose and progression — making depth accessible without oversimplifying what veteran players value."
   />
 </WorkImageGrid>
 
-<WorkClosingText>
-  <p>Alongside retention and monetization systems, I also optimized the UX production pipeline within Unity by introducing modular UI structures and clearer implementation patterns, enabling faster iteration and more efficient live feature rollouts.</p>
-</WorkClosingText>
+<WorkSection title="UX Pipeline">
+  Alongside the player-facing work, I also spent time improving how we built UI in Unity. The existing workflow involved a lot of one-off implementations — each feature built its UI from scratch, which meant inconsistency and slow iteration.
+  <br />
+  We introduced modular UI structures and clearer implementation patterns. This wasnt glamorous work, but it meant we could ship live features faster and iterate on them without rebuilding from zero each time. For a live game where speed matters, the pipeline is part of the product.
+</WorkSection>
+
+

@@ -1,0 +1,78 @@
+---
+title: "Project Name"
+description: "One sentence: what you did, framed as craft — not what was broken."
+pubDate: "2024-01-01"
+company: "Company"
+duration: "Month Year - Month Year"
+role: "Role Title"
+location: "Location"
+featured: false
+heroImage: "/works/project/hero.jpg"
+phoneImage: "/works/project/phone.png"
+narrativeTitle: "Philosophy-Driven Title, Not a Problem Statement"
+publish: false
+---
+{/* 
+  CASE STUDY TEMPLATE
+  ==================
+  Copy this file and rename with a numeric prefix (e.g. 04ProjectName.mdx).
+  
+  Arc: Context → Design Approach → Systems → Closing
+  Not every section is required. Adapt to fit the story.
+  
+  Rules:
+  - No duplicate text. Every title, description, and sentence must be distinct.
+  - No metrics or internal data. Show thinking, not outcomes.
+  - Use "we" for decisions, "I" for your specific role.
+  - Only import what you use.
+*/}
+
+import WorkSection from "../../components/mdxComponents/WorkSection.astro";
+import WorkImageGrid from "../../components/mdxComponents/WorkImageGrid.astro";
+import Image from "../../components/mdxComponents/Image.astro";
+import VideoBreakout from "../../components/VideoBreakout.astro";
+import Callout from "../../components/mdxComponents/Callout.astro";
+
+{/* 1. CONTEXT — set the scene, no title */}
+<WorkSection>
+  What is the product? When did you join? What was the state of the project?
+  Describe your relationship to it. Dont frame a "problem" — this isnt a problem-then-solution story.
+</WorkSection>
+
+{/* Optional: public trailer */}
+{/* <VideoBreakout src="https://www.youtube-nocookie.com/embed/VIDEO_ID?rel=0" /> */}
+
+{/* 2. DESIGN APPROACH — optional, skip if no clear guiding principle */}
+<WorkSection title="Design Approach">
+  Name the principle. Explain the alternative you rejected and why.
+
+  <Callout type="insight">
+    The core belief in one sentence.
+  </Callout>
+</WorkSection>
+
+{/* 3. SYSTEMS — 2-3 sections, each followed by images. The core of the case study. */}
+<WorkSection title="System Name">
+  What the system does. How it adapts to context. A trade-off or tension you navigated.
+</WorkSection>
+
+<WorkImageGrid>
+  {/* <Image
+    src="/works/project/image1.jpg"
+    alt="Describe what is visible"
+    title="Short Label"
+    description="One sentence on design intent — distinct from the section text above."
+  /> */}
+  {/* <Image
+    src="/works/project/image2.jpg"
+    alt="Describe what is visible"
+    title="Different Label"
+    description="One sentence on design intent — distinct from every other description."
+  /> */}
+</WorkImageGrid>
+
+{/* 4. CLOSING — optional, use WorkSection */}
+<WorkSection>
+  Collaboration details or a brief closing perspective. Not a summary.
+  Name what each discipline contributed specifically.
+</WorkSection>
