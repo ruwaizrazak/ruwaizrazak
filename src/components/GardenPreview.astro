@@ -12,7 +12,7 @@ const essays = posts.filter((post) => post.collection === 'essays');
 ---
 
 <section class="my-20 md:my-30">
-  <div class="flex items-center justify-between mb-8">
+  <div class="flex flex-col md:flex-row items-start md:items-center justify-between mb-8">
     <div class="flex flex-col gap-2 w-[80%]">
       <h2 class="text-xl font-sans font-semibold text-syoro dark:text-white/60 uppercase tracking-widest md:col-span-2">
         From the Garden
@@ -21,7 +21,7 @@ const essays = posts.filter((post) => post.collection === 'essays');
     </div>
     <Button
       href="/garden"
-      class="font-sans text-sm uppercase tracking-widest text-link hover:underline"
+      class="font-sans text-sm uppercase mt-5 md:mt-0 tracking-widest text-link hover:underline"
     >
       Visit garden
     </Button>
