@@ -89,7 +89,7 @@ const experience = [
 		<!-- Background: animated zoom from scale(1.15) → 1.0 on scroll -->
 
 		<!-- Hero content: fades out on scroll -->
-		<div id="note-hero-content" class="flex flex-row px-20 justify-between items-center">
+		<div id="note-hero-content" class="flex flex-col md:flex-row px-10 md:px-12 lg:px-20 justify-between items-start md:items-center">
 			<PageHero
 				id="about-hero-text"
 				title="Hi, I'm Ruwaiz."
@@ -106,12 +106,12 @@ const experience = [
 
 	<!-- LEARN: .note-main-wrapper slides up 120px over the hero on scroll (GSAP in note-post-animations.ts).
 	     bg-backgroundcolor gives it a solid background so it covers the hero as it overlaps. -->
-	<div class="note-main-wrapper relative z-10 bg-backgroundcolor">
+	<div class="note-main-wrapper px-10 relative z-10 bg-backgroundcolor">
 		<!-- Intro -->
-		<div class="note-layout mx-auto flex relative w-full max-w-7xl">
-			<article class={`${proseClasses} py-20 px-10 md:px-12 lg:px-20 w-full mx-auto`}>
-				<p>I started building websites as a teenager, before I knew "design" was a thing one could do for a living. That instinct, wanting to make something and see it work never really went away.</p>
-				<p>Today I design player facing systems at <Link href="http://www.nordeus.com">Nordeus</Link>, onboarding, retention, live engagement by being at the intersection of behavioural systems, interaction design, and research.</p>
+		<div class="note-layout mx-auto flex py-10 relative w-full max-w-8xl">
+			<article class={`${proseClasses} w-full mx-auto`}>
+				<p class="text-lg md:text-xl xl:text-2xl">I started building websites as a teenager, before I knew "design" was a thing one could do for a living. That instinct, wanting to make something and see it work never really went away.</p>
+				<p class="text-lg md:text-xl xl:text-2xl">Today I design player facing systems at <Link href="http://www.nordeus.com">Nordeus</Link>, onboarding, retention, live engagement by being at the intersection of behavioural systems, interaction design, and research.</p>
 			</article>
 		</div>
 
@@ -124,21 +124,21 @@ const experience = [
 		</section>
 
 		<!-- A Little History -->
-		<section class="note-layout mx-auto flex relative w-full max-w-7xl">
-			<div class={`${proseClasses} px-10 md:px-12 lg:px-20 w-full mx-auto`}>
+		<section class="note-layout mx-auto flex relative w-full max-w-8xl">
+			<div class={`${proseClasses} w-full mx-auto`}>
 				<h2>
 					A Little History
 				</h2>
 				<div class="flex flex-col gap-5 font-serif text-syoro/90 dark:text-white/80 leading-relaxed">
-					<p>
+					<p class="text-lg md:text-xl xl:text-2xl">
 						It started in 2009. A classmate mentioned he was building a website and suddenly it felt like something I could do too. I spent weeks on no-code builders like webs.com, webspot.com, whatever I could find before discovering Blogspot to built a car blog called "onthewheels.in" in my regional language. 
 						
 						I remember staring at the screen the first time something I made was live on the internet. That feeling hasn't gone away.
 					</p>
-					<p>
+					<p class="text-lg md:text-xl xl:text-2xl">
 						From there it was Bootstrap, then Jekyll, then a long stretch of learning how to learn, reading documentation instead of watching tutorials, picking up Sass and templating languages by building things that probably should've stayed private. Im writing about this whole journey in <Link href="/series/portfolio-to-garden/">From Portfolio to Garden</Link> — tracing how a teenager's car blog eventually became this site, built from scratch in Astro.
 					</p>
-					<p>
+					<p class="text-lg md:text-xl xl:text-2xl">
 						I'm from India, grew up between languages and cultures, and that background shows up in how I think about design. Im always aware that what feels obvious to one person can be completely invisible to another.
 					</p>
 				</div>
