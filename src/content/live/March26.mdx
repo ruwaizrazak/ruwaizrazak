@@ -1,0 +1,62 @@
+---
+Month: March
+OneLiner: 'Rebuilt the site, shipped the essay, and got back to training.'
+date: '2026-03-31'
+publish: true
+---
+import Image from '../../components/mdxComponents/Image.astro';
+import EngagementBarChart from '../../components/mdxComponents/EngagementBarChart.astro';
+
+Session length is a strange thing to care about when you built the site for yourself. But I do care, and March was the month I wanted to improve the sessions.
+
+The intention was simple, make the site more interesting to be inside. Not to land on, but to stay in. The place where you arrive for one thing and leave having read three others. That does not happen by accident. It happens because something on the first page catches you, and then something on the second catches you again, and by the third you have forgotten you were only passing through.
+
+Getting that sequence right meant thinking about first impressions, about anchoring essays on the homepage, about the threads that pull people further into the garden.
+
+## The Site
+I started with the homepage. I wanted to surface the essays there, not as a list but as an anchor, something that told a visitor what kind of place this was before they had read a word.
+
+From the experiments running since February, I landed on a design that was doing what I wanted. Users were moving through the pages in roughly the order I hoped. There is one anomaly in the data, a post about AI tools pulling more traffic than anything else, but I am choosing to ignore it for now due to AI being trendy.
+
+<div class="flex flex-col gap-4 max-w-full mx-auto lg:flex-row">
+	<div class="w-full">
+		<Image src="/live/march26/january2026.png" alt="comparison image of google analytics"/>
+	</div>
+	<div class="w-full">
+		<Image src="/live/march26/march2026.png" alt="comparison image of google analytics"/>
+	</div>
+</div>
+
+The next question was what happens after someone lands in the garden. How do you hold their attention once they are inside? That is where a little animation using GSAP came in.
+
+I had been learning it since February. March was where it went into production. The first thing I built was a sprite sheet animation, a small character that walks across the page and breaks into a run as you scroll faster. A detail most people will never consciously notice. But that is exactly the point. The best interactions are the ones that make a place feel alive without announcing themselves.
+<img src="/live/march26/GSAP.png" alt="GSAP animation"/>
+From there it snowballed. A custom cursor. Page transitions. Each one a small experiment, each one teaching me about how motion and timing work together. But snowballing came with a cost. After a point the codebase started feeling like a stranger to me, which is a particular kind of discomfort when you are an amateur who has to return to the same files months later and remember what you were thinking.
+
+<EngagementBarChart
+  caption="/garden engagement — Apr 4–30, 2026 vs Jan 1–31, 2026"
+  beforeLabel="Jan"
+  afterLabel="Apr"
+  metrics={[
+    { label: 'Views', before: 8, after: 95 },
+    { label: 'Engagement rate', before: 55.5, after: 100, unit: '%' },
+    { label: 'Avg engagement time', before: 1.34, after: 5.4, unit: 's' },
+  ]}
+/>
+
+I stopped adding and started cleaning. Shared types, consolidated components, utility functions pulled out of pages and into their own files, comments everywhere. Invisible to anyone visiting the site, but necessary if the codebase was going to make sense to me two years from now.
+
+By the end of it, the site had a new homescreen, unified typography, a new footer, dark theme support where it had been missing, and a component architecture that finally felt coherent.
+
+Then came the unglamorous part. Robot.txt, JSON-LD, RSS updates, structured data for posts. Not the kind of work you commit to GitHub with any pride. But the kind that matters if you want the garden to actually be findable.
+
+## The Essay ✍️
+I have been researching how games provide aid to players without breaking their immersion, the design problem of helping someone without making them feel helped. The essay is [here](/essays/aidsingames/) if you want to read it.
+
+Getting the writing done was one part. The other was making sure the reading experience matched the care that went into it. Updated layouts, a custom table of contents, components rebuilt to sit properly inside prose. There is always a gap between finishing a piece and actually shipping it. March was the month I closed that gap.
+
+## Training 🏋️
+The 5K plan did not survive contact with reality. I started personal training instead, which felt like the smarter call. Building a base properly rather than rushing toward a target and risking another setback. The rotator cuff is still in recovery. One thing at a time.
+
+## Photography 📷
+Going. Spending more time now on composition and framing, mostly wide angle at F4 and above.
