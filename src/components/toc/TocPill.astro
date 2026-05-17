@@ -1,0 +1,93 @@
+---
+// LEARN: Floating bottom-center TOC pill. Single component replaces both the
+// old desktop sidebar and the old mobile drawer. Markup is intentionally minimal
+// — the script in src/scripts/toc.ts owns rendering the list, scroll-spy
+// highlighting, the odometer label, and the GSAP open/close timeline.
+//
+// Hardcoded dark surface (independent of site theme) to match the design ref.
+// Hidden by default; initTOC() removes [hidden] only if the article has headings.
+---
+
+<div
+  data-toc-pill
+  hidden
+  class="toc-pill group fixed bottom-6 left-1/2 -translate-x-1/2 z-50
+         flex flex-col items-stretch
+         bg-black/85 text-white backdrop-blur-md
+         rounded-full shadow-2xl ring-1 ring-white/10
+         overflow-hidden
+         max-w-[calc(100vw-1.5rem)]"
+  style="width: 14rem;"
+>
+  <!-- Expanded panel — script GSAP-animates height/opacity (order-first stacks it above the toggle button in flex layout). -->
+  <nav
+    data-toc-panel
+    id="toc-panel"
+    aria-label="Table of contents"
+    aria-hidden="true"
+    class="hidden order-first">
+    <p class="text-xs uppercase font-sans text-white/50 px-3 pt-3 pb-2">On this page</p>
+    <hr class="border-white/10 m-0">
+
+    <div class="relative">
+      <!-- gradient line top -->
+      <div
+        aria-hidden="true"
+        class="pointer-events-none absolute inset-x-0 top-0 h-px z-10
+               bg-gradient-to-r from-transparent via-white/25 to-transparent"
+      ></div>
+
+      <ul
+        data-toc-list
+        class="list-none p-0 m-0 space-y-0.5
+               h-56 overflow-y-auto scroll-smooth px-1.5 py-2"
+      ></ul>
+
+      <!-- gradient line bottom -->
+      <div
+        aria-hidden="true"
+        class="pointer-events-none absolute inset-x-0 bottom-0 h-px z-10
+               bg-gradient-to-r from-transparent via-white/25 to-transparent"
+      ></div>
+    </div>
+  </nav>
+
+  <button
+    type="button"
+    data-toc-toggle
+    aria-expanded="false"
+    aria-controls="toc-panel"
+    aria-label="Table of contents"
+    class="flex items-center gap-2 px-4 py-2.5
+           text-sm font-sans text-white/90 hover:text-white
+           focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30 rounded-full
+           cursor-pointer"
+  >
+    <!-- Odometer clip: script appends absolutely-positioned span children that slide vertically. -->
+    <span
+      data-toc-current
+      class="relative flex-1 min-w-0 overflow-hidden h-5 text-left"
+    ></span>
+    <svg
+      data-toc-chevron
+      class="w-3.5 h-3.5 shrink-0 opacity-70"
+      fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"
+    >
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+    </svg>
+  </button>
+</div>
+
+<style>
+  /*
+   * LEARN: active-row styling lives here (CSS) rather than as four classList
+   * toggles in the script. setActive() only flips a single [data-active]
+   * attribute per item — fewer DOM mutations on long heading lists, and a
+   * single source of truth for the active visual.
+   */
+  [data-toc-list] [data-toc-link][data-active] {
+    color: rgb(255 255 255);
+    background-color: rgb(255 255 255 / 0.10);
+    font-weight: 500;
+  }
+</style>
