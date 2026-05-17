@@ -48,14 +48,18 @@ const reduceMotion =
   window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 // --- Morph timing ----------------------------------------------------------
-// LEARN: durations live under the 300ms threshold recommended in the 12
-// Principles of Animation — UI animations longer than that start to feel
-// laggy. Open uses power3.out for a soft landing, close mirrors with
-// power3.in for a snappier exit. Single timeline = all properties land on
-// the same frame, avoiding a staggered "snap then settle" feel.
-const OPEN_DURATION = 0.3;
-const CLOSE_DURATION = 0.2;
-const OPEN_EASE = 'power3.out';
+// LEARN: matches iOS Dynamic Island character — slightly longer open so the
+// spring overshoot has time to read, snappier close. ~420ms gives back.out
+// room to feel "alive"; at 300ms a spring just reads as jitter.
+const OPEN_DURATION = 0.42;
+const CLOSE_DURATION = 0.28;
+// LEARN: mixed eases on a single timeline. SPRING (back.out) for visual
+// silhouette properties — width/radius/scale overshoot harmlessly. SMOOTH
+// (power3.out) for height + opacity — overshooting `height: 'auto'` would
+// briefly reveal empty space below the content. Close mirrors with power3.in
+// because reverse-springs feel weird on dismissal.
+const OPEN_EASE_SPRING = 'back.out(1.4)';
+const OPEN_EASE_SMOOTH = 'power3.out';
 const CLOSE_EASE = 'power3.in';
 
 // LEARN: string form with explicit px units. GSAP's CSSPlugin can fail to
@@ -64,6 +68,12 @@ const CLOSE_EASE = 'power3.in';
 // can't read back as a finite starting value — fromTo() forces both endpoints.
 const ROUND_FULL = '9999px';
 const ROUND_2XL = '16px';
+
+// LEARN: bi-directional morph — DI's signature is both width and height
+// growing together. State-driven (not content-driven) so scroll-spy label
+// changes don't jitter the collapsed pill's width.
+const WIDTH_COMPACT = '14rem';
+const WIDTH_EXPANDED = '22rem';
 
 // --- Open / close ----------------------------------------------------------
 
@@ -78,10 +88,10 @@ function expand() {
   gsap.killTweensOf([panelEl, pillEl, chevronEl]);
 
   if (reduceMotion) {
-    // a11y path: jump to the end state with no animation.
+    // a11y path: jump to the expanded end state with no animation.
     panelEl.style.display = 'block';
     gsap.set(panelEl, { height: 'auto', opacity: 1, clearProps: 'height,willChange' });
-    gsap.set(pillEl, { borderRadius: ROUND_2XL });
+    gsap.set(pillEl, { width: WIDTH_EXPANDED, borderRadius: ROUND_2XL, scale: 1 });
     gsap.set(chevronEl, { rotate: 180 });
     return;
   }
@@ -91,10 +101,10 @@ function expand() {
   // to repaint each frame; promote both animated elements while the tween
   // runs, then clear so the hint doesn't leak GPU memory after.
   panelEl.style.willChange = 'height';
-  pillEl.style.willChange = 'border-radius';
+  pillEl.style.willChange = 'width, border-radius, transform';
 
   gsap.timeline({
-    defaults: { duration: OPEN_DURATION, ease: OPEN_EASE },
+    defaults: { duration: OPEN_DURATION },
     onComplete: () => {
       // LEARN: GSAP leaves panel.height set to the measured natural height
       // (e.g. "382px"). Clearing it returns control to CSS so the panel
@@ -106,15 +116,45 @@ function expand() {
       if (pillEl) pillEl.style.willChange = '';
     },
   })
-    .fromTo(panelEl, { height: 0, opacity: 0 }, { height: 'auto', opacity: 1 }, 0)
-    .fromTo(pillEl, { borderRadius: ROUND_FULL }, { borderRadius: ROUND_2XL }, 0)
-    // LEARN: subtle scale anticipation — pill "breathes" briefly at the
-    // start of the morph (squash-and-stretch lite, from the 12 principles).
-    // GSAP parses the existing transform so Tailwind's translate(-50%)
+    // SMOOTH ease — height/opacity overshoot would briefly show empty space below content.
+    .fromTo(
+      panelEl,
+      { height: 0, opacity: 0 },
+      { height: 'auto', opacity: 1, ease: OPEN_EASE_SMOOTH },
+      0
+    )
+    // SPRING ease — width morph is the visual hook of the Dynamic Island feel.
+    .fromTo(
+      pillEl,
+      { width: WIDTH_COMPACT },
+      { width: WIDTH_EXPANDED, ease: OPEN_EASE_SPRING },
+      0
+    )
+    // SMOOTH ease — radius overshoot would push the value past 16 into the
+    // negative range (9983px delta × ~7% back.out overshoot ≈ -700px), which
+    // browsers clamp to 0px → corners flash sharp for a frame near the end.
+    // Use the monotonic ease so the radius lands cleanly.
+    .fromTo(
+      pillEl,
+      { borderRadius: ROUND_FULL },
+      { borderRadius: ROUND_2XL, ease: OPEN_EASE_SMOOTH },
+      0
+    )
+    // LEARN: scale anticipation — pill "breathes" briefly (squash-and-stretch
+    // lite). GSAP parses the existing transform so Tailwind's translate(-50%)
     // is preserved when scale is composed onto it.
-    .fromTo(pillEl, { scale: 1 }, { scale: 1.015, duration: OPEN_DURATION * 0.4, ease: 'power2.out' }, 0)
-    .to(pillEl, { scale: 1, duration: OPEN_DURATION * 0.6, ease: 'power2.inOut' }, OPEN_DURATION * 0.4)
-    .to(chevronEl, { rotate: 180 }, 0);
+    .fromTo(
+      pillEl,
+      { scale: 1 },
+      { scale: 1.02, duration: OPEN_DURATION * 0.4, ease: 'power2.out' },
+      0
+    )
+    .to(
+      pillEl,
+      { scale: 1, duration: OPEN_DURATION * 0.6, ease: OPEN_EASE_SPRING },
+      OPEN_DURATION * 0.4
+    )
+    .to(chevronEl, { rotate: 180, ease: OPEN_EASE_SPRING }, 0);
 }
 
 function collapse(animate: boolean = true) {
@@ -128,13 +168,18 @@ function collapse(animate: boolean = true) {
   if (!animate || reduceMotion) {
     // Instant path — used at init, on view-transition, and for a11y.
     gsap.set(panelEl, { height: 0, opacity: 0, display: 'none', willChange: '' });
-    gsap.set(pillEl, { borderRadius: ROUND_FULL, willChange: '' });
+    gsap.set(pillEl, {
+      width: WIDTH_COMPACT,
+      borderRadius: ROUND_FULL,
+      scale: 1,
+      willChange: '',
+    });
     gsap.set(chevronEl, { rotate: 0 });
     return;
   }
 
   panelEl.style.willChange = 'height';
-  pillEl.style.willChange = 'border-radius';
+  pillEl.style.willChange = 'width, border-radius, transform';
 
   gsap.timeline({
     defaults: { duration: CLOSE_DURATION, ease: CLOSE_EASE },
@@ -147,6 +192,7 @@ function collapse(animate: boolean = true) {
     },
   })
     .to(panelEl, { height: 0, opacity: 0 }, 0)
+    .to(pillEl, { width: WIDTH_COMPACT }, 0)
     .fromTo(pillEl, { borderRadius: ROUND_2XL }, { borderRadius: ROUND_FULL }, 0)
     .to(chevronEl, { rotate: 0 }, 0);
 }
