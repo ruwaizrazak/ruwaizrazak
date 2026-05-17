@@ -1,25 +1,14 @@
 ---
 import { proseClasses } from '../utils/proseClasses';
-import TocSidebar from './toc/TocSidebar.astro';
-import TocMobile from './toc/TocMobile.astro';
+import TocPill from './toc/TocPill.astro';
 ---
 
-<div class="note-layout mx-auto flex relative w-full max-w-6xl">
-  <TocSidebar />
-  <TocMobile />
-
-  <!-- Article -->
+<div class="note-layout mx-auto relative w-full max-w-6xl">
   <article class={`${proseClasses} e-content py-20 px-10 md:px-12 lg:px-20 w-full min-w-0`}>
     <slot />
   </article>
+  <TocPill />
 </div>
-
-<style>
-  .note-layout:not([data-has-toc]) .toc-sidebar,
-  .note-layout:not([data-has-toc]) .toc-tab {
-    display: none;
-  }
-</style>
 
 <script>
   import { initOnLoad } from '../utils/initOnLoad';

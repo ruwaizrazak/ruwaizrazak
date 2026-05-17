@@ -1,0 +1,57 @@
+---
+// Floating bottom-center TOC pill. Replaces the old TocSidebar + TocMobile.
+// Collapsed = small dark capsule showing the current section.
+// Expanded = dark rounded panel with the full heading list.
+// The pill stays hardcoded dark (independent of site theme) to match the design reference.
+// Hidden by default — initTOC removes the [hidden] attr only if the article has headings.
+---
+
+<div
+  data-toc-pill
+  hidden
+  class="toc-pill group fixed bottom-6 left-1/2 -translate-x-1/2 z-50
+         flex flex-col items-stretch
+         bg-black/85 text-white backdrop-blur-md
+         rounded-full shadow-2xl ring-1 ring-white/10
+         data-[expanded]:rounded-2xl
+         transition-[border-radius] duration-200 ease-out
+         max-w-[calc(100vw-1.5rem)]"
+>
+  <!-- Expanded panel — script toggles `hidden` directly (order-first places it above the toggle button in flex layout). -->
+  <nav
+    data-toc-panel
+    id="toc-panel"
+    aria-label="Table of contents"
+    aria-hidden="true"
+    class="hidden
+           order-first
+           px-1.5 pt-2 pb-1
+           max-h-[60vh] overflow-y-auto">
+    <p class="text-xs uppercase font-sans text-white/50 mb-2">On this page</p>
+    <hr class="border-white/10 mb-2">
+    <ul data-toc-list class="list-none p-0 m-0 space-y-0.5 min-w-[14rem]"></ul>
+  </nav>
+
+  <button
+    type="button"
+    data-toc-toggle
+    aria-expanded="false"
+    aria-controls="toc-panel"
+    aria-label="Table of contents"
+    class="flex items-center gap-2 px-4 py-2.5
+           text-sm font-sans text-white/90 hover:text-white
+           focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30 rounded-full
+           cursor-pointer"
+  >
+    <span
+      data-toc-current
+      class="truncate max-w-[60vw] sm:max-w-xs"
+    >On this page</span>
+    <svg
+      class="w-3.5 h-3.5 shrink-0 opacity-70 transition-transform duration-200 group-data-[expanded]:rotate-180"
+      fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"
+    >
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+    </svg>
+  </button>
+</div>

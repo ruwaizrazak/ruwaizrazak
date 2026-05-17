@@ -1,57 +1,99 @@
 /**
- * Table of contents: list building, mobile drawer, and scroll-spy.
- * Extracted from NoteMain.astro to match the src/scripts/ module pattern.
+ * Floating TOC pill: scroll-spy + click-to-toggle expansion.
+ * Headings are scraped from the rendered article DOM so the script
+ * works for both MDX and HTML content.
+ *
+ * Idempotent: initOnLoad fires on both DOMContentLoaded and astro:page-load,
+ * so this can run multiple times per page. Event listeners are wired exactly
+ * once (gated by `wired`); per-page state (heading list + IntersectionObserver)
+ * is rebuilt on every call so view-transition navigation picks up the new article.
  */
 
-function buildTOCList(
-  container: HTMLElement,
-  headings: Element[],
-  onLinkClick: (() => void) | null
-) {
+let wired = false;
+let observer: IntersectionObserver | null = null;
+let pillEl: HTMLElement | null = null;
+let panelEl: HTMLElement | null = null;
+let toggleEl: HTMLButtonElement | null = null;
+let labelEl: HTMLElement | null = null;
+let listEl: HTMLElement | null = null;
+let currentHeadings: Element[] = [];
+
+function expand() {
+  if (!pillEl || !toggleEl || !panelEl) return;
+  pillEl.setAttribute('data-expanded', '');
+  toggleEl.setAttribute('aria-expanded', 'true');
+  panelEl.classList.remove('hidden');
+  panelEl.setAttribute('aria-hidden', 'false');
+}
+function collapse() {
+  if (!pillEl || !toggleEl || !panelEl) return;
+  pillEl.removeAttribute('data-expanded');
+  toggleEl.setAttribute('aria-expanded', 'false');
+  panelEl.classList.add('hidden');
+  panelEl.setAttribute('aria-hidden', 'true');
+}
+function toggle() {
+  if (!pillEl) return;
+  if (pillEl.hasAttribute('data-expanded')) collapse();
+  else expand();
+}
+
+function buildTOCList(container: HTMLElement, headings: Element[]) {
   container.innerHTML = '';
   headings.forEach((heading) => {
     const id = heading.id;
     const li = document.createElement('li');
-    const a = document.createElement('a');
-    a.href = `#${id}`;
-    a.textContent = heading.textContent ?? '';
-    (a as HTMLElement).dataset.tocLink = id;
-
-    const tag = heading.tagName;
-    const indent = tag === 'H3' ? 'pl-4' : tag === 'H2' ? 'pl-2' : '';
-    const weight = tag === 'H1' ? 'text-syoro/70 hover:text-syoro font-semibold' :
-                   tag === 'H2' ? 'text-syoro/70 hover:text-syoro font-medium' :
-                                  'text-syoro/50 hover:text-syoro';
-    a.className = [
-      'block font-sans text-sm leading-snug transition-colors duration-150 py-0.5',
-      indent,
-      weight,
-    ].filter(Boolean).join(' ');
-
-    a.addEventListener('click', (e) => {
-      e.preventDefault();
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.textContent = heading.textContent ?? '';
+    btn.dataset.tocLink = id;
+    btn.className = [
+      'block w-full text-left',
+      'px-3 py-1.5 rounded-lg',
+      'text-sm font-sans leading-snug',
+      'text-white/50 hover:text-white hover:bg-white/5',
+      'transition-colors duration-150',
+      'cursor-pointer',
+    ].join(' ');
+    btn.addEventListener('click', () => {
       document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
-      if (onLinkClick) onLinkClick();
+      collapse();
     });
-
-    li.appendChild(a);
+    li.appendChild(btn);
     container.appendChild(li);
   });
+}
+
+function setActive(id: string) {
+  if (!listEl || !labelEl) return;
+  listEl.querySelectorAll<HTMLElement>('[data-toc-link]').forEach((el) => {
+    const isActive = el.dataset.tocLink === id;
+    el.classList.toggle('!text-white', isActive);
+    el.classList.toggle('bg-white/10', isActive);
+    el.classList.toggle('font-medium', isActive);
+  });
+  const match = currentHeadings.find((h) => h.id === id);
+  if (match) labelEl.textContent = match.textContent ?? '';
 }
 
 export function initTOC() {
   const article = document.querySelector('.note-layout article');
   if (!article) return;
 
-  // Move fixed elements to <body> to escape GSAP transform stacking context
-  const tab = document.querySelector('.toc-tab');
-  const drawerEl = document.querySelector('[data-toc-drawer]');
-  const backdropEl = document.querySelector('[data-toc-backdrop]');
-  if (tab && tab.parentNode !== document.body) document.body.appendChild(tab);
-  if (backdropEl && backdropEl.parentNode !== document.body) document.body.appendChild(backdropEl);
-  if (drawerEl && drawerEl.parentNode !== document.body) document.body.appendChild(drawerEl);
+  const pill = document.querySelector('[data-toc-pill]') as HTMLElement | null;
+  if (!pill) return;
 
-  // Collect H1/H2/H3, assign IDs if missing
+  // Reparent once to escape any GSAP transform stacking context.
+  if (pill.parentNode !== document.body) document.body.appendChild(pill);
+
+  pillEl = pill;
+  toggleEl = pill.querySelector('[data-toc-toggle]') as HTMLButtonElement | null;
+  panelEl = pill.querySelector('[data-toc-panel]') as HTMLElement | null;
+  listEl = pill.querySelector('[data-toc-list]') as HTMLElement | null;
+  labelEl = pill.querySelector('[data-toc-current]') as HTMLElement | null;
+  if (!toggleEl || !panelEl || !listEl || !labelEl) return;
+
+  // Collect H1/H2/H3, auto-generate IDs.
   const rawHeadings = Array.from(article.querySelectorAll('h1, h2, h3'));
   rawHeadings.forEach((h) => {
     if (!h.id) {
@@ -61,53 +103,25 @@ export function initTOC() {
         .replace(/[^\w-]/g, '');
     }
   });
-  const headings = rawHeadings.filter((h) => h.id);
-  if (headings.length === 0) return;
+  currentHeadings = rawHeadings.filter((h) => h.id);
 
-  // Mark layout as having a TOC (shows sidebar + edge tab)
-  document.querySelector('.note-layout')?.setAttribute('data-has-toc', '');
-
-  // Build desktop TOC
-  const desktopList = document.getElementById('toc-list');
-  if (desktopList) buildTOCList(desktopList, headings, null);
-
-  // Build mobile TOC
-  const mobileList = document.getElementById('toc-list-mobile');
-  const drawer = document.querySelector('[data-toc-drawer]') as HTMLElement | null;
-  const backdrop = document.querySelector('[data-toc-backdrop]') as HTMLElement | null;
-  const toggleBtn = document.querySelector('[data-toc-toggle]');
-  const closeBtn = document.querySelector('[data-toc-close]');
-
-  function openDrawer() {
-    drawer?.classList.remove('-translate-x-full');
-    drawer?.setAttribute('aria-hidden', 'false');
-    backdrop?.classList.remove('hidden');
-    document.body.style.overflow = 'hidden';
+  if (currentHeadings.length === 0) {
+    pill.hidden = true;
+    observer?.disconnect();
+    observer = null;
+    return;
   }
-  function closeDrawer() {
-    drawer?.classList.add('-translate-x-full');
-    drawer?.setAttribute('aria-hidden', 'true');
-    backdrop?.classList.add('hidden');
-    document.body.style.overflow = '';
-  }
+  pill.hidden = false;
 
-  if (mobileList) buildTOCList(mobileList, headings, closeDrawer);
+  // Rebuild list + reset collapsed label to first heading.
+  buildTOCList(listEl, currentHeadings);
+  labelEl.textContent = currentHeadings[0].textContent ?? 'On this page';
+  // Reset to collapsed in case a prior page left it expanded.
+  collapse();
 
-  toggleBtn?.addEventListener('click', openDrawer);
-  closeBtn?.addEventListener('click', closeDrawer);
-  backdrop?.addEventListener('click', closeDrawer);
-
-  // Scroll spy via IntersectionObserver
-  function setActive(id: string) {
-    document.querySelectorAll('[data-toc-link]').forEach((a) => {
-      const el = a as HTMLElement;
-      const isActive = el.dataset.tocLink === id;
-      el.classList.toggle('!text-syoro', isActive);
-      el.classList.toggle('font-semibold', isActive);
-    });
-  }
-
-  const observer = new IntersectionObserver(
+  // Refresh scroll-spy observer for the new article.
+  observer?.disconnect();
+  observer = new IntersectionObserver(
     (entries) => {
       const visible = entries.filter((e) => e.isIntersecting);
       if (visible.length === 0) return;
@@ -118,6 +132,22 @@ export function initTOC() {
     },
     { rootMargin: '0px 0px -60% 0px', threshold: 0 }
   );
+  currentHeadings.forEach((h) => observer!.observe(h));
 
-  headings.forEach((h) => observer.observe(h));
+  // Wire listeners exactly once across the lifetime of the page.
+  if (wired) return;
+  wired = true;
+
+  toggleEl.addEventListener('click', (e) => {
+    e.stopPropagation();
+    toggle();
+  });
+  document.addEventListener('click', (e) => {
+    if (!pillEl?.hasAttribute('data-expanded')) return;
+    if (e.target instanceof Node && pillEl.contains(e.target)) return;
+    collapse();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && pillEl?.hasAttribute('data-expanded')) collapse();
+  });
 }
