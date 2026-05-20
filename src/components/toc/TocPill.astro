@@ -24,16 +24,13 @@
          max-w-[calc(100vw-1.5rem)]"
   style="width: var(--toc-w-compact);"
 >
-  <!-- Expanded panel — script GSAP-animates height/opacity (order-first stacks it above the toggle button in flex layout). -->
+  <!-- Expanded panel — script GSAP-animates height/opacity (order-first stacks it above the toggle button in flex layout). The "On this page" title now lives in the toggle bar when expanded, so the panel is just the heading list bracketed by gradient lines. -->
   <nav
     data-toc-panel
     id="toc-panel"
     aria-label="Table of contents"
     aria-hidden="true"
     class="hidden order-first">
-    <p class="text-xs uppercase font-sans text-white/50 dark:text-black/50 px-3 pt-3 pb-2">On this page</p>
-    <hr class="border-white/10 dark:border-black/10 m-0">
-
     <div class="relative">
       <!-- gradient line top -->
       <div
@@ -42,9 +39,12 @@
                bg-gradient-to-r from-transparent via-white/25 dark:via-black/25 to-transparent"
       ></div>
 
+      <!-- LEARN: space-y removed so adjacent rows' rail ::before pseudo-elements
+           butt against each other into one continuous vertical line. Button
+           py-2 still provides vertical rhythm between slot centers. -->
       <ul
         data-toc-list
-        class="list-none p-0 m-0 space-y-1
+        class="list-none p-0 m-0
                h-56 overflow-y-auto scroll-smooth px-1.5 py-2"
       ></ul>
 
@@ -70,11 +70,27 @@
            touch-manipulation transition-transform duration-150
            cursor-pointer"
   >
-    <!-- Odometer clip: script appends absolutely-positioned span children that slide vertically. h-6 matches text-base line height. -->
+    <!-- LEARN: pulsating "current section" dot. Same animation drives the
+         list's active-row ::before pseudo-element so the indicator reads as
+         one continuous signal across the morph. bg-current = theme-aware. -->
     <span
-      data-toc-current
-      class="relative flex-1 min-w-0 overflow-hidden h-6 text-left"
+      class="toc-dot inline-block w-1.5 h-1.5 rounded-full bg-current shrink-0"
+      aria-hidden="true"
     ></span>
+    <!-- Middle slot — stacks two layers in the same flex cell:
+         (1) [data-toc-current]: odometer label showing the current heading name, visible when collapsed.
+         (2) [data-toc-static-label]: static "On this page" title, visible when expanded.
+         Opacity crossfade via [data-expanded] (CSS below). h-6 matches text-base line height. -->
+    <span class="relative flex-1 min-w-0 h-6">
+      <span
+        data-toc-current
+        class="absolute inset-0 overflow-hidden text-left"
+      ></span>
+      <span
+        data-toc-static-label
+        class="absolute inset-0 flex items-center text-left"
+      >On this page</span>
+    </span>
     <svg
       data-toc-chevron
       class="w-3.5 h-3.5 shrink-0 opacity-70"
@@ -133,14 +149,143 @@
   }
 
   /*
-   * LEARN: active-row styling lives here (CSS) rather than as four classList
-   * toggles in the script. setActive() only flips a single [data-active]
-   * attribute per item — fewer DOM mutations on long heading lists, and a
-   * single source of truth for the active visual that inverts with the theme.
+   * LEARN: timeline-style slot indicator. Every list row has an outlined ring
+   * at the left edge. Only the active row's slot contains the pulsating inner
+   * dot (rendered via ::after). This is the single visual signal for "current"
+   * — no bg-tint, no bold weight needed.
    */
-  [data-toc-list] [data-toc-link][data-active] {
-    color: rgb(var(--toc-fg-rgb));
-    background-color: rgb(var(--toc-fg-rgb) / 0.10);
-    font-weight: 500;
+  @keyframes toc-dot-pulse {
+    0%, 100% { opacity: 0.55; transform: scale(0.85); }
+    50%      { opacity: 1;    transform: scale(1); }
+  }
+
+  .toc-slot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 1px solid currentColor;
+    position: relative;
+    flex-shrink: 0;
+    opacity: 0.4;
+    transition: opacity 200ms ease-out;
+  }
+  [data-toc-link]:hover .toc-slot {
+    opacity: 0.7;
+  }
+  [data-toc-link][data-active] .toc-slot {
+    opacity: 1;
+  }
+  [data-toc-link][data-active] .toc-slot::after {
+    content: '';
+    position: absolute;
+    inset: 2px;
+    border-radius: 50%;
+    background: currentColor;
+    box-shadow: 0 0 4px 0 currentColor;
+    animation: toc-dot-pulse 1.6s ease-in-out infinite;
+  }
+
+  /*
+   * LEARN: vertical timeline rail. Each row draws its own 1px line at the
+   * slot's horizontal center, top-to-bottom; with space-y removed on the ul
+   * these butt into one continuous line. Default opacity reads as "bright"
+   * (above-active + active rows); the :has(...) ~ sibling rule below dims
+   * rows that come AFTER the active one. left = button px-3 (12px) + half
+   * the 10px slot - half the 1px line = 16.5px from the button's left edge.
+   */
+  [data-toc-link] {
+    position: relative;
+  }
+  [data-toc-link]::before {
+    content: '';
+    position: absolute;
+    left: calc(0.75rem + 5px - 0.5px);
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: currentColor;
+    opacity: 0.5;
+    pointer-events: none;
+  }
+  /* Trim the rail so it starts/ends at the first/last slot's center,
+     not at the row edges — otherwise the rail visibly overshoots. */
+  [data-toc-list] li:first-child [data-toc-link]::before { top: 50%; }
+  [data-toc-list] li:last-child  [data-toc-link]::before { bottom: 50%; }
+
+  /* Rows AFTER the active row → faint rail (the path not yet walked).
+     :has(...) ~ li selects every sibling li that follows the active one. */
+  [data-toc-list] li:has([data-toc-link][data-active]) ~ li [data-toc-link]::before {
+    opacity: 0.15;
+  }
+
+  /*
+   * LEARN: "passed" slot state. Rows ABOVE the active row are headings the
+   * reader has scrolled past — fill their slots with a solid dot (no pulse).
+   * Only the active row pulses, so the live cue stays unambiguous.
+   * Selector: li that has a later sibling containing the active link.
+   */
+  [data-toc-list] li:has(~ li [data-toc-link][data-active]) .toc-slot {
+    opacity: 1;
+  }
+  [data-toc-list] li:has(~ li [data-toc-link][data-active]) .toc-slot::after {
+    content: '';
+    position: absolute;
+    inset: 2px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  /* Upcoming rows → fainter ring so the progress hierarchy reads at a glance. */
+  [data-toc-list] li:has([data-toc-link][data-active]) ~ li .toc-slot {
+    opacity: 0.3;
+  }
+
+  /*
+   * LEARN: pulsating dot in the collapsed pill's toggle bar. Same keyframe as
+   * the in-slot dot, so both share a single heartbeat cadence across the morph.
+   */
+  .toc-dot {
+    animation: toc-dot-pulse 1.6s ease-in-out infinite;
+    box-shadow: 0 0 6px 0 currentColor;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .toc-dot,
+    [data-toc-link][data-active] .toc-slot::after {
+      animation: none;
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  /*
+   * LEARN: middle-slot crossfade.
+   *  Collapsed: pulsating dot + current-heading odometer visible, static label hidden.
+   *  Expanded:  dot + odometer hidden, static "On this page" title visible.
+   * Same flex slot for both labels (absolute siblings in a relative wrapper),
+   * so the chevron stays anchored at the right edge throughout the morph.
+   * The dot also hides when expanded — its semantic role ("you're in section X")
+   * doesn't fit a generic title; the dot continues to do its job in the list.
+   */
+  [data-toc-pill] [data-toc-current],
+  [data-toc-pill] [data-toc-static-label],
+  [data-toc-pill] .toc-dot {
+    transition: opacity 180ms ease-out;
+  }
+  [data-toc-pill] [data-toc-static-label] {
+    opacity: 0;
+    pointer-events: none;
+  }
+  [data-toc-pill][data-expanded] [data-toc-current] {
+    opacity: 0;
+    pointer-events: none;
+  }
+  [data-toc-pill][data-expanded] [data-toc-static-label] {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  [data-toc-pill][data-expanded] .toc-dot {
+    opacity: 0;
   }
 </style>

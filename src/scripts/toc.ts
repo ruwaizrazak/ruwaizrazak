@@ -229,10 +229,12 @@ function buildTOCList(container: HTMLElement, headings: Element[]) {
     const li = document.createElement('li');
     const btn = document.createElement('button');
     btn.type = 'button';
-    btn.textContent = heading.textContent ?? '';
     btn.dataset.tocLink = id;
     btn.className = [
-      'block w-full text-left truncate',
+      // LEARN: button is a flex row so the timeline slot (outlined ring) and
+      // the heading text align horizontally. truncate moved to the text child
+      // so the slot doesn't get clipped on long headings.
+      'flex items-center gap-2.5 w-full text-left',
       'px-3 py-2 rounded-lg',
       'text-base font-sans leading-snug',
       // LEARN: pill inverts from page theme — list colors invert with it.
@@ -248,6 +250,20 @@ function buildTOCList(container: HTMLElement, headings: Element[]) {
       'touch-manipulation transition-all duration-150',
       'cursor-pointer',
     ].join(' ');
+
+    // Timeline slot — outlined ring on every row; the active row's slot
+    // contains the pulsating dot (CSS pseudo-element on [data-active]).
+    const slot = document.createElement('span');
+    slot.className = 'toc-slot';
+    slot.setAttribute('aria-hidden', 'true');
+
+    const text = document.createElement('span');
+    text.className = 'toc-text truncate flex-1 min-w-0';
+    text.textContent = heading.textContent ?? '';
+
+    btn.appendChild(slot);
+    btn.appendChild(text);
+
     btn.addEventListener('click', () => {
       document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
       collapse();
@@ -316,51 +332,23 @@ function setLabelText(text: string, animate: boolean) {
 
 function setActive(id: string) {
   if (id === activeId) return;
-  const isFirstActivation = activeId === null;
   activeId = id;
   if (!listEl) return;
 
-  // LEARN: one data-attribute toggle + one CSS rule beats four classList
-  // toggles per item — fewer DOM mutations (matters on long heading lists
-  // during fast scroll) and a single source of truth for the active style.
-  // aria-current="location" gives screen readers a real "you are here" signal.
-  let newActiveBtn: HTMLElement | null = null;
+  // LEARN: one data-attribute toggle (+ aria-current) per row drives the
+  // active visual. The CSS rules in TocPill.astro show the in-slot pulsating
+  // dot only when [data-active] is set. No bg flash needed — the slot's
+  // infinite keyframe is the "live" cue on its own.
   listEl.querySelectorAll<HTMLElement>('[data-toc-link]').forEach((el) => {
     const isActive = el.dataset.tocLink === id;
     if (isActive) {
       el.setAttribute('data-active', '');
       el.setAttribute('aria-current', 'location');
-      newActiveBtn = el;
     } else {
       el.removeAttribute('data-active');
       el.removeAttribute('aria-current');
     }
   });
-
-  // LEARN: secondary action — when the active row changes, briefly flash
-  // its background from a brighter tint back to the resting active style.
-  // clearProps lets the CSS [data-active] rule take over once the tween
-  // ends, so the resting state stays in one place (the component's <style>).
-  // Skipped on the very first activation (no "change" to celebrate) and
-  // when the user has prefers-reduced-motion.
-  if (newActiveBtn && !isFirstActivation && !reduceMotion) {
-    // LEARN: brief background flash on the new active row, fading from a
-    // brighter tint back to the resting [data-active] value. clearProps
-    // hands styling back to the CSS rule once the tween ends, keeping the
-    // resting state in a single source of truth (TocPill.astro's <style>).
-    // --toc-fg-rgb flips with theme (255 255 255 light → 0 0 0 dark), so
-    // the pulse stays on-theme with zero JS branching.
-    gsap.fromTo(
-      newActiveBtn,
-      { backgroundColor: 'rgb(var(--toc-fg-rgb) / 0.22)' },
-      {
-        backgroundColor: 'rgb(var(--toc-fg-rgb) / 0.10)',
-        duration: 0.4,
-        ease: 'power2.out',
-        clearProps: 'backgroundColor',
-      }
-    );
-  }
 
   const match = currentHeadings.find((h) => h.id === id);
   if (match) setLabelText(match.textContent ?? '', true);
