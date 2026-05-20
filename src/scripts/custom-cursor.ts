@@ -213,6 +213,18 @@ function handleMouseOver(e: MouseEvent): void {
   const target = e.target as Element;
   if (!target || !target.closest) return;
 
+  // LEARN: TOC pill inverts from page theme (dark on light page, light on
+  // dark page). The default cursor color matches the page foreground, so it
+  // would be invisible over the pill. Swap `--color-cursor` to its inverse
+  // (`--color-cursor-text` is already defined as the inverse pair in
+  // global.css) while over the pill. var() resolves at paint time, so this
+  // takes effect for the SVG fill and any other --color-cursor reference.
+  // Doesn't `return` — the existing state machine still picks the right
+  // cursor shape (e.g. 'button' over the toggle).
+  if (target.closest('[data-toc-pill]')) {
+    cursor?.style.setProperty('--color-cursor', 'var(--color-cursor-text)');
+  }
+
   if (target.closest('.work-card-container')) {
     setState('work-card');
     return;
@@ -241,6 +253,13 @@ function handleMouseOut(e: MouseEvent): void {
   const target = e.target as Element;
   const related = e.relatedTarget as Element | null;
   if (!target || !target.closest) return;
+
+  // LEARN: revert the --color-cursor override when leaving the TOC pill.
+  // removeProperty falls back to the global root value, which is already
+  // theme-aware via the .dark class on <html>.
+  if (target.closest('[data-toc-pill]') && (!related || !related.closest?.('[data-toc-pill]'))) {
+    cursor?.style.removeProperty('--color-cursor');
+  }
 
   if (target.closest('.work-card-container') && (!related || !related.closest?.('.work-card-container'))) {
     setState('default');

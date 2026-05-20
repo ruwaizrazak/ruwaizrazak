@@ -221,6 +221,13 @@ hr {
   height: 20px;
 }
 
+/* LEARN: smooth fill crossfade when --color-cursor is overridden — e.g. when
+   the cursor enters/leaves the TOC pill, which flips it to the inverse color
+   so it stays visible against the pill's inverted surface. */
+#custom-cursor .cursor-morph-path {
+  transition: fill 200ms ease-out;
+}
+
 #custom-cursor .cursor-label {
   position: absolute;
   z-index: 1;

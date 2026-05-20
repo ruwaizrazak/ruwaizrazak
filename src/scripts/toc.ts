@@ -235,7 +235,10 @@ function buildTOCList(container: HTMLElement, headings: Element[]) {
       'block w-full text-left truncate',
       'px-3 py-2 rounded-lg',
       'text-base font-sans leading-snug',
+      // LEARN: pill inverts from page theme — list colors invert with it.
+      // Light mode (dark pill) → white text. Dark mode (light pill) → black text.
       'text-white/50 hover:text-white hover:bg-white/5',
+      'dark:text-black/50 dark:hover:text-black dark:hover:bg-black/5',
       // LEARN: matches the HeaderLink press pattern. `motion-safe:active:scale-95`
       // gives finger/click feedback (works on touch without hover). `transition-all`
       // (not just colors) so the scale also animates back on release.
@@ -345,11 +348,13 @@ function setActive(id: string) {
     // brighter tint back to the resting [data-active] value. clearProps
     // hands styling back to the CSS rule once the tween ends, keeping the
     // resting state in a single source of truth (TocPill.astro's <style>).
+    // --toc-fg-rgb flips with theme (255 255 255 light → 0 0 0 dark), so
+    // the pulse stays on-theme with zero JS branching.
     gsap.fromTo(
       newActiveBtn,
-      { backgroundColor: 'rgba(255, 255, 255, 0.22)' },
+      { backgroundColor: 'rgb(var(--toc-fg-rgb) / 0.22)' },
       {
-        backgroundColor: 'rgba(255, 255, 255, 0.10)',
+        backgroundColor: 'rgb(var(--toc-fg-rgb) / 0.10)',
         duration: 0.4,
         ease: 'power2.out',
         clearProps: 'backgroundColor',
