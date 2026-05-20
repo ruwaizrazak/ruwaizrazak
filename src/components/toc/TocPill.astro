@@ -4,20 +4,21 @@
 // — the script in src/scripts/toc.ts owns rendering the list, scroll-spy
 // highlighting, the odometer label, and the GSAP open/close timeline.
 //
-// Hardcoded dark surface (independent of site theme) to match the design ref.
+// Hardcoded dark surface (independent of site theme): always black/white.
+// Width comes from CSS custom properties so it scales responsively at lg/xl.
 // Hidden by default; initTOC() removes [hidden] only if the article has headings.
 ---
 
 <div
   data-toc-pill
   hidden
-  class="toc-pill group fixed bottom-6 left-1/2 -translate-x-1/2 z-50
+  class="toc-pill toc-pill-shadow group fixed bottom-6 left-1/2 -translate-x-1/2 z-50
          flex flex-col items-stretch
          bg-black/85 text-white backdrop-blur-md
-         rounded-full shadow-2xl ring-1 ring-white/10
+         rounded-full ring-1 ring-white/10
          overflow-hidden
          max-w-[calc(100vw-1.5rem)]"
-  style="width: 14rem;"
+  style="width: var(--toc-w-compact);"
 >
   <!-- Expanded panel — script GSAP-animates height/opacity (order-first stacks it above the toggle button in flex layout). -->
   <nav
@@ -39,7 +40,7 @@
 
       <ul
         data-toc-list
-        class="list-none p-0 m-0 space-y-0.5
+        class="list-none p-0 m-0 space-y-1
                h-56 overflow-y-auto scroll-smooth px-1.5 py-2"
       ></ul>
 
@@ -59,14 +60,16 @@
     aria-controls="toc-panel"
     aria-label="Table of contents"
     class="flex items-center gap-2 px-4 py-2.5
-           text-sm font-sans text-white/90 hover:text-white
+           text-base font-sans text-white/90 hover:text-white
            focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30 rounded-full
+           motion-safe:active:scale-95 motion-safe:transform-gpu
+           touch-manipulation transition-transform duration-150
            cursor-pointer"
   >
-    <!-- Odometer clip: script appends absolutely-positioned span children that slide vertically. -->
+    <!-- Odometer clip: script appends absolutely-positioned span children that slide vertically. h-6 matches text-base line height. -->
     <span
       data-toc-current
-      class="relative flex-1 min-w-0 overflow-hidden h-5 text-left"
+      class="relative flex-1 min-w-0 overflow-hidden h-6 text-left"
     ></span>
     <svg
       data-toc-chevron
@@ -79,6 +82,38 @@
 </div>
 
 <style>
+  /*
+   * LEARN: responsive width custom properties — toc.ts reads these at animation
+   * time via getComputedStyle, so resizing across breakpoints picks up new
+   * values on the next open/close without a JS resize listener.
+   */
+  [data-toc-pill] {
+    --toc-w-compact: 14rem;
+    --toc-w-expanded: 22rem;
+  }
+  @media (min-width: 1024px) {  /* lg */
+    [data-toc-pill] {
+      --toc-w-compact: 16rem;
+      --toc-w-expanded: 26rem;
+    }
+  }
+  @media (min-width: 1280px) {  /* xl */
+    [data-toc-pill] {
+      --toc-w-compact: 18rem;
+      --toc-w-expanded: 30rem;
+    }
+  }
+
+  /*
+   * LEARN: dual shadow — directional dark drop for depth + a soft white ambient
+   * glow for the "floating glass" feel. Pill is always dark so no theme variant.
+   */
+  .toc-pill-shadow {
+    box-shadow:
+      0 8px 32px rgb(0 0 0 / 0.35),
+      0 0 40px rgb(255 255 255 / 0.05);
+  }
+
   /*
    * LEARN: active-row styling lives here (CSS) rather than as four classList
    * toggles in the script. setActive() only flips a single [data-active]

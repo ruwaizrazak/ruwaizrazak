@@ -71,9 +71,19 @@ const ROUND_2XL = '16px';
 
 // LEARN: bi-directional morph — DI's signature is both width and height
 // growing together. State-driven (not content-driven) so scroll-spy label
-// changes don't jitter the collapsed pill's width.
-const WIDTH_COMPACT = '14rem';
-const WIDTH_EXPANDED = '22rem';
+// changes don't jitter the collapsed pill's width. Widths come from CSS
+// custom properties on the pill (defined in TocPill.astro's <style> with
+// @media overrides for lg and xl) — reading them at animation call time
+// means resizing across breakpoints picks up new values on the next
+// open/close, no resize listener required.
+function readWidths(): { compact: string; expanded: string } {
+  if (!pillEl) return { compact: '14rem', expanded: '22rem' };
+  const cs = getComputedStyle(pillEl);
+  return {
+    compact: cs.getPropertyValue('--toc-w-compact').trim() || '14rem',
+    expanded: cs.getPropertyValue('--toc-w-expanded').trim() || '22rem',
+  };
+}
 
 // --- Open / close ----------------------------------------------------------
 
@@ -87,11 +97,13 @@ function expand() {
   // toggle never strands properties at intermediate values.
   gsap.killTweensOf([panelEl, pillEl, chevronEl]);
 
+  const { compact, expanded } = readWidths();
+
   if (reduceMotion) {
     // a11y path: jump to the expanded end state with no animation.
     panelEl.style.display = 'block';
     gsap.set(panelEl, { height: 'auto', opacity: 1, clearProps: 'height,willChange' });
-    gsap.set(pillEl, { width: WIDTH_EXPANDED, borderRadius: ROUND_2XL, scale: 1 });
+    gsap.set(pillEl, { width: expanded, borderRadius: ROUND_2XL, scale: 1 });
     gsap.set(chevronEl, { rotate: 180 });
     return;
   }
@@ -126,8 +138,8 @@ function expand() {
     // SPRING ease — width morph is the visual hook of the Dynamic Island feel.
     .fromTo(
       pillEl,
-      { width: WIDTH_COMPACT },
-      { width: WIDTH_EXPANDED, ease: OPEN_EASE_SPRING },
+      { width: compact },
+      { width: expanded, ease: OPEN_EASE_SPRING },
       0
     )
     // SMOOTH ease — radius overshoot would push the value past 16 into the
@@ -165,11 +177,13 @@ function collapse(animate: boolean = true) {
 
   gsap.killTweensOf([panelEl, pillEl, chevronEl]);
 
+  const { compact } = readWidths();
+
   if (!animate || reduceMotion) {
     // Instant path — used at init, on view-transition, and for a11y.
     gsap.set(panelEl, { height: 0, opacity: 0, display: 'none', willChange: '' });
     gsap.set(pillEl, {
-      width: WIDTH_COMPACT,
+      width: compact,
       borderRadius: ROUND_FULL,
       scale: 1,
       willChange: '',
@@ -192,7 +206,7 @@ function collapse(animate: boolean = true) {
     },
   })
     .to(panelEl, { height: 0, opacity: 0 }, 0)
-    .to(pillEl, { width: WIDTH_COMPACT }, 0)
+    .to(pillEl, { width: compact }, 0)
     .fromTo(pillEl, { borderRadius: ROUND_2XL }, { borderRadius: ROUND_FULL }, 0)
     .to(chevronEl, { rotate: 0 }, 0);
 }
@@ -219,10 +233,16 @@ function buildTOCList(container: HTMLElement, headings: Element[]) {
     btn.dataset.tocLink = id;
     btn.className = [
       'block w-full text-left truncate',
-      'px-3 py-1.5 rounded-lg',
-      'text-sm font-sans leading-snug',
+      'px-3 py-2 rounded-lg',
+      'text-base font-sans leading-snug',
       'text-white/50 hover:text-white hover:bg-white/5',
-      'transition-colors duration-150',
+      // LEARN: matches the HeaderLink press pattern. `motion-safe:active:scale-95`
+      // gives finger/click feedback (works on touch without hover). `transition-all`
+      // (not just colors) so the scale also animates back on release.
+      // `touch-manipulation` removes iOS Safari's 300ms tap delay so the press
+      // feedback feels immediate on mobile.
+      'motion-safe:active:scale-95 motion-safe:transform-gpu',
+      'touch-manipulation transition-all duration-150',
       'cursor-pointer',
     ].join(' ');
     btn.addEventListener('click', () => {
@@ -321,6 +341,10 @@ function setActive(id: string) {
   // Skipped on the very first activation (no "change" to celebrate) and
   // when the user has prefers-reduced-motion.
   if (newActiveBtn && !isFirstActivation && !reduceMotion) {
+    // LEARN: brief background flash on the new active row, fading from a
+    // brighter tint back to the resting [data-active] value. clearProps
+    // hands styling back to the CSS rule once the tween ends, keeping the
+    // resting state in a single source of truth (TocPill.astro's <style>).
     gsap.fromTo(
       newActiveBtn,
       { backgroundColor: 'rgba(255, 255, 255, 0.22)' },
