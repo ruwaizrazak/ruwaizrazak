@@ -13,15 +13,21 @@
 // Hidden by default; initTOC() removes [hidden] only if the article has headings.
 ---
 
+<!-- LEARN: dual-layer shadow folded into Tailwind arbitrary values. Light mode
+     gets a white-tinted ambient glow against the dark pill; dark mode flips
+     to a black-tinted glow against the light pill. Underscores replace spaces
+     per Tailwind v4 arbitrary-value syntax. -->
 <div
   data-toc-pill
   hidden
-  class="toc-pill toc-pill-shadow group fixed bottom-6 left-1/2 -translate-x-1/2 z-50
+  class="group fixed bottom-6 left-1/2 -translate-x-1/2 z-50
          flex flex-col items-stretch
          bg-black/85 text-white dark:bg-white/85 dark:text-black backdrop-blur-md
          rounded-full ring-1 ring-white/10 dark:ring-black/10
          overflow-hidden
-         max-w-[calc(100vw-1.5rem)]"
+         max-w-[calc(100vw-1.5rem)]
+         shadow-[0_8px_32px_rgb(0_0_0_/_0.35),0_0_40px_rgb(255_255_255_/_0.05)]
+         dark:shadow-[0_8px_32px_rgb(0_0_0_/_0.45),0_0_40px_rgb(0_0_0_/_0.08)]"
   style="width: var(--toc-w-compact);"
 >
   <!-- Expanded panel — script GSAP-animates height/opacity (order-first stacks it above the toggle button in flex layout). The "On this page" title now lives in the toggle bar when expanded, so the panel is just the heading list bracketed by gradient lines. -->
@@ -70,11 +76,16 @@
            touch-manipulation transition-transform duration-150
            cursor-pointer"
   >
-    <!-- LEARN: pulsating "current section" dot. Same animation drives the
-         list's active-row ::before pseudo-element so the indicator reads as
-         one continuous signal across the morph. bg-current = theme-aware. -->
+    <!-- LEARN: pulsating "current section" dot. Same keyframe drives the
+         active-row in-slot dot so the indicator reads as one continuous
+         signal across the morph. bg-current = theme-aware.
+         `motion-safe:` variant gates the animation off in reduce-motion mode
+         (no separate media-query override needed). The `.toc-dot` class
+         survives only as a selector hook for the expanded-state hide rule. -->
     <span
-      class="toc-dot inline-block w-1.5 h-1.5 rounded-full bg-current shrink-0"
+      class="toc-dot inline-block w-1.5 h-1.5 rounded-full bg-current shrink-0
+             shadow-[0_0_6px_0_currentColor]
+             motion-safe:animate-[toc-dot-pulse_1.6s_ease-in-out_infinite]"
       aria-hidden="true"
     ></span>
     <!-- Middle slot — stacks two layers in the same flex cell:
@@ -133,20 +144,10 @@
   }
 
   /*
-   * LEARN: dual shadow — directional dark drop for depth + a soft ambient glow.
-   * Light mode: white-tinted glow against a dark pill on a light page.
-   * Dark mode: black-tinted glow against a light pill on a dark page.
+   * LEARN: shadow now lives in Tailwind arbitrary `shadow-[…]` utilities on
+   * the wrapper div (with a `dark:shadow-[…]` variant). Folded out of CSS so
+   * we don't keep a custom class around just for two box-shadow declarations.
    */
-  .toc-pill-shadow {
-    box-shadow:
-      0 8px 32px rgb(0 0 0 / 0.35),
-      0 0 40px rgb(255 255 255 / 0.05);
-  }
-  :where(.dark) .toc-pill-shadow {
-    box-shadow:
-      0 8px 32px rgb(0 0 0 / 0.45),
-      0 0 40px rgb(0 0 0 / 0.08);
-  }
 
   /*
    * LEARN: timeline-style slot indicator. Every list row has an outlined ring
@@ -173,16 +174,32 @@
   [data-toc-link]:hover .toc-slot {
     opacity: 0.7;
   }
+  /* LEARN: persistent background tint on the current row. Uses --toc-fg-rgb
+     so the hue is right on both light and dark pills with no override. 0.08
+     sits a hair above the 5% hover tint so the active state reads as "sticky"
+     rather than "transient hover". Button's rounded-lg shapes the fill. */
+  [data-toc-link][data-active] {
+    background-color: rgb(var(--toc-fg-rgb) / 0.08);
+  }
   [data-toc-link][data-active] .toc-slot {
     opacity: 1;
+    /* LEARN: alpha-free border so the active ring reads at full theme color,
+       not inherited 50% alpha from the button's text-white/50 currentColor. */
+    border-color: rgb(var(--toc-fg-rgb));
   }
   [data-toc-link][data-active] .toc-slot::after {
     content: '';
     position: absolute;
-    inset: 2px;
+    /* LEARN: inset 1 → 8×8 dot inside the 10×10 ring (was 6×6, too small to
+       read at this scale). */
+    inset: 1px;
     border-radius: 50%;
-    background: currentColor;
-    box-shadow: 0 0 4px 0 currentColor;
+    /* LEARN: use the pill's theme-aware foreground RGB triplet (no alpha)
+       so the dot pulses at full opacity. currentColor here would inherit
+       the button's text-white/50 (or text-black/50) and render at ~50%
+       even at the keyframe peak — invisible against the translucent pill. */
+    background: rgb(var(--toc-fg-rgb));
+    box-shadow: 0 0 6px 1px rgb(var(--toc-fg-rgb) / 0.7);
     animation: toc-dot-pulse 1.6s ease-in-out infinite;
   }
 
@@ -242,16 +259,17 @@
   }
 
   /*
-   * LEARN: pulsating dot in the collapsed pill's toggle bar. Same keyframe as
-   * the in-slot dot, so both share a single heartbeat cadence across the morph.
+   * LEARN: pulsating dot in the collapsed pill's toggle bar — animation +
+   * shadow now live as Tailwind utilities directly on the <span>:
+   *   motion-safe:animate-[toc-dot-pulse_1.6s_ease-in-out_infinite]
+   *   shadow-[0_0_6px_0_currentColor]
+   * The `.toc-dot` class name survives only so [data-expanded] can pin the
+   * dot to opacity:0 during the morph (see crossfade block below).
+   *
+   * The reduced-motion override stays for the in-slot active dot only,
+   * because pseudo-elements (::after) can't be reached by Tailwind variants.
    */
-  .toc-dot {
-    animation: toc-dot-pulse 1.6s ease-in-out infinite;
-    box-shadow: 0 0 6px 0 currentColor;
-  }
-
   @media (prefers-reduced-motion: reduce) {
-    .toc-dot,
     [data-toc-link][data-active] .toc-slot::after {
       animation: none;
       opacity: 1;
@@ -287,5 +305,6 @@
   }
   [data-toc-pill][data-expanded] .toc-dot {
     opacity: 0;
+    animation: none;
   }
 </style>

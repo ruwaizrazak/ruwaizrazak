@@ -13,6 +13,17 @@
  *  module's `initTOC()` runs twice on first page load and again on every
  *  view-transition navigation. Listeners are wired once via the `wired` flag;
  *  per-page state (heading list + IntersectionObserver) is rebuilt every call.
+ *
+ * File layout (top → bottom):
+ *  1. Imports
+ *  2. Module-scoped state
+ *  3. Constants (motion timing + invariants)
+ *  4. Helpers (readWidths, setMorphHints, applyMorphState)
+ *  5. Open / close / toggle
+ *  6. List rendering
+ *  7. Odometer label
+ *  8. Active state (scroll-spy → DOM)
+ *  9. initTOC entry point
  */
 
 import gsap from 'gsap';
@@ -40,24 +51,26 @@ let activeId: string | null = null;
 let lastScrollY = 0;
 let scrollDirection: 1 | -1 = 1;
 
-// LEARN: a11y — respect prefers-reduced-motion. We sample it once at module
-// load (the user is unlikely to flip the OS setting mid-session) and skip
-// every GSAP animation for users who opted out of motion.
+// --- Constants -------------------------------------------------------------
+
+// LEARN: a11y — respect prefers-reduced-motion. Sampled once at module load
+// (the user is unlikely to flip the OS setting mid-session); every GSAP path
+// short-circuits to an instant `gsap.set` when this is true.
 const reduceMotion =
   typeof window !== 'undefined' &&
   window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-// --- Morph timing ----------------------------------------------------------
-// LEARN: matches iOS Dynamic Island character — slightly longer open so the
-// spring overshoot has time to read, snappier close. ~420ms gives back.out
-// room to feel "alive"; at 300ms a spring just reads as jitter.
+// LEARN: morph timing matches iOS Dynamic Island character — slightly longer
+// open so the spring overshoot has time to read, snappier close. ~420ms gives
+// back.out room to feel "alive"; at 300ms a spring just reads as jitter.
 const OPEN_DURATION = 0.42;
 const CLOSE_DURATION = 0.28;
-// LEARN: mixed eases on a single timeline. SPRING (back.out) for visual
-// silhouette properties — width/radius/scale overshoot harmlessly. SMOOTH
-// (power3.out) for height + opacity — overshooting `height: 'auto'` would
-// briefly reveal empty space below the content. Close mirrors with power3.in
-// because reverse-springs feel weird on dismissal.
+
+// LEARN: mixed eases on a single timeline. SPRING (back.out) for the visual
+// silhouette — width/radius/scale overshoot harmlessly. SMOOTH (power3.out)
+// for height + opacity — overshooting `height: 'auto'` would briefly reveal
+// empty space below the content. Close mirrors with power3.in because
+// reverse-springs feel weird on dismissal.
 const OPEN_EASE_SPRING = 'back.out(1.4)';
 const OPEN_EASE_SMOOTH = 'power3.out';
 const CLOSE_EASE = 'power3.in';
@@ -68,6 +81,31 @@ const CLOSE_EASE = 'power3.in';
 // can't read back as a finite starting value — fromTo() forces both endpoints.
 const ROUND_FULL = '9999px';
 const ROUND_2XL = '16px';
+
+// LEARN: button className for every TOC row, hoisted to module scope so the
+// long string is allocated once at module load instead of per-heading on each
+// initTOC rebuild. Pure visual config — no dynamic bits depend on the heading.
+const TOC_BTN_CLASS = [
+  // Flex row so the timeline slot (outlined ring) and the heading text align
+  // horizontally. `truncate` lives on the text child so the slot doesn't get
+  // clipped on long headings.
+  'flex items-center gap-2.5 w-full text-left',
+  'px-3 py-2 rounded-lg',
+  'text-base font-sans leading-snug',
+  // Pill inverts from page theme — list colors invert with it.
+  // Light mode (dark pill) → white text. Dark mode (light pill) → black text.
+  'text-white/50 hover:text-white hover:bg-white/5',
+  'dark:text-black/50 dark:hover:text-black dark:hover:bg-black/5',
+  // Press feedback: `motion-safe:active:scale-95` gives click/tap feedback
+  // without needing hover (so touch users see it). `transition-all` (not just
+  // colors) so the scale animates back on release. `touch-manipulation`
+  // removes iOS Safari's 300ms tap delay.
+  'motion-safe:active:scale-95 motion-safe:transform-gpu',
+  'touch-manipulation transition-all duration-150',
+  'cursor-pointer',
+].join(' ');
+
+// --- Helpers ---------------------------------------------------------------
 
 // LEARN: bi-directional morph — DI's signature is both width and height
 // growing together. State-driven (not content-driven) so scroll-spy label
@@ -85,6 +123,35 @@ function readWidths(): { compact: string; expanded: string } {
   };
 }
 
+// LEARN: GPU compositor hints — pill has backdrop-blur which is expensive to
+// repaint each frame. Promote both animated elements while the tween runs,
+// then clear so the hint doesn't leak GPU memory after. Centralised here so
+// every animated path turns hints on/off symmetrically.
+function setMorphHints(on: boolean) {
+  if (!panelEl || !pillEl) return;
+  panelEl.style.willChange = on ? 'height' : '';
+  pillEl.style.willChange = on ? 'width, border-radius, transform' : '';
+}
+
+// LEARN: jump to the open/closed end state with zero animation. Shared by the
+// `reduceMotion` paths in expand/collapse AND the `collapse(false)` reset that
+// runs on every initTOC call (initial render + post-view-transition). One
+// helper kept these two flows from drifting apart.
+function applyMorphState(open: boolean) {
+  if (!pillEl || !panelEl || !chevronEl) return;
+  const { compact, expanded } = readWidths();
+  if (open) {
+    panelEl.style.display = 'block';
+    gsap.set(panelEl, { height: 'auto', opacity: 1, clearProps: 'height,willChange' });
+    gsap.set(pillEl, { width: expanded, borderRadius: ROUND_2XL, scale: 1, willChange: '' });
+    gsap.set(chevronEl, { rotate: 180 });
+  } else {
+    gsap.set(panelEl, { height: 0, opacity: 0, display: 'none', willChange: '' });
+    gsap.set(pillEl, { width: compact, borderRadius: ROUND_FULL, scale: 1, willChange: '' });
+    gsap.set(chevronEl, { rotate: 0 });
+  }
+}
+
 // --- Open / close ----------------------------------------------------------
 
 function expand() {
@@ -97,37 +164,26 @@ function expand() {
   // toggle never strands properties at intermediate values.
   gsap.killTweensOf([panelEl, pillEl, chevronEl]);
 
-  const { compact, expanded } = readWidths();
-
   if (reduceMotion) {
-    // a11y path: jump to the expanded end state with no animation.
-    panelEl.style.display = 'block';
-    gsap.set(panelEl, { height: 'auto', opacity: 1, clearProps: 'height,willChange' });
-    gsap.set(pillEl, { width: expanded, borderRadius: ROUND_2XL, scale: 1 });
-    gsap.set(chevronEl, { rotate: 180 });
+    applyMorphState(true);
     return;
   }
 
+  const { compact, expanded } = readWidths();
   panelEl.style.display = 'block';
-  // LEARN: GPU compositor hints — pill has backdrop-blur which is expensive
-  // to repaint each frame; promote both animated elements while the tween
-  // runs, then clear so the hint doesn't leak GPU memory after.
-  panelEl.style.willChange = 'height';
-  pillEl.style.willChange = 'width, border-radius, transform';
+  setMorphHints(true);
 
-  gsap.timeline({
-    defaults: { duration: OPEN_DURATION },
-    onComplete: () => {
-      // LEARN: GSAP leaves panel.height set to the measured natural height
-      // (e.g. "382px"). Clearing it returns control to CSS so the panel
-      // reflows naturally if the viewport or font size changes later.
-      if (panelEl) {
-        panelEl.style.height = '';
-        panelEl.style.willChange = '';
-      }
-      if (pillEl) pillEl.style.willChange = '';
-    },
-  })
+  gsap
+    .timeline({
+      defaults: { duration: OPEN_DURATION },
+      onComplete: () => {
+        // LEARN: GSAP leaves panel.height set to the measured natural height
+        // (e.g. "382px"). Clearing returns control to CSS so the panel
+        // reflows naturally if the viewport or font size changes later.
+        if (panelEl) panelEl.style.height = '';
+        setMorphHints(false);
+      },
+    })
     // SMOOTH ease — height/opacity overshoot would briefly show empty space below content.
     .fromTo(
       panelEl,
@@ -136,16 +192,10 @@ function expand() {
       0
     )
     // SPRING ease — width morph is the visual hook of the Dynamic Island feel.
-    .fromTo(
-      pillEl,
-      { width: compact },
-      { width: expanded, ease: OPEN_EASE_SPRING },
-      0
-    )
+    .fromTo(pillEl, { width: compact }, { width: expanded, ease: OPEN_EASE_SPRING }, 0)
     // SMOOTH ease — radius overshoot would push the value past 16 into the
     // negative range (9983px delta × ~7% back.out overshoot ≈ -700px), which
     // browsers clamp to 0px → corners flash sharp for a frame near the end.
-    // Use the monotonic ease so the radius lands cleanly.
     .fromTo(
       pillEl,
       { borderRadius: ROUND_FULL },
@@ -153,18 +203,22 @@ function expand() {
       0
     )
     // LEARN: scale anticipation — pill "breathes" briefly (squash-and-stretch
-    // lite). GSAP parses the existing transform so Tailwind's translate(-50%)
-    // is preserved when scale is composed onto it.
-    .fromTo(
-      pillEl,
-      { scale: 1 },
-      { scale: 1.02, duration: OPEN_DURATION * 0.4, ease: 'power2.out' },
-      0
-    )
+    // lite). Single keyframed tween (1 → 1.02 → 1) replaces the older
+    // fromTo+to pair so the two segments read as one logical gesture.
+    // Each keyframe's ease applies to the segment ending at that keyframe,
+    // preserving the original power2.out → back.out(1.4) curve. GSAP composes
+    // the resulting transform onto Tailwind's existing translate(-50%).
     .to(
       pillEl,
-      { scale: 1, duration: OPEN_DURATION * 0.6, ease: OPEN_EASE_SPRING },
-      OPEN_DURATION * 0.4
+      {
+        duration: OPEN_DURATION,
+        keyframes: {
+          '0%': { scale: 1, ease: 'none' },
+          '40%': { scale: 1.02, ease: 'power2.out' },
+          '100%': { scale: 1, ease: OPEN_EASE_SPRING },
+        },
+      },
+      0
     )
     .to(chevronEl, { rotate: 180, ease: OPEN_EASE_SPRING }, 0);
 }
@@ -177,34 +231,22 @@ function collapse(animate: boolean = true) {
 
   gsap.killTweensOf([panelEl, pillEl, chevronEl]);
 
-  const { compact } = readWidths();
-
   if (!animate || reduceMotion) {
-    // Instant path — used at init, on view-transition, and for a11y.
-    gsap.set(panelEl, { height: 0, opacity: 0, display: 'none', willChange: '' });
-    gsap.set(pillEl, {
-      width: compact,
-      borderRadius: ROUND_FULL,
-      scale: 1,
-      willChange: '',
-    });
-    gsap.set(chevronEl, { rotate: 0 });
+    applyMorphState(false);
     return;
   }
 
-  panelEl.style.willChange = 'height';
-  pillEl.style.willChange = 'width, border-radius, transform';
+  const { compact } = readWidths();
+  setMorphHints(true);
 
-  gsap.timeline({
-    defaults: { duration: CLOSE_DURATION, ease: CLOSE_EASE },
-    onComplete: () => {
-      if (panelEl) {
-        panelEl.style.display = 'none';
-        panelEl.style.willChange = '';
-      }
-      if (pillEl) pillEl.style.willChange = '';
-    },
-  })
+  gsap
+    .timeline({
+      defaults: { duration: CLOSE_DURATION, ease: CLOSE_EASE },
+      onComplete: () => {
+        if (panelEl) panelEl.style.display = 'none';
+        setMorphHints(false);
+      },
+    })
     .to(panelEl, { height: 0, opacity: 0 }, 0)
     .to(pillEl, { width: compact }, 0)
     .fromTo(pillEl, { borderRadius: ROUND_2XL }, { borderRadius: ROUND_FULL }, 0)
@@ -230,26 +272,7 @@ function buildTOCList(container: HTMLElement, headings: Element[]) {
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.dataset.tocLink = id;
-    btn.className = [
-      // LEARN: button is a flex row so the timeline slot (outlined ring) and
-      // the heading text align horizontally. truncate moved to the text child
-      // so the slot doesn't get clipped on long headings.
-      'flex items-center gap-2.5 w-full text-left',
-      'px-3 py-2 rounded-lg',
-      'text-base font-sans leading-snug',
-      // LEARN: pill inverts from page theme — list colors invert with it.
-      // Light mode (dark pill) → white text. Dark mode (light pill) → black text.
-      'text-white/50 hover:text-white hover:bg-white/5',
-      'dark:text-black/50 dark:hover:text-black dark:hover:bg-black/5',
-      // LEARN: matches the HeaderLink press pattern. `motion-safe:active:scale-95`
-      // gives finger/click feedback (works on touch without hover). `transition-all`
-      // (not just colors) so the scale also animates back on release.
-      // `touch-manipulation` removes iOS Safari's 300ms tap delay so the press
-      // feedback feels immediate on mobile.
-      'motion-safe:active:scale-95 motion-safe:transform-gpu',
-      'touch-manipulation transition-all duration-150',
-      'cursor-pointer',
-    ].join(' ');
+    btn.className = TOC_BTN_CLASS;
 
     // Timeline slot — outlined ring on every row; the active row's slot
     // contains the pulsating dot (CSS pseudo-element on [data-active]).
