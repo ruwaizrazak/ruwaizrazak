@@ -39,7 +39,7 @@ const OFFSET_PX =60;
 <div class="sticky-experience">
   {entries.map((entry, i) => (
     <div
-      class="sticky-card sticky bg-backgroundcolor rounded-2xl shadow-lg border border-syoro/10 dark:border-white/10 my-10 max-w-[90%] md:max-w-[60%] mx-auto"
+      class="sticky-card sticky bg-backgroundcolor rounded-2xl shadow-lg border border-syoro/10 dark:border-white/10 my-10 max-w-[90%] md:max-w-[60%]"
       style={`top: calc(${BASE_TOP_VH}vh + ${i * OFFSET_PX}px); z-index: ${10 + i};`}
     >
       {/* Header bar — this ~80px strip stays visible when the next card stacks on top.
