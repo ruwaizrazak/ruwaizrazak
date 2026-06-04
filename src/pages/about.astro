@@ -90,12 +90,20 @@ const experience = [
 
 		<!-- Hero content: fades out on scroll -->
 		<div id="note-hero-content" class="flex flex-col md:flex-row px-10 md:px-12 lg:px-20 justify-between items-start md:items-center">
+			<div class="flex flex-col gap-10">
 			<PageHero
 				id="about-hero-text"
 				title="Hi, I'm Ruwaiz."
-				description="I design and optimize systems that improve onboarding, retention, and longterm user motivation."
+				description=""
 				class="!h-auto"
 			/>
+			<div class="note-layout flex relative w-full max-w-8xl py-10 -mt-20 mb-10">
+				<article class={`${proseClasses}`}>
+					<p class="text-lg md:text-xl xl:text-2xl">I started building websites as a teenager, before I knew "design" was a thing one could do for a living. That instinct, wanting to make something and see it work never really went away.</p>
+					<p class="text-lg md:text-xl xl:text-2xl">Today I design player facing systems at <Link href="http://www.nordeus.com">Nordeus</Link>, onboarding, retention, live engagement by being at the intersection of behavioural systems, interaction design, and research.</p>
+				</article>
+			</div>
+			</div>
 			<img
 				src="/about/ruwaiz1.jpg"
 				alt="Ruwaiz Razak"
@@ -106,17 +114,10 @@ const experience = [
 
 	<!-- LEARN: .note-main-wrapper slides up 120px over the hero on scroll (GSAP in note-post-animations.ts).
 	     bg-backgroundcolor gives it a solid background so it covers the hero as it overlaps. -->
-	<div class="note-main-wrapper px-10 relative z-10 bg-backgroundcolor">
-		<!-- Intro -->
-		<div class="note-layout mx-auto flex py-10 relative w-full max-w-8xl">
-			<article class={`${proseClasses} w-full mx-auto`}>
-				<p class="text-lg md:text-xl xl:text-2xl">I started building websites as a teenager, before I knew "design" was a thing one could do for a living. That instinct, wanting to make something and see it work never really went away.</p>
-				<p class="text-lg md:text-xl xl:text-2xl">Today I design player facing systems at <Link href="http://www.nordeus.com">Nordeus</Link>, onboarding, retention, live engagement by being at the intersection of behavioural systems, interaction design, and research.</p>
-			</article>
-		</div>
+	<div class="note-main-wrapper px-10 md:px-12 lg:px-20 relative z-10 bg-backgroundcolor">
 
 		<!-- Work Experience — sticky stacking cards -->
-		<section class="py-5 md:py-10 px-6 md:px-12 lg:px-20">
+		<section class="py-5 md:py-10">
 			<h2 class="text-xl font-sans font-semibold text-syoro dark:text-white/60 uppercase tracking-widest md:col-span-2">
 				Work Experience
 			</h2>
@@ -124,8 +125,8 @@ const experience = [
 		</section>
 
 		<!-- A Little History -->
-		<section class="note-layout mx-auto flex relative w-full max-w-8xl">
-			<div class={`${proseClasses} w-full mx-auto`}>
+		<section class="note-layout flex relative w-full max-w-8xl">
+			<div class={`${proseClasses} w-full`}>
 				<h2>
 					A Little History
 				</h2>
@@ -146,7 +147,7 @@ const experience = [
 		</section>
 
 		<!-- Selected Projects -->
-		<section class="py-14 md:py-20 px-6 md:px-12 lg:px-20 mb-16">
+		<section class="py-14 md:py-20 mb-16">
 			<h2 class="text-xl font-sans font-semibold text-syoro dark:text-white/60 uppercase tracking-widest md:col-span-2">
 				Selected Projects
 			</h2>
@@ -166,7 +167,7 @@ const experience = [
 				))}
 			</div>
 		</section>
-		<section class="px-6 md:px-12 lg:px-20 mb-16">
+		<section class="mb-16">
 			<GardenPreview posts={gardenPosts} />
 		</section>
 	</div>
