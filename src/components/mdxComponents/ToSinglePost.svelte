@@ -1,0 +1,34 @@
+<script lang="ts">
+  interface Props {
+    title: string;
+    subtitle: string;
+    company: string;
+    imageSrc: string;
+    url: string;
+    description?: string;
+  }
+
+  let {
+    title,
+    subtitle,
+    company,
+    imageSrc,
+    url,
+    description = "Here is a case study, if you are interested in understanding how my process would look like in a nutshell.",
+  }: Props = $props();
+</script>
+
+<div>
+  <div class="flex flex-col md:flex-row gap-5 items-center bg-cardbg border border-card-border hover:scale-95 hover:rounded-lg transition-all duration-200">
+    <div class="w-full lg:w-1/2 lg:px-5 mt-0 items-start">
+      <a href={url} class="group no-underline">
+        <h2 class="!text-lg uppercase !mb-0 font-normal">{subtitle} at {company}</h2>
+        <h2 class="!text-2xl !mt-0 mb-4 text-konpeki uppercase font-medium">{title}</h2>
+        <p class="!text-lg text-syoro font-normal leading-6 font-serif">{description}</p>
+      </a>
+    </div>
+    <div class="w-full p-4 lg:w-1/2 object-contain">
+      <img src={imageSrc} alt={title} class="w-full" />
+    </div>
+  </div>
+</div>

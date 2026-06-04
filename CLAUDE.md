@@ -26,6 +26,10 @@
 - Lazy load images below the fold; eager load above-the-fold hero images
 - Minimize bundle size: avoid importing entire libraries when only a function is needed
 - Prefer CSS animations/transitions over JS animations where possible (GSAP for complex sequences only)
+- Animation tool order (smallest payload first): **CSS** → **Svelte built-ins** (`svelte/transition`, `svelte/animate`, `svelte/motion`, `svelte/easing` — zero install, ship with Svelte) → **GSAP** (only for ScrollTrigger / interruptible timelines / flubber SVG-path morphs that the built-ins can't express)
+  - Island mount/unmount → `transition:fade|fly|scale|slide`; smooth value/spring → `svelte/motion` `Tween`/`Spring`; list reorder → `animate:flip`
+  - **Always gate Svelte transitions on `prefers-reduced-motion`** (they don't auto-gate) — pass `duration: 0` when reduced (see `PolaroidImage.svelte`)
+  - In a Svelte island, modules that call `gsap.registerPlugin(ScrollTrigger)` or import CommonJS-named-export libs (e.g. `flubber`) must be loaded via dynamic `import()` inside `onMount` — a top-level import runs during Astro SSR and breaks the build/dev
 - Use Astro's `<Image />` component for automatic image optimization when adding new images
 - Remote image domains must be authorized in `astro.config.mjs` under `image.domains` (e.g. `i.imgur.com` is already added)
 - The custom `Image.astro` MDX component uses Astro's `<Image />` for the thumbnail; the lightbox stays as raw `<img>` for full-res zoom/pan

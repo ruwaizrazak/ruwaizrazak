@@ -2,7 +2,7 @@
 import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
-import react from '@astrojs/react';
+import svelte from '@astrojs/svelte';
 import tailwindcss from '@tailwindcss/vite';
 import remarkWikiLink from '@portaljs/remark-wiki-link';
 import lottie from 'astro-integration-lottie';
@@ -35,7 +35,10 @@ export default defineConfig({
       gfm: true,
     }),
     sitemap(),
-    react(),
+    // LEARN: Svelte is the UI-component framework for this site's islands.
+    // A .svelte component rendered without a client:* directive is static HTML
+    // (zero JS); add client:load/visible/idle only where hydration is needed.
+    svelte(),
     lottie(),
   ],
 

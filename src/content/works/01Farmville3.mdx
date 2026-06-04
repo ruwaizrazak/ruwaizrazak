@@ -14,15 +14,15 @@ playStoreUrl: "https://play.google.com/store/apps/details?id=com.zynga.farmville
 narrativeTitle: "Designing Systems That Give Players Direction"
 publish: true
 ---
-import WorkSection from "../../components/mdxComponents/WorkSection.astro";
-import WorkImageGrid from "../../components/mdxComponents/WorkImageGrid.astro";
-import AppStoreBadge from "../../components/AppStoreBadge.astro";
-import GooglePlayBadge from "../../components/GooglePlayBadge.astro";
-import VideoBreakout from "../../components/VideoBreakout.astro";
+import WorkSection from "../../components/mdxComponents/WorkSection.svelte";
+import WorkImageGrid from "../../components/mdxComponents/WorkImageGrid.svelte";
+import AppStoreBadge from "../../components/AppStoreBadge.svelte";
+import GooglePlayBadge from "../../components/GooglePlayBadge.svelte";
+import VideoBreakout from "../../components/VideoBreakout.svelte";
 import Image from "../../components/mdxComponents/Image.astro";
-import ProjectOverview from "../../components/mdxComponents/ProjectOverview.astro";
-import Callout from "../../components/mdxComponents/Callout.astro";
-import SideNote from "../../components/mdxComponents/SideNote.astro";
+import ProjectOverview from "../../components/mdxComponents/ProjectOverview.svelte";
+import Callout from "../../components/mdxComponents/Callout.svelte";
+import SideNote from "../../components/mdxComponents/SideNote.svelte";
 
 <WorkSection>
   Farmville 3 is a farming simulation game, the third in the Farmville franchise that helped define the casual mobile genre. I joined the team during softlaunch and stayed through full launch and into live operations, building player facing experiences across the product. 
@@ -37,7 +37,7 @@ import SideNote from "../../components/mdxComponents/SideNote.astro";
 
 
 
-<VideoBreakout src="https://www.youtube-nocookie.com/embed/lgnY0QYqAfE?si=FfJmZJcKRKHGnKOB&mute=1&rel=0" />
+<VideoBreakout client:visible src="https://www.youtube-nocookie.com/embed/lgnY0QYqAfE?si=FfJmZJcKRKHGnKOB&mute=1&rel=0" />
 
 
 

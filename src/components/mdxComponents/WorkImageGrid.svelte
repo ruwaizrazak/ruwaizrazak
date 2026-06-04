@@ -1,0 +1,13 @@
+<script lang="ts">
+  // LEARN: Wraps Image components in a 2-column grid on lg+; one Image shrinks to
+  // intrinsic width and centers via :has(> img:only-of-type) — no extra MDX props.
+  // Lightbox siblings use display:none so only <img> nodes participate in the grid.
+  import type { Snippet } from 'svelte';
+  let { children }: { children?: Snippet } = $props();
+</script>
+
+<div
+  class="grid w-full max-w-full mx-auto gap-10 justify-items-center items-center my-5 md:my-10 py-5 md:py-0 rounded-2xl grid-cols-1 lg:grid-cols-2 [&:has(>img:only-of-type)]:w-fit lg:[&:has(>img:only-of-type)]:grid-cols-1 [&_img]:w-auto [&_img]:max-w-[min(80%,48rem)]"
+>
+  {@render children?.()}
+</div>

@@ -1,13 +1,13 @@
 ---
 import Layout from '../layouts/AboutLayout.astro';
-import WorkCardCompact from '../components/WorkCardCompact.astro';
-import StickyExperience from '../components/StickyExperience.astro';
+import WorkCardCompact from '../components/WorkCardCompact.svelte';
+import StickyExperience from '../components/StickyExperience.svelte';
 import { getCollection } from 'astro:content';
-import CustomCursor from '../components/CustomCursor.astro';
+import CustomCursor from '../components/CustomCursor.svelte';
 import Link from '../components/mdxComponents/Link.astro';
 import { proseClasses } from '../utils/proseClasses';
-import GardenPreview from '../components/GardenPreview.astro';
-import PageHero from '../components/PageHero.astro';
+import GardenPreview from '../components/GardenPreview.svelte';
+import PageHero from '../components/PageHero.svelte';
 import { getPublishedAndSorted } from '../utils/collections';
 
 // LEARN: Homepage garden strip is essays-only; notes stay on /garden
@@ -112,7 +112,7 @@ const experience = [
 		</div>
 	</section>
 
-	<!-- LEARN: .note-main-wrapper slides up 120px over the hero on scroll (GSAP in note-post-animations.ts).
+	<!-- LEARN: .note-main-wrapper slides up 120px over the hero on scroll (native CSS in global.css).
 	     bg-backgroundcolor gives it a solid background so it covers the hero as it overlaps. -->
 	<div class="note-main-wrapper px-10 md:px-12 lg:px-20 relative z-10 bg-backgroundcolor">
 
@@ -168,20 +168,14 @@ const experience = [
 			</div>
 		</section>
 		<section class="mb-16">
-			<GardenPreview posts={gardenPosts} />
+			<GardenPreview posts={gardenPosts} pathname={Astro.url.pathname} />
 		</section>
 	</div>
 
-	<CustomCursor />
+	<CustomCursor client:load />
 </Layout>
 
-<!-- LEARN: Same scroll animations as notesPost — hero overlap, fade, and zoom.
-     Reuses the existing GSAP script rather than duplicating animation logic. -->
-<script>
-	import { initNotePostAnimations } from '../scripts/note-post-animations';
-	import { initOnLoad } from '../utils/initOnLoad';
-	initOnLoad(initNotePostAnimations);
-</script>
+<!-- Hero overlap is now native CSS (.note-main-wrapper in global.css). -->
 
 <style>
 	/* LEARN: Breaks out of the parent Main component's px-20 padding

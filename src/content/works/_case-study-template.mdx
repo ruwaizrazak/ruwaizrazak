@@ -27,11 +27,11 @@ publish: false
   - Only import what you use.
 */}
 
-import WorkSection from "../../components/mdxComponents/WorkSection.astro";
-import WorkImageGrid from "../../components/mdxComponents/WorkImageGrid.astro";
+import WorkSection from "../../components/mdxComponents/WorkSection.svelte";
+import WorkImageGrid from "../../components/mdxComponents/WorkImageGrid.svelte";
 import Image from "../../components/mdxComponents/Image.astro";
-import VideoBreakout from "../../components/VideoBreakout.astro";
-import Callout from "../../components/mdxComponents/Callout.astro";
+import VideoBreakout from "../../components/VideoBreakout.svelte";
+import Callout from "../../components/mdxComponents/Callout.svelte";
 
 {/* 1. CONTEXT — set the scene, no title */}
 <WorkSection>
@@ -40,7 +40,7 @@ import Callout from "../../components/mdxComponents/Callout.astro";
 </WorkSection>
 
 {/* Optional: public trailer */}
-{/* <VideoBreakout src="https://www.youtube-nocookie.com/embed/VIDEO_ID?rel=0" /> */}
+{/* <VideoBreakout client:visible src="https://www.youtube-nocookie.com/embed/VIDEO_ID?rel=0" /> */}
 
 {/* 2. DESIGN APPROACH — optional, skip if no clear guiding principle */}
 <WorkSection title="Design Approach">

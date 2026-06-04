@@ -2,11 +2,11 @@
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import IntroSection from '../components/IntroSection.astro';
-import SelectedWorksSection from '../components/SelectedWorksSection.astro';
-import GardenPreview from '../components/GardenPreview.astro';
+import IntroSection from '../components/IntroSection.svelte';
+import SelectedWorksSection from '../components/SelectedWorksSection.svelte';
+import GardenPreview from '../components/GardenPreview.svelte';
 
-import CustomCursor from '../components/CustomCursor.astro';
+import CustomCursor from '../components/CustomCursor.svelte';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 import { getCollection } from 'astro:content';
 import { getPublishedAndSorted } from '../utils/collections';
@@ -58,10 +58,10 @@ const gardenPosts = (await getPublishedAndSorted('essays')).slice(0, 3);
       <Header />
       <IntroSection />
       <SelectedWorksSection works={works} />
-      <GardenPreview posts={gardenPosts} />
+      <GardenPreview posts={gardenPosts} pathname={Astro.url.pathname} />
 		</main>
 
 		<Footer />
-		<CustomCursor />
+		<CustomCursor client:load />
 	</body>
 </html>

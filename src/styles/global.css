@@ -392,3 +392,22 @@ hr {
   white-space: nowrap;
 }
 
+
+/* LEARN: ".note-main-wrapper" slides up to overlap the hero on scroll — native CSS
+   scroll-driven (replaces GSAP ScrollTrigger in the deleted note-post-animations.ts).
+   End-state (translateY -120) ≠ resting, so it's gated behind @supports: browsers
+   without animation-timeline (Firefox, Safari <26) get no animation and the wrapper
+   sits at translateY(0) — never stuck overlapping. Also off for reduced-motion. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    @keyframes note-main-overlap {
+      from { transform: translateY(0); }
+      to   { transform: translateY(-120px); }
+    }
+    .note-main-wrapper {
+      animation: note-main-overlap linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 60%;
+    }
+  }
+}

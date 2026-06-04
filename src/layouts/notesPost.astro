@@ -5,10 +5,11 @@ import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import NoteMain from '../components/NoteMain.astro';
-import NotePostHero from '../components/NotePostHero.astro';
-import RelatedNotes from '../components/RelatedNotes.astro';
+import NotePostHero from '../components/NotePostHero.svelte';
+import RelatedNotes from '../components/RelatedNotes.svelte';
 import Webmentions from '../components/Webmentions.astro';
-import CustomCursor from '../components/CustomCursor.astro';
+import CustomCursor from '../components/CustomCursor.svelte';
+import { getMultiCollectionPosts } from '../utils/collections';
 
 type LayoutProps = CollectionEntry<'notes'>['data'] & {
   collection?: string;
@@ -18,6 +19,15 @@ type LayoutProps = CollectionEntry<'notes'>['data'] & {
 
 const { title, description, pubDate, updatedDate, heroImage, tags = [], maturity, collection, transitionName, seriesPosts } = Astro.props as LayoutProps;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site).href;
+
+// LEARN: Related-posts query moved here from RelatedNotes (now a Svelte island that
+// can't fetch). Result is passed down as a prop.
+const relatedNotes = seriesPosts && seriesPosts.length > 0
+  ? seriesPosts.map((post: any) => ({ ...post, collection: 'seriesPosts' as const, url: `/series/${post.id}/` }))
+  : (await getMultiCollectionPosts(['notes', 'essays']))
+      .filter((note) => note.data.title !== title)
+      .filter((note) => note.data.tags?.some((tag: string) => tags.includes(tag)))
+      .slice(0, 8);
 
 // LEARN: Derive the OG image URL from the current page path so it always
 // stays in sync. A page at /essays/my-post/ gets /og/essays/my-post.png.
@@ -80,7 +90,7 @@ const blogPostingSchema = {
         maturity={maturity}
       />
 
-      <!-- Main content wrapper: overlaps hero on scroll (see note-post-animations.ts) -->
+      <!-- Main content wrapper: overlaps hero on scroll (native CSS .note-main-wrapper, global.css) -->
       <!-- LEARN: h-entry is the microformats2 class that tells IndieWeb parsers
            (brid.gy, webmention.io) "this is a post" — needed for webmentions to work -->
       <div class="note-main-wrapper h-entry relative z-10 bg-backgroundcolor">
@@ -94,19 +104,17 @@ const blogPostingSchema = {
         </NoteMain>
         <Webmentions url={canonicalURL} />
         <!-- Related notes carousel -->
-        <RelatedNotes currentTags={tags} currentTitle={title} seriesPosts={seriesPosts} />
+        <RelatedNotes relatedNotes={relatedNotes} client:visible />
       </div>
     </main>
-    <CustomCursor />
+    <CustomCursor client:load />
     <Footer />
     
 
-    <!-- Scroll animations: hero overlap, fade-out, and zoom (see note-post-animations.ts) -->
+    <!-- Hero overlap is now native CSS (.note-main-wrapper in global.css). -->
     <script>
-      import { initNotePostAnimations } from '../scripts/note-post-animations';
       import { initScrollDepth } from '../scripts/analytics';
       import { initOnLoad } from '../utils/initOnLoad';
-      initOnLoad(initNotePostAnimations);
       initOnLoad(initScrollDepth);
     </script>
   </body>

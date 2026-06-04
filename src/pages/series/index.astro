@@ -4,9 +4,9 @@ import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import { SITE_TITLE, SITE_DESCRIPTION, SERIES_HERO_IMAGE } from '../../consts';
 import { getCollection } from 'astro:content';
-import NotePostHero from '../../components/NotePostHero.astro';
-import SeriesCard from '../../components/SeriesCard.astro';
-import CustomCursor from '../../components/CustomCursor.astro';
+import NotePostHero from '../../components/NotePostHero.svelte';
+import SeriesCard from '../../components/SeriesCard.svelte';
+import CustomCursor from '../../components/CustomCursor.svelte';
 
 // Get all published series, sorted by order or lastUpdated
 const allSeries = await getCollection('series', ({ data }) => data.publish);
@@ -75,11 +75,6 @@ const seriesWithPosts = sortedSeries.map(series => {
 		</main>
 		</div>
 		<Footer />
-		<script>
-			import { initNotePostAnimations } from '../../scripts/note-post-animations';
-			import { initOnLoad } from '../../utils/initOnLoad';
-			initOnLoad(initNotePostAnimations);
-		</script>
-		<CustomCursor />
+		<CustomCursor client:load />
 	</body>
 </html>

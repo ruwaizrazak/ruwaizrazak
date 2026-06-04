@@ -1,8 +1,8 @@
+// Related-notes carousel. The reveal is now driven by an IntersectionObserver
+// + a plain GSAP height tween (no ScrollTrigger) so post pages no longer ship the
+// 44 KB ScrollTrigger chunk. The card pop-in timeline + pagination are unchanged.
 import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { createScrubReveal } from '../utils/scrubReveal';
 import { initDotNav, setActiveDot, setVisibleDotCount } from './dot-nav';
-gsap.registerPlugin(ScrollTrigger);
 
 export function initRelatedNotes() {
   const section = document.querySelector('.related-notes-section') as HTMLElement;
@@ -11,6 +11,10 @@ export function initRelatedNotes() {
   const cards = gsap.utils.toArray('.related-card') as HTMLElement[];
   const nav = document.getElementById('related-nav');
   if (!section || !reveal || !track) return;
+
+  // Guard against double-init (View Transitions re-run this on navigation).
+  if (section.dataset.relatedInited === '1') return;
+  section.dataset.relatedInited = '1';
 
   // Card pop-in timeline (built before reveal so it can be triggered)
   const cardTl = gsap.timeline({ paused: true });
@@ -60,7 +64,7 @@ export function initRelatedNotes() {
     if (paginationReady || !nav) return;
     paginationReady = true;
 
-    const cleanupNav = initDotNav(nav);
+    initDotNav(nav);
 
     nav.addEventListener('dotnav:prev', () => goToPage(currentPage - 1));
     nav.addEventListener('dotnav:next', () => goToPage(currentPage + 1));
@@ -73,28 +77,13 @@ export function initRelatedNotes() {
     window.addEventListener('resize', () => goToPage(currentPage));
   }
 
-  const fullHeight = createScrubReveal({
-    section,
-    reveal,
-    initFlag: 'relatedInited',
-    start: 'top 90%',
-    end: 'top 50%',
-    beforeMeasure: () => cards.forEach(c => { c.style.opacity = '1'; }),
-    afterMeasure: () => cards.forEach(c => { c.style.opacity = '0'; }),
-    onRevealed: (h) => {
-      reveal.style.height = 'auto';
-      cardTl.play();
-      // Defer pagination init until cards have layout
-      requestAnimationFrame(() => initPagination());
-    },
-    onHidden: (h) => {
-      reveal.style.height = h + 'px';
-      cardTl.reverse();
-    },
-  });
-  if (fullHeight === null) return;
+  // Measure the natural height (cards are opacity:0 via CSS but still take layout),
+  // then collapse — same dance the old createScrubReveal did, minus ScrollTrigger.
+  reveal.style.height = 'auto';
+  const fullHeight = reveal.offsetHeight;
+  reveal.style.height = '0px';
 
-  // Card pop-in with reverse support
+  // Card pop-in with reverse support (unchanged)
   cardTl.eventCallback('onComplete', () => { reveal.style.height = 'auto'; });
   cardTl.eventCallback('onReverseComplete', () => { reveal.style.height = fullHeight + 'px'; });
 
@@ -103,4 +92,45 @@ export function initRelatedNotes() {
     { opacity: 0, scale: 0.8, y: 20 },
     { opacity: 1, scale: 1, y: 0, duration: 0.4, stagger: 0.12, ease: 'back.out(1.4)' }
   );
+
+  // Reduced motion: skip the reveal/pop-in, just show everything.
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    reveal.style.height = 'auto';
+    cards.forEach((c) => { c.style.opacity = '1'; });
+    requestAnimationFrame(() => initPagination());
+    return;
+  }
+
+  let revealed = false;
+  function doReveal() {
+    if (revealed) return;
+    revealed = true;
+    gsap.to(reveal, {
+      height: fullHeight,
+      duration: 0.5,
+      ease: 'power2.out',
+      onComplete: () => { reveal.style.height = 'auto'; },
+    });
+    cardTl.play();
+    requestAnimationFrame(() => initPagination());
+  }
+  function doHide() {
+    if (!revealed) return;
+    revealed = false;
+    reveal.style.height = fullHeight + 'px';
+    gsap.to(reveal, { height: 0, duration: 0.4, ease: 'power2.in' });
+    cardTl.reverse();
+  }
+
+  // LEARN: replaces ScrollTrigger 'top 90% → top 50%'. rootMargin -40% bottom makes
+  // the observer fire when the section reaches roughly the lower-middle of the
+  // viewport; reverse when it's scrolled back above the top.
+  const io = new IntersectionObserver((entries) => {
+    const e = entries[0];
+    if (!e) return;
+    if (e.isIntersecting) doReveal();
+    else if (e.boundingClientRect.top < 0) doHide();
+  }, { rootMargin: '0px 0px -40% 0px', threshold: 0 });
+
+  io.observe(section);
 }

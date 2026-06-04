@@ -5,9 +5,9 @@ import Footer from '../../components/Footer.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
 import { getCollection } from 'astro:content';
 import { render } from 'astro:content';
-import CustomCursor from '../../components/CustomCursor.astro';
+import CustomCursor from '../../components/CustomCursor.svelte';
 import { ClientRouter } from 'astro:transitions';
-import NotePostHero from '../../components/NotePostHero.astro';
+import NotePostHero from '../../components/NotePostHero.svelte';
 import { proseClasses } from '../../utils/proseClasses';
 
 const livePosts = await getCollection('live', ({ data }) => data.publish === true);
@@ -30,7 +30,7 @@ const liveProseClasses = `${proseClasses} prose-a:text-link prose-a:underline pr
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
 		<ClientRouter />
-		<CustomCursor />
+		<CustomCursor client:load />
 	</head>
 	<body class="footer-reveal bg-backgroundcolor">
 		<div class="footer-reveal-content">
@@ -90,11 +90,5 @@ const liveProseClasses = `${proseClasses} prose-a:text-link prose-a:underline pr
 		</main>
 		</div>
 		<Footer />
-		<!-- Scroll animations: hero overlap, fade-out, and zoom -->
-		<script>
-			import { initNotePostAnimations } from '../../scripts/note-post-animations';
-			import { initOnLoad } from '../../utils/initOnLoad';
-			initOnLoad(initNotePostAnimations);
-		</script>
 	</body>
 </html>

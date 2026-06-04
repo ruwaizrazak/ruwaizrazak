@@ -1,12 +1,13 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import { getCollection } from 'astro:content';
 import { ClientRouter } from 'astro:transitions';
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import Image from '../components/mdxComponents/Image.astro';
-import OtherWorksSection from '../components/OtherWorksSection.astro';
-import CustomCursor from '../components/CustomCursor.astro';
+import OtherWorksSection from '../components/OtherWorksSection.svelte';
+import CustomCursor from '../components/CustomCursor.svelte';
 
 type WorkLayoutProps = CollectionEntry<'works'>['data'] & {
   transitionName?: string;
@@ -32,6 +33,13 @@ const ogImage = `/og${Astro.url.pathname.replace(/\/$/, '')}.png`;
 const workTransitionStyle = transitionName
   ? `::view-transition-new(${transitionName}){animation:work-scale-in .4s cubic-bezier(.32,.72,0,1)}`
   : '';
+
+// LEARN: getCollection moved here from OtherWorksSection (now a Svelte island that
+// can't fetch). currentSlug derives from the URL; otherWorks is passed as a prop.
+const currentSlug = Astro.url.pathname.replace('/works/', '').replace(/\/$/, '');
+const otherWorks = (await getCollection('works', ({ data }) => data.publish)).filter(
+  (entry) => entry.id !== currentSlug
+);
 ---
 
 <!doctype html>
@@ -93,13 +101,13 @@ const workTransitionStyle = transitionName
         </article>
         <!-- Other works: slides up to overlap article on scroll (see other-works-overlap.ts) -->
         <div class="other-works-overlap" data-other-works-wrapper>
-          <OtherWorksSection currentSlug={Astro.url.pathname.replace('/works/', '').replace(/\/$/, '')} />
+          <OtherWorksSection otherWorks={otherWorks} client:visible />
         </div>
       </main>
       
     </div>
     <Footer />
-    <CustomCursor />
+    <CustomCursor client:load />
   </body>
 </html>
 
@@ -125,24 +133,6 @@ const workTransitionStyle = transitionName
     runIfWorkPage();
   } else {
     window.addEventListener('load', runIfWorkPage);
-  }
-</script>
-
-<!-- "Other works" overlap animation (see other-works-overlap.ts) -->
-<script>
-  import { initOtherWorksOverlap } from '../scripts/other-works-overlap';
-
-  function runOverlapIfWorkPage() {
-    if (window.location.pathname.startsWith('/works/')) {
-      initOtherWorksOverlap();
-    }
-  }
-
-  document.addEventListener('astro:page-load', runOverlapIfWorkPage);
-  if (document.readyState === 'complete') {
-    runOverlapIfWorkPage();
-  } else {
-    window.addEventListener('load', runOverlapIfWorkPage);
   }
 </script>
 
@@ -185,5 +175,24 @@ const workTransitionStyle = transitionName
   .work-article {
     position: relative;
     z-index: 1;
+  }
+
+  /* LEARN: "Other works" rises to overlap the article on scroll — native CSS
+     scroll-driven (replaces GSAP ScrollTrigger). The end-state (translateY -200)
+     is NOT the resting state, so this MUST be gated behind @supports: browsers
+     without animation-timeline (Firefox, Safari <26) get no animation and the
+     section sits normally (translateY 0) instead of stuck shifted up. */
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      @keyframes other-works-rise {
+        from { transform: translateY(0); }
+        to   { transform: translateY(-200px); }
+      }
+      .other-works-overlap {
+        animation: other-works-rise linear both;
+        animation-timeline: view();
+        animation-range: entry 0% cover 30%;
+      }
+    }
   }
 </style>

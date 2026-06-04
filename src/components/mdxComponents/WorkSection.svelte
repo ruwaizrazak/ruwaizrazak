@@ -1,0 +1,19 @@
+<script lang="ts">
+  // LEARN: Encapsulates the repeating 1/4 + 3/4 section pattern used in works pages,
+  // so new works get consistent typography and spacing without copy-pasting Tailwind classes.
+  import type { Snippet } from 'svelte';
+
+  interface Props {
+    title: string;
+    children?: Snippet;
+  }
+
+  let { title, children }: Props = $props();
+</script>
+
+<div class="w-full md:w-[80%] mx-auto gap-4 my-5 md:my-10 py-10 md:py-0">
+  <h2 class="text-3xl md:text-5xl font-sans">{title}</h2>
+  <div class="text-xl sm:text-2xl md:text-3xl py-5 md:py-10 leading-relaxed">
+    {@render children?.()}
+  </div>
+</div>
