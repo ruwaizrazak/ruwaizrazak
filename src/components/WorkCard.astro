@@ -1,5 +1,7 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import { Image } from 'astro:assets';
+import { resolveImage } from '../utils/resolveImage';
 
 interface Props {
   entry: CollectionEntry<'works'>;
@@ -11,6 +13,8 @@ const { data } = entry;
 const { role, duration, heroImage, title, description } = data;
 const slug = entry.id;
 const href = `/works/${slug}`;
+// LEARN: <Image> infers width/height from the asset, so we no longer hardcode them.
+const heroImg = resolveImage(heroImage);
 ---
 
 <!-- Work card: text on left, hero image on right (stacks on mobile) -->
@@ -27,14 +31,12 @@ const href = `/works/${slug}`;
         <p class="text-syoro/80 font-serif mt-5 leading-relaxed">{description}</p>
       )}
     </div>
-    <!-- Hero image with parallax zoom (see work-card-animations.ts) -->
+    <!-- Hero image with CSS parallax zoom (see .work-card-image in global.css) -->
     <div class="w-full md:w-2/3 overflow-hidden rounded-lg group-hover:border-4 group-hover:border-blue-200">
-      {heroImage ? (
-        <img
-          src={heroImage}
-          alt={title}
-          class="work-card-image w-full aspect-[4/3] object-cover"
-        />
+      {heroImg ? (
+        <Image src={heroImg} alt={title} class="work-card-image w-full aspect-[4/3] object-cover" />
+      ) : heroImage ? (
+        <img src={heroImage} alt={title} class="work-card-image w-full aspect-[4/3] object-cover" />
       ) : (
         <div class="w-full aspect-[4/3] bg-gray-200 dark:bg-gray-700" />
       )}
@@ -50,11 +52,3 @@ const href = `/works/${slug}`;
     }
   }
 </style>
-
-<!-- Parallax zoom animation: images scale 1.5→1 on scroll -->
-<script>
-  import { initWorkCardAnimations } from '../scripts/work-card-animations';
-
-  import { initOnLoad } from '../utils/initOnLoad';
-  initOnLoad(initWorkCardAnimations);
-</script>

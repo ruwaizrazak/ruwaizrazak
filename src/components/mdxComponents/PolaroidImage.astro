@@ -1,5 +1,8 @@
 ---
 // src/components/PolaroidImage.astro
+import { Image as AstroImage } from 'astro:assets';
+import { resolveImage } from '../../utils/resolveImage';
+
 interface Props {
   src: string;
   alt: string;
@@ -9,14 +12,18 @@ interface Props {
   className?: string;
 }
 
-const { 
-  src, 
-  alt, 
-  caption, 
-  width = '100%', 
+const {
+  src,
+  alt,
+  caption,
+  width = '100%',
   rotate = 0,
-  className = '' 
+  className = ''
 } = Astro.props;
+
+// Resolve to optimized asset when local; remote (imgur) → undefined → passthrough.
+const resolved = resolveImage(src);
+const fullSrc = resolved?.src ?? src;
 
 // Generate rotation value
 let rotation = 0;
@@ -35,12 +42,11 @@ const uniqueId = `polaroid-${Math.random().toString(36).substr(2, 9)}`;
   style={`max-width: ${width}; transform: rotate(${rotation}deg);`}
 >
   <div class="bg-white p-3 shadow-2xl hover:shadow-3xl transition-shadow duration-300 mx-auto cursor-pointer" data-polaroid-trigger={uniqueId}>
-    <img
-      src={src}
-      alt={alt}
-      loading="lazy"
-      class="w-full h-auto mx-auto"
-    />
+    {resolved ? (
+      <AstroImage src={resolved} alt={alt} loading="lazy" class="w-full h-auto mx-auto" />
+    ) : (
+      <img src={src} alt={alt} loading="lazy" class="w-full h-auto mx-auto" />
+    )}
     {caption && (
       <div class="mt-3 text-center px-2">
         <p class="text-syoro !font-handwriting !text-xl sm:text-sm">
@@ -69,7 +75,7 @@ const uniqueId = `polaroid-${Math.random().toString(36).substr(2, 9)}`;
   
   <div class="max-w-7xl max-h-[90vh] flex flex-col items-center">
     <img
-      src={src}
+      src={fullSrc}
       alt={alt}
       class="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl"
     />

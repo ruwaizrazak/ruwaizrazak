@@ -2,7 +2,9 @@
 // LEARN: Sticky stacking cards — each card uses CSS `position: sticky` with an
 // incrementing `top` value. As the user scrolls, each card "sticks" at its top
 // position and the next card slides up underneath it, creating a stacking effect.
+import { Image } from 'astro:assets';
 import Link from './mdxComponents/Link.astro';
+import { resolveImage } from '../utils/resolveImage';
 
 interface ExperienceEntry {
   role: string;
@@ -46,7 +48,12 @@ const OFFSET_PX =60;
           The height of this bar should roughly match OFFSET_PX so headers line up. */}
       <div class="card-header flex items-center justify-between gap-4 px-6 pt-5 pb-3 md:px-8 md:pt-6 md:pb-4">
         <div class="flex flex-row items-center gap-4">
-          <img src={entry.image} alt={entry.company} class="w-16 aspect-square"/>
+          {(() => {
+            const logo = resolveImage(String(entry.image));
+            return logo
+              ? <Image src={logo} alt={entry.company} class="w-16 aspect-square" />
+              : <img src={entry.image} alt={entry.company} class="w-16 aspect-square" />;
+          })()}
           <div>
             <h3 class="text-xl md:text-2xl font-sans font-bold uppercase tracking-wide text-syoro dark:text-white">
           {entry.company}

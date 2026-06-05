@@ -1,11 +1,15 @@
 ---
-// LEARN: Wraps Image components in a 2-column grid on lg+; one Image shrinks to
-// intrinsic width and centers via :has(> img:only-of-type) — no extra MDX props.
-// Lightbox siblings use display:none so only <img> nodes participate in the grid.
+// LEARN: Wraps Image components in a 2-column grid on lg+. A lone image spans the
+// full content width; 2+ images sit in the centered 2-col grid at intrinsic width.
+// Detection is CSS-only via :has() — no extra MDX props. After the astro:assets
+// migration each Image thumbnail renders as <picture> (the <img> is nested inside
+// it), so single-image detection keys off `> picture:only-of-type`; the parallel
+// `> img:only-of-type` keeps covering a lone bare <img> (remote/SVG passthrough).
+// The lightbox sibling is display:none, so it doesn't participate in the grid.
 ---
 
 <div
-  class="grid w-full max-w-full mx-auto gap-10 justify-items-center items-center my-5 md:my-10 py-5 md:py-0 rounded-2xl grid-cols-1 lg:grid-cols-2 [&:has(>img:only-of-type)]:w-fit lg:[&:has(>img:only-of-type)]:grid-cols-1 [&_img]:w-auto [&_img]:max-w-[min(80%,48rem)]"
+  class="grid w-full max-w-full mx-auto gap-10 justify-items-center items-center my-5 md:my-10 py-5 md:py-0 rounded-2xl grid-cols-1 lg:grid-cols-2 [&_img]:w-auto [&_img]:max-w-[min(80%,48rem)] lg:[&:has(>picture:only-of-type)]:grid-cols-1 lg:[&:has(>img:only-of-type)]:grid-cols-1 [&:has(>picture:only-of-type)>picture]:w-full [&:has(>picture:only-of-type)_img]:!w-full [&:has(>picture:only-of-type)_img]:!max-w-full [&:has(>img:only-of-type)>img]:!w-full [&:has(>img:only-of-type)>img]:!max-w-full"
 >
   <slot />
 </div>

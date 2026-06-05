@@ -2,8 +2,10 @@
 // Unified card component — consolidates the deleted EssayCard, NoteCard, and PlaygroundCard
 // into a single component with a `variant` prop ('card' | 'compact').
 
+import { Image } from 'astro:assets';
 import type { ContentCardProps } from '../types';
 import { formatDate } from '../utils/formatDate';
+import { resolveImage } from '../utils/resolveImage';
 import MaturityBadge from './MaturityBadge.astro';
 
 type Props = ContentCardProps;
@@ -34,6 +36,12 @@ const label = collection ? collectionLabels[collection] || collection : '';
 
 const isCompact = variant === 'compact';
 const isWide = variant === 'wide';
+
+// LEARN: resolveImage() turns the public-style string into optimized ImageMetadata
+// (from src/assets) so <Image> can emit srcset/WebP. Remote/unknown → undefined →
+// passthrough <img>. The `garden-card-image` class is preserved so the CSS
+// scroll-driven parallax zoom (global.css) still applies to the generated <img>.
+const heroImg = resolveImage(heroImage);
 ---
 
 {isCompact ? (
@@ -55,11 +63,11 @@ const isWide = variant === 'wide';
     <a href={url} class="bg-syoro/5 rounded-lg border-1 border-card-border shadow-xs group-hover:shadow-none relative flex flex-col md:flex-row overflow-hidden">
       {heroImage && (
         <div class="w-full md:w-1/2 lg:w-2/3 shrink-0 grow-0 overflow-hidden">
-          <img
-            src={heroImage}
-            alt={title}
-            class="garden-card-image w-full h-full object-cover"
-          />
+          {heroImg ? (
+            <Image src={heroImg} alt={title} class="garden-card-image w-full h-full object-cover" />
+          ) : (
+            <img src={heroImage} alt={title} class="garden-card-image w-full h-full object-cover" />
+          )}
         </div>
       )}
       <div class="flex-1 min-w-0 p-5 flex flex-col justify-between">
@@ -77,15 +85,21 @@ const isWide = variant === 'wide';
 ) : (
   <div class="group rounded-lg overflow-hidden hover:scale-95 transition-all duration-200 py-5" transition:name={transitionName}>
     <a href={url} class="essay-card-link block p-5 bg-syoro/5 rounded-xl border-1 border-card-border shadow-xs group-hover:shadow-none relative">
-      {heroImage && (
+      {heroImage && (heroImg ? (
+        <Image
+          src={heroImg}
+          alt={title}
+          class={`garden-card-image w-full ${imageHeight} aspect-square object-cover rounded-lg mb-5`}
+        />
+      ) : (
         <img
           src={heroImage}
           alt={title}
-          class={`garden-card-image w-full ${imageHeight} aspect-square object-cover rounded-lg mb-4`}
+          class={`garden-card-image w-full ${imageHeight} aspect-square object-cover rounded-lg mb-5`}
         />
-      )}
+      ))}
       <div class="flex gap-2 mb-0 items-center">
-        <h5 class="text-sm text-konpeki uppercase font-sans tracking-widest">{label}</h5>
+        <h5 class="text-sm text-konpeki uppercase font-sans tracking-widest pt-5">{label}</h5>
       </div>
       <h3 class="font-serif text-xl md:text-2xl lg:text-3xl leading-tight text-syoro group-hover:text-link mb-4 font-medium">{title}</h3>
       {description && <p class="font-serif text-syoro/90 mb-4">{description}</p>}

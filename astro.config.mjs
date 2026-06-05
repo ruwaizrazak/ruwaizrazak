@@ -5,19 +5,6 @@ import sitemap from '@astrojs/sitemap';
 import react from '@astrojs/react';
 import tailwindcss from '@tailwindcss/vite';
 import remarkWikiLink from '@portaljs/remark-wiki-link';
-import lottie from 'astro-integration-lottie';
-import { getSitemapEntries } from './src/utils/sitemapData.mjs';
-
-// LEARN: Built once at config eval time (config can't use astro:content), this maps
-// each content URL → { publish, lastmod } so the sitemap can drop drafts + add dates.
-const sitemapEntries = getSitemapEntries();
-
-// Top-level pages that are section landing pages (not individual content entries).
-const SECTION_INDEXES = new Set([
-  '/about', '/notes', '/essays', '/works', '/garden', '/series', '/playground', '/live',
-]);
-const isSectionIndex = (path) => SECTION_INDEXES.has(path) || path.startsWith('/tags/');
-
 export default defineConfig({
   output: 'static',
   image: {
@@ -46,36 +33,11 @@ export default defineConfig({
       smartypants: true,
       gfm: true,
     }),
-    // LEARN: changefreq/priority are hints Google ignores; <lastmod> is the real
-    // ranking-relevant signal — so we set it accurately per page below.
-    sitemap({
-      changefreq: 'monthly',
-      priority: 0.6,
-      serialize(item) {
-        // Normalize the emitted URL to a no-trailing-slash pathname for lookup.
-        const path = new URL(item.url).pathname.replace(/\/$/, '') || '/';
-        const entry = sitemapEntries.get(path);
-
-        // Drop unpublished drafts from the sitemap (they stay reachable by URL).
-        if (entry && entry.publish === false) return undefined;
-
-        // Accurate per-page lastmod from updatedDate/pubDate.
-        if (entry?.lastmod) item.lastmod = entry.lastmod;
-
-        // Section-aware priority/changefreq; content pages keep the 0.6/monthly default.
-        if (path === '/') {
-          item.priority = 1.0;
-          item.changefreq = 'weekly';
-        } else if (isSectionIndex(path)) {
-          item.priority = 0.7;
-          item.changefreq = 'weekly';
-        }
-
-        return item;
-      },
-    }),
+    sitemap(),
+    // LEARN: react() is build-time only — it provides the .tsx JSX transform Satori
+    // needs for OG image generation (src/utils/og-template.tsx). No component is ever
+    // hydrated (zero client:* directives), so no React ships to the browser.
     react(),
-    lottie(),
   ],
 
   vite: {

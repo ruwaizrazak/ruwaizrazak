@@ -1,4 +1,7 @@
 ---
+import { Image as AstroImage } from 'astro:assets';
+import { resolveImage } from '../../utils/resolveImage';
+
 interface Props {
   imageSrc: string;
   alt?: string;
@@ -16,11 +19,17 @@ const {
 } = Astro.props;
 
 const textPercent = 100 - imagePercent;
+// Local paths optimize via <Image>; current uses are imgur (remote) → passthrough.
+const resolved = resolveImage(imageSrc);
 ---
 
 <div class="w-full mx-auto flex flex-col md:flex-row gap-6 my-8 items-center bg-stone-100 border border-stone-200 p-6 rounded-lg self-center">
   <div class="p-5" style={`width: 100%; @media (min-width: 768px) { width: ${imagePercent}%; }`}>
-    <img src={imageSrc} alt={alt} class="w-full rounded-lg p-0 m-0">
+    {resolved ? (
+      <AstroImage src={resolved} alt={alt} class="w-full rounded-lg p-0 m-0" />
+    ) : (
+      <img src={imageSrc} alt={alt} class="w-full rounded-lg p-0 m-0" />
+    )}
   </div>
   <div class="space-y-4 flex flex-col justify-center text-base/6 md:text-lg/8" style={`width: 100%; @media (min-width: 768px) { width: ${100 - imagePercent}%; }`}>
     <slot />

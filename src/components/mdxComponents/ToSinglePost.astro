@@ -1,4 +1,7 @@
 ---
+import { Image as AstroImage } from 'astro:assets';
+import { resolveImage } from '../../utils/resolveImage';
+
 interface Props {
   title: string;
   subtitle: string;
@@ -9,7 +12,7 @@ interface Props {
 }
 
 const { title, subtitle, company, imageSrc, url, description = "Here is a case study, if you are interested in understanding how my process would look like in a nutshell." } = Astro.props;
-
+const img = resolveImage(imageSrc);
 ---
 
 <div>
@@ -22,7 +25,11 @@ const { title, subtitle, company, imageSrc, url, description = "Here is a case s
       </a>
     </div>
     <div class="w-full p-4 lg:w-1/2 object-contain">
-      <img src={imageSrc} alt={title} class="w-full">
+      {img ? (
+        <AstroImage src={img} alt={title} class="w-full" />
+      ) : (
+        <img src={imageSrc} alt={title} class="w-full">
+      )}
     </div>
   </div>
 </div>

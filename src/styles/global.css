@@ -162,19 +162,6 @@ hr {
   }
 }
 
-/* Footer reveal: main content scrolls over sticky footer */
-.footer-reveal .footer-reveal-content {
-  position: relative;
-  z-index: 1;
-  background-color: var(--color-backgroundcolor);
-}
-
-.footer-reveal footer {
-  position: sticky;
-  bottom: 0;
-  z-index: 0;
-}
-
 /* Work card → full page scale-up view transition */
 @keyframes work-scale-in {
   from {
@@ -362,6 +349,61 @@ hr {
 /* Related notes track transition */
 .related-track {
   transition: transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+/* ---------------------------------------------------------------------------
+   Scroll-driven animations (native CSS, zero JS)
+   LEARN: `animation-timeline: view()` ties an animation's progress to the
+   element's travel through the scroll viewport — the same scrub the old GSAP
+   ScrollTriggers produced (work/garden card parallax zoom + the "other works"
+   and note-hero overlaps), but it runs off the compositor with NO JS on the
+   scroll path. Gated behind @supports so browsers without scroll-timeline just
+   render the resting (end) state, and behind prefers-reduced-motion so we don't
+   animate for users who opt out.
+--------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    /* Parallax zoom: hero images scale down as they pass through the viewport.
+       Default view() range (cover 0%→100%) == old ScrollTrigger
+       'top bottom' → 'bottom top'. */
+    .work-card-image {
+      animation: parallax-zoom-lg linear both;
+      animation-timeline: view();
+    }
+    .garden-card-image {
+      animation: parallax-zoom-sm linear both;
+      animation-timeline: view();
+    }
+    @keyframes parallax-zoom-lg {
+      from { transform: scale(1.5); }
+      to   { transform: scale(1); }
+    }
+    @keyframes parallax-zoom-sm {
+      from { transform: scale(1.3); }
+      to   { transform: scale(1); }
+    }
+
+    /* Overlap slides: section pulls up to overlap the content above it as it
+       enters view (replaces other-works-overlap.ts / note-post-animations.ts). */
+    .other-works-overlap {
+      animation: overlap-slide-lg linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 100%;
+    }
+    .note-main-wrapper {
+      animation: overlap-slide-sm linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 100%;
+    }
+    @keyframes overlap-slide-lg {
+      from { transform: translateY(0); }
+      to   { transform: translateY(-200px); }
+    }
+    @keyframes overlap-slide-sm {
+      from { transform: translateY(0); }
+      to   { transform: translateY(-120px); }
+    }
+  }
 }
 
 /* Reduced motion */

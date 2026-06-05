@@ -1,5 +1,7 @@
 ---
+import { Image } from 'astro:assets';
 import SeriesPostCard from './SeriesPostCard.astro';
+import { resolveImage } from '../utils/resolveImage';
 
 interface Props {
   series: {
@@ -25,17 +27,24 @@ interface Props {
 }
 
 const { series } = Astro.props;
+const featuredImg = resolveImage(series.data.featuredImage);
 ---
 
 <div class="mb-12 border-b border-syoro/10 pb-10">
   <div class="flex items-center gap-6 mb-6">
-    {series.data.featuredImage && (
+    {series.data.featuredImage && (featuredImg ? (
+      <Image
+        src={featuredImg}
+        alt={series.data.title}
+        class="w-[40%] h-auto object-cover rounded-lg shrink-0"
+      />
+    ) : (
       <img
         src={series.data.featuredImage}
         alt={series.data.title}
         class="w-[40%] h-auto object-cover rounded-lg shrink-0"
       />
-    )}
+    ))}
     <div>
       <h1 class="font-serif text-4xl md:text-5xl text-syoro">{series.data.title}</h1>
       <p class="font-serif italic text-syoro/90 mt-2 mb-4">{series.data.description}</p>

@@ -7,6 +7,7 @@ import Footer from '../components/Footer.astro';
 import Image from '../components/mdxComponents/Image.astro';
 import OtherWorksSection from '../components/OtherWorksSection.astro';
 import CustomCursor from '../components/CustomCursor.astro';
+import { resolveImage } from '../utils/resolveImage';
 
 type WorkLayoutProps = CollectionEntry<'works'>['data'] & {
   transitionName?: string;
@@ -29,6 +30,12 @@ const articleSchema = {
 // social card instead of relying on whatever the hero image happens to be.
 const ogImage = `/og${Astro.url.pathname.replace(/\/$/, '')}.png`;
 
+// LEARN: the hero is a CSS background-image, so we use the optimized asset's .src
+// (the hashed build URL) instead of the raw /public path. Falls back to the string
+// for remote heroes.
+const heroImg = resolveImage(heroImage);
+const heroImageUrl = heroImg?.src ?? heroImage;
+
 const workTransitionStyle = transitionName
   ? `::view-transition-new(${transitionName}){animation:work-scale-in .4s cubic-bezier(.32,.72,0,1)}`
   : '';
@@ -41,10 +48,10 @@ const workTransitionStyle = transitionName
     <ClientRouter />
     {workTransitionStyle && <style is:global set:html={workTransitionStyle} />}
   </head>
-  <body class="footer-reveal bg-backgroundcolor">
-    <div class="footer-reveal-content px-10 md:px-12 lg:px-20">
+  <body class="bg-backgroundcolor">
+    <div class="px-10 md:px-12 lg:px-20">
       <Header />
-      <main transition:name={transitionName} class="!p-0">
+      <main transition:name={transitionName}>
         <!-- Title + metadata header -->
         <div>
           <div class="flex flex-col gap-4 md:flex-row md:items-start md:justify-between mt-20 mb-10 p-0">
@@ -73,7 +80,7 @@ const workTransitionStyle = transitionName
           <div
             class="hero-image-wrapper relative z-0 w-screen max-w-[100vw] ml-[calc(50%-50vw)] content-end overflow-hidden mt-15 
             inset-shadow-white bg-center bg-cover bg-no-repeat"
-            style={heroImage ? `background-image: url(${heroImage})` : undefined}
+            style={heroImageUrl ? `background-image: url(${heroImageUrl})` : undefined}
             id="hero-image"
           >
           </div>
@@ -91,7 +98,7 @@ const workTransitionStyle = transitionName
         <article class="work-article text-syoro font-serif text-xl sm:text-2xl md:text-3xl w-full md:w-4/5 mx-auto">
           <slot />
         </article>
-        <!-- Other works: slides up to overlap article on scroll (see other-works-overlap.ts) -->
+        <!-- Other works: slides up to overlap article on scroll (CSS, see global.css) -->
         <div class="other-works-overlap" data-other-works-wrapper>
           <OtherWorksSection currentSlug={Astro.url.pathname.replace('/works/', '').replace(/\/$/, '')} />
         </div>
@@ -128,23 +135,7 @@ const workTransitionStyle = transitionName
   }
 </script>
 
-<!-- "Other works" overlap animation (see other-works-overlap.ts) -->
-<script>
-  import { initOtherWorksOverlap } from '../scripts/other-works-overlap';
-
-  function runOverlapIfWorkPage() {
-    if (window.location.pathname.startsWith('/works/')) {
-      initOtherWorksOverlap();
-    }
-  }
-
-  document.addEventListener('astro:page-load', runOverlapIfWorkPage);
-  if (document.readyState === 'complete') {
-    runOverlapIfWorkPage();
-  } else {
-    window.addEventListener('load', runOverlapIfWorkPage);
-  }
-</script>
+<!-- "Other works" overlap is now CSS scroll-driven (see .other-works-overlap in global.css) -->
 
 <style>
   #hero-image {
