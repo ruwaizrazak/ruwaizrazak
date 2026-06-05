@@ -1,7 +1,10 @@
 ---
-// LEARN: Astro's <Image /> from astro:assets optimizes images at build time —
-// converting to webp/avif and setting proper width/height to prevent CLS
-import { Image as AstroImage } from 'astro:assets';
+// LEARN: Astro's <Image>/<Picture> from astro:assets optimize at build time —
+// generating srcset + AVIF/WebP and inferring width/height (prevents CLS). They
+// require imported ImageMetadata, NOT a /public string, so we resolve the string
+// path to the optimized asset in src/assets via resolveImage().
+import { Image as AstroImage, Picture as AstroPicture } from 'astro:assets';
+import { resolveImage } from '../../utils/resolveImage';
 
 interface Props {
   src: string;
@@ -18,8 +21,8 @@ interface Props {
 const {
   src,
   alt,
-  width = 300,
-  height = 150,
+  width,
+  height,
   class: className = 'w-full',
   title,
   description,
@@ -27,17 +30,25 @@ const {
 } = Astro.props;
 
 const uniqueId = `image-lightbox-${Math.random().toString(36).slice(2, 11)}`;
+
+const resolved = resolveImage(src);
+const isSvg = resolved?.format === 'svg';
+// Optional manual size override; otherwise dimensions are inferred from the asset.
+const sizeProps = width && height ? { width, height } : {};
+// Lightbox shows the full-size image — the optimized asset URL, or the raw string for remote.
+const fullSrc = resolved?.src ?? src;
+const thumbClass = ['object-cover cursor-pointer hover:scale-[1.02] transition-transform duration-200', className];
 ---
 
-<AstroImage
-  src={src}
-  alt={alt || ''}
-  width={width}
-  height={height}
-  class:list={['object-cover cursor-pointer hover:scale-[1.02] transition-transform duration-200', className]}
-  data-image-trigger={uniqueId}
-  {...props}
-/>
+{resolved ? (
+  isSvg ? (
+    <AstroImage src={resolved} alt={alt || ''} class:list={thumbClass} data-image-trigger={uniqueId} {...sizeProps} {...props} />
+  ) : (
+    <AstroPicture src={resolved} formats={['avif', 'webp']} fallbackFormat="webp" alt={alt || ''} class:list={thumbClass} data-image-trigger={uniqueId} {...sizeProps} {...props} />
+  )
+) : (
+  <img src={src} alt={alt || ''} class:list={thumbClass} data-image-trigger={uniqueId} {...props} />
+)}
 
 <!-- Lightbox -->
 <div
@@ -65,7 +76,7 @@ const uniqueId = `image-lightbox-${Math.random().toString(36).slice(2, 11)}`;
         data-zoom-container
       >
         <img
-          src={src}
+          src={fullSrc}
           alt={alt}
           class="w-full max-h-[80vh] object-contain rounded-lg shadow-2xl block"
           data-zoom-image

@@ -1,6 +1,8 @@
 ---
+import { Picture } from 'astro:assets';
 import Layout from '../layouts/AboutLayout.astro';
 import WorkCardCompact from '../components/WorkCardCompact.astro';
+import { resolveImage } from '../utils/resolveImage';
 import StickyExperience from '../components/StickyExperience.astro';
 import { getCollection } from 'astro:content';
 import CustomCursor from '../components/CustomCursor.astro';
@@ -101,8 +103,10 @@ const experience = [
 				</article>
 			</div>
 			</div>
-			<img
-				src="/about/ruwaiz1.jpg"
+			<Picture
+				src={resolveImage('/about/ruwaiz1.jpg')!}
+				formats={['avif', 'webp']}
+				fallbackFormat="webp"
 				alt="Ruwaiz Razak"
 				class="w-100 h-auto rounded-2xl object-cover"
 			/>

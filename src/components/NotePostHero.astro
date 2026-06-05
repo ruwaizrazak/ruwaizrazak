@@ -1,5 +1,7 @@
 ---
+import { Picture } from 'astro:assets';
 import { getMaturityIcon } from '../utils/maturityIcons';
+import { resolveImage } from '../utils/resolveImage';
 import PageHero from './PageHero.astro';
 
 
@@ -15,6 +17,10 @@ interface Props {
 
 const { title, description, pubDate, updatedDate, heroImage, tags = [], maturity } = Astro.props;
 const maturityIcon = getMaturityIcon(maturity);
+// LEARN: <Picture> emits AVIF + WebP <source>s for the hero (best compression on a
+// large above-the-fold image). Remote heroes (e.g. the series imgur image) resolve
+// to undefined → passthrough <img>.
+const heroImg = resolveImage(heroImage);
 
 const formattedDate = pubDate.toLocaleDateString('en-us', {
   year: 'numeric',
@@ -61,12 +67,21 @@ const formattedUpdatedDate = updatedDate?.toLocaleDateString('en-us', {
   )}
 
   <!-- Hero image, clean and simple -->
-  {heroImage && (
+  {heroImage && (heroImg ? (
+    <Picture
+      src={heroImg}
+      formats={['avif', 'webp']}
+      fallbackFormat="webp"
+      alt=""
+      class="w-full mt-12 rounded"
+      loading="eager"
+    />
+  ) : (
     <img
       src={heroImage}
       alt=""
       class="w-full mt-12 rounded"
       loading="eager"
     />
-  )}
+  ))}
 </PageHero>

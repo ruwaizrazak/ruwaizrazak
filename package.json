@@ -8,8 +8,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "webmentions": "node src/scripts/get-webmentions.js",
-    "optimize-images": "node scripts/optimize-images.mjs"
+    "webmentions": "node src/scripts/get-webmentions.js"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.3.13",

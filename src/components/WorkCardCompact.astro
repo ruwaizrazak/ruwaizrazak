@@ -1,4 +1,7 @@
 ---
+import { Image } from 'astro:assets';
+import { resolveImage } from '../utils/resolveImage';
+
 export interface Props {
   title: string;
   role?: string;
@@ -9,16 +12,15 @@ export interface Props {
 }
 
 const { title, role, company, duration, heroImage, url } = Astro.props;
+const heroImg = resolveImage(heroImage);
 ---
 
 <a href={url} class="group block hover:scale-95 transition-all duration-200 ease-in-out">
   <div class="overflow-hidden rounded-lg">
-    {heroImage ? (
-      <img
-        src={heroImage}
-        alt={title}
-        class="w-full aspect-[4/3] object-cover"
-      />
+    {heroImg ? (
+      <Image src={heroImg} alt={title} class="w-full aspect-[4/3] object-cover" />
+    ) : heroImage ? (
+      <img src={heroImage} alt={title} class="w-full aspect-[4/3] object-cover" />
     ) : (
       <div class="w-full aspect-[4/3] bg-gray-200 dark:bg-gray-700" />
     )}

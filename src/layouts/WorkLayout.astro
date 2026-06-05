@@ -7,6 +7,7 @@ import Footer from '../components/Footer.astro';
 import Image from '../components/mdxComponents/Image.astro';
 import OtherWorksSection from '../components/OtherWorksSection.astro';
 import CustomCursor from '../components/CustomCursor.astro';
+import { resolveImage } from '../utils/resolveImage';
 
 type WorkLayoutProps = CollectionEntry<'works'>['data'] & {
   transitionName?: string;
@@ -28,6 +29,12 @@ const articleSchema = {
 // using heroImage. This ensures every work page gets a consistently branded
 // social card instead of relying on whatever the hero image happens to be.
 const ogImage = `/og${Astro.url.pathname.replace(/\/$/, '')}.png`;
+
+// LEARN: the hero is a CSS background-image, so we use the optimized asset's .src
+// (the hashed build URL) instead of the raw /public path. Falls back to the string
+// for remote heroes.
+const heroImg = resolveImage(heroImage);
+const heroImageUrl = heroImg?.src ?? heroImage;
 
 const workTransitionStyle = transitionName
   ? `::view-transition-new(${transitionName}){animation:work-scale-in .4s cubic-bezier(.32,.72,0,1)}`
@@ -73,7 +80,7 @@ const workTransitionStyle = transitionName
           <div
             class="hero-image-wrapper relative z-0 w-screen max-w-[100vw] ml-[calc(50%-50vw)] content-end overflow-hidden mt-15 
             inset-shadow-white bg-center bg-cover bg-no-repeat"
-            style={heroImage ? `background-image: url(${heroImage})` : undefined}
+            style={heroImageUrl ? `background-image: url(${heroImageUrl})` : undefined}
             id="hero-image"
           >
           </div>

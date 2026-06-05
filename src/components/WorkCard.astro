@@ -1,5 +1,7 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import { Image } from 'astro:assets';
+import { resolveImage } from '../utils/resolveImage';
 
 interface Props {
   entry: CollectionEntry<'works'>;
@@ -11,6 +13,8 @@ const { data } = entry;
 const { role, duration, heroImage, title, description } = data;
 const slug = entry.id;
 const href = `/works/${slug}`;
+// LEARN: <Image> infers width/height from the asset, so we no longer hardcode them.
+const heroImg = resolveImage(heroImage);
 ---
 
 <!-- Work card: text on left, hero image on right (stacks on mobile) -->
@@ -29,14 +33,10 @@ const href = `/works/${slug}`;
     </div>
     <!-- Hero image with CSS parallax zoom (see .work-card-image in global.css) -->
     <div class="w-full md:w-2/3 overflow-hidden rounded-lg group-hover:border-4 group-hover:border-blue-200">
-      {heroImage ? (
-        <img
-          src={heroImage}
-          alt={title}
-          width="1200"
-          height="900"
-          class="work-card-image w-full aspect-[4/3] object-cover"
-        />
+      {heroImg ? (
+        <Image src={heroImg} alt={title} class="work-card-image w-full aspect-[4/3] object-cover" />
+      ) : heroImage ? (
+        <img src={heroImage} alt={title} class="work-card-image w-full aspect-[4/3] object-cover" />
       ) : (
         <div class="w-full aspect-[4/3] bg-gray-200 dark:bg-gray-700" />
       )}

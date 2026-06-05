@@ -9,6 +9,7 @@ import NotePostHero from '../components/NotePostHero.astro';
 import RelatedNotes from '../components/RelatedNotes.astro';
 import Webmentions from '../components/Webmentions.astro';
 import CustomCursor from '../components/CustomCursor.astro';
+import { resolveImage } from '../utils/resolveImage';
 
 type LayoutProps = CollectionEntry<'notes'>['data'] & {
   collection?: string;
@@ -37,7 +38,9 @@ const blogPostingSchema = {
   datePublished: pubDate.toISOString(),
   dateModified: (updatedDate ?? pubDate).toISOString(),
   url: canonicalURL,
-  ...(heroImage && { image: new URL(heroImage, Astro.site).href }),
+  // LEARN: heroImage is a public-style string; resolve to the optimized asset's
+  // build URL for the JSON-LD image (falls back to the raw string for remote heroes).
+  ...(heroImage && { image: new URL(resolveImage(heroImage)?.src ?? heroImage, Astro.site).href }),
   author: {
     '@type': 'Person',
     name: 'Ruwaiz Razak',
