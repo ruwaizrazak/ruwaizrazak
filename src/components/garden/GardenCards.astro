@@ -41,8 +41,6 @@ const cardVariantCollections = new Set(['essays', 'playground']);
 
 <script>
   import { initOnLoad } from '../../utils/initOnLoad';
-  import { initGardenCardAnimations } from '../../scripts/garden/gardenCardAnimations';
-  initOnLoad(initGardenCardAnimations);
 
   function updateEssayWidths() {
     const grid = document.querySelector<HTMLElement>('.card-masonry');

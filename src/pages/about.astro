@@ -109,7 +109,7 @@ const experience = [
 		</div>
 	</section>
 
-	<!-- LEARN: .note-main-wrapper slides up 120px over the hero on scroll (GSAP in note-post-animations.ts).
+	<!-- LEARN: .note-main-wrapper slides up 120px over the hero on scroll (CSS scroll-timeline, see global.css).
 	     bg-backgroundcolor gives it a solid background so it covers the hero as it overlaps. -->
 	<div class="note-main-wrapper px-10 md:px-12 lg:px-20 relative z-10 bg-backgroundcolor">
 
@@ -172,13 +172,7 @@ const experience = [
 	<CustomCursor />
 </Layout>
 
-<!-- LEARN: Same scroll animations as notesPost — hero overlap, fade, and zoom.
-     Reuses the existing GSAP script rather than duplicating animation logic. -->
-<script>
-	import { initNotePostAnimations } from '../scripts/note-post-animations';
-	import { initOnLoad } from '../utils/initOnLoad';
-	initOnLoad(initNotePostAnimations);
-</script>
+<!-- Hero overlap is now CSS scroll-driven (see .note-main-wrapper in global.css) -->
 
 <style>
 	/* LEARN: Breaks out of the parent Main component's px-20 padding

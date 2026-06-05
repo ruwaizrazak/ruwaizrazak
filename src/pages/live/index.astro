@@ -90,11 +90,6 @@ const liveProseClasses = `${proseClasses} prose-a:text-link prose-a:underline pr
 		</main>
 		</div>
 		<Footer />
-		<!-- Scroll animations: hero overlap, fade-out, and zoom -->
-		<script>
-			import { initNotePostAnimations } from '../../scripts/note-post-animations';
-			import { initOnLoad } from '../../utils/initOnLoad';
-			initOnLoad(initNotePostAnimations);
-		</script>
+		<!-- Hero overlap is now CSS scroll-driven (see .note-main-wrapper in global.css) -->
 	</body>
 </html>

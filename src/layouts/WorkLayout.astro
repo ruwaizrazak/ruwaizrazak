@@ -91,7 +91,7 @@ const workTransitionStyle = transitionName
         <article class="work-article text-syoro font-serif text-xl sm:text-2xl md:text-3xl w-full md:w-4/5 mx-auto">
           <slot />
         </article>
-        <!-- Other works: slides up to overlap article on scroll (see other-works-overlap.ts) -->
+        <!-- Other works: slides up to overlap article on scroll (CSS, see global.css) -->
         <div class="other-works-overlap" data-other-works-wrapper>
           <OtherWorksSection currentSlug={Astro.url.pathname.replace('/works/', '').replace(/\/$/, '')} />
         </div>
@@ -128,23 +128,7 @@ const workTransitionStyle = transitionName
   }
 </script>
 
-<!-- "Other works" overlap animation (see other-works-overlap.ts) -->
-<script>
-  import { initOtherWorksOverlap } from '../scripts/other-works-overlap';
-
-  function runOverlapIfWorkPage() {
-    if (window.location.pathname.startsWith('/works/')) {
-      initOtherWorksOverlap();
-    }
-  }
-
-  document.addEventListener('astro:page-load', runOverlapIfWorkPage);
-  if (document.readyState === 'complete') {
-    runOverlapIfWorkPage();
-  } else {
-    window.addEventListener('load', runOverlapIfWorkPage);
-  }
-</script>
+<!-- "Other works" overlap is now CSS scroll-driven (see .other-works-overlap in global.css) -->
 
 <style>
   #hero-image {

@@ -80,7 +80,7 @@ const blogPostingSchema = {
         maturity={maturity}
       />
 
-      <!-- Main content wrapper: overlaps hero on scroll (see note-post-animations.ts) -->
+      <!-- Main content wrapper: overlaps hero on scroll (CSS, see global.css) -->
       <!-- LEARN: h-entry is the microformats2 class that tells IndieWeb parsers
            (brid.gy, webmention.io) "this is a post" — needed for webmentions to work -->
       <div class="note-main-wrapper h-entry relative z-10 bg-backgroundcolor">
@@ -101,12 +101,10 @@ const blogPostingSchema = {
     <Footer />
     
 
-    <!-- Scroll animations: hero overlap, fade-out, and zoom (see note-post-animations.ts) -->
+    <!-- Hero overlap is now CSS scroll-driven (see .note-main-wrapper in global.css) -->
     <script>
-      import { initNotePostAnimations } from '../scripts/note-post-animations';
       import { initScrollDepth } from '../scripts/analytics';
       import { initOnLoad } from '../utils/initOnLoad';
-      initOnLoad(initNotePostAnimations);
       initOnLoad(initScrollDepth);
     </script>
   </body>

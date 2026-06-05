@@ -8,34 +8,29 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "webmentions": "node src/scripts/get-webmentions.js"
+    "webmentions": "node src/scripts/get-webmentions.js",
+    "optimize-images": "node scripts/optimize-images.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.3.13",
     "@astrojs/react": "^4.4.2",
     "@astrojs/rss": "^4.0.15",
     "@astrojs/sitemap": "^3.7.0",
-    "@lottiefiles/lottie-interactivity": "^1.6.2",
     "@portaljs/remark-wiki-link": "^1.2.0",
     "@resvg/resvg-js": "^2.6.2",
     "@tailwindcss/vite": "^4.0.7",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
     "astro": "^5.17.1",
-    "astro-integration-lottie": "^0.3.2",
     "dotenv": "^17.4.0",
-    "fast-xml-parser": "^5.2.5",
     "flubber": "^0.4.2",
     "gsap": "^3.13.0",
     "lodash": "^4.18.1",
-    "lottie-web": "^5.13.0",
-    "motion": "^12.4.7",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "satori": "^0.26.0",
     "tailwindcss": "^4.0.7",
-    "tippy.js": "^6.3.7",
-    "xml2js": "^0.6.2"
+    "tippy.js": "^6.3.7"
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.16",

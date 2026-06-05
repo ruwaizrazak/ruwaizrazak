@@ -5,7 +5,6 @@ import sitemap from '@astrojs/sitemap';
 import react from '@astrojs/react';
 import tailwindcss from '@tailwindcss/vite';
 import remarkWikiLink from '@portaljs/remark-wiki-link';
-import lottie from 'astro-integration-lottie';
 export default defineConfig({
   output: 'static',
   image: {
@@ -35,8 +34,10 @@ export default defineConfig({
       gfm: true,
     }),
     sitemap(),
+    // LEARN: react() is build-time only — it provides the .tsx JSX transform Satori
+    // needs for OG image generation (src/utils/og-template.tsx). No component is ever
+    // hydrated (zero client:* directives), so no React ships to the browser.
     react(),
-    lottie(),
   ],
 
   vite: {
