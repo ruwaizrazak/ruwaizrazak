@@ -82,8 +82,7 @@ const Content = renderResult?.Content;
     <head>
       <BaseHead title={seoTitle} description={seriesDoc?.data.description ?? ''} image={ogImage} />
     </head>
-    <body class="footer-reveal bg-backgroundcolor">
-      <div class="footer-reveal-content">
+    <body class="bg-backgroundcolor">
       <Header />
       <main class="w-full sm:w-[90%] mx-auto">
         <div class="mt-20">
@@ -123,7 +122,6 @@ const Content = renderResult?.Content;
           )}
         </div>
       </main>
-      </div>
       <Footer />
     </body>
   </html>

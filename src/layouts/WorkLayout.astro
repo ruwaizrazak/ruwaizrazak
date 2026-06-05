@@ -48,8 +48,8 @@ const workTransitionStyle = transitionName
     <ClientRouter />
     {workTransitionStyle && <style is:global set:html={workTransitionStyle} />}
   </head>
-  <body class="footer-reveal bg-backgroundcolor">
-    <div class="footer-reveal-content px-10 md:px-12 lg:px-20">
+  <body class="bg-backgroundcolor">
+    <div class="px-10 md:px-12 lg:px-20">
       <Header />
       <main transition:name={transitionName} class="!p-0">
         <!-- Title + metadata header -->
