@@ -51,11 +51,11 @@ const liveProseClasses = `${proseClasses} prose-a:text-link prose-a:underline pr
 										<div class="w-full h-full rounded-4xl bg-konpeki"></div>
 									</div>
 								</span>
-								<h2 class="text-3xl md:text-4xl lg:text-5xl text-syoro">{nowPost.data.Month}</h2>
+								<h2 class="text-3xl md:text-5xl lg:text-6xl text-syoro font-sans">{nowPost.data.Month}</h2>
 							</div>
 						</div>
-						<p class="mx-12 text-xl mt-2 mb-5 font-sans text-syoro">{nowPost.data.OneLiner}</p>
-						<div class={`mx-12 ${liveProseClasses}`}>
+						<p class="mx-12 text-lg md:text-xl lg:text-2xl mt-2 mb-5 font-serif text-syoro">{nowPost.data.OneLiner}</p>
+						<div class={`ml-12 ${liveProseClasses}`}>
 							<nowContent.Content />
 						</div>
 					</div>
@@ -64,18 +64,18 @@ const liveProseClasses = `${proseClasses} prose-a:text-link prose-a:underline pr
 					<>
 						
 						<hr class="w-full my-8 border-stone-100">
-						<div class="space-y-8 pb-20 w-full sm:w-[90%] lg:w-[90%] xl:w-[80%] 2xl:w-[70%] mx-auto px-5 md:px-20">
-							<h1 class="text-3xl md:text-4xl lg:text-5xl text-syoro">Then ...</h1>
+						<div class="space-y-8 pb-20 w-full sm:w-[90%] lg:w-[90%] xl:w-[80%] 2xl:w-[70%] mx-auto px-5 md:px-20 opacity-90">
+							<h1 class="text-4xl md:text-6xl lg:text-7xl font-sans font-medium text-syoro">Then ...</h1>
 							{thenPosts.map((post, index) => {
 								const Content = thenContents[index]?.Content;
 								return (
 									<div class="border-b-2 border-stone-100">
 										<div class="flex items-center gap-4">
 											<div class="h-8 w-8 rounded-4xl border-4 border-konpeki"></div>
-											<h2 class="text-5xl text-syoro">{post.data.Month}</h2>
+											<h2 class="text-3xl md:text-5xl lg:text-6xl text-syoro font-sans font-medium">{post.data.Month}</h2>
 										</div>
-										<p class="mx-12 text-xl mt-2 mb-5 font-sans text-syoro">{post.data.OneLiner}</p>
-										<div class={`mx-12 ${liveProseClasses}`}>
+										<p class="mx-12 text-xl mt-2 mb-5 font-sans">{post.data.OneLiner}</p>
+										<div class={`mx-12 text-syoro ${liveProseClasses}`}>
 											{Content && <Content />}
 										</div>
 									</div>
