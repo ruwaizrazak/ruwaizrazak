@@ -89,17 +89,17 @@ const heroImg = resolveImage(heroImage);
         <Image
           src={heroImg}
           alt={title}
-          class={`garden-card-image w-full ${imageHeight} aspect-square object-cover rounded-lg mb-4`}
+          class={`garden-card-image w-full ${imageHeight} aspect-square object-cover rounded-lg mb-5`}
         />
       ) : (
         <img
           src={heroImage}
           alt={title}
-          class={`garden-card-image w-full ${imageHeight} aspect-square object-cover rounded-lg mb-4`}
+          class={`garden-card-image w-full ${imageHeight} aspect-square object-cover rounded-lg mb-5`}
         />
       ))}
       <div class="flex gap-2 mb-0 items-center">
-        <h5 class="text-sm text-konpeki uppercase font-sans tracking-widest">{label}</h5>
+        <h5 class="text-sm text-konpeki uppercase font-sans tracking-widest pt-5">{label}</h5>
       </div>
       <h3 class="font-serif text-xl md:text-2xl lg:text-3xl leading-tight text-syoro group-hover:text-link mb-4 font-medium">{title}</h3>
       {description && <p class="font-serif text-syoro/90 mb-4">{description}</p>}
