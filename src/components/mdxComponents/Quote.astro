@@ -1,0 +1,75 @@
+---
+// LEARN: Editorial pull-quote modeled on Emil Kowalski's quote treatment
+// (emilkowal.ski). Signature = serif quotation marks where the opening mark hangs
+// into the left margin (first line stays flush) + a right-aligned credit led by a
+// hairline rule. Richer than a markdown `>` blockquote because it carries author,
+// source, and an optional link to the original — when `cite` is set the whole block
+// becomes clickable, like the reference.
+interface Props {
+  author: string;
+  source?: string;
+  cite?: string; // URL of the original; makes the entire quote a link to the source
+}
+
+const { author, source, cite } = Astro.props;
+
+// LEARN: Render as <a> only when a source URL exists. HTML5 lets <a> wrap the
+// <figure>/<blockquote> flow content, so we keep the "click anywhere → source"
+// behavior while the inner markup stays semantic for SEO and screen readers.
+const Wrapper = cite ? 'a' : 'div';
+const wrapperProps = cite
+  ? { href: cite, target: '_blank', rel: 'noopener noreferrer' }
+  : {};
+---
+
+<Wrapper
+  {...wrapperProps}
+  class:list={[
+    'relative my-12 md:my-16 block no-underline',
+    cite &&
+      'rounded-sm transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-konpeki/50',
+  ]}
+>
+  <figure class="relative m-0">
+    {/*
+      LEARN: `!` important utilities are needed here — this renders inside the
+      `prose` container, and @tailwindcss/typography's default blockquote styles
+      (italic, left border, ::before/::after auto-quotes) plus the global
+      `blockquote` rule would otherwise fight our layout. We reset them and supply
+      our own marks. `[&>p]:inline` collapses the slotted paragraph so the closing
+      mark sits right after the last word.
+    */}
+    <blockquote
+      cite={cite}
+      class="relative !m-0 !border-0 !p-0 !not-italic font-serif !text-syoro
+             text-[24px] md:text-[30px] leading-[1.33]
+             before:!content-none
+             [&>p]:!m-0 [&>p]:inline [&>p]:font-medium
+             [&>p:first-of-type]:before:content-none [&>p:last-of-type]:after:content-none"
+    >
+      <span
+        aria-hidden="true"
+        class="absolute left-[-0.55em] top-0 select-none font-serif text-konpeki/90"
+      >&ldquo;</span>
+      <slot />
+      <span aria-hidden="true" class="select-none text-konpeki/90">&rdquo;</span>
+    </blockquote>
+
+    {/* LEARN: hairline rule fills the gap to the left of the credit on desktop,
+        pulling the eye toward the attribution (reference detail). */}
+    <figcaption
+      class="ml-auto mt-6 flex w-full items-center gap-3 font-sans text-[13px]
+             font-medium leading-none text-syoro/90 md:w-1/2"
+    >
+      <span class="hidden h-px flex-grow bg-syoro/25 md:block"></span>
+      <span class="md:ml-auto md:text-right">
+        {author}
+        {source && (
+          <span class="text-syoro/55"
+            ><span class="hidden md:inline">, </span>{source}</span
+          >
+        )}
+      </span>
+    </figcaption>
+  </figure>
+</Wrapper>

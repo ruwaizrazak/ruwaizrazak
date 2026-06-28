@@ -21,10 +21,8 @@ export const proseClasses = [
   'prose-img:w-full prose-img:aspect-auto',
   // Strong
   'prose-strong:text-syoro prose-strong:font-bold',
-  // Blockquotes
-  'prose-blockquote:font-serif prose-blockquote:medium',
-  'prose-blockquote:text-konpeki prose-blockquote:border-konpeki',
-  'prose-blockquote:text-lg prose-blockquote:leading-[1.5] prose-blockquote:pl-6',
+  // Blockquotes — styled centrally in global.css (`.prose blockquote`) so the
+  // editorial hanging-mark look stays in one place and matches the <Quote> component.
   // Lists
   'prose-ul:font-serif prose-li:font-serif prose-ul:list-disc prose-ol:list-decimal',
   // Font size

@@ -125,11 +125,52 @@ pre>code {
   all: unset;
 }
 
+/* LEARN: Editorial blockquote — matches the <Quote> MDX component's treatment so
+   plain markdown `>` quotes share the look (minus author/source, which markdown
+   can't express). The signature is a serif opening quote mark hanging in the left
+   margin (text stays flush) instead of the old 4px accent bar. The hang of -0.55em
+   stays inside `main`'s page padding, so it never clips. */
 blockquote {
-  border-left: 4px solid var(--color-konpeki);
-  padding: 0 0 0 20px;
-  margin: 0px;
-  font-size: 1.333em;
+  position: relative;
+  margin: 2rem 0;
+  padding: 0;
+  border: 0;
+  font-family: var(--font-serif);
+  font-style: normal;
+  font-weight: 500;
+  font-size: 1.25em;
+  line-height: 1.4;
+  color: var(--color-syoro);
+}
+
+blockquote::before {
+  content: "\201C"; /* “ — left double quotation mark */
+  position: absolute;
+  left: -0.55em;
+  top: 0;
+  font-family: var(--font-serif);
+  color: color-mix(in srgb, var(--color-konpeki) 90%, transparent);
+  pointer-events: none;
+}
+
+/* LEARN: @tailwindcss/typography styles `.prose :where(blockquote)` (specificity
+   0,1,0) — italic, an accent border, and auto open/close quotes on the inner <p>.
+   `.prose blockquote` (0,1,1) out-specifies it without !important so the rules
+   above win inside essays/notes; the second selector removes the plugin's auto
+   quotes so we don't double up on our single hanging mark. */
+.prose blockquote {
+  border: 0;
+  padding: 0;
+  margin: 2rem 0;
+  font-style: normal;
+  font-weight: 500;
+  font-family: var(--font-serif);
+  color: var(--color-syoro);
+}
+
+.prose blockquote p:first-of-type::before,
+.prose blockquote p:last-of-type::after {
+  content: none;
 }
 
 hr {
