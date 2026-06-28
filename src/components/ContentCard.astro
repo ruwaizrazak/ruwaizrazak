@@ -50,8 +50,8 @@ const heroImg = resolveImage(heroImage);
       <div class="flex gap-2 py-2 items-center">
         <h5 class="text-sm text-konpeki uppercase font-sans tracking-widest">{label}</h5>
       </div>
-      <h3 class="font-serif text-lg md:text-xl lg:text-2xl leading-tight text-syoro group-hover:text-link mb-4 font-medium">{title}</h3>
-      {description && <p class="font-serif text-syoro/90 mb-4">{description}</p>}
+      <h3 class="font-serif text-xl md:text-2xl lg:text-3xl xl:text-4xl leading-tight text-syoro group-hover:text-link mb-4 font-medium">{title}</h3>
+      {description && <p class="font-serif text-syoro/90 mb-4 text-base lg:text-xl xl:text-2xl">{description}</p>}
       <div class="text-base font-sans text-syoro/40 mt-2 flex items-center gap-2">
         {formattedDate}
         {maturity && <MaturityBadge maturity={maturity} iconClass="w-4 h-auto" />}
@@ -72,10 +72,10 @@ const heroImg = resolveImage(heroImage);
       )}
       <div class="flex-1 min-w-0 p-5 flex flex-col justify-between">
         <div class="mx-auto">
-          <h3 class="font-serif text-xl md:text-xl lg:text-2xl leading-tight text-syoro group-hover:text-link mb-4 font-medium">{title}</h3>
-          {description && <p class="font-serif text-syoro/90 mb-4">{description}</p>}
+          <h3 class="font-serif text-xl md:text-2xl lg:text-3xl xl:text-4xl leading-tight text-syoro group-hover:text-link mb-4 font-medium">{title}</h3>
+          {description && <p class="font-serif text-syoro/90 mb-4 text-base lg:text-xl xl:text-2xl">{description}</p>}
         </div>
-        <div class="text-base font-sans text-syoro/40 flex items-center gap-2">
+        <div class="text-base lg:text-lg xl:text-xl font-sans text-syoro flex items-center gap-2">
           {formattedDate}
           {maturity && <MaturityBadge maturity={maturity} />}
         </div>
@@ -101,8 +101,8 @@ const heroImg = resolveImage(heroImage);
       <div class="flex gap-2 mb-0 items-center">
         <h5 class="text-sm text-konpeki uppercase font-sans tracking-widest pt-5">{label}</h5>
       </div>
-      <h3 class="font-serif text-xl md:text-2xl lg:text-3xl leading-tight text-syoro group-hover:text-link mb-4 font-medium">{title}</h3>
-      {description && <p class="font-serif text-syoro/90 mb-4">{description}</p>}
+      <h3 class="font-serif text-xl md:text-2xl lg:text-3xl xl:text-4xl leading-tight text-syoro group-hover:text-link mb-4 font-medium">{title}</h3>
+      {description && <p class="font-serif text-syoro/90 mb-4 text-base lg:text-xl xl:text-2xl">{description}</p>}
       <div class="text-base font-sans text-syoro/40 mt-4 flex items-center gap-2">
         {formattedDate}
         {maturity && <MaturityBadge maturity={maturity} />}
