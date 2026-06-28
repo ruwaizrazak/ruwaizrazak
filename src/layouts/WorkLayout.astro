@@ -54,11 +54,11 @@ const workTransitionStyle = transitionName
       <main transition:name={transitionName}>
         <!-- Title + metadata header -->
         <div>
-          <div class="flex flex-col gap-4 md:flex-row md:items-start md:justify-between mt-20 mb-10 p-0">
-            <h1 class="text-syoro dark:text-syoro font-sans text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold leading-none max-w-4xl">
+          <div class="flex flex-col gap-4 2xl:flex-row xl:items-start md:justify-between mt-20 mb-10 p-0">
+            <h1 class="text-syoro dark:text-syoro font-sans text-5xl sm:text-6xl md:text-7xl lg:text-9xl font-bold leading-none md:max-w-4xl lg:max-w-5xl xl:max-w-6xl">
               {title} <span class="font-normal">| {company}</span>
             </h1>
-            <div class="flex flex-col items-start md:items-end gap-1 my-auto text-left sm:text-right">
+            <div class="flex flex-col items-start 2xl:items-end gap-1 lg:mt-0 2xl:my-auto text-left sm:text-right">
               {role && (
                 <p class="text-syoro dark:text-syoro font-sans text-2xl sm:text-xl md:text-2xl lg:text-3xl">{role}</p>
               )}
