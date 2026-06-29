@@ -10,14 +10,15 @@ interface Props {
   description: string;
   posts: any[];
   sortedTags: string[];
+  wideFullRow?: boolean;
 }
-const { title, description, posts, sortedTags } = Astro.props;
+const { title, description, posts, sortedTags, wideFullRow = false } = Astro.props;
 ---
 
 <Header />
 <main>
   <GardenIntro title={title} description={description} />
   <!-- <GardenStickyBar title={title} sortedTags={sortedTags} /> -->
-  <GardenCards posts={posts} />
+  <GardenCards posts={posts} wideFullRow={wideFullRow} />
 </main>
 <GardenStrip posts={posts} />

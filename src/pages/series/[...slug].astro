@@ -4,6 +4,10 @@ import BaseHead from '../../components/BaseHead.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import NotesPost from '../../layouts/notesPost.astro';
+import NotePostHero from '../../components/NotePostHero.astro';
+import SeriesCard from '../../components/SeriesCard.astro';
+import CustomCursor from '../../components/CustomCursor.astro';
+import { getSeriesWithPosts } from '../../utils/collections';
 
 export async function getStaticPaths() {
   const seriesIndexes = await getCollection('series', ({ data }) => data.publish);
@@ -32,19 +36,16 @@ const ParentSeriesSlug = seriesSlug;
 const ParentSeriesSlugPretty = ParentSeriesSlug.replace(/-/g, ' ');
 const ParentSeriesTitlePretty = ParentSeriesSlugPretty.replace(/\b\w/g, (c) => c.toUpperCase());
 
-// Load the series index document
-const matchingSeries = await getCollection('series', ({ id }) => id === `${seriesSlug}/index`);
-const seriesDoc = matchingSeries[0];
-
-// Load all parts under this series
-const allParts = (await getCollection('seriesPosts', ({ data }) => data.publish))
-  .filter((p) => p.id.startsWith(seriesSlug + '/') && !p.id.endsWith('/index'))
-  .sort((a, b) => {
-    const ao = a.data.seriesOrder ?? Number.POSITIVE_INFINITY;
-    const bo = b.data.seriesOrder ?? Number.POSITIVE_INFINITY;
-    if (ao !== bo) return ao - bo;
-    return new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime();
-  });
+// LEARN: getSeriesWithPosts() returns each series with its sorted posts — shared with
+// /series and /garden — so the index doc and its parts come from one source of truth.
+// LEARN: Astro's glob loader strips `/index` from index files, so a series id is
+// e.g. "portfolio-to-garden" (not ".../index"). Match on the stripped id so this
+// is robust whichever form the loader yields.
+const current = (await getSeriesWithPosts()).find(
+  (s) => s.id.replace(/\/index$/, '') === seriesSlug
+);
+const seriesDoc = current;
+const allParts = current?.posts ?? [];
 
 // If this is a part page, find the specific part
 const activePart = kind === 'part' ? allParts.find((p) => p.id === slug) : undefined;
@@ -83,8 +84,8 @@ const Content = renderResult?.Content;
       <BaseHead title={seoTitle} description={seriesDoc?.data.description ?? ''} image={ogImage} />
     </head>
     <body class="bg-backgroundcolor">
-      <Header />
-      <main class="w-full sm:w-[90%] mx-auto">
+      <main class="px-20">
+        <Header />
         <div class="mt-20">
           <a href="/series" class="inline-block z-1">
             <div class="flex items-center gap-2 group not-prose">
@@ -92,37 +93,29 @@ const Content = renderResult?.Content;
               <span class="uppercase font-sans font-medium text-lg">Back to Series</span>
             </div>
           </a>
+        </div>
 
-          {seriesDoc && (
-            <section class="mt-8">
-              <h1>{seriesDoc.data.title}</h1>
-              <p class="text-lg sm:text-xl mt-0 font-serif italic">{seriesDoc.data.description}</p>
-              <hr class="w-full my-8 border-stone-100" />
+        {seriesDoc && (
+          <NotePostHero
+            title={seriesDoc.data.title}
+            description={seriesDoc.data.description}
+            pubDate={seriesDoc.data.startedDate}
+            updatedDate={seriesDoc.data.lastUpdated}
+            heroImage={seriesDoc.data.featuredImage}
+            tags={seriesDoc.data.tags ?? []}
+          />
+        )}
 
-              {allParts.length > 0 ? (
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {allParts.map((post) => (
-                    <a href={`/series/${post.id}`} class="block p-5 bg-cardbg rounded-xl border-1 border-stone-100 dark:border-card-border hover:bg-yellow-50 dark:hover:bg-gray-700 transition-all duration-200 hover:shadow-md hover:scale-[1.02] cursor-pointer">
-                      <div class="flex items-center gap-3 mb-3">
-                        {post.data.seriesOrder && (
-                          <span class="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full uppercase">Part {post.data.seriesOrder}</span>
-                        )}
-                        <span class="text-xs text-stone-400">•</span>
-                        <span class="text-xs text-stone-500">{post.data.pubDate.toLocaleDateString()}</span>
-                      </div>
-                      <h2 class="font-semibold mb-0 text-3xl uppercase text-konpeki">{post.data.title}</h2>
-                      <p class="text-lg text-syoro mb-3 font-sans">{post.data.description}</p>
-                    </a>
-                  ))}
-                </div>
-              ) : (
-                <div class="text-center py-8 text-stone-500"><p>No posts in this series yet.</p></div>
-              )}
-            </section>
-          )}
+        {/* LEARN: same full-bleed scroll-overlap wrapper as /series; SeriesCard with
+            hideHeader renders only the posts grid since the hero already shows the header */}
+        <div class="note-main-wrapper pt-20 relative z-10 bg-backgroundcolor w-screen max-w-[100vw] ml-[calc(50%-50vw)]">
+          <div class="w-full mx-auto px-20">
+            {seriesDoc && <SeriesCard series={seriesDoc} hideHeader />}
+          </div>
         </div>
       </main>
       <Footer />
+      <CustomCursor />
     </body>
   </html>
 )}

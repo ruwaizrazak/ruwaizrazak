@@ -1,9 +1,17 @@
 ---
 import { GARDEN_COLLECTIONS } from '../../consts';
-import { getMultiCollectionPosts, extractUniqueTags } from '../../utils/collections';
+import { getMultiCollectionPosts, getSeriesCards, extractUniqueTags } from '../../utils/collections';
 import IndexLayout from '../../layouts/IndexLayout.astro';
 
-const allPosts = await getMultiCollectionPosts(['notes', 'essays', 'books', 'playground']);
+const posts = await getMultiCollectionPosts(['notes', 'essays', 'books', 'playground']);
+
+// LEARN: getSeriesCards() returns series in the card shape (with a synthetic
+// pubDate from lastUpdated) so they interleave by recency with the other cards.
+const seriesCards = await getSeriesCards();
+
+const allPosts = [...posts, ...seriesCards].sort(
+  (a: any, b: any) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
 const allTags = extractUniqueTags(allPosts);
 ---
 

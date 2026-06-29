@@ -32,6 +32,69 @@ export function extractUniqueTags(posts: any[]): string[] {
 }
 
 /**
+ * Fetch published series, sort by `order` then `lastUpdated` desc, and attach each
+ * series' published posts (sorted by seriesOrder then pubDate desc).
+ * LEARN: centralizes the series+posts grouping so both /series and /garden share one
+ * source of truth instead of duplicating the filter/group logic in each page.
+ */
+export async function getSeriesWithPosts() {
+  const allSeries = await getCollection('series', ({ data }: any) => data.publish);
+  const sortedSeries = allSeries.sort((a: any, b: any) => {
+    if (a.data.order && b.data.order) {
+      return a.data.order - b.data.order;
+    }
+    return new Date(b.data.lastUpdated).getTime() - new Date(a.data.lastUpdated).getTime();
+  });
+
+  // Posts living under series folders, excluding each folder's index entry.
+  const allSeriesPosts = (await getCollection('seriesPosts', ({ data }: any) => data.publish))
+    .filter((post: any) => !post.id.endsWith('/index'));
+
+  return sortedSeries.map((series: any) => {
+    const seriesFolder = series.id.replace(/\/index$/, '');
+    const posts = allSeriesPosts
+      .filter((post: any) => post.id.startsWith(seriesFolder + '/'))
+      .sort((a: any, b: any) => {
+        const ao = a.data.seriesOrder ?? Number.POSITIVE_INFINITY;
+        const bo = b.data.seriesOrder ?? Number.POSITIVE_INFINITY;
+        if (ao !== bo) return ao - bo;
+        return new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime();
+      });
+
+    return { ...series, posts };
+  });
+}
+
+/**
+ * Map published series into the garden card shape consumed by GardenCards →
+ * ContentCard's `series` variant. Shared by /garden (interleaved with other
+ * collections) and /series (the dedicated listing), so the mapping lives in one place.
+ * LEARN: series have no pubDate, so `pubDate` is synthesized from `lastUpdated`
+ * to let series interleave by recency alongside other collections in the garden.
+ */
+export async function getSeriesCards() {
+  return (await getSeriesWithPosts()).map((s: any) => ({
+    collection: 'series',
+    id: s.id.replace(/\/index$/, ''),
+    postCount: s.posts.length,
+    data: {
+      title: s.data.title,
+      description: s.data.description,
+      tags: s.data.tags,
+      featuredImage: s.data.featuredImage,
+      startedDate: s.data.startedDate,
+      lastUpdated: s.data.lastUpdated,
+      pubDate: s.data.lastUpdated,
+      posts: s.posts.map((p: any) => ({
+        title: p.data.title,
+        description: p.data.description,
+        url: `/series/${p.id}/`,
+      })),
+    },
+  }));
+}
+
+/**
  * Standard getStaticPaths for slug pages.
  * Handles both direct id (notes) and nested id (essays/playground) patterns.
  */

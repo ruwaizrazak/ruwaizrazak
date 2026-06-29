@@ -14,8 +14,14 @@ export interface ContentCardProps {
   imageHeight?: string;
   maturity?: Maturity;
   collection?: string;
-  variant?: 'card' | 'compact' | 'wide';
+  variant?: 'card' | 'compact' | 'wide' | 'series';
   transitionName?: string;
+  // Series-only (variant='series'): metadata footer + a linked post-preview list.
+  // `heroImage` doubles as the series featured image (rendered as a background).
+  startedDate?: Date;
+  lastUpdated?: Date;
+  postCount?: number;
+  posts?: { title: string; description: string; url: string }[];
 }
 
 // LEARN: WebMention types follow the JF2 format from webmention.io API.

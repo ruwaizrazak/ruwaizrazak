@@ -1,7 +1,13 @@
 ---
-// Unified card component — consolidates the deleted EssayCard, NoteCard, and PlaygroundCard
-// into a single component with a `variant` prop ('card' | 'compact').
+// ============================================================================
+// ContentCard — the single card component for all garden/listing collections.
+// Consolidates the old EssayCard/NoteCard/PlaygroundCard AND GardenSeriesCard
+// into one component selected by the `variant` prop:
+//   compact → text-only row (notes)        wide → image + text side-by-side (essays)
+//   series  → full-width series card        card → image-top card (default/playground)
+// ============================================================================
 
+// ---- Imports ----
 import { Image } from 'astro:assets';
 import type { ContentCardProps } from '../types';
 import { formatDate } from '../utils/formatDate';
@@ -10,6 +16,7 @@ import MaturityBadge from './MaturityBadge.astro';
 
 type Props = ContentCardProps;
 
+// ---- Props ----
 const {
   title = 'Untitled',
   description = '',
@@ -21,8 +28,14 @@ const {
   collection,
   variant = 'card',
   transitionName,
+  // series-only
+  startedDate,
+  lastUpdated,
+  postCount,
+  posts = [],
 } = Astro.props;
 
+// ---- Derived values ----
 const formattedDate = formatDate(pubDate);
 
 const collectionLabels: Record<string, string> = {
@@ -31,20 +44,33 @@ const collectionLabels: Record<string, string> = {
   playground: 'Playground',
   books: 'Books',
   casestudies: 'Case Studies',
+  series: 'Series',
 };
 const label = collection ? collectionLabels[collection] || collection : '';
 
 const isCompact = variant === 'compact';
 const isWide = variant === 'wide';
+const isSeries = variant === 'series';
 
 // LEARN: resolveImage() turns the public-style string into optimized ImageMetadata
 // (from src/assets) so <Image> can emit srcset/WebP. Remote/unknown → undefined →
 // passthrough <img>. The `garden-card-image` class is preserved so the CSS
 // scroll-driven parallax zoom (global.css) still applies to the generated <img>.
 const heroImg = resolveImage(heroImage);
+
+// series-only: featured image is rendered as a CSS background (use the hashed
+// optimized src for local assets, else the raw URL), plus a one-line metadata
+// string with no spaces around the "·" separators.
+const bgImage = heroImg?.src ?? heroImage;
+const metaParts: string[] = [];
+if (startedDate) metaParts.push(`Started ${formatDate(startedDate)}`);
+if (lastUpdated) metaParts.push(`Updated ${formatDate(lastUpdated)}`);
+if (postCount != null) metaParts.push(`${postCount} ${postCount === 1 ? 'post' : 'posts'}`);
+const meta = metaParts.join('·');
 ---
 
 {isCompact ? (
+  /* ===== COMPACT variant (notes): text-only row with dashed bottom border ===== */
   <div class="group hover:scale-95 transition-all duration-200" transition:name={transitionName}>
     <a href={url} class="block p-5 border-b-1 bg-backgroundcolor border-syoro border-opacity-10 border-dashed relative">
       <div class="flex gap-2 py-2 items-center">
@@ -58,7 +84,77 @@ const heroImg = resolveImage(heroImage);
       </div>
     </a>
   </div>
+) : isSeries ? (
+  /* ===== SERIES variant: full-width card — left background image (full height
+     on desktop, banner on mobile) + content panel with a scrollable list of
+     linked posts and a "Visit Entire Series" CTA. ===== */
+  <div class="group py-5" transition:name={transitionName}>
+    {/* LEARN: fixed desktop height (not max-h) gives the row a definite height so
+        the left image column reliably fills the full 50% width × full height. */}
+    <div class="bg-backgroundcolor rounded-lg border-1 border-card-border shadow-xs overflow-hidden flex flex-col md:flex-row md:h-[34rem]">
+      {/* Featured image as the div's background; role/aria-label restore the alt
+          text a background image otherwise loses. */}
+      {heroImage && (
+        <div
+          class="w-full aspect-[16/10] md:aspect-auto md:w-1/2 md:h-full shrink-0 bg-cover bg-center bg-no-repeat"
+          style={`background-image: url('${bgImage}')`}
+          role="img"
+          aria-label={title}
+        ></div>
+      )}
+
+      {/* Content panel */}
+      <div class="flex-1 min-w-0 flex flex-col p-5">
+        <h5 class="text-sm text-konpeki uppercase font-sans tracking-widest">Series</h5>
+        <h3 class="font-serif text-3xl lg:text-4xl leading-tight text-syoro font-medium">{title}</h3>
+        {description && <p class="font-serif text-syoro/80 text-lg lg:text-xl">{description}</p>}
+
+        {posts.length > 0 && (
+          <>
+            <h4 class="font-sans text-syoro text-base mt-6 mb-3">Posts in this series</h4>
+            {/* LEARN: native scroll + a CSS mask fades the last row at the bottom
+                edge, signalling "more below" without any JS. */}
+            <ul class="series-post-list flex-1 min-h-0 overflow-y-auto flex flex-col gap-2 pr-1">
+              {posts.map((post) => (
+                <li>
+                  <a
+                    href={post.url}
+                    class="series-post-row group/row flex items-center gap-4 rounded-lg bg-syoro/5 hover:bg-syoro/10 p-4 transition-colors"
+                  >
+                    <div class="min-w-0 flex-1">
+                      <p class="font-sans font-semibold text-syoro group-hover/row:text-link truncate">{post.title}</p>
+                      {post.description && <p class="font-sans text-syoro/60 text-sm mt-1 line-clamp-2">{post.description}</p>}
+                    </div>
+                    <svg
+                      class="series-row-arrow shrink-0 w-5 h-5 text-syoro/40 group-hover/row:text-link"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      aria-hidden="true"
+                    >
+                      <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
+
+        {/* Footer: metadata + CTA */}
+        <div class="flex flex-row justify-between items-center mt-6">
+          {meta && <p class="text-base font-sans text-syoro/40">{meta}</p>}
+          <a
+            href={url}
+            class="inline-flex items-center px-6 py-3 rounded-md bg-konpeki text-white hover:opacity-90 font-sans font-medium text-sm transition-opacity"
+          >
+            Visit Entire Series
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
 ) : isWide ? (
+  /* ===== WIDE variant (essays): image left, text right ===== */
   <div class="group hover:scale-95 transition-all duration-200 py-5" transition:name={transitionName}>
     <a href={url} class="bg-syoro/5 rounded-lg border-1 border-card-border shadow-xs group-hover:shadow-none relative flex flex-col md:flex-row overflow-hidden">
       {heroImage && (
@@ -83,6 +179,7 @@ const heroImg = resolveImage(heroImage);
     </a>
   </div>
 ) : (
+  /* ===== CARD variant (default / playground): image top, text below ===== */
   <div class="group rounded-lg overflow-hidden hover:scale-95 transition-all duration-200 py-5" transition:name={transitionName}>
     <a href={url} class="essay-card-link block p-5 bg-syoro/5 rounded-xl border-1 border-card-border shadow-xs group-hover:shadow-none relative">
       {heroImage && (heroImg ? (
@@ -110,3 +207,25 @@ const heroImg = resolveImage(heroImage);
     </a>
   </div>
 )}
+
+<style>
+  /* series variant — fade the bottom edge of the scroll list so the last row
+     hints "more below". */
+  .series-post-list {
+    -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 1.5rem), transparent);
+    mask-image: linear-gradient(to bottom, #000 calc(100% - 1.5rem), transparent);
+  }
+  .series-row-arrow {
+    transition: transform 200ms ease;
+  }
+  .series-post-row:hover .series-row-arrow {
+    transform: translateX(3px);
+  }
+
+  /* Motion skill §4.5 — snap, don't shorten. */
+  @media (prefers-reduced-motion: reduce) {
+    .series-row-arrow {
+      transition: none;
+    }
+  }
+</style>

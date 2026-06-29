@@ -24,13 +24,17 @@ interface Props {
       };
     }[];
   };
+  // LEARN: on an individual series page the NotePostHero already shows the image/title,
+  // so hideHeader skips this card's header block and renders only the posts grid.
+  hideHeader?: boolean;
 }
 
-const { series } = Astro.props;
+const { series, hideHeader = false } = Astro.props;
 const featuredImg = resolveImage(series.data.featuredImage);
 ---
 
 <div class="mb-12 border-b border-syoro/10 pb-10">
+  {!hideHeader && (
   <div class="flex items-center gap-6 mb-6">
     {series.data.featuredImage && (featuredImg ? (
       <Image
@@ -57,12 +61,13 @@ const featuredImg = resolveImage(series.data.featuredImage);
       </div>
     </div>
   </div>
-
-  
+  )}
 
   {series.posts.length > 0 ? (
     <div class="space-y-4 mt-10">
-      <h3 class="text-xl font-sans font-semibold text-syoro/70 uppercase tracking-widest">Posts in this series:</h3>
+      <h3 class="text-xl font-sans font-semibold text-syoro/70 uppercase tracking-widest">
+        Posts in this series{hideHeader ? ` · ${series.posts.length}` : ':'}
+      </h3>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {series.posts.map((post) => (
           <SeriesPostCard post={post} />

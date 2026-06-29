@@ -1,78 +1,19 @@
 ---
-import BaseHead from '../../components/BaseHead.astro';
-import Header from '../../components/Header.astro';
-import Footer from '../../components/Footer.astro';
-import { SITE_TITLE, SITE_DESCRIPTION, SERIES_HERO_IMAGE } from '../../consts';
-import { getCollection } from 'astro:content';
-import NotePostHero from '../../components/NotePostHero.astro';
-import SeriesCard from '../../components/SeriesCard.astro';
-import CustomCursor from '../../components/CustomCursor.astro';
+import { getSeriesCards, extractUniqueTags } from '../../utils/collections';
+import IndexLayout from '../../layouts/IndexLayout.astro';
 
-// Get all published series, sorted by order or lastUpdated
-const allSeries = await getCollection('series', ({ data }) => data.publish);
-const sortedSeries = allSeries.sort((a, b) => {
-  if (a.data.order && b.data.order) {
-    return a.data.order - b.data.order;
-  }
-  return new Date(b.data.lastUpdated).getTime() - new Date(a.data.lastUpdated).getTime();
-});
-
-// Get all posts that live under series folders (exclude each folder's index)
-const allSeriesPosts = (await getCollection('seriesPosts', ({ data }) => data.publish))
-  .filter((post) => !post.id.endsWith('/index'));
-
-// Group posts by series
-const seriesWithPosts = sortedSeries.map(series => {
-  const seriesFolder = series.id.replace(/\/index$/, '');
-  const posts = allSeriesPosts
-    .filter(post => post.id.startsWith(seriesFolder + '/'))
-    .sort((a, b) => {
-      const ao = a.data.seriesOrder ?? Number.POSITIVE_INFINITY;
-      const bo = b.data.seriesOrder ?? Number.POSITIVE_INFINITY;
-      if (ao !== bo) return ao - bo;
-      return new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime();
-    });
-
-  return {
-    ...series,
-    posts
-  };
-});
+// LEARN: same listing layout as /essays and /notes — each series renders as
+// ContentCard's `series` variant (via GardenCards). wideFullRow makes the cards
+// span the full row since every card here is a wide series card.
+const seriesCards = await getSeriesCards();
+const allTags = extractUniqueTags(seriesCards);
 ---
 
-<!doctype html>
-<html lang="en">
-	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-	</head>
-	<body class="bg-backgroundcolor">
-		<main class="px-20">
-			<Header />
-			<NotePostHero
-				title="Series"
-				description="Explore content organized by series and themes"
-				pubDate={sortedSeries[0]?.data.lastUpdated ?? new Date()}
-				heroImage={SERIES_HERO_IMAGE}
-				tags={[]}
-			/>
-			<div class="note-main-wrapper pt-20 relative z-10 bg-backgroundcolor w-screen max-w-[100vw] ml-[calc(50%-50vw)]">
-				<div class="w-full mx-auto px-20">
-
-				{seriesWithPosts.map((series) => (
-					<SeriesCard series={series} />
-				))}
-
-				{seriesWithPosts.length === 0 && (
-					<div class="text-center py-12">
-						<p class="text-syoro/50 text-lg">No series content available yet.</p>
-						<p class="text-syoro/50 mt-2">Check back soon for organized content series!</p>
-					</div>
-				)}
-				</div>
-			</div>
-		</main>
-		<Footer />
-		<!-- Hero overlap is now CSS scroll-driven (see .note-main-wrapper in global.css) -->
-		<CustomCursor />
-	</body>
-</html>
+<IndexLayout
+  title="Series"
+  description="Explore content organized by series and themes."
+  posts={seriesCards}
+  tags={allTags}
+  icon="/icons/series.svg"
+  wideFullRow
+/>

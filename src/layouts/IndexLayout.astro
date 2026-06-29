@@ -14,6 +14,8 @@ interface Props {
   showCollections?: boolean;
   icon?: string;
   showTags?: boolean;
+  // When true, wide cards (essays/series) span the full row instead of 75% at xl+.
+  wideFullRow?: boolean;
 }
 
 const {
@@ -21,6 +23,7 @@ const {
   description,
   posts,
   tags = ['all'],
+  wideFullRow = false,
 } = Astro.props;
 
 const sortedTags = [...tags.filter(tag => tag !== 'all').sort()];
@@ -44,6 +47,7 @@ const sortedTags = [...tags.filter(tag => tag !== 'all').sort()];
       description={description}
       posts={posts}
       sortedTags={sortedTags}
+      wideFullRow={wideFullRow}
     />
     
   </body>
