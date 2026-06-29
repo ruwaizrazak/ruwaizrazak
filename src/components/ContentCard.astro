@@ -71,7 +71,7 @@ const meta = metaParts.join('·');
 
 {isCompact ? (
   /* ===== COMPACT variant (notes): text-only row with dashed bottom border ===== */
-  <div class="group hover:scale-95 transition-all duration-200" transition:name={transitionName}>
+  <div class="group hover:scale-95 transition-transform duration-200 ease-snappy" transition:name={transitionName}>
     <a href={url} class="block p-5 border-b-1 bg-backgroundcolor border-syoro border-opacity-10 border-dashed relative">
       <div class="flex gap-2 py-2 items-center">
         <h5 class="text-sm text-konpeki uppercase font-sans tracking-widest">{label}</h5>
@@ -106,7 +106,7 @@ const meta = metaParts.join('·');
       {/* Content panel */}
       <div class="flex-1 min-w-0 flex flex-col p-5">
         <h5 class="text-sm text-konpeki uppercase font-sans tracking-widest">Series</h5>
-        <h3 class="font-serif text-3xl lg:text-4xl leading-tight text-syoro font-medium">{title}</h3>
+        <h3 class="font-serif text-xl md:text-2xl lg:text-3xl xl:text-4xl leading-tight text-syoro font-medium">{title}</h3>
         {description && <p class="font-serif text-syoro/80 text-lg lg:text-xl">{description}</p>}
 
         {posts.length > 0 && (
@@ -145,7 +145,7 @@ const meta = metaParts.join('·');
           {meta && <p class="text-base font-sans text-syoro/40">{meta}</p>}
           <a
             href={url}
-            class="inline-flex items-center px-6 py-3 rounded-md bg-konpeki text-white hover:opacity-90 font-sans font-medium text-sm transition-opacity"
+            class="inline-flex items-center px-6 py-3 rounded-xl bg-konpeki text-white hover:opacity-90 font-sans font-medium text-sm transition-[transform,opacity] duration-[180ms] ease-snappy active:scale-[0.97]"
           >
             Visit Entire Series
           </a>
@@ -155,7 +155,7 @@ const meta = metaParts.join('·');
   </div>
 ) : isWide ? (
   /* ===== WIDE variant (essays): image left, text right ===== */
-  <div class="group hover:scale-95 transition-all duration-200 py-5" transition:name={transitionName}>
+  <div class="group hover:scale-95 transition-transform duration-200 ease-snappy py-5" transition:name={transitionName}>
     <a href={url} class="bg-syoro/5 rounded-lg border-1 border-card-border shadow-xs group-hover:shadow-none relative flex flex-col md:flex-row overflow-hidden">
       {heroImage && (
         <div class="w-full md:w-1/2 lg:w-2/3 shrink-0 grow-0 overflow-hidden">
@@ -180,7 +180,7 @@ const meta = metaParts.join('·');
   </div>
 ) : (
   /* ===== CARD variant (default / playground): image top, text below ===== */
-  <div class="group rounded-lg overflow-hidden hover:scale-95 transition-all duration-200 py-5" transition:name={transitionName}>
+  <div class="group rounded-lg overflow-hidden hover:scale-95 transition-transform duration-200 ease-snappy py-5" transition:name={transitionName}>
     <a href={url} class="essay-card-link block p-5 bg-syoro/5 rounded-xl border-1 border-card-border shadow-xs group-hover:shadow-none relative">
       {heroImage && (heroImg ? (
         <Image
@@ -216,7 +216,7 @@ const meta = metaParts.join('·');
     mask-image: linear-gradient(to bottom, #000 calc(100% - 1.5rem), transparent);
   }
   .series-row-arrow {
-    transition: transform 200ms ease;
+    transition: transform 200ms var(--ease-snappy);
   }
   .series-post-row:hover .series-row-arrow {
     transform: translateX(3px);

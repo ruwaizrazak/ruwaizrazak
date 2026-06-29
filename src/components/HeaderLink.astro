@@ -17,7 +17,7 @@ const isActive = href === pathname || href === '/' + (subpath?.[0] || '');
     className,
     { active: isActive },
     "motion-safe:hover:scale-[1.02] motion-safe:active:scale-95",
-    "motion-safe:transform-gpu motion-safe:transition-all duration-200"
+    "motion-safe:transform-gpu motion-safe:transition-transform duration-200 ease-snappy"
   ]}
   {...props}>
   <slot />

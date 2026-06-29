@@ -57,7 +57,7 @@ const {
           <!-- Garden Dropdown Button -->
           <button 
             id="desktop-menu-button"
-            class="flex items-center text-xl font-medium text-syoro rounded-full hover:bg-blue-50 dark:hover:bg-syoro/10 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-syoro/20 dark:focus:ring-syoro/20 transition-all uppercase hover:scale-95 px-5">
+            class="flex items-center text-xl font-medium text-syoro rounded-full hover:bg-blue-50 dark:hover:bg-syoro/10 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-syoro/20 dark:focus:ring-syoro/20 transition-[transform,background-color] duration-200 ease-snappy uppercase hover:scale-95 px-5">
             Garden
             <svg  class="ml-2 -mr-1 w-4 h-4 flex-shrink-0 transition-transform duration-200" id="desktop-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
@@ -67,7 +67,7 @@ const {
           {additionalLinks.map((link) => (
             <a 
               href={link.href}
-              class="flex-1 min-w-0 flex items-center justify-center px-5 py-2 text-syoro rounded-full uppercase transition-all hover:bg-blue-50 dark:hover:bg-syoro/10 hover:text-link hover:scale-95 focus:ring-syoro/20 dark:focus:ring-syoro/20">
+              class="flex-1 min-w-0 flex items-center justify-center px-5 py-2 text-syoro rounded-full uppercase transition-[transform,background-color,color] duration-200 ease-snappy hover:bg-blue-50 dark:hover:bg-syoro/10 hover:text-link hover:scale-95 focus:ring-syoro/20 dark:focus:ring-syoro/20">
               <h3 class="font-sans font-medium text-xl flex items-center gap-2">
                 {link.icon && (
                   <span
@@ -88,7 +88,7 @@ const {
           <div class="bg-link rounded-full">
             <button 
               id="about-menu-button"
-              class="flex items-center text-xl font-medium text-white rounded-full hover:bg-syoro/10 dark:hover:bg-syoro/10 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-syoro/20 dark:focus:ring-syoro/20 transition-all uppercase hover:scale-95 px-5 py-2">
+              class="flex items-center text-xl font-medium text-white rounded-full hover:bg-syoro/10 dark:hover:bg-syoro/10 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-syoro/20 dark:focus:ring-syoro/20 transition-[transform,background-color] duration-200 ease-snappy uppercase hover:scale-95 px-5 py-2">
               Work with me
               <span class="text-white">
                 <svg class="ml-2 -mr-1 w-4 h-4 flex-shrink-0 transition-transform duration-200" id="about-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -99,7 +99,7 @@ const {
           </div>
           <div 
             id="about-dropdown" 
-            class="hidden absolute right-0 mt-2 w-56 shadow-lg rounded-xl transform bg-backgroundcolor scale-95 pointer-events-none transition-all duration-200 ease-out border backdrop-blur-md z-50"
+            class="hidden absolute right-0 mt-2 w-56 shadow-lg rounded-xl transform bg-backgroundcolor scale-95 pointer-events-none transition-[transform,opacity] duration-200 ease-snappy border backdrop-blur-md z-50"
           >
             <div>
               <a
@@ -107,7 +107,7 @@ const {
                 target="_blank"
                 rel="noopener noreferrer"
                 data-contact="linkedin"
-                class="p-4 text-xl font-medium text-konpeki hover:bg-blue-50 dark:hover:bg-syoro/10 hover:text-link hover:scale-95 rounded-t-xl flex gap-2 transition-all"
+                class="p-4 text-xl font-medium text-konpeki hover:bg-blue-50 dark:hover:bg-syoro/10 hover:text-link hover:scale-95 rounded-t-xl flex gap-2 transition-[transform,background-color,color] duration-200 ease-snappy"
               >
                 <span class="text-syoro">
                   <svg class="contact-icon w-6 h-6" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -119,10 +119,10 @@ const {
               <a
                 href="mailto:hello@ruwaizrazak.com"
                 data-contact="email"
-                class="group flex gap-2 hover:gap-4 transition-all duration-200 p-4 text-xl font-medium text-konpeki hover:bg-blue-50 dark:hover:bg-syoro/10 hover:text-link hover:scale-95"
+                class="group flex gap-2 hover:gap-4 transition-[transform,background-color,color,gap] duration-200 ease-snappy p-4 text-xl font-medium text-konpeki hover:bg-blue-50 dark:hover:bg-syoro/10 hover:text-link hover:scale-95"
               >
                 <span class="text-syoro flex-shrink-0">
-                  <svg class="contact-icon w-6 h-6 transition-all duration-200" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <svg class="contact-icon w-6 h-6 transition-colors duration-200 ease-snappy" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                     <path class="contact-icon-symbol" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
                 </span>
@@ -133,7 +133,7 @@ const {
                 target="_blank"
                 rel="noopener noreferrer"
                 data-contact="resume"
-                class="flex gap-2 p-4 text-xl font-medium text-konpeki hover:bg-blue-50 dark:hover:bg-syoro/10 hover:text-link hover:scale-95 transition-all rounded-b-xl"
+                class="flex gap-2 p-4 text-xl font-medium text-konpeki hover:bg-blue-50 dark:hover:bg-syoro/10 hover:text-link hover:scale-95 transition-[transform,background-color,color] duration-200 ease-snappy rounded-b-xl"
               >
                 <span class="text-syoro flex-shrink-0">
                   <svg class="contact-icon w-6 h-6" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -167,14 +167,14 @@ const {
   <!-- Desktop Dropdown Menu (md and up) -->
   <div 
     id="desktop-dropdown" 
-    class="hidden md:block absolute my-2 top-full md:w-[60%] lg:w-[50%] right-10 bg-backgroundcolor shadow-lg rounded-xl stransform opacity-0 scale-95 pointer-events-none transition-all duration-200 ease-out border border-card-border backdrop-blur-md z-50"
+    class="hidden md:block absolute my-2 top-full md:w-[60%] lg:w-[50%] right-10 bg-backgroundcolor shadow-lg rounded-xl stransform opacity-0 scale-95 pointer-events-none transition-[transform,opacity] duration-200 ease-snappy border border-card-border backdrop-blur-md z-50"
   >
     <div class="w-[90%] mx-auto py-6">
       <div class="grid grid-cols-2 lg:gap-2 xl:gap-4">
         {menuItems.map((item) => (
           <a 
             href={item.href}
-            class="group p-4 rounded-lg hover:scale-95 hover:border border-card-border ease-in-out transition-all block duration-200 hover:bg-blue-50 dark:hover:bg-syoro/10 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-syoro/20 dark:focus:ring-syoro/20"
+            class="group p-4 rounded-lg hover:scale-95 hover:border border-card-border ease-snappy transition-[transform,background-color,border-color] block duration-200 hover:bg-blue-50 dark:hover:bg-syoro/10 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-syoro/20 dark:focus:ring-syoro/20"
           >
             <div class="flex items-center space-x-4">
               {item.icon && (
@@ -207,13 +207,13 @@ const {
   <!-- Mobile Sidebar Overlay -->
   <div 
     id="mobile-overlay" 
-    class="md:hidden fixed inset-0 backdrop-blur-xs transition-all z-40 hidden duration-300"
+    class="md:hidden fixed inset-0 backdrop-blur-xs transition-opacity z-40 hidden duration-300 ease-snappy"
   ></div>
 
   <!-- Mobile Sidebar -->
   <div 
     id="mobile-sidebar" 
-    class="md:hidden fixed top-0 right-0 h-full w-80 bg-backgroundcolor border border-card-border shadow-xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out overflow-y-auto scroll-auto"
+    class="md:hidden fixed top-0 right-0 h-full w-80 bg-backgroundcolor border border-card-border shadow-xl z-50 transform translate-x-full transition-transform duration-300 ease-drawer overflow-y-auto scroll-auto"
   >
     <div class="flex items-end justify-end p-4 border-b">
       <button 
@@ -231,7 +231,7 @@ const {
       {additionalLinks.map((link) => (
         <a 
           href={link.href}
-          class="flex items-center px-4 py-3 text-konpeki hover:scale-95 hover:text-link transition-colors duration-200 border-b border-gray-100 dark:border-card-border"
+          class="flex items-center px-4 py-3 text-konpeki hover:scale-95 hover:text-link transition-[transform,color] duration-200 ease-snappy border-b border-gray-100 dark:border-card-border"
         >
           {link.icon && (
   <span class="flex-shrink-0 mr-3">
@@ -255,7 +255,7 @@ const {
       
       <!-- Garden Menu Items -->
       <div class="px-4 py-2">
-        <h3 class="text-md font-semibold text-gray-400 uppercase tracking-wider">Garden</h3>
+        <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider">Garden</h3>
       </div>
       {menuItems.map((item) => (
         <a 
@@ -286,7 +286,7 @@ const {
 
       <!-- About / Connect section in mobile -->
       <div class="px-4 py-2">
-        <h3 class="text-md font-semibold text-gray-400 uppercase tracking-wider">Contact</h3>
+        <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider">Contact</h3>
       </div>
       <a
         href="https://www.linkedin.com/in/ruwaizrazak"

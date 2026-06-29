@@ -51,26 +51,12 @@
   --color-cursor: #003535;
   --color-cursor-text: #ffffff;
 
-  --animate-shiver: shiver-animation 0.5s ease-in-out infinite;
-}
-
-@keyframes shiver-animation {
-  0%, 100% {
-    transform: translate(0, 0);
-    box-shadow: none;
-  }
-  25% {
-    transform: translate(-2px, -2px);
-    box-shadow: 4px 4px #00000003;
-  }
-  50% {
-    transform: translate(2px, 2px);
-    box-shadow: -4px -4px #00000003;
-  }
-  75% {
-    transform: translate(-2px, 2px);
-    box-shadow: 4px 4px #00000003;
-  }
+  /* LEARN: Shared easing vocabulary. The built-in CSS easings are too weak —
+     these Emil-style curves have the punch that makes UI feel intentional.
+     Tailwind 4 turns the --ease-* namespace into utilities: ease-snappy, ease-smooth. */
+  --ease-snappy: cubic-bezier(0.23, 1, 0.32, 1);   /* enter/exit, hover, press feedback */
+  --ease-smooth: cubic-bezier(0.77, 0, 0.175, 1);  /* on-screen movement / morphs */
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);   /* iOS-like; used by view transitions */
 }
 
 @layer theme {
@@ -261,7 +247,7 @@ hr {
   z-index: 1;
   white-space: nowrap;
   font-family: var(--font-sans);
-  font-size: 14px;
+  font-size: var(--text-sm);
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -357,10 +343,11 @@ hr {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: opacity 0.2s;
+  transition: opacity 0.2s var(--ease-snappy), transform 0.14s var(--ease-snappy);
   color: var(--color-cursor-text);
 }
 .dot-nav-playpause:hover { opacity: 1; }
+.dot-nav-playpause:active { transform: scale(0.95); }
 
 /* Dot nav arrows */
 .dot-nav-arrow {
@@ -374,11 +361,12 @@ hr {
   color: var(--color-cursor-text);
   border: none;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.2s var(--ease-snappy), transform 0.14s var(--ease-snappy);
 }
 .dot-nav-arrow:hover {
   background: color-mix(in srgb, var(--color-cursor-text) 50%, transparent);
 }
+.dot-nav-arrow:active { transform: scale(0.95); }
 
 /* Dot nav dots container */
 .dot-nav-dots {
