@@ -26,13 +26,13 @@ const heroImg = resolveImage(heroImage);
     )}
   </div>
   <div class="flex flex-col gap-1 mt-4">
-    <h3 class="text-lg font-sans text-syoro dark:text-white uppercase leading-snug group-hover:text-konpeki transition-colors">
+    <h3 class="text-syoro font-serif text-xl md:text-2xl lg:text-3xl xl:text-4xl leading-snug group-hover:text-konpeki transition-colors ">
       {title}
     </h3>
     {role && (
-      <p class="text-lg font-sans text-syoro/60 dark:text-white/40 uppercase">{role}</p>
+      <p class="text-lg md:text-xl lg:text-xl xl:text-2xl font-sans text-syoro/60 dark:text-white/40 uppercase">{role}</p>
     )}
-    <p class="text-base font-sans font-semibold text-syoro/40 dark:text-white/30 uppercase tracking-wide">
+    <p class="text-syoro/60 font-sans text-base md:text-lg uppercase tracking-wide font-semibold dark:text-white/30">
       {company} · {duration}
     </p>
   </div>
