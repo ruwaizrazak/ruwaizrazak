@@ -11,6 +11,7 @@ import { proseClasses } from '../utils/proseClasses';
 import GardenPreview from '../components/GardenPreview.astro';
 import PageHero from '../components/PageHero.astro';
 import { getPublishedAndSorted } from '../utils/collections';
+import { pageType } from '../styles/typography';
 
 // LEARN: Homepage garden strip is essays-only; notes stay on /garden
 const gardenPosts = (await getPublishedAndSorted('essays')).slice(0, 3);
@@ -93,7 +94,7 @@ const experience = [
 		<!-- Hero content: fades out on scroll -->
 		<div id="note-hero-content" class="flex flex-col md:flex-row px-10 md:px-12 lg:px-20 justify-between items-start md:items-center">
 			<div class="flex flex-col gap-10 py-10 my-5 md:py-20 lg:py-30">
-				<h1 class:list={["font-sans text-5xl sm:text-6xl md:text-7xl lg:text-9xl font-medium text-syoro md:leading-16 lg:leading-26 -tracking-wider mb-5 w-full md:max-w-[12ch] -ml-2"]}>
+				<h1 class:list={[pageType.header, "text-syoro mb-5 w-full md:max-w-[12ch] -ml-2"]}>
 					Hi, I'm Ruwaiz.
 				  </h1>
 			<div class="note-layout flex relative w-full max-w-8xl py-10 -mt-20 mb-10">
@@ -119,7 +120,7 @@ const experience = [
 
 		<!-- Work Experience — sticky stacking cards -->
 		<section class="py-5 md:py-10">
-			<h2 class="text-xl font-sans font-semibold text-syoro dark:text-white/60 uppercase tracking-widest md:col-span-2">
+			<h2 class={`${pageType.sectionLabel} text-syoro dark:text-white/60 md:col-span-2`}>
 				Work Experience
 			</h2>
 			<StickyExperience entries={experience} />
@@ -149,7 +150,7 @@ const experience = [
 
 		<!-- Selected Projects -->
 		<section class="py-14 md:py-20 mb-16">
-			<h2 class="text-xl font-sans font-semibold text-syoro dark:text-white/60 uppercase tracking-widest md:col-span-2">
+			<h2 class={`${pageType.sectionLabel} text-syoro dark:text-white/60 md:col-span-2`}>
 				Selected Projects
 			</h2>
 			<p class="text-lg md:text-xl font-serif text-syoro/70 dark:text-white/50 leading-relaxed mb-8">

@@ -1,6 +1,7 @@
 ---
 import ContentCard from './ContentCard.astro';
 import Button from './Button.astro';
+import { pageType } from '../styles/typography';
 
 interface Props {
   posts: any[];
@@ -14,7 +15,7 @@ const essays = posts.filter((post) => post.collection === 'essays');
 <section class="my-20 md:my-30">
   <div class="flex flex-col md:flex-row items-start md:items-center justify-between mb-8">
     <div class="flex flex-col gap-2 w-[80%]">
-      <h2 class="text-xl font-sans font-semibold text-syoro dark:text-white/60 uppercase tracking-widest md:col-span-2">
+      <h2 class={`${pageType.sectionLabel} text-syoro dark:text-white/60 md:col-span-2`}>
         From the Garden
       </h2>
       <p class="font-serif text-syoro dark:text-white/60 border-syoro w-full md:w-3/4">Writing is an essential part of my process and learning. Here are some of my latest essays and you can find more in the garden.</p>

@@ -3,6 +3,7 @@ import { Picture } from 'astro:assets';
 import { getMaturityIcon } from '../utils/maturityIcons';
 import { resolveImage } from '../utils/resolveImage';
 import PageHero from './PageHero.astro';
+import { pageType } from '../styles/typography';
 
 
 interface Props {
@@ -36,7 +37,7 @@ const formattedUpdatedDate = updatedDate?.toLocaleDateString('en-us', {
 
 <PageHero title={title} description={description} titleClass="p-name" descriptionClass="p-summary" class="justify-start mb-10">
   <!-- Metadata row -->
-  <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-lg font-sans uppercase text-syoro/60 mb-4 mt-10">
+  <div class={`${pageType.date} flex flex-wrap items-center gap-x-4 gap-y-1 text-syoro/60 mb-4 mt-10`}>
     {maturityIcon && (
       <div class="flex items-center gap-1.5">
         <img src={maturityIcon} class="w-4 opacity-60" alt="" />

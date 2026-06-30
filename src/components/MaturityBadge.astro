@@ -3,6 +3,7 @@
 
 import type { Maturity } from '../types';
 import { getMaturityIcon } from '../utils/maturityIcons';
+import { cardType } from '../styles/typography';
 
 interface Props {
   maturity: Maturity;
@@ -10,7 +11,7 @@ interface Props {
   textClass?: string;
 }
 
-const { maturity, iconClass = 'w-4 h-4', textClass = 'text-base font-sans uppercase tracking-wide text-syoro/50' } = Astro.props;
+const { maturity, iconClass = 'w-4 h-4', textClass = `${cardType.meta} text-syoro/50` } = Astro.props;
 const maturityIcon = getMaturityIcon(maturity);
 ---
 

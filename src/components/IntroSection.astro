@@ -1,10 +1,11 @@
 ---
 import Link from './mdxComponents/Link.astro';
+import { pageType } from '../styles/typography';
 ---
 
 <section id="Intro-text" class="w-full sm:w-3/4 md:w-3/4 xl:w-[50%] font-serif my-30 text-syoro">
-  <p class="index-intro text-2xl md:text-3xl lg:text-4xl mt-6 max-w-4xl lg:max-w-5xl  mb-2 text-syoro/80 font-sans" >Senior UX Designer at <Link href="https://nordeus.com/" class="text-link">Nordeus.</Link></p>
-  <p class="index-intro font-serif text-2xl md:text-3xl lg:text-4xl mt-6 max-w-4xl lg:max-w-5xl text-syoro ">Designs and optimize systems that improve onboarding, retention, and longterm user motivation</p>
+  <p class={`index-intro ${pageType.description} font-sans mt-6 max-w-4xl lg:max-w-5xl mb-2 text-syoro/80`}>Senior UX Designer at <Link href="https://nordeus.com/" class="text-link">Nordeus.</Link></p>
+  <p class={`index-intro ${pageType.description} mt-6 max-w-4xl lg:max-w-5xl text-syoro`}>Designs and optimize systems that improve onboarding, retention, and longterm user motivation</p>
 </section>
 
 <style>
