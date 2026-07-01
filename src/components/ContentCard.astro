@@ -115,8 +115,14 @@ const meta = metaParts.join('·');
           <>
             <h4 class={`${cardType.meta} text-syoro mt-6 mb-3`}>Posts in this series</h4>
             {/* LEARN: native scroll + a CSS mask fades the last row at the bottom
-                edge, signalling "more below" without any JS. */}
-            <ul class="series-post-list flex-1 min-h-0 overflow-y-auto flex flex-col gap-2 pr-1">
+                edge, signalling "more below" without any JS.
+                Mobile: `max-h-[50vh]` gives the list a bounded height so it can
+                overflow-scroll on its own (the card's fixed height is desktop-only
+                via `md:h-[34rem]`, so mobile has no bound otherwise). `md:max-h-none`
+                hands control back to `flex-1 min-h-0` on desktop — no regression.
+                `overscroll-contain` stops the list's scroll from chaining to the
+                page, so it scrolls separately under touch. */}
+            <ul class="series-post-list flex-1 min-h-0 max-h-[50vh] md:max-h-none overscroll-contain overflow-y-auto flex flex-col gap-2 pr-1">
               {posts.map((post) => (
                 <li>
                   <a
@@ -173,7 +179,7 @@ const meta = metaParts.join('·');
           <h3 class={`${cardType.title} text-syoro group-hover:text-link mb-4`}>{title}</h3>
           {description && <p class={`${cardType.description} text-syoro/90 mb-4`}>{description}</p>}
         </div>
-        <div class={`${cardType.date} text-syoro flex items-center gap-2`}>
+        <div class={`${cardType.date} text-syoro/40 flex items-center gap-2`}>
           {formattedDate}
           {maturity && <MaturityBadge maturity={maturity} />}
         </div>
