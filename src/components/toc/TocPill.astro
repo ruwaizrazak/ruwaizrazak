@@ -13,23 +13,42 @@
 // Hidden by default; initTOC() removes [hidden] only if the article has headings.
 ---
 
-<!-- LEARN: dual-layer shadow folded into Tailwind arbitrary values. Light mode
-     gets a white-tinted ambient glow against the dark pill; dark mode flips
-     to a black-tinted glow against the light pill. Underscores replace spaces
-     per Tailwind v4 arbitrary-value syntax. -->
+<!-- LEARN: the pill splits into TWO layers to dodge two iOS Safari WebKit bugs
+     that both stem from putting `backdrop-filter` on this container:
+       1. Hit-testing breaks on/inside a position:fixed element carrying
+          backdrop-filter — the toggle button eats taps but never fires, so
+          the pill reads as "not expandable" on iPhone.
+       2. backdrop-filter + overflow-hidden + border-radius fails to clip the
+          blur to the rounded corners, so the pill renders with square corners.
+     Fix: the interactive container stays backdrop-filter-FREE (so taps reach
+     the button and its own border-radius/overflow clip the panel normally),
+     and a non-interactive [data-toc-bg] layer behind the content owns the
+     blur + tint + shadow. Taps never touch a backdrop-filter surface. -->
 <div
   data-toc-pill
   hidden
   class="group fixed bottom-6 left-1/2 -translate-x-1/2 z-50
          flex flex-col items-stretch
-         bg-black/85 text-white dark:bg-white/85 dark:text-black backdrop-blur-md
-         rounded-full ring-1 ring-white/10 dark:ring-black/10
+         text-white dark:text-black
+         ring-1 ring-white/10 dark:ring-black/10
          overflow-hidden
          max-w-[calc(100vw-1.5rem)]
          shadow-[0_8px_32px_rgb(0_0_0_/_0.35),0_0_40px_rgb(255_255_255_/_0.05)]
          dark:shadow-[0_8px_32px_rgb(0_0_0_/_0.45),0_0_40px_rgb(0_0_0_/_0.08)]"
   style="width: var(--toc-w-compact);"
 >
+  <!-- LEARN: backdrop layer — absolutely positioned behind the content and
+       pointer-events-none so it's off the tap path. `border-radius: inherit`
+       tracks the container's GSAP-animated radius (9999px ↔ 16px) with no JS.
+       Only the blur + tint live here; the shadow stays on the container so the
+       container's own overflow-hidden doesn't clip it (a parent clips a
+       child's box-shadow, but never its own). -->
+  <div
+    data-toc-bg
+    aria-hidden="true"
+    class="absolute inset-0 -z-10 pointer-events-none
+           bg-black/85 dark:bg-white/85 backdrop-blur-md"
+  ></div>
   <!-- Expanded panel — script GSAP-animates height/opacity (order-first stacks it above the toggle button in flex layout). The "On this page" title now lives in the toggle bar when expanded, so the panel is just the heading list bracketed by gradient lines. -->
   <nav
     data-toc-panel
@@ -126,6 +145,20 @@
     --toc-w-compact: 14rem;
     --toc-w-expanded: 22rem;
     --toc-fg-rgb: 255 255 255;
+    /* LEARN: explicit finite radius instead of Tailwind `rounded-full`
+       (= calc(infinity * 1px)), which iOS Safari can drop → 0 → square
+       corners on first paint / reduce-motion before GSAP's set runs. GSAP
+       still animates this inline (9999px ↔ 16px) on open/close. */
+    border-radius: 9999px;
+  }
+
+  /* LEARN: backdrop layer inherits the container's animated radius, and the
+     -webkit-mask forces iOS Safari to actually clip the backdrop-filter to
+     those rounded corners (the classic overflow-hidden + border-radius +
+     backdrop-filter clip bug). Harmless no-op on browsers that already clip. */
+  [data-toc-bg] {
+    border-radius: inherit;
+    -webkit-mask-image: -webkit-radial-gradient(white, black);
   }
   :where(.dark) [data-toc-pill] {
     --toc-fg-rgb: 0 0 0;
