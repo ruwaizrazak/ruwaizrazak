@@ -1,0 +1,30 @@
+---
+title: "Where the Prototype Breaks"
+description: "Why traditional design tools fall short for game interaction, and the resource wall that kept the real fix out of reach."
+pubDate: 2026-07-03
+tags: ["prototyping", "design", "ai"]
+publish: true
+maturity: "seed"
+seriesOrder: 1
+excerpt: "A Figma artifact can show you how a pass works. It can never show you a pass made while your player is pinned against the touchline with a second to spare."
+---
+
+import Link from '../../../components/mdxComponents/Link.astro';
+
+I've never trusted my prototypes when it came to game interaction.
+
+They look fine. They click. You can hand one to someone and they'll nod and move the mouse where you expected them to. But playing a game isn't clicking where you expected. It's pressure, intensity, the half-second where your thumb is already moving before your brain has caught up. No design tool I've used has been able to put that on the screen.
+
+Take a passing mechanism in a football game. A Figma artifact can show you how the pass works, the arc, the receiver highlight, the button mapping. What it can't show you is what happens when the user's player is cornered tight against the touchline and the pass has to come out anyway. That second one is the whole thing. That's the interaction. The first one is just a diagram of it.
+
+I kept running into this. Different games, same wall. I went through Origami, Principle, Protopie, Invision, Sketch, Figma, and each time I came out the other side with the same conclusion: the only place this interaction actually lives is inside the codebase. Test it there or you're not really testing it.
+
+Which would be fine, except testing inside the codebase meant pulling a frontend developer onto a prototype. And getting a resource allocated just to prototype is hard. In production terms it's a tough ask, you're spending engineering time on something that might not ship, to answer a question that's hard to articulate until you can feel it.
+
+So it stayed there. For a long time.
+
+I did try to climb the wall myself. I picked up some Unity, got far enough to build and ship prefabs. But I could never figure out how to embed those prefabs into an active codebase and turn them into something I could actually prototype against. The prefab existed. The game existed. I couldn't get them to talk to each other in a way that let me test the thing I cared about. [? — I kept this close to how you wrote it. If there's a sharper memory of *where* it broke, that detail would land hard here.]
+
+That's where it sat. A problem I knew the shape of, a fix I could see, and no way to reach it on my own.
+
+In the next part, something changed that, and it wasn't a new design tool.

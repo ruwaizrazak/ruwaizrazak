@@ -1,0 +1,52 @@
+---
+title: "Breaking It Down Before AI Builds It Up"
+description: "The method: think the task through like you're building it yourself, then hand AI the pieces, not the whole."
+pubDate: 2026-01-01
+tags: ["prototyping", "design", "ai", "swift"]
+publish: true
+maturity: "seed"
+seriesOrder: 4
+excerpt: "I don't ask AI to build me a screen with two drawers. I ask myself the questions first. The screen is the last thing that happens, not the first."
+---
+
+import Link from '../../../components/mdxComponents/Link.astro';
+
+Here's the part I care about most, and it's the part that has nothing to do with the stack.
+
+The temptation with AI is to describe the end and let it fill the middle. Build me a screen with two drawers, one for subs, one for reserves. It'll do it. And you'll get something that looks like a prototype and teaches you nothing, because you skipped the thinking that the prototype was supposed to surface.
+
+So I don't start there. I start the way I'd start if I were building it by hand. I write the task out for myself first, plainly, until I actually understand it. Then I break it into pieces.
+
+Let me use a worked example. Say the task is a training system in EA FC Mobile, where users merge multiple players into one to train a squad player. (Disclaimer: I haven't worked on EA FC, this system already exists in the build, I'm just reverse engineering it to show the method. Pretend we built it my way.)
+
+Before any screen, I ask questions:
+
+1. How many players can a user have?
+2. Which players are available to merge? Can they pull from substitutes too, or only reserves?
+3. What's the maximum number of players you can merge at once?
+
+Say the hypothetical answers come back as:
+
+1. A lot. Let's say 1,200. (I got this number off a Reddit thread, so, grain of salt.)
+2. Only reserves.
+3. As many as they can, because users should be able to do this fast.
+
+Now I have constraints, and constraints are what turn a vague "build me a screen" into something I can actually break down into tasks:
+
+1. User sees all their players on a screen. Probably a list.
+2. User taps the player they want to train.
+3. That takes them to a player profile.
+4. User taps the Training CTA.
+5. User sees a list of available players to merge.
+6. As they select each one, they see the training player's stats update in real time.
+7. They can multi-select players through some interaction.
+8. When they hit the max, a feedback fires.
+9. They tap train, and see a confirmation animation on the player.
+
+Notice what happened. By the time AI builds anything, the hard part is done. The thinking is done. AI is filling in known steps, not inventing the shape of the thing. That's the difference between a prototype you can defend and a screen you can't explain.
+
+This is also where the real-time stat update earns its place, step six. That's the beat you could never feel in a static artifact. Watching the numbers move as you select is the interaction. Everything else is plumbing.
+
+I'm going to stop short of the solution here, because the point was never the training system. It was the method around it. Assume we discovered the solution.
+
+What I'm still chewing on is the other door, the one I didn't take. Prototyping inside the actual codebase, flags and all. That's the harder version of this, and I haven't solved it yet. Maybe that's where this series goes next.

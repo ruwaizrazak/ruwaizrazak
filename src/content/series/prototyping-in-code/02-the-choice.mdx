@@ -1,0 +1,35 @@
+---
+title: "Two Doors, and the One I Took"
+description: "AI lowered the barrier to prototyping in code. Then came the harder question: in the codebase, or beside it?"
+pubDate: 2026-07-03
+tags: ["prototyping", "design", "ai"]
+publish: true
+maturity: "seed"
+seriesOrder: 2
+excerpt: "It solves for half. Maybe less, maybe more, depending on where your product is in its life. But half a wall climbed is still half a wall."
+---
+
+import Link from '../../../components/mdxComponents/Link.astro';
+
+I left off stuck. A fix I could see, no way to reach it.
+
+Then AI lowered the requirement for getting into programming, and the thing I'd parked for years came back to life. I should be clear about what that did and didn't mean for me. I'm not new to this. I've been doing basic web development for twelve years and I'm a computer science engineering graduate. So it wasn't AI handing me programming from nothing. It was AI clearing the friction off a road I already knew how to walk. That's a different thing. (<Link href="/notes/aitoolsascreativepartners">I've written about how I use these tools as partners, not magicians</Link>, and the same applies here.)
+
+With the friction gone, I had two doors in front of me.
+
+One: build the prototype inside the codebase.
+Two: build it as a separate system, outside the codebase.
+
+Door one is tempting because it's the real thing. But prototyping inside a live codebase means setting flags everywhere, guarding against shipping or exposing something you didn't mean to. It's careful work. It's the kind of careful that slows you down right when you want to be moving fast and breaking things to learn.
+
+So in my case the decision was easy. I went with door two. Separate system, outside the codebase.
+
+But door two isn't a path paved with roses either. Its biggest thorn is this: you can't prototype inside the gameplay, because the gameplay is the big chunk of the actual game, and you've just stepped outside it. So what does this approach actually solve for? The meta. The pieces around the game.
+
+Take FC 26. With a separate system you won't prototype an interaction that happens inside a match. But you can build interaction systems for SBC, Squad Management, Transfers, all the meta surfaces. Which means this approach isn't solving for everything I set out to solve. It's solving for maybe 50%.
+
+And here's the part I keep having to be honest about. That 50% isn't fixed. Depending on where your product sits in its lifecycle and what kind of product it is, your meta might be a small slice or it might be most of what users touch. The number moves. Mine happened to land around half.
+
+Half a problem solved isn't nothing. It's the half I could reach.
+
+Next, the stack, and why the winner surprised me a little.
