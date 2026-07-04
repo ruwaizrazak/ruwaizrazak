@@ -3,9 +3,15 @@
 // Run with: npm run webmentions
 
 import fs from "fs";
-import lodash from "lodash";
 import dotenv from "dotenv";
 dotenv.config();
+
+// LEARN: replaces lodash.unionBy — importing all of lodash (~25KB) for one function is wasteful.
+// Keeps items from `primary`, then appends items from `secondary` whose key isn't already present.
+const unionBy = (primary, secondary, key) => {
+  const seen = new Set(primary.map((i) => i[key]));
+  return [...primary, ...secondary.filter((i) => !seen.has(i[key]))];
+};
 
 const CACHE_FILE = "src/data/webmentions.json";
 const DOMAIN = "ruwaizrazak.com";
@@ -76,8 +82,8 @@ async function run() {
   const cache = readFromCache();
   const feed = await fetchWebmentions(cache.lastFetched);
 
-  // LEARN: lodash.unionBy deduplicates by wm-id when merging cached + fresh mentions
-  const merged = lodash.unionBy(feed.children, cache.children, "wm-id");
+  // Deduplicate by wm-id when merging cached + fresh mentions
+  const merged = unionBy(feed.children, cache.children, "wm-id");
 
   writeToCache({
     lastFetched: new Date().toISOString(),
