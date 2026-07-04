@@ -15,9 +15,10 @@ type LayoutProps = CollectionEntry<'notes'>['data'] & {
   collection?: string;
   transitionName?: string;
   seriesPosts?: any[];
+  seriesTitle?: string;
 };
 
-const { title, description, pubDate, updatedDate, heroImage, tags = [], maturity, collection, transitionName, seriesPosts } = Astro.props as LayoutProps;
+const { title, description, pubDate, updatedDate, heroImage, tags = [], maturity, collection, transitionName, seriesPosts, seriesTitle } = Astro.props as LayoutProps;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site).href;
 
 // LEARN: Derive the OG image URL from the current page path so it always
@@ -97,7 +98,7 @@ const blogPostingSchema = {
         </NoteMain>
         <Webmentions url={canonicalURL} />
         <!-- Related notes carousel -->
-        <RelatedNotes currentTags={tags} currentTitle={title} seriesPosts={seriesPosts} />
+        <RelatedNotes currentTags={tags} currentTitle={title} seriesPosts={seriesPosts} seriesTitle={seriesTitle} />
       </div>
     </main>
     <CustomCursor />
