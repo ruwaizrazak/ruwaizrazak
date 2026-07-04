@@ -27,7 +27,7 @@
 <div
   data-toc-pill
   hidden
-  class="group fixed bottom-6 left-1/2 -translate-x-1/2 z-50
+  class="group fixed bottom-6 inset-x-0 mx-auto z-50
          flex flex-col items-stretch
          text-white dark:text-black
          ring-1 ring-white/10 dark:ring-black/10
@@ -144,6 +144,9 @@
    * --toc-fg-rgb is a foreground RGB triplet (no alpha) used by the active-row
    * pulse animation. Flipping it with .dark keeps the pulse on-theme.
    */
+  /* LEARN: margin-inline auto + inset-x-0 centers reliably in Safari.
+     Avoid left:50% + translateX(-50%) — WebKit can miscompute fixed positioning
+     when scale animations run on the same element. Width is explicit below. */
   [data-toc-pill] {
     --toc-w-compact: 14rem;
     --toc-w-expanded: 22rem;
@@ -203,11 +206,8 @@
   }
 
   /* LEARN: scale "breathe" on open (squash-and-stretch lite). Animates the
-     individual `scale` property — NOT `transform` — because Tailwind v4 centers
-     the pill via the separate `translate` property (translate: -50%). Using
-     `transform: translateX(-50%)` here would STACK on top of that translate and
-     shove the pill a full width left mid-animation, then snap back on end.
-     Animating `scale` alone leaves the centering untouched. Gated to motion-safe. */
+     individual `scale` property — NOT `transform` — so centering via margin
+     auto stays untouched during the morph. Gated to motion-safe. */
   @media (prefers-reduced-motion: no-preference) {
     [data-toc-pill][data-expanded] {
       animation: toc-breathe 420ms cubic-bezier(0.34, 1.4, 0.64, 1);
