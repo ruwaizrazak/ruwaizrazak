@@ -164,21 +164,6 @@ hr {
   border-top: 1px solid rgb(var(--gray-light));
 }
 
-.gradientbg{
-  background: linear-gradient(103.32deg, #1E1E1E 5.7%, #324084 106.34%);
-}
-.path-animation {
-  stroke-dasharray: 6000;
-  stroke-dashoffset: 6000;
-  animation: draw 5s ease-in-out forwards 0.5s;
-}
-
-@keyframes draw {
-  to {
-    stroke-dashoffset: 0;
-  }
-}
-
 @media (max-width: 720px) {
   body {
     font-size: 18px;
@@ -254,47 +239,6 @@ hr {
   color: var(--color-cursor-text);
   opacity: 0;
   pointer-events: none;
-}
-
-/* Dot nav morph: collapsed circle → expanded pill */
-#carousel-nav {
-  max-width: 40px;
-  padding: 0.5rem;
-  overflow: hidden;
-  transition: max-width 0.5s cubic-bezier(0.25, 0.1, 0.25, 1),
-              padding 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
-}
-#carousel-nav.dots-visible {
-  max-width: 300px;
-  padding: 1rem;
-}
-
-/* Carousel track transition */
-#carousel-track {
-  transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
-}
-
-/* Each slide: responsive width (mobile-first) */
-.carousel-slide {
-  width: 85%;          /* sm default: 1 card + peek */
-  padding: 0 0.75rem;
-}
-@media (min-width: 768px) {
-  .carousel-slide { width: 50%; }
-}
-@media (min-width: 1024px) {
-  .carousel-slide { width: 33.333%; }
-}
-
-/* Card within slide — inactive dimmed, active full */
-.carousel-slide .work-card {
-  transition: opacity 0.4s ease, transform 0.4s ease;
-  opacity: 0.4;
-  transform: scale(0.95);
-}
-.carousel-slide.active-group .work-card {
-  opacity: 1;
-  transform: scale(1);
 }
 
 /* ---------------------------------------------------------------------------

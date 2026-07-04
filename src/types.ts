@@ -55,14 +55,3 @@ export interface WebMentionCache {
   lastFetched: string | null;
   children: WebMention[];
 }
-
-export interface SocialLinkData {
-  href: string;
-  label: string;
-  rel?: string;
-  class?: string;
-  diamondPath: string;
-  symbolPath: string;
-  symbolFill?: 'stroke' | 'fill';
-  symbolStrokeAttrs?: string;
-}

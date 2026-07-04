@@ -35,7 +35,6 @@
          max-w-[calc(100vw-1.5rem)]
          shadow-[0_8px_32px_rgb(0_0_0_/_0.35),0_0_40px_rgb(255_255_255_/_0.05)]
          dark:shadow-[0_8px_32px_rgb(0_0_0_/_0.45),0_0_40px_rgb(0_0_0_/_0.08)]"
-  style="width: var(--toc-w-compact);"
 >
   <!-- LEARN: backdrop layer — absolutely positioned behind the content and
        pointer-events-none so it's off the tap path. `border-radius: inherit`
@@ -49,14 +48,19 @@
     class="absolute inset-0 -z-10 pointer-events-none
            bg-black/85 dark:bg-white/85 backdrop-blur-md"
   ></div>
-  <!-- Expanded panel — script GSAP-animates height/opacity (order-first stacks it above the toggle button in flex layout). The "On this page" title now lives in the toggle bar when expanded, so the panel is just the heading list bracketed by gradient lines. -->
+  <!-- Expanded panel — CSS animates open/close via the grid-template-rows 0fr→1fr
+       trick keyed off [data-expanded] (no JS). order-first stacks it above the
+       toggle button in flex layout. The "On this page" title lives in the toggle
+       bar when expanded, so the panel is just the heading list bracketed by
+       gradient lines. The inner wrapper is overflow-hidden + min-h-0 so it clips
+       to the collapsing grid row. -->
   <nav
     data-toc-panel
     id="toc-panel"
     aria-label="Table of contents"
     aria-hidden="true"
-    class="hidden order-first">
-    <div class="relative">
+    class="order-first">
+    <div class="relative overflow-hidden min-h-0">
       <!-- gradient line top -->
       <div
         aria-hidden="true"
@@ -133,34 +137,86 @@
 
 <style>
   /*
-   * LEARN: responsive width custom properties — toc.ts reads these at animation
-   * time via getComputedStyle, so resizing across breakpoints picks up new
-   * values on the next open/close without a JS resize listener.
+   * LEARN: responsive width custom properties — CSS transitions the pill
+   * directly between --toc-w-compact and --toc-w-expanded (see [data-expanded]
+   * below), so resizing across breakpoints is picked up with no JS.
    *
    * --toc-fg-rgb is a foreground RGB triplet (no alpha) used by the active-row
-   * pulse animation in toc.ts. Flipping it with .dark keeps the pulse on-theme
-   * without any JS branching.
+   * pulse animation. Flipping it with .dark keeps the pulse on-theme.
    */
   [data-toc-pill] {
     --toc-w-compact: 14rem;
     --toc-w-expanded: 22rem;
     --toc-fg-rgb: 255 255 255;
+    /* Width lives in CSS (not an inline style) so [data-expanded] can
+       transition it. */
+    width: var(--toc-w-compact);
     /* LEARN: explicit finite radius instead of Tailwind `rounded-full`
        (= calc(infinity * 1px)), which iOS Safari can drop → 0 → square
-       corners on first paint / reduce-motion before GSAP's set runs. GSAP
-       still animates this inline (9999px ↔ 16px) on open/close. */
+       corners on first paint. CSS animates it to 16px on open (below). */
     border-radius: 9999px;
-    /* LEARN: fade the pill in/out as the note body enters/leaves the viewport
-       (toggled via [data-toc-offscreen] by the IntersectionObserver in toc.ts).
-       Only opacity is transitioned here — GSAP owns width/transform/border-radius
-       inline during the morph, so touching transform would fight it. */
-    transition: opacity 250ms ease;
+    /* LEARN: the open/close morph is pure CSS now — width springs (slight
+       overshoot ease so the Dynamic-Island feel survives), radius + opacity
+       smooth. No JS/GSAP touches this element, so an interrupted toggle can
+       never strand it mid-morph. */
+    transition:
+      width 420ms cubic-bezier(0.34, 1.4, 0.64, 1),
+      border-radius 360ms cubic-bezier(0.23, 1, 0.32, 1),
+      opacity 250ms ease;
   }
   /* Pill hidden once the reader reaches the related-notes section. pointer-events
      off so the invisible pill never intercepts taps over related notes/footer. */
   [data-toc-pill][data-toc-offscreen] {
     opacity: 0;
     pointer-events: none;
+  }
+
+  /* --- CSS open/close morph (driven by the [data-expanded] attribute) ------ */
+  [data-toc-pill][data-expanded] {
+    width: var(--toc-w-expanded);
+    border-radius: 16px;
+  }
+
+  /* LEARN: panel open/close via the grid-template-rows 0fr → 1fr trick — the
+     panel is a grid whose single child (the overflow-hidden .relative wrapper)
+     collapses to zero height when the row is 0fr. Animates to the content's
+     natural height with no JS measuring. */
+  [data-toc-panel] {
+    display: grid;
+    grid-template-rows: 0fr;
+    opacity: 0;
+    transition:
+      grid-template-rows 380ms cubic-bezier(0.23, 1, 0.32, 1),
+      opacity 260ms ease;
+  }
+  [data-toc-pill][data-expanded] [data-toc-panel] {
+    grid-template-rows: 1fr;
+    opacity: 1;
+  }
+
+  /* Chevron flips when open. */
+  [data-toc-chevron] {
+    transition: transform 360ms cubic-bezier(0.23, 1, 0.32, 1);
+  }
+  [data-toc-pill][data-expanded] [data-toc-chevron] {
+    transform: rotate(180deg);
+  }
+
+  /* LEARN: scale "breathe" on open (squash-and-stretch lite). Animates the
+     individual `scale` property — NOT `transform` — because Tailwind v4 centers
+     the pill via the separate `translate` property (translate: -50%). Using
+     `transform: translateX(-50%)` here would STACK on top of that translate and
+     shove the pill a full width left mid-animation, then snap back on end.
+     Animating `scale` alone leaves the centering untouched. Gated to motion-safe. */
+  @media (prefers-reduced-motion: no-preference) {
+    [data-toc-pill][data-expanded] {
+      animation: toc-breathe 420ms cubic-bezier(0.34, 1.4, 0.64, 1);
+    }
+  }
+  @keyframes toc-breathe {
+    0%   { scale: 1; }
+    40%  { scale: 1.02; }
+    100% { scale: 1; }
   }
 
   /* LEARN: backdrop layer inherits the container's animated radius, and the

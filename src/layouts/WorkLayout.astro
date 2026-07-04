@@ -119,20 +119,11 @@ const workTransitionStyle = transitionName
 
 <!-- Hero scroll height + blur effect (see work-hero-scroll.ts) -->
 <script>
-  import { initHeroScrollHeight } from '../scripts/work-hero-scroll';
-
-  function runIfWorkPage() {
-    if (window.location.pathname.startsWith('/works/')) {
-      initHeroScrollHeight();
-    }
-  }
-
-  document.addEventListener('astro:page-load', runIfWorkPage);
-  if (document.readyState === 'complete') {
-    runIfWorkPage();
-  } else {
-    window.addEventListener('load', runIfWorkPage);
-  }
+  // Path-gated init extracted to src/scripts/ per CLAUDE.md; initOnLoad replaces the
+  // hand-rolled astro:page-load + load listeners.
+  import { initOnLoad } from '../utils/initOnLoad';
+  import { initWorkHero } from '../scripts/workHeroInit';
+  initOnLoad(initWorkHero);
 </script>
 
 <!-- "Other works" overlap is now CSS scroll-driven (see .other-works-overlap in global.css) -->
