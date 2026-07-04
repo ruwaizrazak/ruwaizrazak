@@ -32,10 +32,6 @@ const { post } = Astro.props;
   </h2>
   <p class={`${cardType.description} text-syoro/90 mb-4`}>{post.data.description}</p>
 
-  {post.data.excerpt && (
-    <p class={`${cardType.description} text-syoro/70 italic mb-4`}>"{post.data.excerpt}..."</p>
-  )}
-
   {post.data.tags.length > 0 && (
     <div class="flex flex-wrap items-center gap-2 mb-2">
       {post.data.tags.map((tag: string) => (

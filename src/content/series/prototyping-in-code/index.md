@@ -1,7 +1,7 @@
 ---
 title: "Prototyping in Code"
 description: "Revisiting UX handoffs in the age of AI"
-featuredImage: "https://i.imgur.com/cvTxnRd.jpeg"
+featuredImage: "https://i.imgur.com/ZFYbVMI.jpeg"
 startedDate: 2026-07-03
 lastUpdated: 2026-07-03
 publish: true

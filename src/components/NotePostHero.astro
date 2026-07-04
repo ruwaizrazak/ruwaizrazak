@@ -74,14 +74,14 @@ const formattedUpdatedDate = updatedDate?.toLocaleDateString('en-us', {
       formats={['avif', 'webp']}
       fallbackFormat="webp"
       alt=""
-      class="w-screen mt-12 rounded mx-auto"
+      class="w-screen mt-12 rounded mx-auto aspect-video"
       loading="eager"
     />
   ) : (
     <img
       src={heroImage}
       alt=""
-      class="w-screen mt-12 rounded mx-auto"
+      class="w-screen mt-12 rounded mx-auto h-60"
       loading="eager"
     />
   ))}

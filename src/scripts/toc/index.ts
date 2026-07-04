@@ -39,6 +39,9 @@ let wired = false;
 let morphCtrl: MorphController | null = null;
 let odometer: Odometer | null = null;
 let scrollSpy: ScrollSpy | null = null;
+// Watches the "related notes" section so the pill fades out once the reader
+// reaches it — the TOC isn't relevant beyond the note body.
+let visibilityObserver: IntersectionObserver | null = null;
 
 // Cross-cutting state: shared between the scroll listener (writer) and the
 // odometer (reader, via a getter passed into createOdometer).
@@ -97,6 +100,8 @@ export function initTOC() {
     pill.hidden = true;
     scrollSpy?.disconnect();
     scrollSpy = null;
+    visibilityObserver?.disconnect();
+    visibilityObserver = null;
     return;
   }
   pill.hidden = false;
@@ -110,6 +115,30 @@ export function initTOC() {
   // after a view-transition — old observed nodes are gone.
   scrollSpy?.disconnect();
   scrollSpy = createScrollSpy(currentHeadings, handleActiveChange);
+
+  // LEARN: hide the pill once the reader reaches the "related notes" section —
+  // the TOC is irrelevant past the note body. We watch that section and hide
+  // whenever its top has scrolled up into (or above) the viewport, so the pill
+  // stays gone through related notes + footer, and returns when scrolled back
+  // up into the article. The [data-toc-offscreen] attribute fades it via CSS
+  // (opacity only — GSAP owns width/transform/radius on this element). Rebuilt
+  // per initTOC because the section node is fresh after a view-transition.
+  // Notes without related content have no section → observer stays null → pill
+  // behaves as before (always visible while on the page).
+  visibilityObserver?.disconnect();
+  visibilityObserver = null;
+  const relatedSection = document.querySelector('.related-notes-section');
+  if (relatedSection) {
+    visibilityObserver = new IntersectionObserver(
+      ([entry]) => {
+        const reached = entry.boundingClientRect.top < window.innerHeight;
+        pill.toggleAttribute('data-toc-offscreen', reached);
+        if (reached && morphCtrl?.isOpen()) morphCtrl.close();
+      },
+      { threshold: 0 },
+    );
+    visibilityObserver.observe(relatedSection);
+  }
 
   buildList(list, currentHeadings, (id) => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });

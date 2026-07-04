@@ -93,7 +93,13 @@ const meta = metaParts.join('·');
   <div class="group py-5" transition:name={transitionName}>
     {/* LEARN: fixed desktop height (not max-h) gives the row a definite height so
         the left image column reliably fills the full 50% width × full height. */}
-    <div class="bg-backgroundcolor rounded-lg border-1 border-card-border shadow-xs overflow-hidden flex flex-col md:flex-row md:h-[34rem]">
+    <div class="relative bg-backgroundcolor rounded-lg border-1 border-card-border shadow-xs transition-shadow duration-200 group-hover:shadow-md overflow-hidden flex flex-col md:flex-row md:h-[34rem]">
+      {/* LEARN: "stretched link" pattern — a sibling overlay <a> (not a wrapper)
+          makes the whole card clickable without nesting anchors (invalid HTML).
+          Inner links sit above it via a higher z-index so they stay independently
+          clickable. Non-interactive content (image/title) falls through to this
+          card link. CSS-only, so middle-click / open-in-new-tab / focus all work. */}
+      <a href={url} class="absolute inset-0 z-10" aria-label={`View the ${title} series`}></a>
       {/* Featured image as the div's background; role/aria-label restore the alt
           text a background image otherwise loses. */}
       {heroImage && (
@@ -122,7 +128,7 @@ const meta = metaParts.join('·');
                 hands control back to `flex-1 min-h-0` on desktop — no regression.
                 `overscroll-contain` stops the list's scroll from chaining to the
                 page, so it scrolls separately under touch. */}
-            <ul class="series-post-list flex-1 min-h-0 max-h-[50vh] md:max-h-none overscroll-contain overflow-y-auto flex flex-col gap-2 pr-1">
+            <ul class="series-post-list relative z-20 flex-1 min-h-0 max-h-[50vh] md:max-h-none overscroll-contain overflow-y-auto flex flex-col gap-2 pr-1">
               {posts.map((post) => (
                 <li>
                   <a
@@ -153,7 +159,7 @@ const meta = metaParts.join('·');
           {meta && <p class={`${cardType.meta} text-syoro/40 w-3/4`}>{meta}</p>}
           <a
             href={url}
-            class="inline-flex items-center px-6 py-3 rounded-xl bg-konpeki text-white hover:opacity-90 font-sans font-medium text-sm transition-[transform,opacity] duration-[180ms] ease-snappy active:scale-[0.97]"
+            class="relative z-20 inline-flex items-center px-6 py-3 rounded-xl bg-konpeki text-white hover:opacity-90 font-sans font-medium text-sm transition-[transform,opacity] duration-[180ms] ease-snappy active:scale-[0.97]"
           >
             View all
           </a>

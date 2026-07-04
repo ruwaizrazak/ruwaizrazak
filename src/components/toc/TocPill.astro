@@ -150,6 +150,17 @@
        corners on first paint / reduce-motion before GSAP's set runs. GSAP
        still animates this inline (9999px ↔ 16px) on open/close. */
     border-radius: 9999px;
+    /* LEARN: fade the pill in/out as the note body enters/leaves the viewport
+       (toggled via [data-toc-offscreen] by the IntersectionObserver in toc.ts).
+       Only opacity is transitioned here — GSAP owns width/transform/border-radius
+       inline during the morph, so touching transform would fight it. */
+    transition: opacity 250ms ease;
+  }
+  /* Pill hidden once the reader reaches the related-notes section. pointer-events
+     off so the invisible pill never intercepts taps over related notes/footer. */
+  [data-toc-pill][data-toc-offscreen] {
+    opacity: 0;
+    pointer-events: none;
   }
 
   /* LEARN: backdrop layer inherits the container's animated radius, and the

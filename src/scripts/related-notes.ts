@@ -1,106 +1,65 @@
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { createScrubReveal } from '../utils/scrubReveal';
-import { initDotNav, setActiveDot, setVisibleDotCount } from './dot-nav';
-gsap.registerPlugin(ScrollTrigger);
+import { initOnLoad } from '../utils/initOnLoad';
 
-export function initRelatedNotes() {
-  const section = document.querySelector('.related-notes-section') as HTMLElement;
-  const reveal = document.querySelector('.related-reveal') as HTMLElement;
-  const track = document.querySelector('.related-track') as HTMLElement;
-  const cards = gsap.utils.toArray('.related-card') as HTMLElement[];
-  const nav = document.getElementById('related-nav');
-  if (!section || !reveal || !track) return;
+const PER_PAGE = 4;
+const STAGGER_MS = 70; // gap between each card's entrance
 
-  // Card pop-in timeline (built before reveal so it can be triggered)
-  const cardTl = gsap.timeline({ paused: true });
+function initRelatedNotes() {
+  const grid = document.querySelector('.related-grid');
+  const btn = document.querySelector<HTMLButtonElement>('.related-refresh');
+  if (!grid) return;
+  // LEARN: idempotent per-DOM guard (motion skill §4.2) — initOnLoad can fire
+  // twice on first load, which would double-bind the button and make Refresh
+  // jump two pages. A fresh page (view transition) has a new grid, so it re-inits.
+  if (grid.hasAttribute('data-related-inited')) return;
+  grid.setAttribute('data-related-inited', '');
 
-  // Pagination state
-  let currentPage = 0;
-  let paginationReady = false;
+  const cards = Array.from(grid.querySelectorAll<HTMLElement>('.related-card'));
+  const pageCount = Math.ceil(cards.length / PER_PAGE);
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let page = 0;
 
-  function getCardWidth(): number {
-    const card = cards[0];
-    if (!card) return 320;
-    return card.getBoundingClientRect().width;
-  }
+  // LEARN: hidden cards use display:none so the CSS grid only lays out the
+  // visible page of 4. Visible cards cascade in one-by-one via the Web Animations
+  // API — re-triggerable on Refresh (unlike a one-shot CSS load animation).
+  const render = () => {
+    let visiblePos = 0;
+    cards.forEach((c, i) => {
+      const isVisible = Math.floor(i / PER_PAGE) === page;
+      c.classList.toggle('hidden', !isVisible);
+      if (!isVisible) return;
+      if (!reduceMotion) {
+        c.animate(
+          [
+            { opacity: 0, transform: 'translateY(8px)' },
+            { opacity: 1, transform: 'translateY(0)' },
+          ],
+          { duration: 300, delay: visiblePos * STAGGER_MS, easing: 'cubic-bezier(.2,.8,.2,1)', fill: 'both' },
+        );
+      }
+      visiblePos++;
+    });
+  };
 
-  function getGap(): number {
-    return parseFloat(getComputedStyle(track).gap) || 24;
-  }
+  render(); // cascade the initial page in on load / navigation
 
-  function getCardsPerPage(): number {
-    const trackWidth = track.parentElement?.clientWidth ?? track.clientWidth;
-    const cardW = getCardWidth();
-    const gap = getGap();
-    return Math.max(1, Math.floor((trackWidth + gap) / (cardW + gap)));
-  }
-
-  function getPageCount(): number {
-    return Math.ceil(cards.length / getCardsPerPage());
-  }
-
-  function goToPage(page: number) {
-    const pageCount = getPageCount();
-    if (pageCount === 0) return;
-    currentPage = Math.max(0, Math.min(page, pageCount - 1));
-
-    const cardW = getCardWidth();
-    const gap = getGap();
-    const offset = currentPage * getCardsPerPage() * (cardW + gap);
-    track.style.transform = `translateX(-${offset}px)`;
-
-    if (nav) {
-      setActiveDot(nav, currentPage);
-      setVisibleDotCount(nav, pageCount);
-    }
-  }
-
-  function initPagination() {
-    if (paginationReady || !nav) return;
-    paginationReady = true;
-
-    const cleanupNav = initDotNav(nav);
-
-    nav.addEventListener('dotnav:prev', () => goToPage(currentPage - 1));
-    nav.addEventListener('dotnav:next', () => goToPage(currentPage + 1));
-    nav.addEventListener('dotnav:dotclick', ((e: CustomEvent) => {
-      goToPage(e.detail.index);
-    }) as EventListener);
-
-    goToPage(0);
-
-    window.addEventListener('resize', () => goToPage(currentPage));
-  }
-
-  const fullHeight = createScrubReveal({
-    section,
-    reveal,
-    initFlag: 'relatedInited',
-    start: 'top 90%',
-    end: 'top 50%',
-    beforeMeasure: () => cards.forEach(c => { c.style.opacity = '1'; }),
-    afterMeasure: () => cards.forEach(c => { c.style.opacity = '0'; }),
-    onRevealed: (h) => {
-      reveal.style.height = 'auto';
-      cardTl.play();
-      // Defer pagination init until cards have layout
-      requestAnimationFrame(() => initPagination());
-    },
-    onHidden: (h) => {
-      reveal.style.height = h + 'px';
-      cardTl.reverse();
-    },
+  btn?.addEventListener('click', () => {
+    page = (page + 1) % pageCount; // cycle in order, wrap to start
+    render();
   });
-  if (fullHeight === null) return;
-
-  // Card pop-in with reverse support
-  cardTl.eventCallback('onComplete', () => { reveal.style.height = 'auto'; });
-  cardTl.eventCallback('onReverseComplete', () => { reveal.style.height = fullHeight + 'px'; });
-
-  const shuffled = [...cards].sort(() => Math.random() - 0.5);
-  cardTl.fromTo(shuffled,
-    { opacity: 0, scale: 0.8, y: 20 },
-    { opacity: 1, scale: 1, y: 0, duration: 0.4, stagger: 0.12, ease: 'back.out(1.4)' }
-  );
 }
+
+initOnLoad(initRelatedNotes);
+
+// Flag clicks from RelatedNotes so the destination page uses the slide transition
+// (read in notesPost.astro). Registered once at module scope — the document
+// persists across view-transition navigations, so binding here avoids stacking.
+document.addEventListener(
+  'click',
+  (e) => {
+    const card = (e.target as Element).closest('.related-notes-section a');
+    if (card) {
+      sessionStorage.setItem('nav-from-related', '1');
+    }
+  },
+  true,
+);
