@@ -47,13 +47,13 @@ const current = (await getSeriesWithPosts()).find(
 const seriesDoc = current;
 const allParts = current?.posts ?? [];
 
-// If this is a part page, find the specific part
-const activePart = kind === 'part' ? allParts.find((p) => p.id === slug) : undefined;
+// If this is a part page, find the specific part (allParts is sorted by seriesOrder asc)
+const activeIndex = kind === 'part' ? allParts.findIndex((p) => p.id === slug) : -1;
+const activePart = activeIndex !== -1 ? allParts[activeIndex] : undefined;
 
-// Get related posts (other parts in the same series, excluding the current one)
-const relatedParts = kind === 'part' && activePart 
-  ? allParts.filter((p) => p.id !== slug)
-  : [];
+// "What's next" — only parts AFTER the current one in series order. Since allParts is
+// pre-sorted by seriesOrder asc, slicing past the current index yields higher-order parts.
+const relatedParts = activeIndex !== -1 ? allParts.slice(activeIndex + 1) : [];
 
 const seoTitle = activePart ? `${activePart.data.title} · ${seriesDoc?.data.title ?? ''}` : seriesDoc?.data.title ?? 'Series';
 
@@ -75,6 +75,7 @@ const Content = renderResult?.Content;
     heroImage={activePart.data.heroImage}
     tags={activePart.data.tags ?? []}
     seriesPosts={relatedParts}
+    seriesTitle={seriesDoc?.data.title}
   >
     <Content />
   </NotesPost>
