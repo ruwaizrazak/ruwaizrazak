@@ -1,50 +1,69 @@
 ---
 import { getMultiCollectionPosts } from '../utils/collections';
 import ContentCard from './ContentCard.astro';
+import SeriesPostCard from './SeriesPostCard.astro';
 
 interface Props {
   currentTags: string[];
   currentTitle: string;
   seriesPosts?: any[];
+  seriesTitle?: string;
 }
 
-const { currentTags, currentTitle, seriesPosts } = Astro.props;
+const { currentTags, currentTitle, seriesPosts, seriesTitle } = Astro.props;
 
-// Cap the pool at 8 (2 pages of 4) for both branches so Refresh has a bounded set.
-const relatedNotes = (
-  seriesPosts && seriesPosts.length > 0
-    ? seriesPosts.map(post => ({
-        ...post,
-        collection: 'seriesPosts' as const,
-        url: `/series/${post.id}/`,
-      }))
-    : (await getMultiCollectionPosts(['notes', 'essays']))
-        .filter(note => note.data.title !== currentTitle)
-        .filter(note => note.data.tags?.some(tag => currentTags.includes(tag)))
-).slice(0, 8);
+// Series notes list the subsequent parts (already filtered/sorted upstream); regular notes
+// show tag-matched cards capped at 8 (2 pages of 4) so Refresh has a bounded set.
+const isSeries = Boolean(seriesPosts && seriesPosts.length > 0);
+const relatedNotes = isSeries
+  ? seriesPosts!.map(post => ({
+      ...post,
+      collection: 'seriesPosts' as const,
+      url: `/series/${post.id}/`,
+    }))
+  : (await getMultiCollectionPosts(['notes', 'essays']))
+      .filter(note => note.data.title !== currentTitle)
+      .filter(note => note.data.tags?.some(tag => currentTags.includes(tag)))
+      .slice(0, 8);
 ---
 
 {relatedNotes.length > 0 && (
   <section class="related-notes-section px-5 md:px-20">
     <div class="mt-20 mb-10">
-      <h2 class="text-syoro font-sans text-3xl mb-8">Related to</h2>
-      <div class="related-grid grid grid-cols-[repeat(auto-fill,minmax(16rem,1fr))] gap-6 items-start">
+      <h2 class="text-syoro font-sans text-3xl mb-8">{isSeries ? `More in ${seriesTitle}` : 'Related to'}</h2>
+      <div
+        class:list={[
+          "related-grid grid",
+          // Series: SeriesPostCards stretch to equal row height (matches SeriesCard).
+          // Tag branch: garden-style dense grid; items-start keeps card/compact heights natural.
+          isSeries
+            ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+            : "grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 grid-flow-row-dense gap-6 items-start",
+        ]}
+        data-series={isSeries ? '' : undefined}
+      >
         {relatedNotes.map((note, i) => (
-          <div class:list={["related-card", i >= 4 && "hidden"]}>
-            <ContentCard
-              title={note.data.title}
-              description={note.data.description}
-              pubDate={note.data.pubDate}
-              url={note.collection === 'seriesPosts' ? `/series/${note.id}/` : `/${note.collection}/${note.id}/`}
-              maturity={note.data.maturity}
-              collection={note.collection}
-              variant={note.collection === 'essays' ? 'card' : 'compact'}
-              transitionName={`card-${note.collection}-${note.id}`}
-            />
+          <div class:list={["related-card", !isSeries && i >= 4 && "hidden"]}>
+            {note.collection === 'seriesPosts' ? (
+              /* Series parts get the dedicated "Part N" card, matching the series page. */
+              <SeriesPostCard post={note} />
+            ) : (
+              <ContentCard
+                title={note.data.title}
+                description={note.data.description}
+                pubDate={note.data.pubDate}
+                url={`/${note.collection}/${note.id}/`}
+                heroImage={note.collection === 'essays' ? note.data.heroImage : undefined}
+                maturity={note.data.maturity}
+                collection={note.collection}
+                variant={note.collection === 'essays' ? 'card' : 'compact'}
+                transitionName={`card-${note.collection}-${note.id}`}
+              />
+            )}
           </div>
         ))}
       </div>
-      {relatedNotes.length > 4 && (
+      {!isSeries && relatedNotes.length > 4 && (
         <button
           type="button"
           class="related-refresh mt-8 inline-flex items-center gap-2 px-5 py-2 rounded-xl bg-konpeki text-white font-sans text-sm hover:opacity-90 active:scale-[0.97] transition-[transform,opacity] duration-[180ms] ease-snappy"
