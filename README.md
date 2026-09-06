@@ -1,6 +1,6 @@
 # Ruwaiz Razak
 
-Senior UX Designer with 7+ years of experience, building what I design.
+Senior UX Designer with 8+ years of experience, building what I design.
 
 I build things. I got into HTML before I knew design existed — code came first, design came later. That origin shapes how I work: I'm a builder who became a designer, not the other way around.
 
