@@ -62,6 +62,14 @@ test.describe('keyboard and ARIA', () => {
     await page.goto(ROUTES.pageWithTocDemo);
     const toggle = page.locator('[data-tocdemo-toggle]').first();
 
+    // LEARN: the demo is a hydrated island now, and an island's dynamic import
+    // resolves later than the DOMContentLoaded script it replaced. Pressing Enter
+    // before hydration drops the keypress — webkit lost it consistently. Wait for
+    // Astro to clear the `ssr` marker, which is when the handlers are live.
+    await expect(page.locator('astro-island:not([ssr])').first()).toBeAttached({
+      timeout: 15000,
+    });
+
     await toggle.focus();
     await page.keyboard.press('Enter');
     await expect(page.locator('[data-tocdemo-pill]').first()).toHaveAttribute('data-expanded', '');
