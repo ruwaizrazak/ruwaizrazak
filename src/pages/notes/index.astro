@@ -1,6 +1,6 @@
 
 ---
-import { SITE_TITLE, SITE_DESCRIPTION, DEFAULT_COLLECTIONS } from '../../consts';
+import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
 import { getPublishedAndSorted, extractUniqueTags } from '../../utils/collections';
 import IndexLayout from '../../layouts/IndexLayout.astro';
 
@@ -13,7 +13,6 @@ const allTags = extractUniqueTags(allNotes);
   description="Notes are notes. They are not refined, might be incomplete, or just plain wrong. But they sure are a starting point for me to think about."
   posts={allNotes}
   tags={allTags}
-  collections={DEFAULT_COLLECTIONS}
   icon="/icons/notes.svg"
 />
 

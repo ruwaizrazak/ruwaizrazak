@@ -1,16 +1,11 @@
-// Centralized constants — GA_ID, collection arrays, and social link data
-// were previously scattered across individual pages and components.
-// DEFAULT_COLLECTIONS: used by notes, series index pages
-// GARDEN_COLLECTIONS: used by garden index (includes playground, excludes casestudies)
+// Centralized constants — GA_ID and social link data were previously scattered
+// across individual pages and components.
 
 export const SITE_TITLE = 'Ruwaiz Razak';
 export const SITE_DESCRIPTION =
   'Ruwaiz Razaks personal website and knowledge management system.';
 
 export const GA_ID = 'G-75GYY3Y3H3';
-
-export const DEFAULT_COLLECTIONS = ['all', 'notes', 'essays', 'casestudies', 'books'];
-export const GARDEN_COLLECTIONS = ['all', 'notes', 'essays', 'books', 'playground', 'series'];
 
 export const SOCIAL_LINKS = [
   {
