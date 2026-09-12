@@ -19,8 +19,12 @@ test.describe('desktop navigation', () => {
     await page.locator('#desktop-menu-button').click();
     await expect(page.locator('#desktop-dropdown')).toBeVisible();
 
-    await page.locator('h1').first().click({ force: true });
-    await expect(page.locator('#desktop-dropdown')).toBeHidden();
+    // Click empty page chrome rather than a content element — the homepage has
+    // no h1, and `main` is always present.
+    await page.locator('body').click({ position: { x: 5, y: 400 } });
+    // The script fades the panel first and only adds `hidden` after 200ms, so
+    // assert the end state the code actually reaches.
+    await expect(page.locator('#desktop-dropdown')).toHaveClass(/hidden/);
   });
 
   test('opening one dropdown closes the other', async ({ page }) => {
@@ -28,7 +32,7 @@ test.describe('desktop navigation', () => {
     await page.locator('#about-menu-button').click();
 
     await expect(page.locator('#about-dropdown')).toBeVisible();
-    await expect(page.locator('#desktop-dropdown')).toBeHidden();
+    await expect(page.locator('#desktop-dropdown')).toHaveClass(/hidden/);
   });
 
   test('its links navigate', async ({ page }) => {

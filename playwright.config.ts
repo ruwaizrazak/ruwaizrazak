@@ -4,7 +4,13 @@ import { defineConfig, devices } from '@playwright/test';
 // and `reuseExistingServer` would silently point the whole suite at the dev
 // build (Astro toolbar, HMR client, unminified CSS) instead of the real output.
 const PORT = 4322;
-const BASE_URL = `http://localhost:${PORT}`;
+// LEARN: 127.0.0.1, not localhost. `astro preview` binds IPv6-only ([::1]) by
+// default, and Node's fetch resolves `localhost` to 127.0.0.1 first and then
+// STALLS on the dead socket rather than failing fast — so Playwright's webServer
+// readiness probe never connects and the whole run hangs with no output. Binding
+// and probing the same IPv4 address (see --host below) makes both ends agree.
+const HOST = '127.0.0.1';
+const BASE_URL = `http://${HOST}:${PORT}`;
 
 export default defineConfig({
   testDir: './tests/e2e',
@@ -29,7 +35,7 @@ export default defineConfig({
   // TEST_FIXTURES=1 swaps the empty webmentions.json for the sample fixture so
   // the reply cap and Show more/less toggle actually render. See Webmentions.astro.
   webServer: {
-    command: `TEST_FIXTURES=1 npm run build && npm run preview -- --port ${PORT}`,
+    command: `TEST_FIXTURES=1 npm run build && npm run preview -- --host ${HOST} --port ${PORT}`,
     url: BASE_URL,
     reuseExistingServer: false,
     timeout: 240_000,

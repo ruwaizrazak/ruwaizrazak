@@ -65,9 +65,13 @@ test.describe('inline TOC pill demo', () => {
     // The demo sits mid-article; a row click that scrolled the window would
     // yank the reader away from the paragraph they were reading.
     await page.locator(DEMO).first().scrollIntoViewIfNeeded();
+    await page.locator(TOGGLE).click();
+    await expect(page.locator('[data-tocdemo-pill]').first()).toHaveAttribute('data-expanded', '');
+    // Sample AFTER the pill is open: Playwright scrolls a target into view before
+    // clicking, so measuring earlier would blame the demo for Playwright's scroll.
+    await page.locator(ROW).last().scrollIntoViewIfNeeded();
     const pageScroll = await page.evaluate(() => window.scrollY);
 
-    await page.locator(TOGGLE).click();
     await page.locator(ROW).last().click();
 
     await expect.poll(async () => page.locator(`${SCROLLER}`).evaluate((el) => el.scrollTop)).toBeGreaterThan(0);

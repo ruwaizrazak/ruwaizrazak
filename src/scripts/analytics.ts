@@ -2,8 +2,23 @@
 // via BaseHead.astro — this lets TypeScript see it without a full @types package
 declare global {
   interface Window {
-    gtag: (...args: any[]) => void;
+    // Optional on purpose: gtag.js is a third-party script and is simply absent
+    // whenever it fails to load.
+    gtag?: (...args: any[]) => void;
   }
+}
+
+/**
+ * Send a GA4 event, or do nothing if gtag never loaded.
+ *
+ * LEARN: gtag.js is blocked for a large share of real readers — ad blockers,
+ * privacy browsers, corporate proxies, offline. Calling window.gtag() directly
+ * threw an uncaught TypeError for every one of them, and the scroll listener
+ * fired it repeatedly while reading. Analytics must never break the page.
+ */
+function track(event: string, params: Record<string, unknown>): void {
+  if (typeof window.gtag !== 'function') return;
+  window.gtag('event', event, params);
 }
 
 /**
@@ -15,7 +30,7 @@ export function initContactTracking() {
     el.addEventListener('click', () => {
       const method = el.dataset.contact;          // linkedin | email | resume
       const location = el.closest('footer, #Contact') ? 'footer' : 'nav';
-      window.gtag('event', 'contact_click', { method, location });
+      track('contact_click', { method, location });
     });
   });
 }
@@ -24,7 +39,7 @@ export function initContactTracking() {
  * Fire a work_view event when a user lands on a work case study page.
  */
 export function initWorkView() {
-  window.gtag('event', 'work_view', {
+  track('work_view', {
     title: document.title,
     path: location.pathname,
   });
@@ -65,7 +80,7 @@ export function initScrollDepth() {
     for (const threshold of thresholds) {
       if (percent >= threshold && !fired.has(threshold)) {
         fired.add(threshold);
-        window.gtag('event', 'scroll_depth', {
+        track('scroll_depth', {
           depth: String(threshold),
           collection,
           title,

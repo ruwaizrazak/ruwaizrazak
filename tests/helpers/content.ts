@@ -27,6 +27,13 @@ export interface ContentEntry {
   data: Record<string, any>;
 }
 
+/**
+ * Astro's glob loader lowercases entry ids and turns whitespace into dashes,
+ * so "Learning to build.mdx" becomes "learning-to-build". Route derivation here
+ * has to match, or a perfectly built page looks missing.
+ */
+const slugify = (value: string) => value.toLowerCase().replace(/\s+/g, '-');
+
 export function readCollection(collection: string): ContentEntry[] {
   const dir = join(CONTENT_DIR, collection);
   if (!existsSync(dir)) return [];
@@ -40,8 +47,13 @@ export function readCollection(collection: string): ContentEntry[] {
       return {
         file,
         name,
-        slug: name.toLowerCase(),
-        relId: file.slice(dir.length + 1).replace(/\.[^.]+$/, ''),
+        slug: slugify(name),
+        relId: file
+          .slice(dir.length + 1)
+          .replace(/\.[^.]+$/, '')
+          .split('/')
+          .map(slugify)
+          .join('/'),
         data: frontmatter(file),
       };
     });

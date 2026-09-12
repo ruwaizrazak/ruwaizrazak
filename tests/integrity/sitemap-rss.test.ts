@@ -44,7 +44,9 @@ describe('sitemap', () => {
   it('points every entry at a page that was actually built', () => {
     const locs = [...xml('sitemap-0.xml').querySelectorAll('url > loc')].map((l) => l.textContent ?? '');
     const missing = locs
-      .map((loc) => loc.replace(SITE, ''))
+      // Tags containing spaces are percent-encoded in the sitemap but are
+      // literal spaces on disk, so decode before comparing.
+      .map((loc) => decodeURIComponent(loc.replace(SITE, '')))
       .map((path) => (path.endsWith('/') ? path : `${path}/`))
       .filter((path) => !routes.includes(path));
     expect(missing).toEqual([]);

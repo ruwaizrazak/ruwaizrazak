@@ -5,7 +5,7 @@ import IndexLayout from '../../layouts/IndexLayout.astro';
 export async function getStaticPaths() {
   const { getMultiCollectionPosts } = await import('../../utils/collections');
 
-  const allPosts = await getMultiCollectionPosts(['notes', 'essays', 'works', 'books']);
+  const allPosts = await getMultiCollectionPosts(['notes', 'essays', 'works']);
   const uniqueTags = [...new Set(allPosts.flatMap(post => post.data.tags || []))];
 
   return uniqueTags.map(tag => ({
@@ -13,12 +13,11 @@ export async function getStaticPaths() {
     props: {
       posts: allPosts.filter(post => post.data.tags?.includes(tag)),
       tag,
-      collections: ['all', 'notes', 'essays', 'works', 'books']
     }
   }));
 }
 
-const { tag, posts, collections } = Astro.props;
+const { tag, posts } = Astro.props;
 const allTags = ['all', ...new Set(posts.flatMap(post => post.data.tags || []))].sort();
 ---
 
@@ -27,7 +26,5 @@ const allTags = ['all', ...new Set(posts.flatMap(post => post.data.tags || []))]
   description={`Essays, notes and books related to ${tag}`}
   posts={posts}
   tags={[tag]}
-  collections={collections}
-  showCollections={true}
   showTags={false}
 />

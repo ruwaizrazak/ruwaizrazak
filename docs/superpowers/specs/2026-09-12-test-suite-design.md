@@ -88,8 +88,12 @@ GSAP tween interpolation values, grass-canvas pixels, flubber path morphing,
 visual regression, axe/colour-contrast auditing, and reduced-motion branches
 beyond the odometer's.
 
-Also excluded as dead code: `WorkModal.astro` + `work-modal.ts` (nothing imports
-the component; `initWorkModal()` is never called), and the select-dropdown
-branches of `listingFilters.ts` (`.collection-filter`, `#tagDropdown`,
-`#showMoreTags`, `#additionalTags` are rendered nowhere). The live tag-chip path
-of `listingFilters.ts` is covered.
+Dead code found while scoping the suite has since been deleted rather than
+tested: `WorkModal.astro` + `work-modal.ts` (nothing imported the component;
+`initWorkModal()` was never called), `sitemapData.mjs`, the `collections` /
+`showCollections` prop chain, and the `casestudies` / `books` collection names.
+
+Still present and still unreachable: the select-dropdown branches of
+`listingFilters.ts` (`.collection-filter`, `#tagDropdown`, `#showMoreTags`,
+`#additionalTags` are rendered nowhere), and the `icon` / `showTags` props on
+`IndexLayout`. The live tag-chip path of `listingFilters.ts` is covered.

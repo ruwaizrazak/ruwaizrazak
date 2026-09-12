@@ -19,6 +19,19 @@ const doc = (route: string) => {
 const meta = (d: Document, selector: string) =>
   d.querySelector(selector)?.getAttribute('content')?.trim() ?? '';
 
+/**
+ * Every JSON-LD node on a page, flattened. BaseHead wraps WebSite and Person in
+ * an @graph array, while page-specific schema (BlogPosting) is emitted as its
+ * own top-level object — so both shapes have to be unwrapped.
+ */
+function ldNodes(d: Document): any[] {
+  return [...d.querySelectorAll('script[type="application/ld+json"]')].flatMap((block) => {
+    const parsed = JSON.parse(block.textContent ?? '{}');
+    const items = Array.isArray(parsed) ? parsed : [parsed];
+    return items.flatMap((item) => (Array.isArray(item['@graph']) ? item['@graph'] : [item]));
+  });
+}
+
 beforeAll(async () => {
   if (!distExists()) {
     throw new Error(`No build found at ${DIST}. Run \`npm run build\` first.`);
@@ -180,12 +193,7 @@ describe('structured data', () => {
 
   it('always describes the site and its author', () => {
     for (const route of allRoutes) {
-      const types = [...doc(route).querySelectorAll('script[type="application/ld+json"]')]
-        .flatMap((b) => {
-          const parsed = JSON.parse(b.textContent ?? '{}');
-          return Array.isArray(parsed) ? parsed : [parsed];
-        })
-        .map((node: any) => node['@type']);
+      const types = ldNodes(doc(route)).map((node: any) => node['@type']);
       expect(types, `${route}`).toContain('WebSite');
       expect(types, `${route}`).toContain('Person');
     }
@@ -198,12 +206,7 @@ describe('structured data', () => {
     expect(postRoutes.length).toBeGreaterThan(0);
 
     for (const route of postRoutes) {
-      const nodes = [...doc(route).querySelectorAll('script[type="application/ld+json"]')]
-        .flatMap((b) => {
-          const parsed = JSON.parse(b.textContent ?? '{}');
-          return Array.isArray(parsed) ? parsed : [parsed];
-        });
-      const posting = nodes.find((n: any) => n['@type'] === 'BlogPosting');
+      const posting = ldNodes(doc(route)).find((n: any) => n['@type'] === 'BlogPosting');
       expect(posting, `${route} has no BlogPosting schema`).toBeTruthy();
       expect(posting.headline, `${route}`).toBeTruthy();
       expect(Number.isNaN(Date.parse(posting.datePublished)), `${route} bad datePublished`).toBe(false);

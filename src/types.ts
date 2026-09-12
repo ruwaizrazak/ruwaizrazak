@@ -3,7 +3,7 @@
 
 export type Maturity = 'seed' | 'plant' | 'tree';
 
-export type CollectionName = 'notes' | 'essays' | 'casestudies' | 'books' | 'playground' | 'works' | 'live' | 'series' | 'seriesPosts';
+export type CollectionName = 'notes' | 'essays' | 'playground' | 'works' | 'live' | 'series' | 'seriesPosts';
 
 export interface ContentCardProps {
   title: string;
