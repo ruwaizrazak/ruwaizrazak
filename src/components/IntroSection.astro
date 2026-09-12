@@ -1,37 +1,24 @@
 ---
-import Link from './mdxComponents/Link.astro';
-import { pageType } from '../styles/typography';
+/**
+ * LEARN: resolver half. The Nordeus link carries a build-time tooltip, and
+ * resolveTooltipMeta() is an awaited network fetch — unreachable from Svelte.
+ * Resolve here, render the markup in IntroSectionView.svelte.
+ */
+import IntroSectionView from './IntroSectionView.svelte';
+import { resolveTooltipMeta } from '../utils/resolveTooltipMeta';
+import { buildTooltipHTML } from '../utils/buildTooltipHTML';
+
+const NORDEUS = 'https://nordeus.com/';
+const meta = await resolveTooltipMeta(NORDEUS, true);
+const nordeusTooltip = meta
+  ? buildTooltipHTML({
+      title: meta.tooltipTitle,
+      description: meta.tooltipDesc,
+      favicon: meta.favicon,
+      displayUrl: meta.displayUrl,
+      isExternal: true,
+    })
+  : '';
 ---
 
-<section id="Intro-text" class="w-full sm:w-3/4 md:w-3/4 xl:w-[50%] font-serif my-30 text-syoro">
-  <p class={`index-intro ${pageType.description} font-sans mt-6 max-w-4xl lg:max-w-5xl mb-2 text-syoro/80`}>Senior UX Designer at <Link href="https://nordeus.com/" class="text-link">Nordeus.</Link></p>
-  <p class={`index-intro ${pageType.description} mt-6 max-w-4xl lg:max-w-5xl text-syoro`}>Designs and optimize systems that improve onboarding, retention, and longterm user motivation</p>
-</section>
-
-<style>
-  .index-intro {
-    opacity: 0;
-  }
-
-  :global(body.animate-in) .index-intro {
-    animation: HeroSectionIntro 0.7s ease-in-out 0.3s forwards;
-  }
-
-  :global(html.returned-from-work) .index-intro,
-  :global(body.returned-from-work) .index-intro {
-    animation: none;
-    opacity: 1;
-    transform: none;
-  }
-
-  @keyframes HeroSectionIntro {
-    from {
-      opacity: 0;
-      transform: translateY(-20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-</style>
+<IntroSectionView nordeusTooltip={nordeusTooltip} />
