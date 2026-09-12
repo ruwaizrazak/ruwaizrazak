@@ -114,7 +114,7 @@
           data-astro-prefetch
           onclick={() => sessionStorage.setItem('skipIndexAnimations', '1')}
         >
-          <h4 class="text-3xl font-medium font-handwriting text-syoro">{logoText}</h4>
+          <h4 class="text-xl md:text-2xl lg:text-3xl font-medium font-handwriting text-syoro">{logoText}</h4>
         </a>
         <ThemeToggle />
       </div>
@@ -127,7 +127,7 @@
             bind:this={gardenButton}
             id="desktop-menu-button"
             onclick={() => garden.toggle()}
-            class="flex items-center text-xl font-medium text-syoro rounded-full hover:bg-blue-50 dark:hover:bg-syoro/10 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-syoro/20 dark:focus:ring-syoro/20 transition-[transform,background-color] duration-200 ease-snappy uppercase hover:scale-95 px-5"
+            class="flex items-center text-sm md:text-lg lg:text-xl font-medium text-syoro rounded-full hover:bg-blue-50 dark:hover:bg-syoro/10 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-syoro/20 dark:focus:ring-syoro/20 transition-[transform,background-color] duration-200 ease-snappy uppercase hover:scale-95 px-5"
           >
             Garden
             <svg
@@ -144,9 +144,9 @@
           {#each additionalLinks as link (link.href)}
             <a
               href={link.href}
-              class="flex-1 min-w-0 flex items-center justify-center px-5 py-2 text-syoro rounded-full uppercase transition-[transform,background-color,color] duration-200 ease-snappy hover:bg-blue-50 dark:hover:bg-syoro/10 hover:text-link hover:scale-95 focus:ring-syoro/20 dark:focus:ring-syoro/20"
+              class="flex-1 min-w-0 flex items-center justify-center px-5 py-2 text-sm md:text-lg lg:text-xl text-syoro rounded-full uppercase transition-[transform,background-color,color] duration-200 ease-snappy hover:bg-blue-50 dark:hover:bg-syoro/10 hover:text-link hover:scale-95 focus:ring-syoro/20 dark:focus:ring-syoro/20"
             >
-              <h3 class="font-sans font-medium text-xl flex items-center gap-2">
+              <h3 class="font-sans font-medium text-sm md:text-lg lg:text-xl flex items-center gap-2">
                 {#if link.icon}
                   <span
                     class="flex-shrink-0 w-6 h-6 inline-block"
@@ -168,7 +168,7 @@
               bind:this={aboutButton}
               id="about-menu-button"
               onclick={() => about.toggle()}
-              class="flex items-center text-xl font-medium text-white rounded-full hover:bg-syoro/10 dark:hover:bg-syoro/10 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-syoro/20 dark:focus:ring-syoro/20 transition-[transform,background-color] duration-200 ease-snappy uppercase hover:scale-95 px-5 py-2"
+              class="flex items-center text-sm md:text-lg lg:text-xl font-medium text-white rounded-full hover:bg-syoro/10 dark:hover:bg-syoro/10 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-syoro/20 dark:focus:ring-syoro/20 transition-[transform,background-color] duration-200 ease-snappy uppercase hover:scale-95 px-5 py-2"
             >
               Work with me
               <span class="text-white">
