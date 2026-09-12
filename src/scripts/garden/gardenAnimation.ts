@@ -26,30 +26,12 @@ export function initGarden() {
 
   const { strip } = handle;
   const character = document.querySelector('.character') as HTMLElement;
-  const stickyBar = document.getElementById('garden-sticky-bar');
 
   if (character && strip) {
     character.style.setProperty('--idle-frame', String(IDLE_FRAME));
     gsap.set(character, {
       x: 30,
       y: curveY(20 + 30, strip.offsetWidth, 0) - handle.charHeight(),
-    });
-  }
-
-  // Sticky bar: fades in when cards section enters viewport center
-  if (stickyBar) {
-    ScrollTrigger.create({
-      trigger: '.garden-cards-section',
-      start: 'top center',
-      end: 'top top',
-      onEnter: () => {
-        stickyBar.classList.remove('opacity-0', 'pointer-events-none');
-        stickyBar.classList.add('opacity-100');
-      },
-      onLeaveBack: () => {
-        stickyBar.classList.add('opacity-0', 'pointer-events-none');
-        stickyBar.classList.remove('opacity-100');
-      },
     });
   }
 

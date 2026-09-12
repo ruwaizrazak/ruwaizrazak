@@ -1,7 +1,6 @@
 ---
 import Header from '../Header.astro';
 import GardenIntro from './GardenIntro.svelte';
-import GardenStickyBar from './GardenStickyBar.astro';
 import GardenCards from './GardenCards.astro';
 import GardenStrip from './GardenStrip.astro';
 
@@ -18,7 +17,6 @@ const { title, description, posts, sortedTags, wideFullRow = false } = Astro.pro
 <Header />
 <main>
   <GardenIntro title={title} description={description} />
-  <!-- <GardenStickyBar title={title} sortedTags={sortedTags} /> -->
   <GardenCards posts={posts} wideFullRow={wideFullRow} />
 </main>
 <GardenStrip posts={posts} />

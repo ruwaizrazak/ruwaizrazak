@@ -5,12 +5,15 @@ import { initializeFilters } from '../../../src/scripts/listing/listingFilters';
 /**
  * NOTE: none of this runs on the live site. The select-dropdown branches look
  * for `.collection-filter` / `#tagDropdown` / `#showMoreTags` / `#additionalTags`,
- * which appear nowhere in src/. The tag-chip branch needs `a[data-tag]`, rendered
- * only by Tag.astro, which is only used by GardenStickyBar.astro — and that is
- * commented out in GardenView.astro:21. `data-tag` appears in zero built pages.
+ * which appear nowhere in src/. The tag-chip branch needs `a[data-tag]`, which was
+ * rendered only by Tag.astro via GardenStickyBar — both DELETED during the Svelte
+ * migration, since the sticky bar had been commented out in GardenView and
+ * `data-tag` appeared in zero built pages.
  *
- * These tests are kept as a behavioural spec for the module: if the sticky bar
- * is ever uncommented, they say what the filtering is supposed to do.
+ * The module's one live effect is its final unconditional filterPosts() call,
+ * which acts as the garden card entrance cascade. These tests are kept as a
+ * behavioural spec for the rest: if tag filtering is ever rebuilt, they say what
+ * it is supposed to do.
  */
 function renderGrid() {
   document.body.innerHTML = `
