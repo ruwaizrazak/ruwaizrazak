@@ -1,4 +1,5 @@
 ---
+import { mdxComponents } from '../../components/mdxComponents/map';
 import { type CollectionEntry, getCollection } from 'astro:content';
 import { render } from 'astro:content';
 import NotesPost from '../../layouts/notesPost.astro';
@@ -15,5 +16,5 @@ const { Content } = await render(post);
 ---
 
 <NotesPost {...post.data} collection="essays" icon="/icons/essays.svg" transitionName={`card-essays-${post.id}`}>
-	<Content components={{ a: Link }} />
+	<Content components={mdxComponents} />
 </NotesPost>

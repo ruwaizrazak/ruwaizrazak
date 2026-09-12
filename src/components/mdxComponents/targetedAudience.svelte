@@ -1,15 +1,18 @@
----
-interface Props {
-  label?: string;
-  description: string;
-}
+<script lang="ts">
+  interface Props {
+    label?: string;
+    description: string;
+  }
+  let { label = 'Targeted Audience', description }: Props = $props();
+</script>
 
-const {
-  label = "Targeted Audience",
-  description
-} = Astro.props;
----
+<!--
+Usage Example
 
+<TargetedAudience
+  description="This document is targeted at UX designers and product managers working on gaming products."
+/>
+-->
 <div class="flex items-center justify-center w-full bg-cardbg border-1 border-stone-100 shadow-sm p-6 rounded-lg">
   <div class="flex flex-col md:flex-row w-ful items-start md:items-center">
     <div class="md:w-1/4">
@@ -20,12 +23,3 @@ const {
     </div>
   </div>
 </div>
-
-<!--
-Usage Example
-
-<TargetedAudience
-  description="This document is targeted at UX designers and product managers working on gaming products."
-/>
-
--->
