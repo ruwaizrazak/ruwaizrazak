@@ -37,31 +37,9 @@
 </button>
 
 <script>
-  import { cycleTheme, initThemeListener } from '../scripts/theme-toggle';
-
-  function syncToggleState() {
-    const btn = document.getElementById('theme-toggle');
-    if (!btn) return;
-    const isDark = document.documentElement.classList.contains('dark');
-    btn.classList.toggle('theme-toggle--toggled', isDark);
-  }
-
-  function initThemeToggle() {
-    initThemeListener();
-    syncToggleState();
-
-    const btn = document.getElementById('theme-toggle');
-    btn?.addEventListener('click', () => {
-      cycleTheme();
-      syncToggleState();
-    });
-
-    // Sync when system preference changes (for "system" theme)
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-      setTimeout(syncToggleState, 0);
-    });
-  }
-
+  // Wiring lives in src/scripts/theme-toggle.ts — it needs idempotency guards,
+  // which pushed it well past the 10-line inline-script limit in CLAUDE.md.
+  import { initThemeToggle } from '../scripts/theme-toggle';
   import { initOnLoad } from '../utils/initOnLoad';
   initOnLoad(initThemeToggle);
 </script>
