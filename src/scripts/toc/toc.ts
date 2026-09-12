@@ -188,6 +188,10 @@ export function initTOC(): void {
 // --- List rendering --------------------------------------------------------
 
 function buildList(container: HTMLElement, headings: Element[]): void {
+  // LEARN: these rows are created here, not in the template, so Astro's scoped
+  // CSS can't reach them — their slot/rail/active styles live in TocPill.astro's
+  // `is:global` block. Keep any new class or data attribute used below in sync
+  // with that block, not the scoped one.
   // Replacing innerHTML garbage-collects the old buttons (and their listeners).
   container.innerHTML = '';
 

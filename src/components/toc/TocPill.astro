@@ -250,6 +250,47 @@
    */
 
   /*
+   * LEARN: middle-slot crossfade.
+   *  Collapsed: pulsating dot + current-heading odometer visible, static label hidden.
+   *  Expanded:  dot + odometer hidden, static "On this page" title visible.
+   * Same flex slot for both labels (absolute siblings in a relative wrapper),
+   * so the chevron stays anchored at the right edge throughout the morph.
+   * The dot also hides when expanded — its semantic role ("you're in section X")
+   * doesn't fit a generic title; the dot continues to do its job in the list.
+   */
+  [data-toc-pill] [data-toc-current],
+  [data-toc-pill] [data-toc-static-label],
+  [data-toc-pill] .toc-dot {
+    transition: opacity 180ms ease-out;
+  }
+  [data-toc-pill] [data-toc-static-label] {
+    opacity: 0;
+    pointer-events: none;
+  }
+  [data-toc-pill][data-expanded] [data-toc-current] {
+    opacity: 0;
+    pointer-events: none;
+  }
+  [data-toc-pill][data-expanded] [data-toc-static-label] {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  [data-toc-pill][data-expanded] .toc-dot {
+    opacity: 0;
+    animation: none;
+  }
+</style>
+
+<!-- LEARN: these rules are `is:global` ON PURPOSE. Astro scopes component CSS by
+     stamping `data-astro-cid-*` on elements in the TEMPLATE and compiling the
+     selectors to match it (`.toc-slot` → `.toc-slot[data-astro-cid-…]`). The list
+     rows below are built at runtime by src/scripts/toc/toc.ts with
+     document.createElement, so they never receive that attribute — scoped rules
+     silently miss them and the slots, rail and active dot render as nothing.
+     Global is safe here: `.toc-slot` and `[data-toc-link]` exist nowhere else.
+     Anything targeting a template element stays in the scoped block above. -->
+<style is:global>
+  /*
    * LEARN: timeline-style slot indicator. Every list row has an outlined ring
    * at the left edge. Only the active row's slot contains the pulsating inner
    * dot (rendered via ::after). This is the single visual signal for "current"
@@ -364,7 +405,8 @@
    *   motion-safe:animate-[toc-dot-pulse_1.6s_ease-in-out_infinite]
    *   shadow-[0_0_6px_0_currentColor]
    * The `.toc-dot` class name survives only so [data-expanded] can pin the
-   * dot to opacity:0 during the morph (see crossfade block below).
+   * dot to opacity:0 during the morph (see the crossfade block in the scoped
+   * style above — .toc-dot IS a template element, so it stays scoped).
    *
    * The reduced-motion override stays for the in-slot active dot only,
    * because pseudo-elements (::after) can't be reached by Tailwind variants.
@@ -375,36 +417,5 @@
       opacity: 1;
       transform: none;
     }
-  }
-
-  /*
-   * LEARN: middle-slot crossfade.
-   *  Collapsed: pulsating dot + current-heading odometer visible, static label hidden.
-   *  Expanded:  dot + odometer hidden, static "On this page" title visible.
-   * Same flex slot for both labels (absolute siblings in a relative wrapper),
-   * so the chevron stays anchored at the right edge throughout the morph.
-   * The dot also hides when expanded — its semantic role ("you're in section X")
-   * doesn't fit a generic title; the dot continues to do its job in the list.
-   */
-  [data-toc-pill] [data-toc-current],
-  [data-toc-pill] [data-toc-static-label],
-  [data-toc-pill] .toc-dot {
-    transition: opacity 180ms ease-out;
-  }
-  [data-toc-pill] [data-toc-static-label] {
-    opacity: 0;
-    pointer-events: none;
-  }
-  [data-toc-pill][data-expanded] [data-toc-current] {
-    opacity: 0;
-    pointer-events: none;
-  }
-  [data-toc-pill][data-expanded] [data-toc-static-label] {
-    opacity: 1;
-    pointer-events: auto;
-  }
-  [data-toc-pill][data-expanded] .toc-dot {
-    opacity: 0;
-    animation: none;
   }
 </style>
