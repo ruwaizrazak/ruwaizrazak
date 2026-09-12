@@ -58,7 +58,7 @@ export function initWorkView() {
  * Uses a scroll listener on the window that measures progress through
  * the <article> element relative to the viewport.
  */
-export function initScrollDepth() {
+export function initScrollDepth(): (() => void) | void {
   const main = document.querySelector<HTMLElement>('main[data-collection]');
   if (!main) return;
 
@@ -101,4 +101,10 @@ export function initScrollDepth() {
   }
 
   window.addEventListener('scroll', onScroll, { passive: true });
+
+  // LEARN: the listener removes itself once every threshold has fired, but a
+  // reader who leaves early never reaches that point — so without this cleanup
+  // each client-side navigation left another scroll listener behind, measuring
+  // an <article> that is no longer on the page.
+  return () => window.removeEventListener('scroll', onScroll);
 }
