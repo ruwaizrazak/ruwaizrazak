@@ -29,7 +29,13 @@ const liveProseClasses = `${proseClasses} prose-a:text-link prose-a:underline pr
 <!doctype html>
 <html lang="en" transition:animate="fade">
 	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+		<!-- LEARN: /live needs its own title and description. It was passing the
+		     site-wide defaults, so it and the homepage were byte-identical to search
+		     engines. The copy below is the page's own hero text, not new wording. -->
+		<BaseHead
+			title={`Live | ${SITE_TITLE}`}
+			description="Whats happening or rather what am I doing currently?"
+		/>
 		<ClientRouter />
 	</head>
 	<body class="bg-backgroundcolor">
