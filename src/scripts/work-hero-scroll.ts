@@ -2,11 +2,16 @@
  * Scroll-driven hero image height & blur effect for work detail pages.
  * As the user scrolls down, the hero image shrinks and gains a blur filter.
  * Pure vanilla JS — no GSAP dependency.
+ *
+ * LEARN: the `hero.dataset.heroScrollInited` guard that used to sit here existed
+ * only because initOnLoad fired twice on first load. initOnLoad runs its callback
+ * once per page view now, so the guard is gone — and this returns a cleanup
+ * instead, which fixes the actual leak: the guard never removed the window
+ * listeners, so every client-side navigation stacked another scroll/resize pair.
  */
-export function initHeroScrollHeight() {
+export function initHeroScrollHeight(): (() => void) | void {
   const hero = document.getElementById('hero-image');
-  if (!hero || hero.dataset.heroScrollInited === '1') return;
-  hero.dataset.heroScrollInited = '1';
+  if (!hero) return;
 
   // LEARN: Match the CSS breakpoint — 50vh below 768px, 80vh at md+.
   const isMobile = window.innerWidth < 768;
@@ -45,4 +50,9 @@ export function initHeroScrollHeight() {
   updateHeight();
   window.addEventListener('scroll', onScroll, { passive: true });
   window.addEventListener('resize', onResize);
+
+  return () => {
+    window.removeEventListener('scroll', onScroll);
+    window.removeEventListener('resize', onResize);
+  };
 }

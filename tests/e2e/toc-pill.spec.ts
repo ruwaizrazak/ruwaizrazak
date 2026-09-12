@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { ROUTES } from './routes';
-import { scrollSmoothlyTo, documentTop } from './helpers';
+import { scrollSmoothlyTo, documentTop, settleLayout, animationsSettled } from './helpers';
 
 const PILL = '[data-toc-pill]';
 const TOGGLE = '[data-toc-toggle]';
@@ -10,6 +10,9 @@ test.describe('TOC pill', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(ROUTES.pageWithToc);
     await expect(page.locator(PILL)).toBeVisible();
+    // This article lazy-loads 80+ images and grows ~1,700px as they decode.
+    // Settle first so documentTop() offsets below are not stale.
+    await settleLayout(page);
   });
 
   test('shows the first heading as its collapsed label', async ({ page }) => {
@@ -24,6 +27,13 @@ test.describe('TOC pill', () => {
 
     const headings = await page.locator('.note-layout article :is(h1,h2,h3)').allInnerTexts();
     await page.locator(TOGGLE).click();
+
+    // The panel expands via grid-template-rows: 0fr -> 1fr. Until that finishes
+    // the rows have no layout box, and innerText returns "" for an unrendered
+    // element — on webkit that yielded 24 empty strings. Wait for the open state
+    // and the transition before reading any text.
+    await expect(page.locator(PILL)).toHaveAttribute('data-expanded', '');
+    await animationsSettled(page);
 
     const rows = await page.locator(`${ROW} .toc-text`).allInnerTexts();
     expect(rows.map(norm)).toEqual(headings.map(norm));
@@ -110,7 +120,12 @@ test.describe('TOC pill', () => {
           ),
         { timeout: 5000 },
       )
-      .toBeLessThan(120);
+      // LEARN: not an arbitrary number. `.note-main-wrapper` carries the
+      // scroll-driven `overlap-slide-sm` keyframe (translateY 0 -> -120px), so a
+      // heading scrolled to `block: 'start'` settles up to 120px from the top.
+      // Asserting `< 120` sat exactly on that boundary and failed at 120.046875
+      // on mobile-chrome; allow the offset plus a little sub-pixel slack.
+      .toBeLessThan(140);
   });
 
   test('marks the section the reader is in as active', async ({ page }) => {
@@ -145,6 +160,10 @@ test.describe('TOC pill', () => {
     await scrollSmoothlyTo(page, lastTop - 200);
 
     await page.locator(TOGGLE).click();
+    // The panel fades its rows in. Sampling computed opacity mid-transition
+    // reads e.g. "0.992754" instead of "1", which is a stopwatch failure, not
+    // a styling one — wait for the transitions to finish first.
+    await animationsSettled(page);
 
     const states = await page.locator(ROW).evaluateAll((rows) =>
       rows.map((row) => {

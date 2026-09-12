@@ -24,8 +24,10 @@ export const ROUTES = {
   seriesPart: '/series/prototyping-in-code/01-the-problem/',
   /** Renders the inline TocPillDemo component. */
   pageWithTocDemo: '/live/',
-  /** Full-bleed video breakout. */
+  /** Full-bleed video breakout. Also carries lightbox-able content images. */
   workWithVideo: '/works/01Farmville3/',
+  /** Content images that open the zoomable lightbox. */
+  pageWithLightbox: '/works/01Farmville3/',
   /** Garden strip canvas + tag chips over a post grid. */
   pageWithGardenStrip: '/garden/',
 } as const;

@@ -1,7 +1,7 @@
 ---
 import { getMultiCollectionPosts } from '../utils/collections';
-import ContentCard from './ContentCard.astro';
-import SeriesPostCard from './SeriesPostCard.astro';
+import RelatedNotesView from './RelatedNotesView.svelte';
+import { optimizeImage } from '../utils/optimizeImage';
 
 interface Props {
   currentTags: string[];
@@ -25,56 +25,28 @@ const relatedNotes = isSeries
       .filter(note => note.data.title !== currentTitle)
       .filter(note => note.data.tags?.some(tag => currentTags.includes(tag)))
       .slice(0, 8);
+
+// LEARN: see GardenCards — ContentCard is Svelte, so astro:assets optimization
+// happens here and the card receives flat attributes. seriesPosts render through
+// SeriesPostCard instead and carry no image, hence the collection guard.
+const relatedCards = await Promise.all(
+  relatedNotes.map(async (note) => ({
+    note,
+    image:
+      note.collection === 'essays' ? await optimizeImage(note.data.heroImage) : null,
+  })),
+);
 ---
 
-{relatedNotes.length > 0 && (
-  <section class="related-notes-section px-5 md:px-20">
-    <div class="mt-20 mb-10">
-      <h2 class="text-syoro font-sans text-3xl mb-8">{isSeries ? `More in ${seriesTitle}` : 'Related to'}</h2>
-      <div
-        class:list={[
-          "related-grid grid",
-          // Series: SeriesPostCards stretch to equal row height (matches SeriesCard).
-          // Tag branch: garden-style dense grid; items-start keeps card/compact heights natural.
-          isSeries
-            ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
-            : "grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 grid-flow-row-dense gap-6 items-start",
-        ]}
-        data-series={isSeries ? '' : undefined}
-      >
-        {relatedNotes.map((note, i) => (
-          <div class:list={["related-card", !isSeries && i >= 4 && "hidden"]}>
-            {note.collection === 'seriesPosts' ? (
-              /* Series parts get the dedicated "Part N" card, matching the series page. */
-              <SeriesPostCard post={note} />
-            ) : (
-              <ContentCard
-                title={note.data.title}
-                description={note.data.description}
-                pubDate={note.data.pubDate}
-                url={`/${note.collection}/${note.id}/`}
-                heroImage={note.collection === 'essays' ? note.data.heroImage : undefined}
-                maturity={note.data.maturity}
-                collection={note.collection}
-                variant={note.collection === 'essays' ? 'card' : 'compact'}
-                transitionName={`card-${note.collection}-${note.id}`}
-              />
-            )}
-          </div>
-        ))}
-      </div>
-      {!isSeries && relatedNotes.length > 4 && (
-        <button
-          type="button"
-          class="related-refresh mt-8 inline-flex items-center gap-2 px-5 py-2 rounded-xl bg-konpeki text-white font-sans text-sm hover:opacity-90 active:scale-[0.97] transition-[transform,opacity] duration-[180ms] ease-snappy"
-        >
-          Refresh
-        </button>
-      )}
-    </div>
-  </section>
+<!-- LEARN: resolver half — getMultiCollectionPosts() and optimizeImage() both
+     need the Astro side (astro:content + astro:assets). The island receives the
+     finished cards. client:visible: the section sits at the bottom of the
+     article, and the reveal is itself gated on scrolling into view. -->
+{relatedCards.length > 0 && (
+  <RelatedNotesView
+    client:visible
+    cards={relatedCards}
+    isSeries={isSeries}
+    seriesTitle={seriesTitle}
+  />
 )}
-
-<script>
-  import '../scripts/related-notes';
-</script>

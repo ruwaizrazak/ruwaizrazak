@@ -5,7 +5,7 @@ date: '2025-06-27'
 publish: true
 ---
 
-# AI Coding.
+## AI Coding.
 I've been trying to delve into coding for a while and since I was learning on how to be a better designer (Not saying that Im a better designer 🤷🏻‍♂️) it was very hard for me to maintain both aspects of learning and hence I thought of focusing only on the design aspect.
 
 But since, AI tools like Trae and Cursor emerged, its been helping me alot in learning and helping me to recall what I've learned.
@@ -13,7 +13,7 @@ But since, AI tools like Trae and Cursor emerged, its been helping me alot in le
 So, after lots of attempts and tryouts I've built this site using Astro and React with the help of Trae.
 
 
-# Playstation
+## Playstation
 <img src="https://i.imgur.com/w6Rp82d.jpeg" alt="Spiderman."/>
 <p>Even though I had many different consoles over the years for gaming ranging from the Gameboy era to Rog ally (which is technically a PC), my recent aquisition of Playstation 5 has allowed me to experience the ways in which controllers could provide a different experience to the user.</p>
 

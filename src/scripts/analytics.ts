@@ -25,14 +25,20 @@ function track(event: string, params: Record<string, unknown>): void {
  * Track clicks on contact links (LinkedIn, email, resume) across
  * the navigation dropdown and footer.
  */
-export function initContactTracking() {
-  document.querySelectorAll<HTMLElement>('[data-contact]').forEach((el) => {
-    el.addEventListener('click', () => {
-      const method = el.dataset.contact;          // linkedin | email | resume
-      const location = el.closest('footer, #Contact') ? 'footer' : 'nav';
-      track('contact_click', { method, location });
-    });
-  });
+export function initContactTracking(): () => void {
+  // LEARN: one delegated listener, and it returns its own teardown. The previous
+  // version attached a listener to every [data-contact] element and had no
+  // idempotency guard at all — initOnLoad fired it twice on first load, so each
+  // link was double-bound and a single click sent two contact_click events.
+  const onClick = (event: MouseEvent) => {
+    const el = (event.target as Element | null)?.closest<HTMLElement>('[data-contact]');
+    if (!el) return;
+    const method = el.dataset.contact;            // linkedin | email | resume
+    const location = el.closest('footer, #Contact') ? 'footer' : 'nav';
+    track('contact_click', { method, location });
+  };
+  document.addEventListener('click', onClick);
+  return () => document.removeEventListener('click', onClick);
 }
 
 /**
@@ -52,7 +58,7 @@ export function initWorkView() {
  * Uses a scroll listener on the window that measures progress through
  * the <article> element relative to the viewport.
  */
-export function initScrollDepth() {
+export function initScrollDepth(): (() => void) | void {
   const main = document.querySelector<HTMLElement>('main[data-collection]');
   if (!main) return;
 
@@ -95,4 +101,10 @@ export function initScrollDepth() {
   }
 
   window.addEventListener('scroll', onScroll, { passive: true });
+
+  // LEARN: the listener removes itself once every threshold has fired, but a
+  // reader who leaves early never reaches that point — so without this cleanup
+  // each client-side navigation left another scroll listener behind, measuring
+  // an <article> that is no longer on the page.
+  return () => window.removeEventListener('scroll', onScroll);
 }

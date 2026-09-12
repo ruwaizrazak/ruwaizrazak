@@ -6,8 +6,9 @@ export async function GET(context) {
 	// LEARN: Fetch both written collections and merge — the old 'blog' collection
 	// never existed, causing the RSS feed to silently return no items
 	const [essays, notes] = await Promise.all([
-		getCollection('essays'),
-		getCollection('notes'),
+		// Drafts are not syndicated — they have no page to link to.
+		getCollection('essays', ({ data }) => data.publish),
+		getCollection('notes', ({ data }) => data.publish),
 	]);
 	const posts = [...essays, ...notes]
 		.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());

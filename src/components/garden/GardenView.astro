@@ -1,9 +1,14 @@
 ---
+/**
+ * LEARN: this is the resolver for the garden family. GardenCards and GardenStrip
+ * are Svelte now, so the hero-image optimization (astro:assets) and the
+ * build-time random tree choice both happen here.
+ */
 import Header from '../Header.astro';
-import GardenIntro from './GardenIntro.astro';
-import GardenStickyBar from './GardenStickyBar.astro';
-import GardenCards from './GardenCards.astro';
-import GardenStrip from './GardenStrip.astro';
+import GardenIntro from './GardenIntro.svelte';
+import GardenCards from './GardenCards.svelte';
+import GardenStrip from './GardenStrip.svelte';
+import { optimizeImage } from '../../utils/optimizeImage';
 
 interface Props {
   title: string;
@@ -12,13 +17,36 @@ interface Props {
   sortedTags: string[];
   wideFullRow?: boolean;
 }
-const { title, description, posts, sortedTags, wideFullRow = false } = Astro.props;
+const { title, description, posts, wideFullRow = false } = Astro.props;
+
+const cardVariantCollections = new Set(['essays', 'playground']);
+const cards = await Promise.all(
+  (posts ?? []).map(async (post) => ({
+    post,
+    image: await optimizeImage(
+      post.collection === 'series'
+        ? post.data.featuredImage
+        : cardVariantCollections.has(post.collection)
+          ? post.data.heroImage
+          : undefined,
+    ),
+  })),
+);
+
+// LEARN: chosen here, at build time, so the server and client agree. Picking a
+// random tree inside the component would make SSR and hydration disagree.
+const TREE_COUNT = 23;
+const treeIndices = Array.from({ length: 8 }, () => Math.floor(Math.random() * TREE_COUNT));
 ---
 
 <Header />
 <main>
   <GardenIntro title={title} description={description} />
-  <!-- <GardenStickyBar title={title} sortedTags={sortedTags} /> -->
-  <GardenCards posts={posts} wideFullRow={wideFullRow} />
+  <!-- LEARN: client:visible — the cascade is an entrance animation, so there is
+       nothing to do until the grid is on screen. -->
+  <GardenCards client:visible cards={cards} wideFullRow={wideFullRow} />
 </main>
-<GardenStrip posts={posts} />
+<!-- LEARN: client:load — the strip is position:fixed at the bottom of the
+     viewport, so it is visible from first paint and its scroll trigger has to be
+     live immediately. -->
+<GardenStrip client:load treeIndices={treeIndices} />

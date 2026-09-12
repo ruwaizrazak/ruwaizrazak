@@ -5,7 +5,18 @@ import IndexLayout from '../../layouts/IndexLayout.astro';
 export async function getStaticPaths() {
   const { getMultiCollectionPosts } = await import('../../utils/collections');
 
-  const allPosts = await getMultiCollectionPosts(['notes', 'essays', 'works']);
+  // LEARN: every collection that RENDERS tag links must be listed here, or those
+  // links 404. Series parts and playground entries show tags through
+  // NotePostHero exactly like notes and essays do, but were missing from this
+  // list — so /tags/portfolio and /tags/blog were linked from 17 places and
+  // never built.
+  const allPosts = await getMultiCollectionPosts([
+    'notes',
+    'essays',
+    'works',
+    'playground',
+    'seriesPosts',
+  ]);
   const uniqueTags = [...new Set(allPosts.flatMap(post => post.data.tags || []))];
 
   return uniqueTags.map(tag => ({

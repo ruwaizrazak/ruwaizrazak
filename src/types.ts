@@ -1,3 +1,4 @@
+import type { OptimizedImg } from './utils/optimizeImage';
 // Centralized type definitions — extracted from 6+ files where types like
 // Maturity and collection names were defined inline in each component.
 
@@ -9,12 +10,20 @@ export interface ContentCardProps {
   title: string;
   description?: string;
   pubDate: Date;
-  heroImage?: string;
+  /**
+   * LEARN: resolved by the .astro parent via optimizeImage(), not by the card.
+   * Astro's <Image /> and getImage() are unreachable from a Svelte component
+   * (async + astro:assets), so optimization stays on the Astro side and the card
+   * receives flat, serialisable attributes.
+   */
+  image?: OptimizedImg | null;
   url: string;
   imageHeight?: string;
   maturity?: Maturity;
   collection?: string;
   variant?: 'card' | 'compact' | 'wide' | 'series';
+  /** Heading level for the card title: 2 directly under a page <h1>, 3 under a section. */
+  headingLevel?: 2 | 3;
   transitionName?: string;
   // Series-only (variant='series'): metadata footer + a linked post-preview list.
   // `heroImage` doubles as the series featured image (rendered as a background).

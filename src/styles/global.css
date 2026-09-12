@@ -237,13 +237,6 @@ hr {
   }
 }
 
-/* Reduced motion */
-@media (prefers-reduced-motion: reduce) {
-  #carousel-track { transition: none; }
-  #carousel-nav { transition: none; }
-  .carousel-slide .work-card { transition: none; opacity: 1 !important; transform: none !important; }
-}
-
 .sr-only {
   border: 0;
   padding: 0;

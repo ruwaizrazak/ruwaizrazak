@@ -1,4 +1,5 @@
 ---
+import { mdxComponents } from '../../components/mdxComponents/map';
 import BaseHead from '../../components/BaseHead.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
@@ -6,7 +7,7 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
 import { getCollection } from 'astro:content';
 import { render } from 'astro:content';
 import { ClientRouter } from 'astro:transitions';
-import NotePostHero from '../../components/NotePostHero.astro';
+import NotePostHero from '../../components/NotePostHero.svelte';
 import { proseClasses } from '../../utils/proseClasses';
 import { pageType } from '../../styles/typography';
 
@@ -28,7 +29,13 @@ const liveProseClasses = `${proseClasses} prose-a:text-link prose-a:underline pr
 <!doctype html>
 <html lang="en" transition:animate="fade">
 	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+		<!-- LEARN: /live needs its own title and description. It was passing the
+		     site-wide defaults, so it and the homepage were byte-identical to search
+		     engines. The copy below is the page's own hero text, not new wording. -->
+		<BaseHead
+			title={`Live | ${SITE_TITLE}`}
+			description="Whats happening or rather what am I doing currently?"
+		/>
 		<ClientRouter />
 	</head>
 	<body class="bg-backgroundcolor">
@@ -55,7 +62,7 @@ const liveProseClasses = `${proseClasses} prose-a:text-link prose-a:underline pr
 						</div>
 						<p class="mx-12 text-lg md:text-xl lg:text-2xl mt-2 mb-5 font-serif text-syoro">{nowPost.data.OneLiner}</p>
 						<div class={`ml-12 ${liveProseClasses}`}>
-							<nowContent.Content />
+							<nowContent.Content components={mdxComponents} />
 						</div>
 					</div>
 				)}
@@ -64,7 +71,10 @@ const liveProseClasses = `${proseClasses} prose-a:text-link prose-a:underline pr
 						
 						<hr class="w-full my-8 border-stone-100">
 						<div class="space-y-8 pb-20 w-full sm:w-[90%] lg:w-[90%] xl:w-[80%] 2xl:w-[70%] mx-auto px-5 md:px-20 opacity-90">
-							<h1 class={`${pageType.header} text-syoro`}>Then ...</h1>
+							<!-- LEARN: h2, not h1 — this is a section heading under the page title
+							     ("Now"), and a page may only have one h1. The pageType.header class
+							     is kept, so it looks exactly as it did. -->
+							<h2 class={`${pageType.header} text-syoro`}>Then ...</h2>
 							{thenPosts.map((post, index) => {
 								const Content = thenContents[index]?.Content;
 								return (
@@ -75,7 +85,7 @@ const liveProseClasses = `${proseClasses} prose-a:text-link prose-a:underline pr
 										</div>
 										<p class="mx-12 text-lg md:text-xl lg:text-2xl mt-2 mb-5 font-serif text-syoro/90">{post.data.OneLiner}</p>
 										<div class={`mx-12 text-syoro ${liveProseClasses}`}>
-											{Content && <Content />}
+											{Content && <Content components={mdxComponents} />}
 										</div>
 									</div>
 								);

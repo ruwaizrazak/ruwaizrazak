@@ -1,6 +1,5 @@
 ---
-import HeaderLink from './HeaderLink.astro';
-import Navigation from './Navigation.astro';
+import Navigation from './Navigation.svelte';
 const menuItems = [
   {
     name: "Garden",
@@ -19,12 +18,6 @@ const menuItems = [
     href: "/notes",
     icon: "/icons/notes.svg",
     description: "short, raw, impulsive thoughts"
-  },
-  {
-    name: "Books",
-    href: "/books",
-    icon: "/icons/book.svg",
-    description: "Books I've read and want to read"
   },
   {
     name: "Series",
@@ -47,7 +40,7 @@ const additionalLinks = [
 
 <header class="relative z-20 w-full mx-auto mt-10">
 	<nav>
-		<Navigation 
+		<Navigation client:load 
   			menuItems={menuItems}
   			additionalLinks={additionalLinks}
   			logoText="Ruwaiz Razak"

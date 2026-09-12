@@ -99,7 +99,12 @@ export async function getSeriesCards() {
  * Handles both direct id (notes) and nested id (essays/playground) patterns.
  */
 export async function getStaticPathsForCollection(name: CollectionName) {
-  const posts = await getCollection(name);
+  // LEARN: `publish: false` means the entry is not ready, so it gets no route at
+  // all. It previously still built a page — and because the OG endpoint DID filter
+  // on publish, those pages shipped with an og:image that 404'd. Worse, the
+  // sitemap indexes whatever is built and the RSS feed had no filter either, so
+  // two drafts were pushed to search engines and subscribers.
+  const posts = await getCollection(name, ({ data }: any) => data.publish);
   return posts.map((post: any) => {
     // For collections with nested IDs (e.g., essays/my-essay.md), extract the filename
     const parts = post.id.split('/');

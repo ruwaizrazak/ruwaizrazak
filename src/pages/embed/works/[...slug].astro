@@ -1,7 +1,8 @@
 ---
+import { mdxComponents } from '../../../components/mdxComponents/map';
 import { type CollectionEntry, getCollection } from 'astro:content';
 import { render } from 'astro:content';
-import ExternalLink from '../../../components/mdxComponents/ExternalLink.astro';
+import ExternalLink from '../../../components/mdxComponents/ExternalLink.svelte';
 import BaseHead from '../../../components/BaseHead.astro';
 import Image from '../../../components/mdxComponents/Image.astro';
 import { proseClasses } from '../../../utils/proseClasses';
@@ -37,7 +38,7 @@ const { title, description, pubDate, updatedDate, heroImage } = post.data;
           <Image src={heroImage} alt="" class="w-full h-auto object-cover rounded-lg" loading="eager" />
         </div>
       )}
-      <Content components={{ a: ExternalLink }} />
+      <Content components={{ ...mdxComponents, a: ExternalLink }} />
     </article>
   </body>
 </html>

@@ -139,8 +139,8 @@ describe('getStaticPathsForCollection', () => {
   it('derives the slug from the final path segment, lowercased', async () => {
     __setCollections({
       essays: [
-        { id: 'nested/My-Essay', data: {} },
-        { id: 'Flat', data: {} },
+        { id: 'nested/My-Essay', data: { publish: true } },
+        { id: 'Flat', data: { publish: true } },
       ],
     });
     const paths = await getStaticPathsForCollection('essays' as any);
@@ -148,16 +148,24 @@ describe('getStaticPathsForCollection', () => {
   });
 
   it('strips a file extension if the loader left one on the id', async () => {
-    __setCollections({ notes: [{ id: 'thing.mdx', data: {} }] });
+    __setCollections({ notes: [{ id: 'thing.mdx', data: { publish: true } }] });
     const [path] = await getStaticPathsForCollection('notes' as any);
     expect(path.params.slug).toBe('thing');
   });
 
-  it('does NOT filter on publish — drafts still get a route', async () => {
-    // Worth pinning: unpublished entries are excluded from listings by
-    // getPublishedAndSorted, but they are still built as reachable pages.
-    __setCollections({ notes: [{ id: 'draft', data: { publish: false } }] });
+  it('filters on publish — a draft gets no route at all', async () => {
+    // This rule INVERTED. Drafts used to be built as reachable pages, with
+    // publish only controlling listing visibility. That left them with an
+    // og:image that 404'd, and put them in the sitemap and the RSS feed — so
+    // two unfinished notes were served to search engines and subscribers.
+    __setCollections({
+      notes: [
+        { id: 'draft', data: { publish: false } },
+        { id: 'live', data: { publish: true } },
+      ],
+    });
     const paths = await getStaticPathsForCollection('notes' as any);
     expect(paths).toHaveLength(1);
+    expect(paths[0].params.slug).toBe('live');
   });
 });
