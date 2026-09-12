@@ -1,16 +1,20 @@
 ---
 /**
- * Link.astro — styled anchor component with tooltip previews.
+ * Link.astro — resolver half of the Link pair.
  *
  * Data flow:
  *   1. Classify the link (external vs internal, skip anchors/mailto/tel)
  *   2. resolveTooltipMeta() fetches title + description and derives favicon/URL
  *   3. buildTooltipHTML() turns that data into an HTML string
- *   4. The HTML is placed in a data-tippy-content attribute
+ *   4. LinkView.svelte places it in a data-tippy-content attribute
  *   5. Client-side, linkTooltips.ts attaches tippy instances to pick it up
+ *
+ * LEARN: this stays .astro on purpose. Step 2 is an awaited network fetch, and a
+ * Svelte component cannot await during render — so the build-time work lives here
+ * and LinkView.svelte receives plain, already-resolved props.
  */
 import type { HTMLAttributes } from 'astro/types';
-import ExternalLink from '../externallink.astro';
+import LinkView from './LinkView.svelte';
 import { resolveTooltipMeta } from '../../utils/resolveTooltipMeta';
 import { buildTooltipHTML } from '../../utils/buildTooltipHTML';
 
@@ -45,126 +49,16 @@ if (!skipTooltip) {
     });
   }
 }
-
-const hasTooltip = tooltipHTML !== '';
 ---
 
-<span
-  class="inline-block relative"
-  data-link-tooltip={hasTooltip ? '' : undefined}
-  data-tippy-content={hasTooltip ? tooltipHTML : undefined}
->
-  <a
-    href={href}
-    class:list={[
-      "styled-link",
-      "cursor-pointer relative whitespace-nowrap no-underline outline-none pb-1 text-[var(--color-link)] font-medium font-serif",
-      "focus:outline-2 focus:outline-[var(--focus-color,darkblue)] focus:rounded-sm focus:outline-offset-2 dark:focus:outline-[var(--focus-color-dark,lightblue)]",
-      { "styled-link--active text-[var(--color-konpeki)] !font-semibold": isActive },
-      className
-    ]}
-    {...isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {}}
-    {...props}
-  >
-    <span class="link-text inline-block transition-all duration-300 [transition-timing-function:cubic-bezier(0.2,1,0.8,1)]">
-      <slot />
-    </span>
-    {isExternal && <span class="external-icon inline-block ml-1 text-[0.8em] leading-none transition-transform duration-200 ease-in-out" aria-hidden="true">
-      <ExternalLink/>
-    </span>}
-  </a>
-</span>
+<LinkView href={href} class={className} tooltipHTML={tooltipHTML} isExternal={isExternal} isActive={isActive} {...props}>
+  <slot />
+</LinkView>
 
 <script>
+  // LEARN: kept as ONE delegated module script rather than a Svelte `use:` action.
+  // An action only runs in a hydrated component, and a post can carry 9+ links —
+  // that would mean 9 islands to do what a single querySelectorAll pass does.
+  // Astro dedupes this import across every Link instance on the page.
   import '../../scripts/linkTooltips.ts';
 </script>
-
-<style>
-  .external-icon img {
-    width: 1em;
-    height: 1em;
-    vertical-align: baseline;
-    display: inline-block;
-  }
-
-  .styled-link:hover .external-icon {
-    transform: translate(1px, -1px);
-  }
-
-  /* Animated underline effect */
-  .styled-link::before {
-    content: "";
-    transform-origin: 50% 100%;
-    background: var(--color-link);
-    transition:
-      clip-path 0.3s cubic-bezier(0.2, 1, 0.8, 1),
-      transform 0.3s cubic-bezier(0.2, 1, 0.8, 1),
-      background-color 0.3s ease;
-    position: absolute;
-    width: 100%;
-    height: 1px;
-    top: 95%;
-    left: 0;
-    pointer-events: none;
-    clip-path: polygon(
-      0% 0%,
-      0% 100%,
-      0 100%,
-      0 0,
-      100% 0,
-      100% 100%,
-      0 100%,
-      0 100%,
-      100% 100%,
-      100% 0%
-    );
-  }
-
-  .styled-link:hover::before {
-    transform: translate3d(0, 2px, 0) scale3d(1, 2, 1);
-    background: var(--color-konpeki);
-    clip-path: polygon(
-      0% 0%,
-      0% 100%,
-      100% 100%,
-      50% 0,
-      50% 0,
-      50% 100%,
-      50% 100%,
-      0 100%,
-      100% 100%,
-      100% 0%
-    );
-  }
-
-  .styled-link:hover .link-text {
-    transform: translate3d(0, -2px, 0);
-    color: var(--color-konpeki);
-  }
-
-  .styled-link--active::before {
-    background: var(--color-konpeki);
-    height: 2px;
-  }
-
-  .styled-link:active .link-text {
-    transform: translate3d(0, 0, 0);
-    transition-duration: 0.1s;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .styled-link::before,
-    .link-text,
-    .external-icon {
-      transition: none !important;
-    }
-
-    .styled-link:hover .link-text {
-      transform: none;
-    }
-
-    .styled-link:hover::before {
-      transform: none;
-    }
-  }
-</style>
