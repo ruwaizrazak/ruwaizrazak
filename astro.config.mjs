@@ -3,6 +3,7 @@ import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import react from '@astrojs/react';
+import svelte from '@astrojs/svelte';
 import tailwindcss from '@tailwindcss/vite';
 import remarkWikiLink from '@portaljs/remark-wiki-link';
 export default defineConfig({
@@ -38,6 +39,10 @@ export default defineConfig({
     // needs for OG image generation (src/utils/og-template.tsx). No component is ever
     // hydrated (zero client:* directives), so no React ships to the browser.
     react(),
+    // LEARN: @astrojs/svelte is pinned to 7.x — it's the last major with a peer
+    // range of astro ^5. v8 needs Astro ^6 and v9 (latest) needs ^7, so
+    // `astro add svelte` would install v9 and break the build.
+    svelte(),
   ],
 
   vite: {
