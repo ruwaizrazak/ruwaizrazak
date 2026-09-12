@@ -1,7 +1,12 @@
 ---
+/**
+ * LEARN: resolver half — getCollection() and the hero-image optimization inside
+ * toWorkCardsCompact() both need the Astro side. The island only renders.
+ */
 import { getCollection } from 'astro:content';
-import WorkCardCompact from './WorkCardCompact.svelte';
+import OtherWorksSectionView from './OtherWorksSectionView.svelte';
 import { toWorkCardsCompact } from '../utils/workCards';
+
 interface Props {
   currentSlug: string;
 }
@@ -10,38 +15,7 @@ const { currentSlug } = Astro.props;
 const otherWorks = (await getCollection('works', ({ data }) => data.publish)).filter(
   (entry) => entry.id !== currentSlug
 );
-// LEARN: WorkCardCompact is Svelte — hero images resolve here, on the Astro side.
 const otherCards = await toWorkCardsCompact(otherWorks);
 ---
 
-<div class="relative" data-other-works>
-  <div
-    class="w-screen max-w-[100vw] ml-[calc(50%-50vw)] bg-white dark:bg-[var(--color-cardbg)] shadow-[inset_0_1px_2px_0_rgb(0_0_0/0.05)] pt-20"
-  >
-    <div class="w-full mx-auto py-8 px-8 md:px-20">
-      <div class="w-full grid grid-cols-1 lg:grid-cols-4 justify-between gap-4 mb-10 md:py-0 items-center">
-        <div class="col-span-1">
-          <h2 class="font-sans border-l-2 border-syoro text-syoro pl-4 text-3xl md:text-5xl">Other works</h2>
-        </div>
-        <div class="col-span-1 lg:col-span-3 lg:col-start-2">
-          <p class="text-xl sm:text-2xl md:text-3xl text-syoro">Here are some of the other works I can share with you.</p>
-        </div>
-      </div>
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-10">
-        {otherCards.map((card) => (
-          <div class="other-works-card" data-other-works-card>
-            <WorkCardCompact {...card} />
-          </div>
-        ))}
-      </div>
-    </div>
-  </div>
-</div>
-
-<script>
-  // Logic extracted to src/scripts/ per CLAUDE.md; initOnLoad wires both
-  // initial load and Astro view-transition navigations (the init guards re-runs).
-  import { initOnLoad } from '../utils/initOnLoad';
-  import { initOtherWorksAnimation } from '../scripts/otherWorksAnimation';
-  initOnLoad(initOtherWorksAnimation);
-</script>
+<OtherWorksSectionView client:visible cards={otherCards} />
