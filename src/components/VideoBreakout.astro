@@ -1,37 +1,22 @@
 ---
+/**
+ * LEARN: thin wrapper so VideoBreakout can be used from MDX. A component passed
+ * through the components map cannot carry a client:* directive (astro#5853), but
+ * an .astro component used in MDX can — so the directive lives here.
+ *
+ * LEARN: client:load, not client:visible. The old scripts/videoBreakout.ts ran
+ * at page load for EVERY breakout regardless of visibility, and the wrapper's
+ * height is read from its inline style — with client:visible the height is
+ * simply absent until the element scrolls into view, which broke the sizing
+ * assertion on chromium. client:load is the faithful equivalent.
+ */
+import VideoBreakoutIsland from './VideoBreakout.svelte';
+
 interface Props {
   src: string;
   title?: string;
 }
-const { src, title = "YouTube video player" } = Astro.props;
+const { src, title } = Astro.props;
 ---
 
-<div
-  class="video-breakout w-screen max-w-[100vw] ml-[calc(50%-50vw)] mb-8 rounded-none overflow-hidden"
-  data-video-breakout
->
-  <iframe
-    src={src}
-    title={title}
-    class="video-breakout__iframe w-full rounded-lg"
-    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-    allowfullscreen
-  />
-</div>
-
-<style>
-  .video-breakout {
-    height: 56.25vw; /* fallback before script runs */
-  }
-  .video-breakout__iframe {
-    height: 56.25vw; /* 16:9 of viewport width — video keeps aspect, wrapper clips on scroll */
-  }
-</style>
-
-<script>
-  // Sizing logic extracted to src/scripts/ per CLAUDE.md; initOnLoad replaces the
-  // hand-rolled astro:page-load + load listeners (the per-element guard prevents double-init).
-  import { initOnLoad } from '../utils/initOnLoad';
-  import { initVideoBreakouts } from '../scripts/videoBreakout';
-  initOnLoad(initVideoBreakouts);
-</script>
+<VideoBreakoutIsland client:load src={src} title={title} />

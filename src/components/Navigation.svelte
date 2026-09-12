@@ -201,7 +201,7 @@
                 target="_blank"
                 rel="noopener noreferrer"
                 data-contact="linkedin"
-                class="p-4 text-xl font-medium text-konpeki hover:bg-blue-50 dark:hover:bg-syoro/10 hover:text-link hover:scale-95 rounded-t-xl flex gap-2 transition-[transform,background-color,color] duration-200 ease-snappy"
+                class="p-4 text-sm md:text-lg lg:text-xl font-medium text-konpeki hover:bg-blue-50 dark:hover:bg-syoro/10 hover:text-link hover:scale-95 rounded-t-xl flex gap-2 transition-[transform,background-color,color] duration-200 ease-snappy"
               >
                 <span class="text-syoro">
                   <svg class="contact-icon w-6 h-6" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -213,7 +213,7 @@
               <a
                 href="mailto:hello@ruwaizrazak.com"
                 data-contact="email"
-                class="group flex gap-2 hover:gap-4 transition-[transform,background-color,color,gap] duration-200 ease-snappy p-4 text-xl font-medium text-konpeki hover:bg-blue-50 dark:hover:bg-syoro/10 hover:text-link hover:scale-95"
+                class="group flex gap-2 hover:gap-4 transition-[transform,background-color,color,gap] duration-200 ease-snappy p-4 text-sm md:text-lg lg:text-xl font-medium text-konpeki hover:bg-blue-50 dark:hover:bg-syoro/10 hover:text-link hover:scale-95"
               >
                 <span class="text-syoro flex-shrink-0">
                   <svg class="contact-icon w-6 h-6 transition-colors duration-200 ease-snappy" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -227,7 +227,7 @@
                 target="_blank"
                 rel="noopener noreferrer"
                 data-contact="resume"
-                class="flex gap-2 p-4 text-xl font-medium text-konpeki hover:bg-blue-50 dark:hover:bg-syoro/10 hover:text-link hover:scale-95 transition-[transform,background-color,color] duration-200 ease-snappy rounded-b-xl"
+                class="flex gap-2 p-4 text-sm md:text-lg lg:text-xl font-medium text-konpeki hover:bg-blue-50 dark:hover:bg-syoro/10 hover:text-link hover:scale-95 transition-[transform,background-color,color] duration-200 ease-snappy rounded-b-xl"
               >
                 <span class="text-syoro flex-shrink-0">
                   <svg class="contact-icon w-6 h-6" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
