@@ -63,6 +63,13 @@
   const maskStyle = (icon: string) =>
     `background-color: var(--color-syoro); mask: url(${icon}) center/contain no-repeat; -webkit-mask: url(${icon}) center/contain no-repeat;`;
 
+  // LEARN: the Garden dropdown's "floating shelf" chip icon (1c in the design
+  // review) uses --color-konpeki, not the --color-syoro every other masked icon
+  // in this file uses — a separate helper beats overloading maskStyle with a
+  // color argument nothing else needs.
+  const chipIconStyle = (icon: string) =>
+    `background-color: var(--color-konpeki); mask: url(${icon}) center/contain no-repeat; -webkit-mask: url(${icon}) center/contain no-repeat;`;
+
   // Close-on-outside for both dropdowns, from a single document listener.
   $effect(() => {
     const onDocumentClick = (event: MouseEvent) => {
@@ -107,7 +114,28 @@
   let gardenButton: HTMLElement | undefined = $state();
   let aboutEl: HTMLElement | undefined = $state();
   let aboutButton: HTMLElement | undefined = $state();
-</script>
+
+  const gardenContains = (target: EventTarget | null) =>
+    target instanceof Node && !!(gardenEl?.contains(target) || gardenButton?.contains(target));
+
+  const showGarden = () => garden.show();
+  // LEARN: don't close if the pointer/focus is moving between the Garden
+  // button and its panel — otherwise the mt-3 gap (or tabbing into a link)
+  // would hide the menu before you can use it. scheduleClose() still covers
+  // the empty gap: show() on the panel cancels the pending close.
+  const leaveGarden = (event: MouseEvent | FocusEvent) => {
+    if (gardenContains(event.relatedTarget)) return;
+    garden.scheduleClose();
+  };
+
+  const aboutContains = (target: EventTarget | null) =>
+    target instanceof Node && !!(aboutEl?.contains(target) || aboutButton?.contains(target));
+
+  const showAbout = () => about.show();
+  const leaveAbout = (event: MouseEvent | FocusEvent) => {
+    if (aboutContains(event.relatedTarget)) return;
+    about.scheduleClose();
+  };</script>
 
 <nav class={`relative z-50 ${className}`}>
   <div>
@@ -133,7 +161,10 @@
           <button
             bind:this={gardenButton}
             id="desktop-menu-button"
-            onclick={() => garden.toggle()}
+            onmouseover={showGarden}
+            onfocus={showGarden}
+            onmouseleave={leaveGarden}
+            onblur={leaveGarden}
             class="flex items-center text-sm md:text-lg lg:text-xl font-medium text-syoro rounded-full hover:bg-blue-50 dark:hover:bg-syoro/10 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-syoro/20 dark:focus:ring-syoro/20 transition-[transform,background-color] duration-200 ease-snappy uppercase hover:scale-95 px-5"
           >
             Garden
@@ -174,7 +205,10 @@
             <button
               bind:this={aboutButton}
               id="about-menu-button"
-              onclick={() => about.toggle()}
+              onmouseover={showAbout}
+              onfocus={showAbout}
+              onmouseleave={leaveAbout}
+              onblur={leaveAbout}
               class="flex items-center text-sm md:text-lg lg:text-xl font-medium text-white rounded-full hover:bg-syoro/10 dark:hover:bg-syoro/10 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-syoro/20 dark:focus:ring-syoro/20 transition-[transform,background-color] duration-200 ease-snappy uppercase hover:scale-95 px-5 py-2"
             >
               Work with me
@@ -194,6 +228,11 @@
           <div
             bind:this={aboutEl}
             id="about-dropdown"
+            role="region"
+            aria-label="Contact"
+            onmouseover={showAbout}
+            onmouseleave={leaveAbout}
+            onfocusin={showAbout}
             class={[
               'absolute right-0 mt-2 w-56 shadow-lg rounded-xl transform bg-backgroundcolor transition-[transform,opacity] duration-200 ease-snappy border backdrop-blur-md z-50',
               { hidden: about.hidden },
@@ -266,43 +305,50 @@
     </div>
   </div>
 
-  <!-- Desktop Dropdown Menu (md and up) -->
+  <!--
+    Desktop Dropdown Menu (md and up)
+    LEARN: restyled to the "Floating shelf" (1c) direction from the Garden-dropdown
+    design review — icon chips in a rounded-full badge, serif titles/descriptions,
+    and a panel that reads as detached from the pill nav bar rather than pinned to it.
+    The open/close contract is untouched: same #desktop-dropdown id, same Dropdown
+    class driving `garden.hidden`/`garden.open`, same 200ms hidden-lag — that's what
+    navigation.spec.ts asserts against, not the visual treatment.
+  -->
   <div
     bind:this={gardenEl}
     id="desktop-dropdown"
+    role="region"
+    aria-label="Garden"
+    onmouseover={showGarden}
+    onmouseleave={leaveGarden}
+    onfocusin={showGarden}
     class={[
-      'md:block absolute my-2 top-full md:w-[60%] lg:w-[50%] right-10 bg-backgroundcolor shadow-lg rounded-xl stransform transition-[transform,opacity] duration-200 ease-snappy border border-card-border backdrop-blur-md z-50',
+      'md:block absolute mt-3 top-full w-full right-0 bg-backgroundcolor shadow-[0_18px_48px_rgba(0,53,53,0.10)] dark:shadow-none rounded-[26px] transition-[transform,opacity] duration-200 ease-snappy border border-card-border backdrop-blur-md z-50',
       { hidden: garden.hidden },
       garden.open
         ? 'opacity-100 scale-100 pointer-events-auto'
         : 'opacity-0 scale-95 pointer-events-none',
     ]}
   >
-    <div class="w-[90%] mx-auto py-6">
-      <div class="grid grid-cols-2 lg:gap-2 xl:gap-4">
-        {#each menuItems as item (item.href)}
-          <a
-            href={item.href}
-            class="group p-4 rounded-lg hover:scale-95 hover:border border-card-border ease-snappy transition-[transform,background-color,border-color] block duration-200 hover:bg-blue-50 dark:hover:bg-syoro/10 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-syoro/20 dark:focus:ring-syoro/20"
-          >
-            <div class="flex items-center space-x-4">
-              {#if item.icon}
-                <div class="flex-shrink-0">
-                  <span class="block w-8 h-8" style={maskStyle(item.icon)} role="img" aria-label={item.name}></span>
-                </div>
-              {/if}
-              <div class="flex-1">
-                <span class="block text-lg font-medium font-sans uppercase text-konpeki group-hover:text-link transition-colors">
-                  {item.name}
-                </span>
-                {#if item.description}
-                  <p class="text-sm text-konpeki">{item.description}</p>
-                {/if}
-              </div>
-            </div>
-          </a>
-        {/each}
-      </div>
+    <div class="flex justify-around items-right gap-0 p-5">
+      {#each menuItems as item (item.href)}
+        <a
+          href={item.href}
+          class="group flex w-1/5 flex-col gap-3 p-4 pb-5 rounded-2xl hover:scale-95 ease-snappy transition-[transform,background-color] duration-200 hover:bg-[#FAF7F0] dark:hover:bg-[#343434] focus:outline-none focus:ring-2 focus:ring-inset focus:ring-syoro/20 dark:focus:ring-syoro/20"
+        >
+          {#if item.icon}
+            <span class="flex items-center justify-center w-11 h-11 rounded-full bg-[#EAF3FF] dark:bg-[#22313d]">
+              <span class="block w-[22px] h-[22px]" style={chipIconStyle(item.icon)} role="img" aria-label={item.name}></span>
+            </span>
+          {/if}
+          <span class="block text-xl font-medium font-serif text-syoro">
+            {item.name}
+          </span>
+          {#if item.description}
+            <p class="text-sm font-serif text-pretty text-[#5c7070] dark:text-[#a9b8b8]">{item.description}</p>
+          {/if}
+        </a>
+      {/each}
     </div>
   </div>
 

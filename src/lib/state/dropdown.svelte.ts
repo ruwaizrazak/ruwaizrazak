@@ -37,6 +37,15 @@ export class Dropdown {
     }, this.#delayMs);
   }
 
+  // LEARN: hover menus need a grace window so the pointer can cross the gap
+  // between the trigger and the panel. `show()` clears this timer, so entering
+  // the panel cancels the pending close. Click-outside still calls `close()`
+  // immediately so the e2e "hidden after 200ms" contract is unchanged.
+  scheduleClose(): void {
+    clearTimeout(this.#timer);
+    this.#timer = setTimeout(() => this.close(), this.#delayMs);
+  }
+
   toggle(): void {
     if (this.open) this.close();
     else this.show();
