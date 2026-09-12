@@ -1,7 +1,8 @@
 ---
 import { Picture } from 'astro:assets';
 import Layout from '../layouts/AboutLayout.astro';
-import WorkCardCompact from '../components/WorkCardCompact.astro';
+import WorkCardCompact from '../components/WorkCardCompact.svelte';
+import { toWorkCardsCompact } from '../utils/workCards';
 import { resolveImage } from '../utils/resolveImage';
 import StickyExperience from '../components/StickyExperience.astro';
 import { getCollection } from 'astro:content';
@@ -16,6 +17,8 @@ import { pageType } from '../styles/typography';
 const gardenPosts = (await getPublishedAndSorted('essays')).slice(0, 3);
 
 const works = await getCollection('works', ({ data }) => data.publish === true);
+// LEARN: WorkCardCompact is Svelte — resolve hero images on the Astro side.
+const workCards = await toWorkCardsCompact(works);
 
 const experience = [
   {
@@ -156,15 +159,8 @@ const experience = [
 				Some of the work I've shipped.
 			</p>
 			<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-				{works.map(work => (
-					<WorkCardCompact
-						title={work.data.title}
-						role={work.data.role}
-						company={work.data.company}
-						duration={work.data.duration}
-						heroImage={work.data.heroImage}
-						url={`/works/${work.id}`}
-					/>
+				{workCards.map(card => (
+					<WorkCardCompact {...card} />
 				))}
 			</div>
 		</section>

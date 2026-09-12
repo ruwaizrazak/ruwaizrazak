@@ -1,7 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
-import WorkCard from './WorkCard.astro';
-import WorkCardCompact from './WorkCardCompact.astro';
+import WorkCardCompact from './WorkCardCompact.svelte';
+import { toWorkCardsCompact } from '../utils/workCards';
 interface Props {
   currentSlug: string;
 }
@@ -10,6 +10,8 @@ const { currentSlug } = Astro.props;
 const otherWorks = (await getCollection('works', ({ data }) => data.publish)).filter(
   (entry) => entry.id !== currentSlug
 );
+// LEARN: WorkCardCompact is Svelte — hero images resolve here, on the Astro side.
+const otherCards = await toWorkCardsCompact(otherWorks);
 ---
 
 <div class="relative" data-other-works>
@@ -26,9 +28,9 @@ const otherWorks = (await getCollection('works', ({ data }) => data.publish)).fi
         </div>
       </div>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-10">
-        {otherWorks.map((entry, i) => (
+        {otherCards.map((card) => (
           <div class="other-works-card" data-other-works-card>
-            <WorkCardCompact title={entry.data.title} role={entry.data.role} company={entry.data.company} duration={entry.data.duration} heroImage={entry.data.heroImage} url={`/works/${entry.id}`} />
+            <WorkCardCompact {...card} />
           </div>
         ))}
       </div>
