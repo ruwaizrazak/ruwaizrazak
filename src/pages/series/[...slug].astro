@@ -4,8 +4,9 @@ import BaseHead from '../../components/BaseHead.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import NotesPost from '../../layouts/notesPost.astro';
-import NotePostHero from '../../components/NotePostHero.astro';
-import SeriesCard from '../../components/SeriesCard.astro';
+import NotePostHero from '../../components/NotePostHero.svelte';
+import { optimizePicture } from '../../utils/optimizeImage';
+import SeriesCard from '../../components/SeriesCard.svelte';
 import { getSeriesWithPosts } from '../../utils/collections';
 
 export async function getStaticPaths() {
@@ -44,6 +45,8 @@ const current = (await getSeriesWithPosts()).find(
   (s) => s.id.replace(/\/index$/, '') === seriesSlug
 );
 const seriesDoc = current;
+// LEARN: NotePostHero is Svelte — resolve the series hero <picture> here.
+const seriesPicture = await optimizePicture(seriesDoc?.data.featuredImage);
 const allParts = current?.posts ?? [];
 
 // If this is a part page, find the specific part (allParts is sorted by seriesOrder asc)
@@ -93,7 +96,7 @@ const Content = renderResult?.Content;
             description={seriesDoc.data.description}
             pubDate={seriesDoc.data.startedDate}
             updatedDate={seriesDoc.data.lastUpdated}
-            heroImage={seriesDoc.data.featuredImage}
+            picture={seriesPicture}
             tags={seriesDoc.data.tags ?? []}
           />
         )}
