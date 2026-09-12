@@ -1,0 +1,163 @@
+{
+  "lastFetched": "2026-09-12T00:00:00.000Z",
+  "children": [
+    {
+      "type": "entry",
+      "author": {
+        "type": "card",
+        "name": "Ada Lovelace",
+        "photo": "https://indieweb.org/ada.jpg",
+        "url": "https://indieweb.org/ada"
+      },
+      "url": "https://indieweb.org/ada/status/100",
+      "content": {
+        "text": "This is exactly the argument I keep failing to make at work. Bookmarking.",
+        "html": "<p>This is exactly the argument I keep failing to make at work. Bookmarking.</p>"
+      },
+      "published": "2026-01-12T09:00:00Z",
+      "wm-received": "2026-01-12T09:05:00Z",
+      "wm-id": 900000,
+      "wm-source": "https://indieweb.org/ada/status/100",
+      "wm-target": "https://ruwaizrazak.com/notes/whythissite/",
+      "wm-property": "in-reply-to",
+      "in-reply-to": "https://ruwaizrazak.com/notes/whythissite/"
+    },
+    {
+      "type": "entry",
+      "author": {
+        "type": "card",
+        "name": "Grace Hopper",
+        "photo": "https://example.com/grace.jpg",
+        "url": "https://example.com/grace"
+      },
+      "url": "https://example.com/grace/status/101",
+      "content": {
+        "text": "The bit about owning your words landed hard. Thanks for writing it.",
+        "html": "<p>The bit about owning your words landed hard. Thanks for writing it.</p>"
+      },
+      "published": "2026-02-12T09:00:00Z",
+      "wm-received": "2026-02-12T09:05:00Z",
+      "wm-id": 900001,
+      "wm-source": "https://example.com/grace/status/101",
+      "wm-target": "https://ruwaizrazak.com/notes/whythissite/",
+      "wm-property": "in-reply-to",
+      "in-reply-to": "https://ruwaizrazak.com/notes/whythissite/"
+    },
+    {
+      "type": "entry",
+      "author": {
+        "type": "card",
+        "name": "Alan Kay",
+        "photo": "https://example.org/alan.jpg",
+        "url": "https://example.org/alan"
+      },
+      "url": "https://example.org/alan/status/102",
+      "content": {
+        "text": "Been running my own site for years and still learned something here.",
+        "html": "<p>Been running my own site for years and still learned something here.</p>"
+      },
+      "published": "2026-03-12T09:00:00Z",
+      "wm-received": "2026-03-12T09:05:00Z",
+      "wm-id": 900002,
+      "wm-source": "https://example.org/alan/status/102",
+      "wm-target": "https://ruwaizrazak.com/notes/whythissite/",
+      "wm-property": "in-reply-to",
+      "in-reply-to": "https://ruwaizrazak.com/notes/whythissite/"
+    },
+    {
+      "type": "entry",
+      "author": {
+        "type": "card",
+        "name": "Barbara Liskov",
+        "photo": "https://example.net/barbara.jpg",
+        "url": "https://example.net/barbara"
+      },
+      "url": "https://example.net/barbara/status/103",
+      "content": {
+        "text": "Disagree on one point but the overall case is solid.",
+        "html": "<p>Disagree on one point but the overall case is solid.</p>"
+      },
+      "published": "2026-04-12T09:00:00Z",
+      "wm-received": "2026-04-12T09:05:00Z",
+      "wm-id": 900003,
+      "wm-source": "https://example.net/barbara/status/103",
+      "wm-target": "https://ruwaizrazak.com/notes/whythissite/",
+      "wm-property": "in-reply-to",
+      "in-reply-to": "https://ruwaizrazak.com/notes/whythissite/"
+    },
+    {
+      "type": "entry",
+      "author": {
+        "type": "card",
+        "name": "Radia Perlman",
+        "photo": "https://indieweb.org/radia.jpg",
+        "url": "https://indieweb.org/radia"
+      },
+      "url": "https://indieweb.org/radia/status/104",
+      "content": {
+        "text": "Sent this to three people already.",
+        "html": "<p>Sent this to three people already.</p>"
+      },
+      "published": "2026-05-12T09:00:00Z",
+      "wm-received": "2026-05-12T09:05:00Z",
+      "wm-id": 900004,
+      "wm-source": "https://indieweb.org/radia/status/104",
+      "wm-target": "https://ruwaizrazak.com/notes/whythissite/",
+      "wm-property": "in-reply-to",
+      "in-reply-to": "https://ruwaizrazak.com/notes/whythissite/"
+    },
+    {
+      "type": "entry",
+      "author": {
+        "type": "card",
+        "name": "Karen Sparck",
+        "photo": "https://example.com/karen.jpg",
+        "url": "https://example.com/karen"
+      },
+      "url": "https://example.com/karen/status/105",
+      "content": {
+        "text": "The section on decentralisation is the clearest I have read.",
+        "html": "<p>The section on decentralisation is the clearest I have read.</p>"
+      },
+      "published": "2026-06-12T09:00:00Z",
+      "wm-received": "2026-06-12T09:05:00Z",
+      "wm-id": 900005,
+      "wm-source": "https://example.com/karen/status/105",
+      "wm-target": "https://ruwaizrazak.com/notes/whythissite/",
+      "wm-property": "in-reply-to",
+      "in-reply-to": "https://ruwaizrazak.com/notes/whythissite/"
+    },
+    {
+      "type": "entry",
+      "author": {
+        "type": "card",
+        "name": "Ada Lovelace",
+        "photo": "https://indieweb.org/ada.jpg",
+        "url": "https://indieweb.org/ada"
+      },
+      "url": "https://indieweb.org/ada/like/200",
+      "wm-received": "2026-02-01T10:00:00Z",
+      "wm-id": 910000,
+      "wm-source": "https://indieweb.org/ada/like/200",
+      "wm-target": "https://ruwaizrazak.com/notes/whythissite/",
+      "wm-property": "like-of",
+      "like-of": "https://ruwaizrazak.com/notes/whythissite/"
+    },
+    {
+      "type": "entry",
+      "author": {
+        "type": "card",
+        "name": "Grace Hopper",
+        "photo": "https://example.com/grace.jpg",
+        "url": "https://example.com/grace"
+      },
+      "url": "https://example.com/grace/like/201",
+      "wm-received": "2026-02-02T10:00:00Z",
+      "wm-id": 910001,
+      "wm-source": "https://example.com/grace/like/201",
+      "wm-target": "https://ruwaizrazak.com/notes/whythissite/",
+      "wm-property": "like-of",
+      "like-of": "https://ruwaizrazak.com/notes/whythissite/"
+    }
+  ]
+}

@@ -8,7 +8,15 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "webmentions": "node src/scripts/get-webmentions.js"
+    "webmentions": "node src/scripts/get-webmentions.js",
+    "test": "npm run test:unit && npm run test:integrity",
+    "test:unit": "vitest run tests/unit",
+    "test:unit:watch": "vitest tests/unit",
+    "test:integrity": "npm run build && vitest run tests/integrity",
+    "test:integrity:only": "vitest run tests/integrity",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:all": "npm run test && npm run test:e2e"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.3.13",
@@ -31,9 +39,12 @@
     "tippy.js": "^6.3.7"
   },
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
     "@tailwindcss/typography": "^0.5.16",
     "@types/flubber": "^0.4.0",
     "glob": "^11.0.3",
-    "js-yaml": "^4.2.0"
+    "js-yaml": "^4.2.0",
+    "jsdom": "^29.1.1",
+    "vitest": "^3.2.7"
   }
 }

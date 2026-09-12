@@ -1,13 +1,22 @@
 ---
 import type { WebMention, WebMentionCache } from '../types';
 import mentions from '../data/webmentions.json';
+import sampleMentions from '../../tests/fixtures/webmentions.sample.json';
 
 interface Props {
   url: string;
 }
 
 const { url } = Astro.props;
-const webmentions = mentions as WebMentionCache;
+
+// LEARN: the real cache is empty most of the time, so the reply list, the
+// four-item cap and the Show more/less toggle never render — and therefore
+// could never be tested. TEST_FIXTURES=1 (set only by playwright.config.ts)
+// swaps in a sample cache at build time. This runs in Node during the build,
+// so neither JSON is ever shipped to the browser.
+const webmentions = (
+  process.env.TEST_FIXTURES === '1' ? sampleMentions : mentions
+) as WebMentionCache;
 
 // LEARN: Match URL with and without trailing slash to catch all mentions
 const postMentions = webmentions.children.filter((m: WebMention) => {
