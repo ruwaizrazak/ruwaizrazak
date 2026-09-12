@@ -22,3 +22,12 @@ const nordeusTooltip = meta
 ---
 
 <IntroSectionView nordeusTooltip={nordeusTooltip} />
+
+<script>
+  // LEARN: whatever RENDERS a tooltip must also load the binder. Link.astro does
+  // this too. It matters because these resolver shells emit data-tippy-content
+  // through LinkView.svelte without going through Link.astro — so when Footer and
+  // IntroSection stopped rendering Link.astro, the homepage kept its tooltip
+  // markup but lost the script that binds it, silently. Astro dedupes the import.
+  import '../scripts/linkTooltips.ts';
+</script>

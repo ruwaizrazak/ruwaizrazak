@@ -59,3 +59,28 @@ test.describe('link tooltips', () => {
     expect(instances).toBe(total);
   });
 });
+
+test.describe('tooltips outside MDX', () => {
+  /**
+   * REGRESSION GUARD. The tooltip markup and the script that binds it come from
+   * different places: Link.astro emits both, but the resolver shells
+   * (IntroSection, StickyExperience) emit the markup through LinkView.svelte and
+   * have to import the binder themselves. When Footer and IntroSection stopped
+   * rendering Link.astro during the Svelte migration, the homepage kept its
+   * data-tippy-content attribute and silently lost the binding — no test noticed,
+   * because every tooltip spec pointed at an MDX page.
+   */
+  test('the homepage intro link still binds a tooltip', async ({ page }) => {
+    await page.goto(ROUTES.home);
+    const anchor = page.locator('[data-link-tooltip]').first();
+    await expect(anchor).toHaveCount(1);
+
+    // Assert the BINDING, not a hover: mobile-chrome emulates touch, where
+    // tippy's mouseenter trigger never fires. `_tippy` is what the binder
+    // attaches, and its absence is exactly what the regression looked like.
+    await expect
+      .poll(async () => anchor.evaluate((el) => '_tippy' in el), { timeout: 5000 })
+      .toBe(true);
+  });
+});
+

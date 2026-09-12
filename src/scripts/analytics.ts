@@ -25,14 +25,20 @@ function track(event: string, params: Record<string, unknown>): void {
  * Track clicks on contact links (LinkedIn, email, resume) across
  * the navigation dropdown and footer.
  */
-export function initContactTracking() {
-  document.querySelectorAll<HTMLElement>('[data-contact]').forEach((el) => {
-    el.addEventListener('click', () => {
-      const method = el.dataset.contact;          // linkedin | email | resume
-      const location = el.closest('footer, #Contact') ? 'footer' : 'nav';
-      track('contact_click', { method, location });
-    });
-  });
+export function initContactTracking(): () => void {
+  // LEARN: one delegated listener, and it returns its own teardown. The previous
+  // version attached a listener to every [data-contact] element and had no
+  // idempotency guard at all — initOnLoad fired it twice on first load, so each
+  // link was double-bound and a single click sent two contact_click events.
+  const onClick = (event: MouseEvent) => {
+    const el = (event.target as Element | null)?.closest<HTMLElement>('[data-contact]');
+    if (!el) return;
+    const method = el.dataset.contact;            // linkedin | email | resume
+    const location = el.closest('footer, #Contact') ? 'footer' : 'nav';
+    track('contact_click', { method, location });
+  };
+  document.addEventListener('click', onClick);
+  return () => document.removeEventListener('click', onClick);
 }
 
 /**
