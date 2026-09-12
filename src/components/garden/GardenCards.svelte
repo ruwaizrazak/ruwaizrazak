@@ -2,6 +2,7 @@
   import { onMount } from 'svelte';
   import ContentCard from '../ContentCard.svelte';
   import type { OptimizedImg } from '../../utils/optimizeImage';
+  import { urlForEntry } from '../../utils/urls';
 
   /**
    * LEARN: this component also absorbs the only thing
@@ -75,7 +76,7 @@
           title={post.data.title}
           description={post.data.description || ''}
           pubDate={post.data.pubDate}
-          url={post.collection === 'series' ? `/series/${post.id}/` : `/${post.collection}/${post.id}/`}
+          url={urlForEntry(post.collection, post.id)}
           {image}
           maturity={post.data.maturity}
           collection={post.collection}

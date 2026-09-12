@@ -51,15 +51,26 @@ describe('the build produced a site', () => {
 });
 
 describe('content reaches the web', () => {
-  // Slug pages are built for every entry, published or not — publish only
-  // controls listing visibility. See getStaticPathsForCollection.
+  // `publish: false` means no route at all. This used to be the opposite — pages
+  // were built for drafts too, and publish only controlled listing visibility —
+  // but that left drafts with an og:image that 404'd, and put them in the sitemap
+  // and the RSS feed. See getStaticPathsForCollection.
   for (const collection of ['notes', 'essays', 'playground'] as const) {
-    it(`gives every ${collection} entry a page`, () => {
-      for (const entry of readCollection(collection)) {
+    it(`gives every published ${collection} entry a page`, () => {
+      for (const entry of readCollection(collection).filter(isPublished)) {
         expect(
           fileForRoute(`/${collection}/${entry.slug}/`),
           `${entry.name} has no page at /${collection}/${entry.slug}/`,
         ).not.toBeNull();
+      }
+    });
+
+    it(`builds no page for an unpublished ${collection} entry`, () => {
+      for (const entry of readCollection(collection).filter((e) => !isPublished(e))) {
+        expect(
+          fileForRoute(`/${collection}/${entry.slug}/`),
+          `${entry.name} is a draft but has a page at /${collection}/${entry.slug}/`,
+        ).toBeNull();
       }
     });
   }
@@ -80,8 +91,11 @@ describe('content reaches the web', () => {
   });
 
   it('builds a tag page for every tag in use', () => {
+    // Must match the collection list in pages/tags/[tag].astro. Series parts show
+    // tag links through NotePostHero just like notes and essays do, so they were
+    // added there — and omitting them here would flag their tag pages as orphans.
     const tags = new Set<string>();
-    for (const collection of ['notes', 'essays', 'works', 'playground'] as const) {
+    for (const collection of ['notes', 'essays', 'works', 'playground', 'series'] as const) {
       for (const entry of readCollection(collection).filter(isPublished)) {
         for (const tag of entry.data.tags ?? []) tags.add(String(tag));
       }
