@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { ROUTES } from './routes';
+import { scrollSmoothlyTo, documentTop } from './helpers';
 
 /**
  * Behaviour-level accessibility only — the things these components already
@@ -32,8 +33,13 @@ test.describe('keyboard and ARIA', () => {
 
   test('the active TOC row is announced as the current location', async ({ page }) => {
     await page.goto(ROUTES.pageWithToc);
+    // The scroll-spy marks nothing active until a heading crosses its band, so
+    // at the very top of the page there is legitimately no current row.
+    const secondHeadingTop = await documentTop(page, '.note-layout article :is(h1,h2,h3)', 1);
+    await scrollSmoothlyTo(page, secondHeadingTop - 150);
+
     await page.locator('[data-toc-toggle]').click();
-    await expect(page.locator('[data-toc-link][data-active]')).toHaveAttribute(
+    await expect(page.locator('[data-toc-link][data-active]').first()).toHaveAttribute(
       'aria-current',
       'location',
     );

@@ -3,13 +3,14 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { initializeFilters } from '../../../src/scripts/listing/listingFilters';
 
 /**
- * Only the tag-link path is exercised here, because it is the only path that
- * exists in the rendered site: `.collection-filter`, `#tagDropdown`,
- * `#showMoreTags` and `#additionalTags` appear nowhere in src/, so those
- * branches of initializeFilters() are unreachable dead code.
+ * NOTE: none of this runs on the live site. The select-dropdown branches look
+ * for `.collection-filter` / `#tagDropdown` / `#showMoreTags` / `#additionalTags`,
+ * which appear nowhere in src/. The tag-chip branch needs `a[data-tag]`, rendered
+ * only by Tag.astro, which is only used by GardenStickyBar.astro — and that is
+ * commented out in GardenView.astro:21. `data-tag` appears in zero built pages.
  *
- * Note what this pins: a tag chip click calls preventDefault() and filters the
- * grid in place, so it never navigates to the /tags/<tag> page that also exists.
+ * These tests are kept as a behavioural spec for the module: if the sticky bar
+ * is ever uncommented, they say what the filtering is supposed to do.
  */
 function renderGrid() {
   document.body.innerHTML = `

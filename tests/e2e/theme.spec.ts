@@ -30,10 +30,11 @@ test.describe('theme toggle', () => {
 
   test('applies dark mode to the document', async ({ page }) => {
     await page.emulateMedia({ colorScheme: 'light' });
+    // Set via addInitScript, not evaluate+reload: the clear() in beforeEach is
+    // itself an init script and re-runs on every navigation, wiping the value
+    // before the page's inline theme script can read it.
+    await page.addInitScript(() => localStorage.setItem('theme', 'dark'));
     await page.goto(ROUTES.home);
-
-    await page.evaluate(() => localStorage.setItem('theme', 'dark'));
-    await page.reload();
 
     await expect(html(page)).toHaveClass(/dark/);
   });
@@ -66,12 +67,10 @@ test.describe('theme toggle', () => {
 
   test('paints a dark background, not just a class', async ({ page }) => {
     await page.emulateMedia({ colorScheme: 'light' });
-    await page.addInitScript(() => localStorage.setItem('theme', 'light'));
     await page.goto(ROUTES.home);
     const light = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
 
-    await page.evaluate(() => localStorage.setItem('theme', 'dark'));
-    await page.reload();
+    await page.evaluate(() => document.documentElement.classList.add('dark'));
     const dark = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
 
     expect(dark).not.toBe(light);
