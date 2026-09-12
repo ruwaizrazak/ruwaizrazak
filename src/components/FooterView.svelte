@@ -36,7 +36,12 @@
   onMount(() => initContactTracking());
 </script>
 
-<section id="Contact" class="bg-syoro/10 text-syoro -mt-20 py-20 w-full md:w-screen md:ml-[calc(50%-50vw)]">
+<!-- LEARN: a <footer> element, not a <section>. CLAUDE.md asks for semantic
+     landmarks, and until now NO page on the site exposed a footer landmark at all —
+     assistive tech and search engines had nothing to anchor to. smoke.spec.ts
+     carried this as a deliberate known-failure ("Expected to fail until that
+     changes"). The #Contact id is kept: analytics and the nav anchor both use it. -->
+<footer id="Contact" class="bg-syoro/10 text-syoro -mt-20 py-20 w-full md:w-screen md:ml-[calc(50%-50vw)]">
   <div class="mx-auto w-full py-12 px-6 md:px-20 md:py-16 lg:px-20 flex">
     <div class="flex flex-col md:flex-row w-full justify-between">
       <!-- Left: Quote + tagline -->
@@ -94,4 +99,4 @@
       </div>
     </div>
   </div>
-</section>
+</footer>
