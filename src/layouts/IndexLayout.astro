@@ -49,19 +49,3 @@ const sortedTags = [...tags.filter(tag => tag !== 'all').sort()];
   </body>
   <Footer />
 </html>
-
-<script>
-  import { initGarden } from '../scripts/garden/gardenAnimation';
-  import { initializeFilters } from '../scripts/listing/listingFilters';
-
-  function init() {
-    requestAnimationFrame(() => {
-      initGarden();
-      initializeFilters();
-    });
-  }
-
-  import { initOnLoad } from '../utils/initOnLoad';
-  initOnLoad(init);
-  window.addEventListener('pageshow', init);
-</script>
