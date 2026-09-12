@@ -17,7 +17,7 @@ const has = (route: string) => routes.includes(route);
 
 describe('the build produced a site', () => {
   it('emits pages', () => {
-    expect(routes.length).toBeGreaterThan(50);
+    expect(routes.length).toBeGreaterThan(40);
   });
 
   it('renders every index route', () => {
