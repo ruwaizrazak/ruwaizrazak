@@ -6,8 +6,14 @@ import {
   applyTheme,
   cycleTheme,
   initThemeListener,
-  initThemeToggle,
 } from '../../../src/scripts/theme-toggle';
+
+// NOTE: the initThemeToggle() suite that used to live at the bottom of this file
+// is gone along with the function. It existed to prove the double-fire guards
+// worked (initOnLoad ran the wiring twice, so the button could collect two click
+// listeners and skip a state). ThemeToggle.svelte owns its own lifecycle now, so
+// there is no second invocation to guard against. The user-visible behaviour it
+// protected — one state per click — is covered by tests/e2e/theme.spec.ts.
 
 /** jsdom has no matchMedia; this stub also lets tests fire an OS theme change. */
 function stubMatchMedia(prefersDark: boolean) {
@@ -135,52 +141,5 @@ describe('initThemeListener', () => {
 
     mm.setOsDark(true);
     expect(isDark()).toBe(false);
-  });
-});
-
-describe('initThemeToggle', () => {
-  const button = () => document.getElementById('theme-toggle')!;
-
-  it('advances exactly one state per click when init runs twice', () => {
-    // Regression: initOnLoad fires on DOMContentLoaded AND astro:page-load, so
-    // this runs twice on first load. Without the per-element guard the button
-    // collected two listeners and one click ran cycleTheme() twice — a fresh
-    // visitor's first click jumped system -> dark, skipping light entirely.
-    document.body.innerHTML = '<button id="theme-toggle"></button>';
-    initThemeToggle();
-    initThemeToggle();
-
-    setTheme('light');
-    button().click();
-    expect(getTheme()).toBe('dark');
-  });
-
-  it('still binds a fresh button after a view transition', () => {
-    document.body.innerHTML = '<button id="theme-toggle"></button>';
-    initThemeToggle();
-
-    // A view transition replaces the document — the new button must get wired.
-    document.body.innerHTML = '<button id="theme-toggle"></button>';
-    initThemeToggle();
-
-    setTheme('light');
-    button().click();
-    expect(getTheme()).toBe('dark');
-  });
-
-  it('reflects the current theme on the button', () => {
-    document.body.innerHTML = '<button id="theme-toggle"></button>';
-    setTheme('dark');
-    initThemeToggle();
-    expect(button().classList.contains('theme-toggle--toggled')).toBe(true);
-
-    setTheme('light');
-    button().click(); // -> dark
-    expect(button().classList.contains('theme-toggle--toggled')).toBe(true);
-  });
-
-  it('does not throw on a page with no toggle button', () => {
-    document.body.innerHTML = '';
-    expect(() => initThemeToggle()).not.toThrow();
   });
 });

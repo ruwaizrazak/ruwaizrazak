@@ -23,11 +23,27 @@ export function applyTheme(theme: Theme) {
   }
 }
 
-export function initThemeListener() {
-  if (typeof window === 'undefined') return;
-  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-    if (getTheme() === 'system') applyTheme('system');
-  });
+/**
+ * Follow OS theme changes while the reader's preference is "system".
+ *
+ * LEARN: returns a cleanup function. That return is what replaced the old
+ * module-level `mediaListenerWired` flag — instead of guarding against being
+ * called twice, the caller (ThemeToggle.svelte's onMount) simply undoes it when
+ * the island unmounts, so a view transition can't stack duplicate listeners.
+ *
+ * `onApplied` lets the caller mirror the new state onto its own UI.
+ */
+export function initThemeListener(onApplied?: () => void): () => void {
+  if (typeof window === 'undefined') return () => {};
+  const media = window.matchMedia('(prefers-color-scheme: dark)');
+  const handleChange = () => {
+    if (getTheme() === 'system') {
+      applyTheme('system');
+      onApplied?.();
+    }
+  };
+  media.addEventListener('change', handleChange);
+  return () => media.removeEventListener('change', handleChange);
 }
 
 export function cycleTheme(): Theme {
@@ -35,50 +51,4 @@ export function cycleTheme(): Theme {
   const next: Theme = current === 'light' ? 'dark' : current === 'dark' ? 'system' : 'light';
   setTheme(next);
   return next;
-}
-
-/**
- * Wire the toggle button. Moved out of ThemeToggle.astro's inline script, which
- * had grown past the 10-line limit in CLAUDE.md.
- *
- * LEARN: initOnLoad fires this on BOTH DOMContentLoaded and astro:page-load, so
- * it runs twice on first load. Without a guard the button collected two click
- * listeners and each click ran cycleTheme() twice — the toggle skipped a state
- * (a fresh visitor's first click jumped straight from system to dark).
- *
- * Two different guards, because the two listeners have different lifetimes:
- *  - the button is a FRESH element after every view transition, so it is
- *    guarded per element (same as the TOC toggle in scripts/toc/toc.ts);
- *  - the matchMedia listener lives on window, which survives navigation, so it
- *    is wired once ever (same as the `wired` flag in scripts/toc/toc.ts).
- */
-let mediaListenerWired = false;
-
-export function initThemeToggle() {
-  const btn = document.getElementById('theme-toggle');
-
-  if (!mediaListenerWired) {
-    mediaListenerWired = true;
-    initThemeListener();
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-      setTimeout(syncToggleState, 0);
-    });
-  }
-
-  syncToggleState();
-
-  if (btn && btn.dataset.themeToggleBound !== '1') {
-    btn.dataset.themeToggleBound = '1';
-    btn.addEventListener('click', () => {
-      cycleTheme();
-      syncToggleState();
-    });
-  }
-}
-
-/** Mirror the document's dark state onto the button's own toggled class. */
-export function syncToggleState() {
-  const btn = document.getElementById('theme-toggle');
-  if (!btn) return;
-  btn.classList.toggle('theme-toggle--toggled', document.documentElement.classList.contains('dark'));
 }

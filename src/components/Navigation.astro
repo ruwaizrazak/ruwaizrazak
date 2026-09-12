@@ -1,5 +1,5 @@
 ---
-import ThemeToggle from './ThemeToggle.astro';
+import ThemeToggle from './ThemeToggle.svelte';
 // Navigation.astro
 export interface MenuItem {
   name: string;
@@ -46,7 +46,7 @@ const {
             <h4 class="text-3xl font-medium font-handwriting text-syoro">{logoText}</h4>
           
         </a>
-        <ThemeToggle />
+        <ThemeToggle client:load />
       </div>
       
 
