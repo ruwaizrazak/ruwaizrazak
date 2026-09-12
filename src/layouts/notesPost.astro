@@ -5,6 +5,7 @@ import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import NoteMain from '../components/NoteMain.astro';
+import TocPill from '../components/toc/TocPill.svelte';
 import NotePostHero from '../components/NotePostHero.svelte';
 import { optimizePicture } from '../utils/optimizeImage';
 import RelatedNotes from '../components/RelatedNotes.astro';
@@ -105,6 +106,13 @@ const blogPostingSchema = {
       </div>
     </main>
     <Footer />
+    <!-- LEARN: rendered here, OUTSIDE <main> and `.note-main-wrapper`, so the
+         pill's position:fixed resolves against the viewport. It used to sit
+         inside that wrapper and move itself to <body> on init to escape the
+         wrapper's scroll-driven transform. client:load rather than
+         client:visible: the pill is fixed and starts [hidden], so there is no
+         reliable intersection to wait for. -->
+    <TocPill client:load />
     
 
     <!-- Hero overlap is now CSS scroll-driven (see .note-main-wrapper in global.css) -->

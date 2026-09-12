@@ -1,17 +1,14 @@
 ---
 import { proseClasses } from '../utils/proseClasses';
-import TocPill from './toc/TocPill.astro';
 ---
 
+<!-- LEARN: TocPill used to render here and then reparent itself to <body> at
+     runtime, because `.note-main-wrapper` (this component's ancestor) carries a
+     scroll-driven transform, and a transformed ancestor breaks position:fixed.
+     The layout now renders the pill outside that wrapper instead, so the
+     appendChild workaround is gone. -->
 <div class="note-layout mx-auto relative w-full max-w-7xl">
   <article class={`${proseClasses} e-content px-5 md:px-12 lg:px-20 py-20 w-full mx-auto min-w-0`}>
     <slot />
   </article>
-  <TocPill />
 </div>
-
-<script>
-  import { initOnLoad } from '../utils/initOnLoad';
-  import { initTOC } from '../scripts/toc/toc';
-  initOnLoad(initTOC);
-</script>
