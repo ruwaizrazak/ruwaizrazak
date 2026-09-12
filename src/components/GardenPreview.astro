@@ -1,6 +1,6 @@
 ---
 import ContentCard from './ContentCard.astro';
-import Button from './Button.astro';
+import Button from './Button.svelte';
 import { pageType } from '../styles/typography';
 
 interface Props {
@@ -20,8 +20,11 @@ const essays = posts.filter((post) => post.collection === 'essays');
       </h2>
       <p class="font-serif text-syoro dark:text-white/60 border-syoro w-full md:w-3/4">Writing is an essential part of my process and learning. Here are some of my latest essays and you can find more in the garden.</p>
     </div>
+    <!-- LEARN: Button is now Svelte and can't read Astro.url, so its active-link
+         check takes the current pathname as a prop. -->
     <Button
       href="/garden"
+      pathname={Astro.url.pathname}
       class="font-sans text-sm uppercase mt-5 md:mt-0 tracking-widest text-link hover:underline"
     >
       Visit garden

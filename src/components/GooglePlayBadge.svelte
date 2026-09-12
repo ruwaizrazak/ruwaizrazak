@@ -1,15 +1,12 @@
----
-interface Props {
-  href: string;
-}
-const { href } = Astro.props;
----
+<script lang="ts">
+  interface Props { href: string }
+  let { href }: Props = $props();
+</script>
 
 <a
-  href={href}
+  {href}
   target="_blank"
   rel="noopener noreferrer"
-  type="button"
   class="px-4 py-2 cursor-pointer inline-flex items-center rounded-xl text-white text-xl tracking-wider border-none outline-none bg-black hover:bg-[#222] transition-[transform,background-color] duration-[180ms] ease-snappy active:scale-[0.97]"
   aria-label="Get it on Google Play"
 >
