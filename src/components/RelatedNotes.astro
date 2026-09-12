@@ -1,6 +1,7 @@
 ---
 import { getMultiCollectionPosts } from '../utils/collections';
-import ContentCard from './ContentCard.astro';
+import ContentCard from './ContentCard.svelte';
+import { optimizeImage } from '../utils/optimizeImage';
 import SeriesPostCard from './SeriesPostCard.svelte';
 
 interface Props {
@@ -25,6 +26,17 @@ const relatedNotes = isSeries
       .filter(note => note.data.title !== currentTitle)
       .filter(note => note.data.tags?.some(tag => currentTags.includes(tag)))
       .slice(0, 8);
+
+// LEARN: see GardenCards — ContentCard is Svelte, so astro:assets optimization
+// happens here and the card receives flat attributes. seriesPosts render through
+// SeriesPostCard instead and carry no image, hence the collection guard.
+const relatedCards = await Promise.all(
+  relatedNotes.map(async (note) => ({
+    note,
+    image:
+      note.collection === 'essays' ? await optimizeImage(note.data.heroImage) : null,
+  })),
+);
 ---
 
 {relatedNotes.length > 0 && (
@@ -42,7 +54,7 @@ const relatedNotes = isSeries
         ]}
         data-series={isSeries ? '' : undefined}
       >
-        {relatedNotes.map((note, i) => (
+        {relatedCards.map(({ note, image }, i) => (
           <div class:list={["related-card", !isSeries && i >= 4 && "hidden"]}>
             {note.collection === 'seriesPosts' ? (
               /* Series parts get the dedicated "Part N" card, matching the series page. */
@@ -53,7 +65,7 @@ const relatedNotes = isSeries
                 description={note.data.description}
                 pubDate={note.data.pubDate}
                 url={`/${note.collection}/${note.id}/`}
-                heroImage={note.collection === 'essays' ? note.data.heroImage : undefined}
+                image={image}
                 maturity={note.data.maturity}
                 collection={note.collection}
                 variant={note.collection === 'essays' ? 'card' : 'compact'}

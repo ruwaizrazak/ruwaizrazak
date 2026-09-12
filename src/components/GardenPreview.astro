@@ -1,5 +1,6 @@
 ---
-import ContentCard from './ContentCard.astro';
+import ContentCard from './ContentCard.svelte';
+import { optimizeImage } from '../utils/optimizeImage';
 import Button from './Button.svelte';
 import { pageType } from '../styles/typography';
 
@@ -10,6 +11,11 @@ interface Props {
 const { posts } = Astro.props;
 // LEARN: Defensive filter — this block is essays-only even if a parent passes more
 const essays = posts.filter((post) => post.collection === 'essays');
+// LEARN: see GardenCards — image optimization stays on the Astro side because
+// ContentCard is Svelte and cannot await astro:assets during render.
+const cards = await Promise.all(
+  essays.map(async (post) => ({ post, image: await optimizeImage(post.data.heroImage) })),
+);
 ---
 
 <section class="my-20 md:my-30">
@@ -31,13 +37,13 @@ const essays = posts.filter((post) => post.collection === 'essays');
     </Button>
   </div>
   <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-    {essays.map((post) => (
+    {cards.map(({ post, image }) => (
       <ContentCard
         title={post.data.title}
         description={post.data.description}
         pubDate={post.data.pubDate}
         url={`/${post.collection}/${post.id}`}
-        heroImage={post.data.heroImage}
+        image={image}
         maturity={post.data.maturity}
         collection={post.collection}
       />
