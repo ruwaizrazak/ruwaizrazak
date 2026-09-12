@@ -28,3 +28,7 @@ current_feed.xml
 
 # git worktrees
 .worktrees/
+
+# Playwright artifacts (failure screenshots, traces)
+test-results/
+playwright-report/
