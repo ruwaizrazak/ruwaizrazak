@@ -24,12 +24,22 @@
     collection,
     variant = 'card',
     transitionName,
+    headingLevel = 3,
     // series-only
     startedDate,
     lastUpdated,
     postCount,
     posts = [],
   }: ContentCardProps = $props();
+
+  /**
+   * LEARN: the card's title level depends on where the card sits, so it cannot be
+   * hard-coded. On a listing page the cards follow the page's <h1> directly, so a
+   * fixed h3 skipped h2 and broke the document outline. Nested under a section
+   * heading (RelatedNotes' "Related to", GardenPreview's "From the Garden") h3 is
+   * correct. Default 3; listing grids pass 2.
+   */
+  const titleTag = $derived(`h${headingLevel}` as 'h2' | 'h3');
 
   // ---- Derived values ----
   const formattedDate = $derived(formatDate(pubDate));
@@ -63,7 +73,12 @@
   const meta = $derived(metaParts.join('·'));
 </script>
 
-<!-- LEARN: the `garden-card-image` class is preserved on every image branch so the
+<!-- LEARN: the collection label ("Essays", "Notes", "Series") is a <p>, not an
+     <h5>. It is a metadata badge, not a section heading — and as an h5 sitting
+     directly after the page's <h1> it produced h1->h5 / h3->h5 jumps in the
+     document outline on every listing page. It carries cardType.meta classes, so
+     the change is invisible.
+     LEARN: the `garden-card-image` class is preserved on every image branch so the
      CSS scroll-driven parallax zoom in global.css keeps applying. A passthrough
      (remote) image gets no width/height/loading attributes, matching what the old
      `heroImg ? <Image> : <img>` fallback emitted. -->
@@ -91,9 +106,9 @@
   <div class="group hover:scale-95 transition-transform duration-200 ease-snappy" style={vtStyle}>
     <a href={url} class="block p-5 border-b-1 bg-backgroundcolor border-syoro border-opacity-10 border-dashed relative">
       <div class="flex gap-2 py-2 items-center">
-        <h5 class={`${cardType.meta} text-konpeki`}>{label}</h5>
+        <p class={`${cardType.meta} text-konpeki`}>{label}</p>
       </div>
-      <h3 class={`${cardType.title} text-syoro group-hover:text-link mb-4`}>{title}</h3>
+      <svelte:element this={titleTag} class={`${cardType.title} text-syoro group-hover:text-link mb-4`}>{title}</svelte:element>
       {#if description}<p class={`${cardType.description} text-syoro/90 mb-4`}>{description}</p>{/if}
       <div class={`${cardType.date} text-syoro/40 mt-2 flex items-center gap-2`}>
         {formattedDate}
@@ -128,12 +143,14 @@
 
       <!-- Content panel -->
       <div class="flex-1 min-w-0 flex flex-col p-5">
-        <h5 class={`${cardType.meta} text-konpeki`}>Series</h5>
-        <h3 class={`${cardType.title} text-syoro`}>{title}</h3>
+        <p class={`${cardType.meta} text-konpeki`}>Series</p>
+        <svelte:element this={titleTag} class={`${cardType.title} text-syoro`}>{title}</svelte:element>
         {#if description}<p class={`${cardType.description} text-syoro/80`}>{description}</p>{/if}
 
         {#if posts.length > 0}
-          <h4 class={`${cardType.meta} text-syoro mt-6 mb-3`}>Posts in this series</h4>
+          <svelte:element this={`h${headingLevel + 1}`} class={`${cardType.meta} text-syoro mt-6 mb-3`}
+            >Posts in this series</svelte:element
+          >
           <!-- LEARN: native scroll + a CSS mask fades the last row at the bottom
                edge, signalling "more below" without any JS.
                Mobile: `max-h-[50vh]` gives the list a bounded height so it can
@@ -191,7 +208,7 @@
       {/if}
       <div class="flex-1 min-w-0 p-5 flex flex-col justify-between">
         <div class="mx-auto">
-          <h3 class={`${cardType.title} text-syoro group-hover:text-link mb-4`}>{title}</h3>
+          <svelte:element this={titleTag} class={`${cardType.title} text-syoro group-hover:text-link mb-4`}>{title}</svelte:element>
           {#if description}<p class={`${cardType.description} text-syoro/90 mb-4`}>{description}</p>{/if}
         </div>
         <div class={`${cardType.date} text-syoro/40 flex items-center gap-2`}>
@@ -207,9 +224,9 @@
     <a href={url} class="block p-5 bg-syoro/5 rounded-xl border-1 border-card-border shadow-xs group-hover:shadow-none relative">
       {@render cardImage(`w-full ${imageHeight} aspect-square object-cover rounded-lg mb-5`)}
       <div class="flex gap-2 mb-0 items-center">
-        <h5 class={`${cardType.meta} text-konpeki pt-5`}>{label}</h5>
+        <p class={`${cardType.meta} text-konpeki pt-5`}>{label}</p>
       </div>
-      <h3 class={`${cardType.title} text-syoro group-hover:text-link mb-4`}>{title}</h3>
+      <svelte:element this={titleTag} class={`${cardType.title} text-syoro group-hover:text-link mb-4`}>{title}</svelte:element>
       {#if description}<p class={`${cardType.description} text-syoro/90 mb-4`}>{description}</p>{/if}
       <div class={`${cardType.date} text-syoro/40 mt-4 flex items-center gap-2`}>
         {formattedDate}

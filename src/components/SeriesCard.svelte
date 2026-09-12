@@ -55,9 +55,10 @@
 
   {#if series.posts.length > 0}
     <div class="space-y-4 mt-10">
-      <h3 class={`${cardType.meta} font-semibold text-syoro/70`}>
+      <!-- LEARN: h2 — this sits directly under the page <h1>, so h3 skipped a level. -->
+      <h2 class={`${cardType.meta} font-semibold text-syoro/70`}>
         Posts in this series{hideHeader ? ` · ${series.posts.length}` : ':'}
-      </h3>
+      </h2>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {#each series.posts as post (post.id)}
           <SeriesPostCard {post} />

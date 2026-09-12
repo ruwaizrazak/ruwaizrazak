@@ -80,6 +80,7 @@
           maturity={post.data.maturity}
           collection={post.collection}
           variant={variantFor(post.collection)}
+          headingLevel={2}
           startedDate={post.data.startedDate}
           lastUpdated={post.data.lastUpdated}
           postCount={post.postCount}

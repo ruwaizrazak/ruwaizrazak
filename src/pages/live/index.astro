@@ -65,7 +65,10 @@ const liveProseClasses = `${proseClasses} prose-a:text-link prose-a:underline pr
 						
 						<hr class="w-full my-8 border-stone-100">
 						<div class="space-y-8 pb-20 w-full sm:w-[90%] lg:w-[90%] xl:w-[80%] 2xl:w-[70%] mx-auto px-5 md:px-20 opacity-90">
-							<h1 class={`${pageType.header} text-syoro`}>Then ...</h1>
+							<!-- LEARN: h2, not h1 — this is a section heading under the page title
+							     ("Now"), and a page may only have one h1. The pageType.header class
+							     is kept, so it looks exactly as it did. -->
+							<h2 class={`${pageType.header} text-syoro`}>Then ...</h2>
 							{thenPosts.map((post, index) => {
 								const Content = thenContents[index]?.Content;
 								return (

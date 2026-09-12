@@ -45,6 +45,13 @@
    * Svelte 5's object form inside `class={[...]}` keeps the utility as a plain
    * quoted string, which the scanner does pick up.
    */
+  /**
+   * LEARN: nothing in this component is a document heading. The logo used to be an
+   * <h4> and every nav/menu label an <h3>, which put the site navigation into the
+   * heading outline of EVERY page — ahead of the page's own <h1> — and produced
+   * h1->h3 / h2->h4 jumps that the SEO integrity check flagged site-wide. They are
+   * spans and paragraphs now; the classes are unchanged, so nothing moves visually.
+   */
   const garden = new Dropdown();
   const about = new Dropdown();
   let mobileOpen = $state(false);
@@ -114,7 +121,7 @@
           data-astro-prefetch
           onclick={() => sessionStorage.setItem('skipIndexAnimations', '1')}
         >
-          <h4 class="text-xl md:text-2xl lg:text-3xl font-medium font-handwriting text-syoro">{logoText}</h4>
+          <span class="block text-xl md:text-2xl lg:text-3xl font-medium font-handwriting text-syoro">{logoText}</span>
         </a>
         <ThemeToggle />
       </div>
@@ -146,7 +153,7 @@
               href={link.href}
               class="flex-1 min-w-0 flex items-center justify-center px-5 py-2 text-sm md:text-lg lg:text-xl text-syoro rounded-full uppercase transition-[transform,background-color,color] duration-200 ease-snappy hover:bg-blue-50 dark:hover:bg-syoro/10 hover:text-link hover:scale-95 focus:ring-syoro/20 dark:focus:ring-syoro/20"
             >
-              <h3 class="font-sans font-medium text-sm md:text-lg lg:text-xl flex items-center gap-2">
+              <span class="font-sans font-medium text-sm md:text-lg lg:text-xl flex items-center gap-2">
                 {#if link.icon}
                   <span
                     class="flex-shrink-0 w-6 h-6 inline-block"
@@ -156,7 +163,7 @@
                   ></span>
                 {/if}
                 {link.name}
-              </h3>
+              </span>
             </a>
           {/each}
         </div>
@@ -285,9 +292,9 @@
                 </div>
               {/if}
               <div class="flex-1">
-                <h3 class="text-lg font-medium font-sans uppercase text-konpeki group-hover:text-link transition-colors">
+                <span class="block text-lg font-medium font-sans uppercase text-konpeki group-hover:text-link transition-colors">
                   {item.name}
-                </h3>
+                </span>
                 {#if item.description}
                   <p class="text-sm text-konpeki">{item.description}</p>
                 {/if}
@@ -355,7 +362,7 @@
 
       <!-- Garden Menu Items -->
       <div class="px-4 py-2">
-        <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider">Garden</h3>
+        <p class="text-sm font-semibold text-gray-400 uppercase tracking-wider">Garden</p>
       </div>
       {#each menuItems as item (item.href)}
         <a
@@ -382,7 +389,7 @@
 
       <!-- About / Connect section in mobile -->
       <div class="px-4 py-2">
-        <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider">Contact</h3>
+        <p class="text-sm font-semibold text-gray-400 uppercase tracking-wider">Contact</p>
       </div>
       <a
         href="https://www.linkedin.com/in/ruwaizrazak"

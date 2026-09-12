@@ -40,7 +40,13 @@ const notes = defineCollection({
 const works = defineCollection({
   loader: glob({
     base: './src/content/works',
-    pattern: '**/*.{md,mdx}',
+    // LEARN: the `!**/_*` exclusion is load-bearing. Astro's glob loader does NOT
+    // honour the leading-underscore "private file" convention, so
+    // _case-study-template.mdx was being loaded as a real entry and built a live
+    // page at /works/_case-study-template/ — with placeholder image paths that
+    // 404'd on every request. It is a template, not content, so it is excluded
+    // from the collection entirely rather than filtered at each call site.
+    pattern: ['**/*.{md,mdx}', '!**/_*'],
     generateId: ({ entry }) =>
       entry.replace(/\.[^.]+$/, '').replace(/\s+/g, '-'),
   }),

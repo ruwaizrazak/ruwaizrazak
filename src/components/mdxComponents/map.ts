@@ -46,6 +46,19 @@ export const mdxComponents = {
   // HTML element override: every markdown link becomes a tooltip-bearing Link.
   a: Link,
 
+  /**
+   * LEARN: a `#` heading inside a post is a SECTION of that post, not the page
+   * title — the layout already renders the title as the page's one <h1>. Several
+   * posts authored top-level sections with `#`, which produced 6 h1s on one essay
+   * and broke both the "exactly one h1" and heading-hierarchy rules in CLAUDE.md.
+   *
+   * Remapping here makes that structural: authors can keep writing `#` for a
+   * top-level section and it lands at the correct level, rather than every future
+   * post having to remember the convention. Pages that nest content deeper
+   * override this (see live/index.astro).
+   */
+  h1: 'h2',
+
   // Custom names, exactly as content authors write them.
   Link,
   Image,

@@ -22,6 +22,8 @@ export interface ContentCardProps {
   maturity?: Maturity;
   collection?: string;
   variant?: 'card' | 'compact' | 'wide' | 'series';
+  /** Heading level for the card title: 2 directly under a page <h1>, 3 under a section. */
+  headingLevel?: 2 | 3;
   transitionName?: string;
   // Series-only (variant='series'): metadata footer + a linked post-preview list.
   // `heroImage` doubles as the series featured image (rendered as a background).

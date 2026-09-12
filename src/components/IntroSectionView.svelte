@@ -10,14 +10,20 @@
 </script>
 
 <section id="Intro-text" class="w-full sm:w-3/4 md:w-3/4 xl:w-[50%] font-serif my-30 text-syoro">
-  <p class={`index-intro ${pageType.description} font-sans mt-6 max-w-4xl lg:max-w-5xl mb-2 text-syoro/80`}>
+  <!-- LEARN: this is the page's <h1>. The homepage previously had NO h1 at all —
+       nothing described the page to a screen reader or a search engine, and
+       keyboard-a11y + integrity both flagged it. The lead line IS the page's
+       primary statement, so it becomes the heading rather than adding a hidden
+       one. Base h1 styles live in @layer base, which Tailwind utilities override,
+       so the classes below keep it looking exactly as before. -->
+  <h1 class={`index-intro ${pageType.description} font-sans mt-6 max-w-4xl lg:max-w-5xl mb-2 text-syoro/80`}>
     Senior UX Designer at <LinkView
       href="https://nordeus.com/"
       class="text-link"
       tooltipHTML={nordeusTooltip}
       isExternal>Nordeus.</LinkView
     >
-  </p>
+  </h1>
   <p class={`index-intro ${pageType.description} mt-6 max-w-4xl lg:max-w-5xl text-syoro`}>
     Designs and optimize systems that improve onboarding, retention, and longterm user motivation
   </p>
