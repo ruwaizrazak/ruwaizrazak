@@ -6,7 +6,6 @@ import IntroSection from '../components/IntroSection.astro';
 import SelectedWorksSection from '../components/SelectedWorksSection.astro';
 import GardenPreview from '../components/GardenPreview.astro';
 
-import CustomCursor from '../components/CustomCursor.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 import { getCollection } from 'astro:content';
 import { getPublishedAndSorted } from '../utils/collections';
@@ -62,6 +61,5 @@ const gardenPosts = (await getPublishedAndSorted('essays')).slice(0, 3);
 		</main>
 
 		<Footer />
-		<CustomCursor />
 	</body>
 </html>

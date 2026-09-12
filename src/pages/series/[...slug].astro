@@ -6,7 +6,6 @@ import Footer from '../../components/Footer.astro';
 import NotesPost from '../../layouts/notesPost.astro';
 import NotePostHero from '../../components/NotePostHero.astro';
 import SeriesCard from '../../components/SeriesCard.astro';
-import CustomCursor from '../../components/CustomCursor.astro';
 import { getSeriesWithPosts } from '../../utils/collections';
 
 export async function getStaticPaths() {
@@ -108,7 +107,6 @@ const Content = renderResult?.Content;
         </div>
       </main>
       <Footer />
-      <CustomCursor />
     </body>
   </html>
 )}

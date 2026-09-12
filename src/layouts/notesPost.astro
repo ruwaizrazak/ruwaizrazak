@@ -8,7 +8,6 @@ import NoteMain from '../components/NoteMain.astro';
 import NotePostHero from '../components/NotePostHero.astro';
 import RelatedNotes from '../components/RelatedNotes.astro';
 import Webmentions from '../components/Webmentions.astro';
-import CustomCursor from '../components/CustomCursor.astro';
 import { resolveImage } from '../utils/resolveImage';
 
 type LayoutProps = CollectionEntry<'notes'>['data'] & {
@@ -101,7 +100,6 @@ const blogPostingSchema = {
         <RelatedNotes currentTags={tags} currentTitle={title} seriesPosts={seriesPosts} seriesTitle={seriesTitle} />
       </div>
     </main>
-    <CustomCursor />
     <Footer />
     
 

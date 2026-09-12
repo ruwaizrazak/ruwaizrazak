@@ -48,8 +48,6 @@
   --color-konpeki:#004A8F;
   --color-backgroundcolor:#ffffff;
   --color-link:#1A86FF;
-  --color-cursor: #003535;
-  --color-cursor-text: #ffffff;
 
   /* LEARN: Shared easing vocabulary. The built-in CSS easings are too weak —
      these Emil-style curves have the punch that makes UI feel intentional.
@@ -68,8 +66,6 @@
     --color-card-border: #3a3a3a;
     --color-link: #6bb3ff;
     --color-text-primary: #e0e8e8;
-    --color-cursor: #e0e8e8;
-    --color-cursor-text: #1a1a1a;
   }
 }
 
@@ -184,61 +180,6 @@ hr {
     transform: scale(1);
     opacity: 1;
   }
-}
-
-/* Custom cursor — desktop only */
-@media (pointer: fine) {
-  *, *::before, *::after {
-    cursor: none !important;
-  }
-}
-
-#custom-cursor {
-  position: fixed;
-  top: 0;
-  left: 0;
-  pointer-events: none;
-  z-index: 9999;
-  opacity: 0;
-}
-
-#custom-cursor .cursor-dot {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background-color: transparent;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  transform: translate(-50%, -50%);
-}
-
-#custom-cursor .cursor-morph-svg {
-  position: absolute;
-  width: 20px;
-  height: 20px;
-}
-
-/* LEARN: smooth fill crossfade when --color-cursor is overridden — e.g. when
-   the cursor enters/leaves the TOC pill, which flips it to the inverse color
-   so it stays visible against the pill's inverted surface. */
-#custom-cursor .cursor-morph-path {
-  transition: fill 200ms ease-out;
-}
-
-#custom-cursor .cursor-label {
-  position: absolute;
-  z-index: 1;
-  white-space: nowrap;
-  font-family: var(--font-sans);
-  font-size: var(--text-sm);
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--color-cursor-text);
-  opacity: 0;
-  pointer-events: none;
 }
 
 /* ---------------------------------------------------------------------------
