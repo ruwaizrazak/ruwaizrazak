@@ -20,6 +20,16 @@
 - Keep verification light by default. Run focused checks for the changed area, and use heavier test/build verification only when the plan requests it or the change is high-risk.
 - After implementation, summarize changed files, assumptions, and any checks run so the user can hand the work to Claude Opus for testing.
 
+## Plan Drift Lessons
+- Map every design-plan requirement to a concrete implementation target before editing: component, route, fixture, and expected visual/state outcome.
+- Test the page state that proves the feature. If the change affects a hero image, choose a route with a hero image; do not let conditional assertions create fake coverage.
+- Respect component boundaries. Svelte scoped styles cannot style markup rendered inside child components unless using an owned wrapper plus `:global(...)` descendants where appropriate.
+- Preserve design hierarchy exactly. Placement changes such as moving pills between eyebrow/meta/tag rows are plan deviations and require user permission.
+- Audit shared exports before changing them. If a style utility is used by `/about`, embeds, or live pages, split a new targeted utility instead of changing all consumers.
+- Treat design-token and typography values as intentional. If repo rules conflict with a plan value, pause and ask before silently choosing one.
+- Validate parser-style utilities with edge cases that match content reality: URLs, inline code, hyphenated words, snake_case, frontmatter, and MDX syntax.
+- Avoid optional tests that pass when the required fixture is absent. Add or request an explicit fixture when coverage depends on content.
+
 ## Code Style & Conventions
 - PascalCase for components (e.g., `ContentCard.astro`)
 - Centralized types in `src/types.ts`, constants in `src/consts.ts`
