@@ -15,9 +15,9 @@ interface Props {
   description: string;
   posts: any[];
   sortedTags: string[];
-  wideFullRow?: boolean;
+  layout?: 'grid' | 'garden';
 }
-const { title, description, posts, wideFullRow = false } = Astro.props;
+const { title, description, posts, layout = 'grid' } = Astro.props;
 
 const cardVariantCollections = new Set(['essays', 'playground']);
 const cards = await Promise.all(
@@ -44,7 +44,7 @@ const treeIndices = Array.from({ length: 8 }, () => Math.floor(Math.random() * T
   <GardenIntro title={title} description={description} />
   <!-- LEARN: client:visible — the cascade is an entrance animation, so there is
        nothing to do until the grid is on screen. -->
-  <GardenCards client:visible cards={cards} wideFullRow={wideFullRow} />
+  <GardenCards client:visible cards={cards} layout={layout} />
 </main>
 <!-- LEARN: client:load — the strip is position:fixed at the bottom of the
      viewport, so it is visible from first paint and its scroll trigger has to be

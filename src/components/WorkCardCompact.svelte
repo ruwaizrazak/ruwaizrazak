@@ -16,23 +16,23 @@
   let { title, role, company, duration, image = null, url }: Props = $props();
 </script>
 
-<a href={url} class="group block hover:scale-95 transition-all duration-200 ease-in-out">
-  <div class="overflow-hidden rounded-lg">
+<a href={url} class="card-shell group">
+  <div class="card-band">
     <OptimizedImage
       {image}
       alt={title}
-      class="w-full aspect-[4/3] object-cover"
-      fallbackClass="w-full aspect-[4/3] bg-gray-200 dark:bg-gray-700"
+      class="h-full w-full object-cover"
+      fallbackClass="h-full w-full bg-syoro/5"
     />
   </div>
-  <div class="flex flex-col gap-1 mt-4">
-    <h3 class={`${cardType.title} text-syoro group-hover:text-konpeki transition-colors`}>
+  <div class="flex min-w-0 flex-1 flex-col gap-3">
+    <h3 class={`${cardType.title} card-title`}>
       {title}
     </h3>
     {#if role}
-      <p class={`${cardType.meta} text-syoro/60 dark:text-white/40`}>{role}</p>
+      <p class="card-eyebrow">{role}</p>
     {/if}
-    <p class={`${cardType.meta} text-syoro/60 font-semibold dark:text-white/30`}>
+    <p class="card-meta mt-auto uppercase">
       {company} · {duration}
     </p>
   </div>

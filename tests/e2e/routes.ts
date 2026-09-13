@@ -14,7 +14,7 @@ export const ROUTES = {
 
   /** 24 article headings — the TOC pill's proving ground. Also has related notes. */
   pageWithToc: '/essays/deconstructionofcodm/',
-  /** 5 related cards, so the Refresh button renders (it needs more than 4). */
+  /** Five related cards, proving the full set renders without pagination. */
   pageWithRelated: '/essays/deconstructionofcodm/',
   /** 9 tooltip-bearing links. */
   pageWithTooltips: '/essays/deconstructionofcodm/',

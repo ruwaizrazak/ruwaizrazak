@@ -36,6 +36,12 @@ describe('the build produced a site', () => {
     }
   });
 
+  it('renders the garden hierarchy in the built HTML', () => {
+    const html = readRoute('/garden/');
+    expect(html).toContain('card-shell-series');
+    expect(html).toContain('card-shell-wide');
+  });
+
   it('leaves no page empty', () => {
     for (const route of routes) {
       expect(readRoute(route).length, `${route} is empty`).toBeGreaterThan(500);

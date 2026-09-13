@@ -15,40 +15,14 @@ test.describe('related notes', () => {
       .toBe('1');
   });
 
-  test('shows at most four cards per page', async ({ page }) => {
-    await page.goto(ROUTES.pageWithRelated);
-    await page.locator('.related-grid').scrollIntoViewIfNeeded();
-
-    await expect.poll(async () => page.locator('.related-card:visible').count()).toBeLessThanOrEqual(4);
-  });
-
-  test('Refresh swaps in the next page of cards', async ({ page }) => {
+  test('shows the full related set at once with no Refresh control', async ({ page }) => {
     await page.goto(ROUTES.pageWithRelated);
     const grid = page.locator('.related-grid');
     await grid.scrollIntoViewIfNeeded();
 
-    const first = await grid.locator('.related-card:visible a').first().getAttribute('href');
-    await page.locator('.related-refresh').click();
-
-    await expect
-      .poll(async () => grid.locator('.related-card:visible a').first().getAttribute('href'))
-      .not.toBe(first);
-  });
-
-  test('Refresh wraps back to the first page', async ({ page }) => {
-    await page.goto(ROUTES.pageWithRelated);
-    const grid = page.locator('.related-grid');
-    await grid.scrollIntoViewIfNeeded();
-
-    const first = await grid.locator('.related-card:visible a').first().getAttribute('href');
     const total = await grid.locator('.related-card').count();
-    const pages = Math.ceil(total / 4);
-
-    for (let i = 0; i < pages; i++) await page.locator('.related-refresh').click();
-
-    await expect
-      .poll(async () => grid.locator('.related-card:visible a').first().getAttribute('href'))
-      .toBe(first);
+    await expect.poll(async () => grid.locator('.related-card:visible').count()).toBe(total);
+    await expect(page.locator('.related-refresh')).toHaveCount(0);
   });
 
   test('a series part lists its remaining parts, all at once, with no Refresh', async ({ page }) => {

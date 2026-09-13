@@ -1,17 +1,8 @@
 <script lang="ts">
-  // ============================================================================
-  // ContentCard — the single card component for all garden/listing collections.
-  // Consolidates the old EssayCard/NoteCard/PlaygroundCard AND GardenSeriesCard
-  // into one component selected by the `variant` prop:
-  //   compact → text-only row (notes)        wide → image + text side-by-side (essays)
-  //   series  → full-width series card        card → image-top card (default/playground)
-  // ============================================================================
-
   import type { ContentCardProps } from '../types';
+  import { cardType } from '../styles/typography';
   import { formatDate } from '../utils/formatDate';
   import MaturityBadge from './MaturityBadge.svelte';
-  // LEARN: shared type tokens — keeps card font sizes uniform across all variants.
-  import { cardType } from '../styles/typography';
 
   let {
     title = 'Untitled',
@@ -19,73 +10,65 @@
     pubDate,
     image = null,
     url,
-    imageHeight = 'h-48',
     maturity,
-    collection,
+    collection = 'notes',
     variant = 'card',
     transitionName,
     headingLevel = 3,
-    // series-only
     startedDate,
     lastUpdated,
     postCount,
     posts = [],
   }: ContentCardProps = $props();
 
-  /**
-   * LEARN: the card's title level depends on where the card sits, so it cannot be
-   * hard-coded. On a listing page the cards follow the page's <h1> directly, so a
-   * fixed h3 skipped h2 and broke the document outline. Nested under a section
-   * heading (RelatedNotes' "Related to", GardenPreview's "From the Garden") h3 is
-   * correct. Default 3; listing grids pass 2.
-   */
-  const titleTag = $derived(`h${headingLevel}` as 'h2' | 'h3');
-
-  // ---- Derived values ----
-  const formattedDate = $derived(formatDate(pubDate));
-
   const collectionLabels: Record<string, string> = {
     essays: 'Essays',
     notes: 'Notes',
     playground: 'Playground',
     series: 'Series',
+    seriesPosts: 'Series',
   };
-  const label = $derived(collection ? collectionLabels[collection] || collection : '');
 
-  const isCompact = $derived(variant === 'compact');
-  const isWide = $derived(variant === 'wide');
+  const collectionKey = $derived(collection === 'seriesPosts' ? 'series' : collection);
+  const label = $derived(collectionLabels[collection] ?? collection);
+  const collectionIcon = $derived(`/icons/${collectionKey}.svg`);
+  const titleTag = $derived(`h${headingLevel}` as 'h2' | 'h3');
+  const postsHeadingTag = $derived(`h${Math.min(headingLevel + 1, 6)}` as 'h3' | 'h4');
+  const formattedDate = $derived(formatDate(pubDate));
   const isSeries = $derived(variant === 'series');
-
-  // LEARN: Astro's `transition:name` directive doesn't exist in Svelte; setting the
-  // CSS property directly is what that directive compiles to. Kept undefined when
-  // there's no name so the attribute is omitted rather than emitted empty.
-  const vtStyle = $derived(transitionName ? `view-transition-name: ${transitionName}` : undefined);
-
-  // series-only: featured image is rendered as a CSS background, plus a one-line
-  // metadata string with no spaces around the "·" separators.
-  const metaParts = $derived.by(() => {
+  const isWide = $derived(variant === 'wide');
+  const isNote = $derived(collection === 'notes');
+  const isPlayground = $derived(collection === 'playground');
+  const isSeriesCollection = $derived(collection === 'series');
+  const eyebrow = $derived(
+    isSeriesCollection && postCount != null
+      ? `${label} · ${postCount} ${postCount === 1 ? 'part' : 'parts'}`
+      : label,
+  );
+  const vtStyle = $derived(
+    transitionName ? `view-transition-name: ${transitionName}` : undefined,
+  );
+  const seriesMeta = $derived.by(() => {
     const parts: string[] = [];
     if (startedDate) parts.push(`Started ${formatDate(startedDate)}`);
     if (lastUpdated) parts.push(`Updated ${formatDate(lastUpdated)}`);
     if (postCount != null) parts.push(`${postCount} ${postCount === 1 ? 'post' : 'posts'}`);
-    return parts;
+    return parts.join(' · ');
   });
-  const meta = $derived(metaParts.join('·'));
 </script>
 
-<!-- LEARN: the collection label ("Essays", "Notes", "Series") is a <p>, not an
-     <h5>. It is a metadata badge, not a section heading — and as an h5 sitting
-     directly after the page's <h1> it produced h1->h5 / h3->h5 jumps in the
-     document outline on every listing page. It carries cardType.meta classes, so
-     the change is invisible.
-     LEARN: the `garden-card-image` class is preserved on every image branch so the
-     CSS scroll-driven parallax zoom in global.css keeps applying. A passthrough
-     (remote) image gets no width/height/loading attributes, matching what the old
-     `heroImg ? <Image> : <img>` fallback emitted. -->
-{#snippet cardImage(extraClass: string)}
+{#snippet collectionMark(size = 'card-collection-icon')}
+  <span
+    class={size}
+    style={`--card-icon: url('${collectionIcon}')`}
+    aria-hidden="true"
+  ></span>
+{/snippet}
+
+{#snippet optimizedImage(imageClass: string)}
   {#if image}
     {#if image.passthrough}
-      <img src={image.src} alt={title} class={`garden-card-image ${extraClass}`} />
+      <img src={image.src} alt={title} class={imageClass} />
     {:else}
       <img
         src={image.src}
@@ -95,165 +78,341 @@
         fetchpriority="auto"
         width={image.width}
         height={image.height}
-        class={`garden-card-image ${extraClass}`}
+        class={imageClass}
       />
     {/if}
   {/if}
 {/snippet}
 
-{#if isCompact}
-  <!-- ===== COMPACT variant (notes): text-only row with dashed bottom border ===== -->
-  <div class="group hover:scale-95 transition-transform duration-200 ease-snappy" style={vtStyle}>
-    <a href={url} class="block p-5 border-b-1 bg-backgroundcolor border-syoro border-opacity-10 border-dashed relative">
-      <div class="flex gap-2 py-2 items-center">
-        <p class={`${cardType.meta} text-konpeki`}>{label}</p>
-      </div>
-      <svelte:element this={titleTag} class={`${cardType.title} text-syoro group-hover:text-link mb-4`}>{title}</svelte:element>
-      {#if description}<p class={`${cardType.description} text-syoro/90 mb-4`}>{description}</p>{/if}
-      <div class={`${cardType.date} text-syoro/40 mt-2 flex items-center gap-2`}>
-        {formattedDate}
-        {#if maturity}<MaturityBadge {maturity} iconClass="w-4 h-auto" />{/if}
-      </div>
-    </a>
-  </div>
-{:else if isSeries}
-  <!-- ===== SERIES variant: full-width card — left background image (full height
-       on desktop, banner on mobile) + content panel with a scrollable list of
-       linked posts and a "Visit Entire Series" CTA. ===== -->
-  <div class="group py-5" style={vtStyle}>
-    <!-- LEARN: fixed desktop height (not max-h) gives the row a definite height so
-         the left image column reliably fills the full 50% width × full height. -->
-    <div class="relative bg-backgroundcolor rounded-lg border-1 border-card-border shadow-xs transition-shadow duration-200 group-hover:shadow-md overflow-hidden flex flex-col md:flex-row md:h-[34rem]">
-      <!-- LEARN: "stretched link" pattern — a sibling overlay <a> (not a wrapper)
-           makes the whole card clickable without nesting anchors (invalid HTML).
-           Inner links sit above it via a higher z-index so they stay independently
-           clickable. Non-interactive content (image/title) falls through to this
-           card link. CSS-only, so middle-click / open-in-new-tab / focus all work. -->
-      <a href={url} class="absolute inset-0 z-10" aria-label={`View the ${title} series`}></a>
-      <!-- Featured image as the div's background; role/aria-label restore the alt
-           text a background image otherwise loses. -->
+{#snippet cardBand()}
+  <span class="card-band-stack">
+    {#if isSeriesCollection}
+      <span class="series-sheet series-sheet-back" aria-hidden="true"></span>
+      <span class="series-sheet series-sheet-middle" aria-hidden="true"></span>
+    {/if}
+    <span
+      class:card-band-note={isNote || !image}
+      class:card-band-playground={isPlayground}
+      class="card-band"
+    >
       {#if image}
-        <div
-          class="w-full aspect-[16/10] md:aspect-auto md:w-1/2 md:h-full shrink-0 bg-cover bg-center bg-no-repeat"
-          style={`background-image: url('${image.src}')`}
-          role="img"
-          aria-label={title}
-        ></div>
+        {@render optimizedImage('garden-card-image h-full w-full object-cover')}
+      {:else}
+        {@render collectionMark('card-band-icon')}
       {/if}
+      {#if isPlayground}
+        <span class="card-interactive-tag">Interactive</span>
+      {/if}
+    </span>
+  </span>
+{/snippet}
 
-      <!-- Content panel -->
-      <div class="flex-1 min-w-0 flex flex-col p-5">
-        <p class={`${cardType.meta} text-konpeki`}>Series</p>
-        <svelte:element this={titleTag} class={`${cardType.title} text-syoro`}>{title}</svelte:element>
-        {#if description}<p class={`${cardType.description} text-syoro/80`}>{description}</p>{/if}
+{#snippet eyebrowRow(text: string)}
+  <span class="card-eyebrow">
+    {@render collectionMark()}
+    <span>{text}</span>
+  </span>
+{/snippet}
 
-        {#if posts.length > 0}
-          <svelte:element this={`h${headingLevel + 1}`} class={`${cardType.meta} text-syoro mt-6 mb-3`}
-            >Posts in this series</svelte:element
-          >
-          <!-- LEARN: native scroll + a CSS mask fades the last row at the bottom
-               edge, signalling "more below" without any JS.
-               Mobile: `max-h-[50vh]` gives the list a bounded height so it can
-               overflow-scroll on its own (the card's fixed height is desktop-only
-               via `md:h-[34rem]`, so mobile has no bound otherwise). `md:max-h-none`
-               hands control back to `flex-1 min-h-0` on desktop — no regression.
-               `overscroll-contain` stops the list's scroll from chaining to the
-               page, so it scrolls separately under touch. -->
-          <ul class="series-post-list relative z-20 flex-1 min-h-0 max-h-[50vh] md:max-h-none overscroll-contain overflow-y-auto flex flex-col gap-2 pr-1">
-            {#each posts as post (post.url)}
-              <li>
-                <a
-                  href={post.url}
-                  class="series-post-row group/row flex items-center gap-4 rounded-lg bg-syoro/5 hover:bg-syoro/10 p-4 transition-colors"
-                >
-                  <div class="min-w-0 flex-1">
-                    <p class="font-sans font-semibold text-syoro group-hover/row:text-link truncate">{post.title}</p>
-                    {#if post.description}<p class="font-sans text-syoro/60 text-sm mt-1 line-clamp-2">{post.description}</p>{/if}
-                  </div>
-                  <svg
-                    class="series-row-arrow shrink-0 w-5 h-5 text-syoro/40 group-hover/row:text-link"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    aria-hidden="true"
-                  >
-                    <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                  </svg>
-                </a>
-              </li>
-            {/each}
-          </ul>
-        {/if}
-
-        <!-- Footer: metadata + CTA -->
-        <div class="flex flex-row justify-between items-center mt-6">
-          {#if meta}<p class={`${cardType.meta} text-syoro/40 w-3/4`}>{meta}</p>{/if}
-          <a
-            href={url}
-            class="relative z-20 inline-flex items-center px-6 py-3 rounded-xl bg-konpeki text-white hover:opacity-90 font-sans font-medium text-sm transition-[transform,opacity] duration-[180ms] ease-snappy active:scale-[0.97]"
-          >
-            View all
-          </a>
-        </div>
-      </div>
+{#if isSeries}
+  <article class="card-shell card-shell-series group" style={vtStyle}>
+    <a href={url} class="absolute inset-0 z-10" aria-label={`View the ${title} series`}></a>
+    <div class="series-featured-band">
+      {#if image}
+        {@render optimizedImage('h-full w-full object-cover')}
+      {:else}
+        {@render collectionMark('card-band-icon')}
+      {/if}
     </div>
-  </div>
-{:else if isWide}
-  <!-- ===== WIDE variant (essays): image left, text right ===== -->
-  <div class="group hover:scale-95 transition-transform duration-200 ease-snappy py-5" style={vtStyle}>
-    <a href={url} class="bg-syoro/5 rounded-lg border-1 border-card-border shadow-xs group-hover:shadow-none relative flex flex-col md:flex-row overflow-hidden">
-      {#if image}
-        <div class="w-full md:w-1/2 lg:w-2/3 shrink-0 grow-0 overflow-hidden">
-          {@render cardImage('w-full h-full object-cover')}
-        </div>
+
+    <div class="series-card-content">
+      {@render eyebrowRow(postCount != null ? `Series · ${postCount} ${postCount === 1 ? 'part' : 'parts'}` : 'Series')}
+      <svelte:element this={titleTag} class={`${cardType.title} card-title`}>{title}</svelte:element>
+      {#if description}<p class={`${cardType.description} card-description`}>{description}</p>{/if}
+
+      {#if posts.length > 0}
+        <svelte:element this={postsHeadingTag} class="series-posts-heading">Posts in this series</svelte:element>
+        <ul class="series-post-list">
+          {#each posts as post, index (post.url)}
+            <li>
+              <a href={post.url} class="series-post-row group/row">
+                <span class="series-part">Part {index + 1}</span>
+                <span class="min-w-0 flex-1">
+                  <span class="series-post-title">{post.title}</span>
+                  {#if post.description}<span class="series-post-description">{post.description}</span>{/if}
+                </span>
+                <svg class="series-row-arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </a>
+            </li>
+          {/each}
+        </ul>
       {/if}
-      <div class="flex-1 min-w-0 p-5 flex flex-col justify-between">
-        <div class="mx-auto">
-          <svelte:element this={titleTag} class={`${cardType.title} text-syoro group-hover:text-link mb-4`}>{title}</svelte:element>
-          {#if description}<p class={`${cardType.description} text-syoro/90 mb-4`}>{description}</p>{/if}
-        </div>
-        <div class={`${cardType.date} text-syoro/40 flex items-center gap-2`}>
-          {formattedDate}
-          {#if maturity}<MaturityBadge {maturity} />{/if}
-        </div>
-      </div>
-    </a>
-  </div>
+
+      <footer class="series-card-footer">
+        {#if seriesMeta}<p class="card-meta uppercase">{seriesMeta}</p>{/if}
+        <a href={url} class="series-view-all">View all</a>
+      </footer>
+    </div>
+  </article>
 {:else}
-  <!-- ===== CARD variant (default / playground): image top, text below ===== -->
-  <div class="group rounded-lg overflow-hidden hover:scale-95 transition-transform duration-200 ease-snappy py-5" style={vtStyle}>
-    <a href={url} class="block p-5 bg-syoro/5 rounded-xl border-1 border-card-border shadow-xs group-hover:shadow-none relative">
-      {@render cardImage(`w-full ${imageHeight} aspect-square object-cover rounded-lg mb-5`)}
-      <div class="flex gap-2 mb-0 items-center">
-        <p class={`${cardType.meta} text-konpeki pt-5`}>{label}</p>
-      </div>
-      <svelte:element this={titleTag} class={`${cardType.title} text-syoro group-hover:text-link mb-4`}>{title}</svelte:element>
-      {#if description}<p class={`${cardType.description} text-syoro/90 mb-4`}>{description}</p>{/if}
-      <div class={`${cardType.date} text-syoro/40 mt-4 flex items-center gap-2`}>
-        {formattedDate}
+  <a
+    href={url}
+    class:card-shell-wide={isWide}
+    class="card-shell group"
+    data-collection={collectionKey}
+    style={vtStyle}
+  >
+    {@render cardBand()}
+    <span class="card-copy">
+      {@render eyebrowRow(eyebrow)}
+      <svelte:element this={titleTag} class={`${cardType.title} card-title`}>{title}</svelte:element>
+      {#if description}<span class={`${cardType.description} card-description line-clamp-2`}>{description}</span>{/if}
+      <span class:card-footer-note={isNote} class="card-footer">
+        <span class="card-meta">
+          {isSeriesCollection && lastUpdated ? `Updated ${formatDate(lastUpdated)}` : formattedDate}
+        </span>
         {#if maturity}<MaturityBadge {maturity} />{/if}
-      </div>
-    </a>
-  </div>
+      </span>
+    </span>
+  </a>
 {/if}
 
 <style>
-  /* series variant — fade the bottom edge of the scroll list so the last row
-     hints "more below". */
+  .card-band-stack {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+  }
+
+  .series-sheet {
+    height: 5px;
+    border: 1px solid var(--color-card-border);
+    border-bottom: 0;
+    border-radius: 12px 12px 0 0;
+    background: color-mix(in srgb, var(--color-cardbg) 94%, var(--color-card-border));
+  }
+
+  .series-sheet-back { margin-inline: 16px; }
+  .series-sheet-middle { margin-inline: 8px; }
+
+  .card-band-note {
+    background: color-mix(in srgb, var(--color-syoro) 5%, var(--color-cardbg));
+  }
+
+  .card-band-playground { border-style: dashed; }
+
+  .card-band-icon {
+    width: 34px;
+    height: 34px;
+    background: color-mix(in srgb, var(--color-syoro) 30%, transparent);
+    -webkit-mask: var(--card-icon) center / contain no-repeat;
+    mask: var(--card-icon) center / contain no-repeat;
+  }
+
+  .card-interactive-tag {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    border: 1px solid var(--color-card-border);
+    border-radius: 999px;
+    background: var(--color-cardbg);
+    padding: 3px 8px;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-syoro);
+  }
+
+  .card-shell-wide { display: grid; }
+
+  .card-copy {
+    display: flex;
+    min-width: 0;
+    flex: 1;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .card-footer-note {
+    border-top: 1px dashed color-mix(in srgb, var(--color-syoro) 25%, transparent);
+    padding-top: 10px;
+  }
+
+  .card-shell-series {
+    position: relative;
+    display: flex;
+    min-height: 34rem;
+    flex-direction: column;
+    gap: 0;
+    overflow: hidden;
+    padding: 0;
+  }
+
+  .series-featured-band {
+    display: flex;
+    aspect-ratio: 16 / 10;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: color-mix(in srgb, var(--color-syoro) 5%, var(--color-cardbg));
+  }
+
+  .series-card-content {
+    display: flex;
+    min-width: 0;
+    flex: 1;
+    flex-direction: column;
+    padding: 20px;
+  }
+
+  .series-posts-heading {
+    margin: 20px 0 10px;
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-syoro);
+  }
+
   .series-post-list {
+    position: relative;
+    z-index: 20;
+    display: flex;
+    max-height: 50vh;
+    min-height: 0;
+    flex: 1;
+    flex-direction: column;
+    gap: 8px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding-right: 4px;
     -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 1.5rem), transparent);
     mask-image: linear-gradient(to bottom, #000 calc(100% - 1.5rem), transparent);
   }
-  .series-row-arrow {
-    transition: transform 200ms var(--ease-snappy);
-  }
-  .series-post-row:hover .series-row-arrow {
-    transform: translateX(3px);
+
+  .series-post-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    border-radius: 12px;
+    background: color-mix(in srgb, var(--color-syoro) 5%, transparent);
+    padding: 14px;
+    transition: background-color 150ms ease;
   }
 
-  /* Motion skill §4.5 — snap, don't shorten. */
-  @media (prefers-reduced-motion: reduce) {
-    .series-row-arrow {
-      transition: none;
+  .series-part {
+    flex-shrink: 0;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--color-muted);
+  }
+
+  .series-post-title,
+  .series-post-description { display: block; }
+
+  .series-post-title {
+    overflow: hidden;
+    font-family: var(--font-serif);
+    font-size: 17px;
+    font-weight: 500;
+    color: var(--color-syoro);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .series-post-description {
+    margin-top: 2px;
+    font-family: var(--font-serif);
+    font-size: 14px;
+    color: var(--color-muted);
+  }
+
+  .series-row-arrow {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    color: var(--color-muted);
+    transition: transform 200ms var(--ease-snappy), color 150ms ease;
+  }
+
+  .series-card-footer {
+    position: relative;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 18px;
+  }
+
+  .series-view-all {
+    flex-shrink: 0;
+    border-radius: 999px;
+    background: var(--color-konpeki);
+    padding: 12px 22px;
+    font-family: var(--font-sans);
+    font-size: 16px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: white;
+    transition: transform 150ms var(--ease-snappy), opacity 150ms ease;
+  }
+
+  .series-view-all:hover { color: white; opacity: 0.9; }
+  .series-view-all:active { transform: scale(0.97); }
+
+  @media (min-width: 768px) {
+    .card-shell-wide {
+      grid-template-columns: 1fr 1fr;
+      align-items: stretch;
+      gap: 18px;
     }
+
+    .card-shell-wide .card-band-stack { height: 100%; }
+    .card-shell-wide .card-band { aspect-ratio: auto; height: 100%; }
+    .card-shell-wide .card-title { font-size: 26px; line-height: 1.15; }
+    .card-shell-wide .card-description {
+      display: -webkit-box;
+      overflow: hidden;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 3;
+      line-clamp: 3;
+    }
+
+    .card-shell-series {
+      min-height: 0;
+      height: 470px;
+      flex-direction: row;
+    }
+
+    .card-shell-series .card-title { font-size: 30px; line-height: 1.15; }
+
+    .series-featured-band {
+      width: 48%;
+      flex-shrink: 0;
+      aspect-ratio: auto;
+      border-right: 1px solid var(--color-card-border);
+    }
+
+    .series-post-list { max-height: none; }
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .card-shell-wide:hover { transform: scale(0.98); }
+    .series-post-row:hover { background: color-mix(in srgb, var(--color-syoro) 10%, transparent); }
+    .series-post-row:hover .series-row-arrow { transform: translateX(3px); color: var(--color-link); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .series-row-arrow,
+    .series-view-all { transition: none; }
+    .series-post-row:hover .series-row-arrow,
+    .series-view-all:active { transform: none; }
   }
 </style>

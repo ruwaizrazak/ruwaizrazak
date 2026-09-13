@@ -1,5 +1,6 @@
 <script lang="ts">
   import { cardType } from '../styles/typography';
+  import { formatDate } from '../utils/formatDate';
 
   interface Props {
     post: {
@@ -13,50 +14,79 @@
         pubDate: Date;
       };
     };
+    headingLevel?: 2 | 3;
   }
 
-  let { post }: Props = $props();
-
-  // LEARN: mirror ContentCard's view-transition naming (`card-${collection}-${id}`) so a
-  // series part animates as its own element across navigations, like every other card.
+  let { post, headingLevel = 3 }: Props = $props();
+  const titleTag = $derived(`h${headingLevel}` as 'h2' | 'h3');
   const transitionName = $derived(`card-seriesPosts-${post.id}`);
 </script>
 
-<!-- LEARN: match ContentCard's card hover pattern — the `group` wrapper owns the
-     hover:scale-95 + ease-snappy press feel and lets the title's group-hover:text-link
-     (which had no `group` ancestor before, so never fired) actually trigger. -->
-<!-- LEARN: Astro's `transition:name` directive doesn't exist in Svelte. Setting the
-     view-transition-name CSS property directly is exactly what that directive compiles
-     to, so the shared-element morph across navigations behaves identically. -->
-<div
-  class="group hover:scale-95 transition-transform duration-200 ease-snappy"
-  style="view-transition-name: {transitionName}"
+<a
+  href={`/series/${post.id}`}
+  class="card-shell series-post-card group"
+  style={`view-transition-name: ${transitionName}`}
 >
-  <a
-    href={`/series/${post.id}`}
-    class="block p-5 rounded-xl border border-card-border hover:bg-syoro/5 transition-colors duration-200 cursor-pointer"
-  >
-    <div class="flex items-center gap-3 mb-3">
-      <span class={`${cardType.meta} text-konpeki`}>
-        Part {post.data.seriesOrder}
-      </span>
-      <span class={`${cardType.meta} text-syoro/40`}>·</span>
-      <span class={`${cardType.date} text-syoro/40`}>{post.data.pubDate.toLocaleDateString()}</span>
-    </div>
+  <span class="series-post-meta">
+    <span class="card-eyebrow">
+      <span
+        class="card-collection-icon"
+        style="--card-icon: url('/icons/series.svg')"
+        aria-hidden="true"
+      ></span>
+      <span>Part {post.data.seriesOrder ?? '—'}</span>
+    </span>
+    <span class="series-post-dot" aria-hidden="true"></span>
+    <time class="card-meta" datetime={post.data.pubDate.toISOString()}>
+      {formatDate(post.data.pubDate)}
+    </time>
+  </span>
 
-    <h2 class={`${cardType.title} text-syoro group-hover:text-link mb-4`}>
-      {post.data.title}
-    </h2>
-    <p class={`${cardType.description} text-syoro/90 mb-4`}>{post.data.description}</p>
+  <svelte:element this={titleTag} class={`${cardType.title} card-title`}>
+    {post.data.title}
+  </svelte:element>
+  <p class={`${cardType.description} card-description`}>{post.data.description}</p>
 
-    {#if post.data.tags.length > 0}
-      <div class="flex flex-wrap items-center gap-2 mb-2">
-        {#each post.data.tags as tag (tag)}
-          <span class={`${cardType.meta} px-2 py-1 text-syoro/50 border border-card-border`}>
-            {tag}
-          </span>
-        {/each}
-      </div>
-    {/if}
-  </a>
-</div>
+  {#if post.data.tags.length > 0}
+    <span class="series-post-tags">
+      {#each post.data.tags as tag (tag)}
+        <span class="series-post-tag">{tag}</span>
+      {/each}
+    </span>
+  {/if}
+</a>
+
+<style>
+  .series-post-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .series-post-dot {
+    width: 4px;
+    height: 4px;
+    flex-shrink: 0;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--color-syoro) 28%, transparent);
+  }
+
+  .series-post-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: auto;
+    padding-top: 2px;
+  }
+
+  .series-post-tag {
+    border: 1px solid var(--color-card-border);
+    border-radius: 999px;
+    padding: 4px 10px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+</style>

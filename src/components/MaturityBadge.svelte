@@ -19,8 +19,15 @@
   const maturityIcon = $derived(getMaturityIcon(maturity));
 </script>
 
-<span>·</span>
-<div class="flex items-center gap-1">
-  <img src={maturityIcon} alt={`${maturity} maturity`} class={iconClass} />
+<span class="maturity-badge">
+  <img src={maturityIcon} alt="" class={iconClass} />
   <span class={textClass}>{maturity}</span>
-</div>
+</span>
+
+<style>
+  .maturity-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+</style>

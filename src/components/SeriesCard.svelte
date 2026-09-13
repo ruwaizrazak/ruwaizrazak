@@ -1,8 +1,9 @@
 <script lang="ts">
   import type { OptimizedImg } from '../utils/optimizeImage';
-  import SeriesPostCard from './SeriesPostCard.svelte';
-  import OptimizedImage from './ui/OptimizedImage.svelte';
   import { cardType } from '../styles/typography';
+  import { formatDate } from '../utils/formatDate';
+  import OptimizedImage from './ui/OptimizedImage.svelte';
+  import SeriesPostCard from './SeriesPostCard.svelte';
 
   interface Props {
     series: {
@@ -25,49 +26,140 @@
         };
       }[];
     };
-    /** LEARN: resolved by the .astro parent — Svelte can't reach astro:assets. */
     image?: OptimizedImg | null;
-    // LEARN: on an individual series page the NotePostHero already shows the image/title,
-    // so hideHeader skips this card's header block and renders only the posts grid.
     hideHeader?: boolean;
   }
 
   let { series, image = null, hideHeader = false }: Props = $props();
 </script>
 
-<div class="mb-12 border-b border-syoro/10 pb-10">
+<section class="series-overview card-panel">
   {#if !hideHeader}
-    <div class="flex items-center gap-6 mb-6">
-      <OptimizedImage {image} alt={series.data.title} class="w-[40%] h-auto object-cover rounded-lg shrink-0" />
-      <div>
-        <h1 class={`${cardType.title} text-syoro`}>{series.data.title}</h1>
-        <p class={`${cardType.description} italic text-syoro/90 mt-2 mb-4`}>{series.data.description}</p>
-        <div class={`${cardType.meta} flex items-center gap-4 mb-6 text-syoro/80`}>
-          <span>Started: {series.data.startedDate.toLocaleDateString()}</span>
-          <span>·</span>
-          <span>Last updated: {series.data.lastUpdated.toLocaleDateString()}</span>
-          <span>·</span>
-          <span>{series.posts.length} posts</span>
-        </div>
+    <header class="series-header">
+      <OptimizedImage
+        {image}
+        alt={series.data.title}
+        class="series-header-image"
+        fallbackClass="series-header-image bg-syoro/5"
+      />
+      <div class="series-header-copy">
+        <span class="card-eyebrow">
+          <span
+            class="card-collection-icon"
+            style="--card-icon: url('/icons/series.svg')"
+            aria-hidden="true"
+          ></span>
+          <span>Series</span>
+        </span>
+        <h2 class={`${cardType.title} series-title`}>{series.data.title}</h2>
+        <p class={`${cardType.description} card-description italic`}>
+          {series.data.description}
+        </p>
+        <p class="series-meta">
+          Started {formatDate(series.data.startedDate)} · Last updated {formatDate(series.data.lastUpdated)} ·
+          {series.posts.length} {series.posts.length === 1 ? 'post' : 'posts'}
+        </p>
       </div>
-    </div>
+    </header>
   {/if}
 
   {#if series.posts.length > 0}
-    <div class="space-y-4 mt-10">
-      <!-- LEARN: h2 — this sits directly under the page <h1>, so h3 skipped a level. -->
-      <h2 class={`${cardType.meta} font-semibold text-syoro/70`}>
-        Posts in this series{hideHeader ? ` · ${series.posts.length}` : ':'}
-      </h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {#each series.posts as post (post.id)}
-          <SeriesPostCard {post} />
-        {/each}
-      </div>
+    <div class="series-posts-header">
+      <h2>Posts in this series{hideHeader ? ` · ${series.posts.length}` : ''}</h2>
+      <span aria-hidden="true"></span>
+    </div>
+    <div class="series-posts-grid">
+      {#each series.posts as post (post.id)}
+        <SeriesPostCard {post} />
+      {/each}
     </div>
   {:else}
-    <div class="text-center py-8 text-syoro/50">
-      <p>No posts in this series yet.</p>
-    </div>
+    <p class="py-8 text-center font-serif text-syoro/50">No posts in this series yet.</p>
   {/if}
-</div>
+</section>
+
+<style>
+  .series-overview {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    margin-bottom: 3rem;
+  }
+
+  .series-header {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  :global(.series-header-image) {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    flex-shrink: 0;
+    border: 1px solid var(--color-card-border);
+    border-radius: 12px;
+    object-fit: cover;
+  }
+
+  .series-header-copy {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .series-title {
+    font-size: 1.875rem;
+    line-height: 1.15;
+    color: var(--color-syoro);
+  }
+
+  .series-meta {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  .series-posts-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .series-posts-header h2 {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-syoro);
+  }
+
+  .series-posts-header span {
+    height: 1px;
+    flex: 1;
+    background: var(--color-card-border);
+  }
+
+  .series-posts-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-auto-rows: 1fr;
+    gap: 16px;
+  }
+
+  @media (min-width: 640px) {
+    .series-header { flex-direction: row; }
+    :global(.series-header-image) { width: 34%; }
+  }
+
+  @media (min-width: 768px) {
+    .series-posts-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+
+  @media (min-width: 1024px) {
+    .series-posts-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
+</style>

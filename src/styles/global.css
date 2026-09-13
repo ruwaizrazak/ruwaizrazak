@@ -80,6 +80,137 @@
   }
 }
 
+/* LEARN: every editorial card shares one shell so spacing, borders, focus, and
+   interaction feedback cannot drift between garden, series, related, and work. */
+.card-shell,
+.card-panel {
+  border: 1px solid var(--color-card-border);
+  border-radius: 18px;
+  background: var(--color-cardbg);
+}
+
+.card-shell {
+  display: flex;
+  height: 100%;
+  min-width: 0;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
+  color: var(--color-syoro);
+  transform: scale(1);
+  transition:
+    transform 200ms var(--ease-snappy),
+    border-color 200ms var(--ease-snappy);
+}
+
+.card-panel { padding: 20px; }
+
+.card-shell:focus-visible,
+.card-shell-series:focus-within {
+  outline: 2px solid var(--color-link);
+  outline-offset: 3px;
+}
+
+.card-band {
+  position: relative;
+  display: flex;
+  aspect-ratio: 16 / 10;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 1px solid var(--color-card-border);
+  border-radius: 12px;
+}
+
+.card-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-konpeki);
+}
+
+.card-collection-icon {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  background: currentColor;
+  -webkit-mask: var(--card-icon) center / contain no-repeat;
+  mask: var(--card-icon) center / contain no-repeat;
+}
+
+.card-title {
+  color: var(--color-syoro);
+  transition: color 150ms ease;
+}
+
+.card-description {
+  color: color-mix(in srgb, var(--color-syoro) 88%, transparent);
+  text-wrap: pretty;
+}
+
+.card-footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: auto;
+  color: var(--color-muted);
+}
+
+.card-meta {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  letter-spacing: 0.06em;
+  color: var(--color-muted);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .card-shell:hover {
+    border-color: color-mix(in srgb, var(--color-link) 24%, var(--color-card-border));
+    transform: scale(0.97);
+  }
+
+  .card-shell:hover .card-title { color: var(--color-link); }
+}
+
+.card-shell:active { transform: scale(0.97); }
+
+@media (prefers-reduced-motion: reduce) {
+  .card-shell { transition: border-color 150ms ease; }
+  .card-shell:hover,
+  .card-shell:active { transform: none; }
+}
+
+/* LEARN: Dense flow lets a 1-column note fill the leftover slot beside a wide
+   essay, so the garden keeps a deliberate rhythm without visible holes. */
+.garden-feature-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 20px;
+  grid-auto-flow: row dense;
+}
+
+@media (min-width: 768px) {
+  .garden-feature-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .garden-span-wide { grid-column: span 2; }
+}
+
+@media (min-width: 1024px) {
+  .garden-feature-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-auto-rows: 384px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .garden-feature-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .garden-span-wide { grid-column: span 3; }
+}
+
 
 
 
@@ -265,4 +396,3 @@ hr {
   /* added line to stop words getting smushed together (as they go onto separate lines and some screen readers do not understand line feeds as a space */
   white-space: nowrap;
 }
-

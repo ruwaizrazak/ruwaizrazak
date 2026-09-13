@@ -13,7 +13,7 @@ interface Props {
 const { currentTags, currentTitle, seriesPosts, seriesTitle } = Astro.props;
 
 // Series notes list the subsequent parts (already filtered/sorted upstream); regular notes
-// show tag-matched cards capped at 8 (2 pages of 4) so Refresh has a bounded set.
+// show the complete tag-matched set. The Card System intentionally removes pagination.
 const isSeries = Boolean(seriesPosts && seriesPosts.length > 0);
 const relatedNotes = isSeries
   ? seriesPosts!.map(post => ({
@@ -23,8 +23,7 @@ const relatedNotes = isSeries
     }))
   : (await getMultiCollectionPosts(['notes', 'essays']))
       .filter(note => note.data.title !== currentTitle)
-      .filter(note => note.data.tags?.some(tag => currentTags.includes(tag)))
-      .slice(0, 8);
+      .filter(note => note.data.tags?.some(tag => currentTags.includes(tag)));
 
 // LEARN: see GardenCards — ContentCard is Svelte, so astro:assets optimization
 // happens here and the card receives flat attributes. seriesPosts render through

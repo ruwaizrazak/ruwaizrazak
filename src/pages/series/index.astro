@@ -2,9 +2,6 @@
 import { getSeriesCards, extractUniqueTags } from '../../utils/collections';
 import IndexLayout from '../../layouts/IndexLayout.astro';
 
-// LEARN: same listing layout as /essays and /notes — each series renders as
-// ContentCard's `series` variant (via GardenCards). wideFullRow makes the cards
-// span the full row since every card here is a wide series card.
 const seriesCards = await getSeriesCards();
 const allTags = extractUniqueTags(seriesCards);
 ---
@@ -15,5 +12,5 @@ const allTags = extractUniqueTags(seriesCards);
   posts={seriesCards}
   tags={allTags}
   icon="/icons/series.svg"
-  wideFullRow
+  layout="garden"
 />

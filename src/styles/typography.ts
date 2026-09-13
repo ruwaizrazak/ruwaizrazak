@@ -16,20 +16,18 @@
 // ============================================================================
 
 export const cardType = {
-  // Header / card title.
-  // Breakpoints: text-xl → md:2xl → lg:3xl → xl:4xl.
-  title: 'font-serif text-2xl lg:text-2xl xl:text-3xl 3xl:text-5xl leading-tight font-medium',
+  // Editorial card title. Kept stable so four-column rows retain equal rhythm.
+  title: 'font-serif text-xl leading-[1.2] font-medium',
 
   // Body description / excerpt.
-  // Breakpoints: text-base → lg:xl → xl:2xl.
-  description: 'font-serif text-base lg:text-xl xl:text-2xl 3xl:text-3xl',
+  description: 'font-serif text-[0.9375rem] leading-[1.5]',
 
   // Publish date line. Single size, no breakpoints.
-  date: 'font-sans text-base xl:text-lg',
+  date: 'font-sans text-sm tracking-[0.06em]',
 
   // Eyebrow labels, tags, role, company·duration, maturity, info lines.
   // Single size, no breakpoints.
-  meta: 'font-sans text-base xl:text-lg uppercase tracking-widest',
+  meta: 'font-sans text-sm font-medium uppercase tracking-[0.16em]',
 } as const;
 
 export type CardType = typeof cardType;

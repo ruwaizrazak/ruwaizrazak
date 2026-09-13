@@ -66,9 +66,9 @@ export async function getSeriesWithPosts() {
 }
 
 /**
- * Map published series into the garden card shape consumed by GardenCards →
- * ContentCard's `series` variant. Shared by /garden (interleaved with other
- * collections) and /series (the dedicated listing), so the mapping lives in one place.
+ * Map published series into the garden card shape consumed by GardenCards.
+ * Shared by /garden and /series so the stacked-band signature and part count
+ * receive the same data in both listings.
  * LEARN: series have no pubDate, so `pubDate` is synthesized from `lastUpdated`
  * to let series interleave by recency alongside other collections in the garden.
  */

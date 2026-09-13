@@ -3,6 +3,7 @@
   import ContentCard from '../ContentCard.svelte';
   import type { OptimizedImg } from '../../utils/optimizeImage';
   import { urlForEntry } from '../../utils/urls';
+  import { gardenSpan, partitionGardenPosts } from '../../utils/gardenLayout';
 
   /**
    * LEARN: this component also absorbs the only thing
@@ -25,16 +26,10 @@
 
   interface Props {
     cards: GardenCard[];
-    /** Wide cards span the full row (used by /series, where every card is wide). */
-    wideFullRow?: boolean;
+    layout?: 'grid' | 'garden';
   }
 
-  let { cards, wideFullRow = false }: Props = $props();
-
-  const cardVariantCollections = new Set(['essays', 'playground']);
-  // LEARN: essays + series use the wide layout — full width up to lg, then 75%
-  // (3 of 4 columns) from xl up so they don't dominate big screens.
-  const wideCollections = new Set(['essays', 'series']);
+  let { cards, layout = 'grid' }: Props = $props();
 
   // Same hydration gate as RelatedNotes: with scripting off the cards must stay
   // visible, so the pre-hide only applies once this island can reveal them again.
@@ -46,51 +41,109 @@
   });
   let revealed = $state(false);
 
-  function variantFor(collection: string) {
-    if (collection === 'series') return 'series' as const;
-    if (collection === 'essays') return 'wide' as const;
-    return cardVariantCollections.has(collection) ? ('card' as const) : ('compact' as const);
-  }
+  const imageByPost = $derived(new Map(cards.map(({ post, image }) => [post, image])));
+  const gardenPartitions = $derived(partitionGardenPosts(cards.map(({ post }) => post)));
 
-  function spanFor(collection: string) {
-    if (!wideCollections.has(collection)) return '';
-    return wideFullRow ? ' col-span-full' : ' md:col-span-2 lg:col-span-3 xl:col-span-3';
-  }
 </script>
 
 <section class="garden-cards-section pb-40">
-  <!-- LEARN: grid-flow-row-dense lets a normal card backfill the leftover column
-       beside a 75%-wide card (at xl+), so wide cards stay nestled among the
-       others instead of leaving a gap. -->
-  <div class="card-masonry grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 grid-flow-row-dense gap-6">
-    {#each cards as { post, image }, i (post.id)}
-      <div
-        class={`garden-card-item post-item mb-6${spanFor(post.collection)}`}
-        class:cascade-pending={mounted && !revealed}
-        class:cascade-in={revealed}
-        style={`transition-delay: ${i * 40}ms`}
-        data-tags={post.data.tags?.join(' ')}
-        data-collection={post.collection}
-      >
-        <ContentCard
-          title={post.data.title}
-          description={post.data.description || ''}
-          pubDate={post.data.pubDate}
-          url={urlForEntry(post.collection, post.id)}
-          {image}
-          maturity={post.data.maturity}
-          collection={post.collection}
-          variant={variantFor(post.collection)}
-          headingLevel={2}
-          startedDate={post.data.startedDate}
-          lastUpdated={post.data.lastUpdated}
-          postCount={post.postCount}
-          posts={post.data.posts}
-          transitionName={`card-${post.collection}-${post.id}`}
-        />
+  {#if layout === 'garden'}
+    <div class="flex flex-col gap-5">
+      {#each gardenPartitions.seriesPosts as post, i (post.id)}
+        <div
+          class="garden-card-item post-item h-full"
+          class:cascade-pending={mounted && !revealed}
+          class:cascade-in={revealed}
+          style={`transition-delay: ${i * 40}ms`}
+          data-tags={post.data.tags?.join(' ')}
+          data-collection={post.collection}
+        >
+          <ContentCard
+            title={post.data.title}
+            description={post.data.description || ''}
+            pubDate={post.data.pubDate}
+            url={urlForEntry(post.collection, post.id)}
+            image={imageByPost.get(post) ?? null}
+            maturity={post.data.maturity}
+            collection={post.collection}
+            variant="series"
+            headingLevel={2}
+            startedDate={post.data.startedDate}
+            lastUpdated={post.data.lastUpdated}
+            postCount={post.postCount}
+            posts={post.data.posts}
+            transitionName={`card-${post.collection}-${post.id}`}
+          />
+        </div>
+      {/each}
+    </div>
+
+    {#if gardenPartitions.gridPosts.length > 0}
+      <div class="garden-feature-grid mt-5">
+        {#each gardenPartitions.gridPosts as post, i (post.id)}
+          {@const span = gardenSpan(post.collection)}
+          <div
+            class="garden-card-item post-item h-full"
+            class:garden-span-wide={span === 'wide'}
+            class:cascade-pending={mounted && !revealed}
+            class:cascade-in={revealed}
+            style={`transition-delay: ${(gardenPartitions.seriesPosts.length + i) * 40}ms`}
+            data-tags={post.data.tags?.join(' ')}
+            data-collection={post.collection}
+          >
+            <ContentCard
+              title={post.data.title}
+              description={post.data.description || ''}
+              pubDate={post.data.pubDate}
+              url={urlForEntry(post.collection, post.id)}
+              image={imageByPost.get(post) ?? null}
+              maturity={post.data.maturity}
+              collection={post.collection}
+              variant={span}
+              headingLevel={2}
+              startedDate={post.data.startedDate}
+              lastUpdated={post.data.lastUpdated}
+              postCount={post.postCount}
+              posts={post.data.posts}
+              transitionName={`card-${post.collection}-${post.id}`}
+            />
+          </div>
+        {/each}
       </div>
-    {/each}
-  </div>
+    {/if}
+  {:else}
+    <!-- LEARN: auto-rows-fr gives every collection signature the same row height;
+         the 16:10 band and footer auto-margin keep the internal baselines aligned. -->
+    <div class="card-masonry grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 auto-rows-fr gap-5">
+      {#each cards as { post, image }, i (post.id)}
+        <div
+          class="garden-card-item post-item h-full"
+          class:cascade-pending={mounted && !revealed}
+          class:cascade-in={revealed}
+          style={`transition-delay: ${i * 40}ms`}
+          data-tags={post.data.tags?.join(' ')}
+          data-collection={post.collection}
+        >
+          <ContentCard
+            title={post.data.title}
+            description={post.data.description || ''}
+            pubDate={post.data.pubDate}
+            url={urlForEntry(post.collection, post.id)}
+            {image}
+            maturity={post.data.maturity}
+            collection={post.collection}
+            variant="card"
+            headingLevel={2}
+            startedDate={post.data.startedDate}
+            lastUpdated={post.data.lastUpdated}
+            postCount={post.postCount}
+            posts={post.data.posts}
+            transitionName={`card-${post.collection}-${post.id}`}
+          />
+        </div>
+      {/each}
+    </div>
+  {/if}
 </section>
 
 <style>
