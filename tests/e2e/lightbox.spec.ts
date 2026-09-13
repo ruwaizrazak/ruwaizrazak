@@ -14,7 +14,8 @@ import { settleLayout } from './helpers';
 
 const LIGHTBOX = '[data-image-lightbox]';
 const ZOOM_IMAGE = '[data-zoom-image]';
-const SLIDER = '[data-zoom-slider]';
+const ZOOM_IN = '[data-zoom-in]';
+const ZOOM_OUT = '[data-zoom-out]';
 
 /** Open the first content image and wait for the lightbox. */
 async function openFirst(page: import('@playwright/test').Page) {
@@ -73,18 +74,139 @@ test.describe('image lightbox', () => {
 
   test('zooms the image and reports the level', async ({ page }) => {
     await openFirst(page);
-    // At rest there is nothing to reset.
-    await expect(page.locator('[data-zoom-reset]')).toHaveCount(0);
+    await expect(page.locator('[data-zoom-reset]')).toBeVisible();
     await expect(page.locator('[data-zoom-label]')).toHaveText('1.0×');
 
-    await page.locator(SLIDER).fill('200');
+    for (let click = 0; click < 4; click++) await page.locator(ZOOM_IN).click();
     await expect(page.locator('[data-zoom-label]')).toHaveText('2.0×');
     await expect(page.locator(ZOOM_IMAGE)).toHaveAttribute('style', /scale\(2\)/);
 
-    // Reset appears only once zoomed, and returns to 1×.
     await page.locator('[data-zoom-reset]').click();
     await expect(page.locator('[data-zoom-label]')).toHaveText('1.0×');
-    await expect(page.locator('[data-zoom-reset]')).toHaveCount(0);
+    await expect(page.locator(ZOOM_IMAGE)).toHaveAttribute('style', /scale\(1\)/);
+
+    // Reset remains available at rest and is a safe no-op.
+    await page.locator('[data-zoom-reset]').click();
+    await expect(page.locator('[data-zoom-label]')).toHaveText('1.0×');
+  });
+
+  test('disables stepped zoom controls at both limits', async ({ page }) => {
+    await openFirst(page);
+    await expect(page.locator(ZOOM_OUT)).toBeDisabled();
+
+    for (let click = 0; click < 12; click++) await page.locator(ZOOM_IN).click();
+    await expect(page.locator('[data-zoom-label]')).toHaveText('4.0×');
+    await expect(page.locator(ZOOM_IN)).toBeDisabled();
+  });
+
+  test('uses the circular close control', async ({ page }) => {
+    await openFirst(page);
+    const close = page.locator('[data-image-close]');
+    // The panel deliberately grows from the thumbnail, so wait for the visual
+    // box to reach its final size rather than sampling mid-transition.
+    await expect.poll(async () => (await close.boundingBox())?.width).toBeGreaterThanOrEqual(51);
+    const box = await close.boundingBox();
+    const radius = await close.evaluate((element) =>
+      Number.parseFloat(getComputedStyle(element).borderRadius),
+    );
+
+    expect(box?.width).toBeGreaterThanOrEqual(51);
+    expect(box?.width).toBeLessThanOrEqual(53);
+    expect(box?.height).toBeGreaterThanOrEqual(51);
+    expect(box?.height).toBeLessThanOrEqual(53);
+    expect(radius).toBeGreaterThan(20);
+  });
+
+  test('uses the themed backdrop in dark mode', async ({ page }) => {
+    await page.evaluate(() => document.documentElement.classList.add('dark'));
+    await openFirst(page);
+    const background = await page
+      .locator(LIGHTBOX)
+      .evaluate((element) => getComputedStyle(element).backgroundColor);
+
+    expect(background).not.toMatch(/rgba?\(255,\s*255,\s*255/);
+  });
+
+  test('keeps the control pill below the image and inside the viewport', async ({ page }) => {
+    await openFirst(page);
+    const imageBox = await page.locator(ZOOM_IMAGE).boundingBox();
+    const controlsBox = await page.locator('[data-zoom-controls]').boundingBox();
+    const viewport = page.viewportSize();
+
+    expect(imageBox).not.toBeNull();
+    expect(controlsBox).not.toBeNull();
+    expect(viewport).not.toBeNull();
+    expect(controlsBox!.y).toBeGreaterThanOrEqual(imageBox!.y + imageBox!.height);
+    expect(controlsBox!.y + controlsBox!.height).toBeLessThanOrEqual(viewport!.height);
+  });
+
+  test('pans with pointer events while zoomed', async ({ page }) => {
+    await openFirst(page);
+    await page.locator(ZOOM_IN).click();
+    const container = page.locator('[data-zoom-container]');
+
+    await container.dispatchEvent('pointerdown', {
+      pointerId: 1,
+      pointerType: 'mouse',
+      isPrimary: true,
+      buttons: 1,
+      clientX: 200,
+      clientY: 200,
+    });
+    await container.dispatchEvent('pointermove', {
+      pointerId: 1,
+      pointerType: 'mouse',
+      isPrimary: true,
+      buttons: 1,
+      clientX: 245,
+      clientY: 225,
+    });
+    await container.dispatchEvent('pointerup', {
+      pointerId: 1,
+      pointerType: 'mouse',
+      isPrimary: true,
+      clientX: 245,
+      clientY: 225,
+    });
+
+    await expect(page.locator(ZOOM_IMAGE)).toHaveAttribute(
+      'style',
+      /translate\((?!0px, 0px)[^)]+\)/,
+    );
+  });
+
+  test('pinch zoom is continuous on touch', async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== 'mobile-chrome', 'Touch gesture coverage runs on Pixel 7');
+    await openFirst(page);
+    const container = page.locator('[data-zoom-container]');
+
+    await container.dispatchEvent('pointerdown', {
+      pointerId: 11,
+      pointerType: 'touch',
+      isPrimary: true,
+      clientX: 100,
+      clientY: 160,
+    });
+    await container.dispatchEvent('pointerdown', {
+      pointerId: 12,
+      pointerType: 'touch',
+      isPrimary: false,
+      clientX: 200,
+      clientY: 160,
+    });
+    await container.dispatchEvent('pointermove', {
+      pointerId: 12,
+      pointerType: 'touch',
+      isPrimary: false,
+      clientX: 237,
+      clientY: 160,
+    });
+
+    const zoom = Number.parseFloat(
+      (await page.locator('[data-zoom-label]').textContent())?.replace('×', '') ?? '1',
+    );
+    expect(zoom).toBeGreaterThan(1);
+    expect(Math.abs(zoom * 4 - Math.round(zoom * 4))).toBeGreaterThan(0.01);
   });
 
   test('leaks no window listeners across repeated opens', async ({ page }) => {

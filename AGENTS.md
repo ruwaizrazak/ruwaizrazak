@@ -16,7 +16,7 @@
 - When the user provides a plan or modular test case created with Claude Opus, treat that plan as the source of truth.
 - Before editing files, do an implementation read: inspect the relevant code, compare the plan against the repo, and report questions or state that there are no questions.
 - Stick to the provided plan. If a change to the plan seems useful or necessary, explicitly ask the user's permission before deviating.
-- Execute approved plans using GPT-5.5 at medium reasoning effort when that model and effort are available.
+- Execute approved plans using GPT-5.6 Sol at high reasoning effort when that model and effort are available.
 - Keep verification light by default. Run focused checks for the changed area, and use heavier test/build verification only when the plan requests it or the change is high-risk.
 - After implementation, summarize changed files, assumptions, and any checks run so the user can hand the work to Claude Opus for testing.
 

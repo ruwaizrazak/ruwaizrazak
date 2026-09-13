@@ -47,13 +47,34 @@
   let zoom = $state(1);
   let panX = $state(0);
   let panY = $state(0);
-  let isDragging = $state(false);
+  let isGesturing = $state(false);
   let reduceMotion = $state(false);
 
   let triggerEl = $state<HTMLElement>();
   let origin = $state({ x: 0, y: 0 });
 
-  let dragStart = { x: 0, y: 0, panX: 0, panY: 0 };
+  interface Point {
+    x: number;
+    y: number;
+  }
+
+  interface PanAnchor extends Point {
+    pointerId: number;
+    panX: number;
+    panY: number;
+  }
+
+  interface PinchAnchor {
+    distance: number;
+    zoom: number;
+    midpoint: Point;
+    panX: number;
+    panY: number;
+  }
+
+  const activePointers = new Map<number, Point>();
+  let panAnchor: PanAnchor | null = null;
+  let pinchAnchor: PinchAnchor | null = null;
 
   const thumbClass = $derived(
     `object-cover cursor-pointer hover:scale-[1.02] transition-transform duration-200 ${className}`,
@@ -78,6 +99,7 @@
   }
 
   function closeLightbox() {
+    clearGesture();
     open = false;
     triggerEl?.focus?.();
   }
@@ -88,29 +110,137 @@
     panY = 0;
   }
 
-  function onSliderInput(event: Event) {
-    zoom = Number((event.currentTarget as HTMLInputElement).value) / 100;
-    if (zoom === 1) {
-      panX = 0;
-      panY = 0;
+  const clampZoom = (value: number) => Math.min(4, Math.max(1, value));
+  const roundZoom = (value: number) => Math.round(value * 100) / 100;
+
+  function stepZoom(direction: -1 | 1) {
+    const nextZoom = clampZoom(roundZoom(zoom + direction * 0.25));
+    if (nextZoom === 1) {
+      resetZoom();
+      return;
     }
+    zoom = nextZoom;
   }
 
-  function startDrag(event: MouseEvent) {
-    if (zoom <= 1) return;
-    isDragging = true;
-    dragStart = { x: event.clientX, y: event.clientY, panX, panY };
+  function formatZoom(value: number) {
+    return `${value.toFixed(2).replace(/0$/, '')}×`;
+  }
+
+  function getGesturePair() {
+    return Array.from(activePointers.entries()).slice(0, 2);
+  }
+
+  function getDistance(first: Point, second: Point) {
+    return Math.hypot(second.x - first.x, second.y - first.y);
+  }
+
+  function getMidpoint(first: Point, second: Point): Point {
+    return { x: (first.x + second.x) / 2, y: (first.y + second.y) / 2 };
+  }
+
+  function beginPinch() {
+    const pair = getGesturePair();
+    if (pair.length < 2) return;
+    const [, first] = pair[0];
+    const [, second] = pair[1];
+    pinchAnchor = {
+      distance: Math.max(getDistance(first, second), 1),
+      zoom,
+      midpoint: getMidpoint(first, second),
+      panX,
+      panY,
+    };
+    panAnchor = null;
+  }
+
+  function beginPan(pointerId: number, point: Point) {
+    panAnchor = { pointerId, ...point, panX, panY };
+    pinchAnchor = null;
+  }
+
+  function clearGesture() {
+    activePointers.clear();
+    panAnchor = null;
+    pinchAnchor = null;
+    isGesturing = false;
+  }
+
+  function onPointerDown(event: PointerEvent) {
+    const container = event.currentTarget as HTMLElement;
+    try {
+      container.setPointerCapture(event.pointerId);
+    } catch {
+      // Synthetic pointer events do not create a capturable active pointer.
+    }
+
+    activePointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+    isGesturing = true;
+    if (activePointers.size >= 2) beginPinch();
+    else if (zoom > 1) beginPan(event.pointerId, { x: event.clientX, y: event.clientY });
     event.preventDefault();
   }
 
-  // LEARN: bound on <svelte:window>, so Svelte removes them when the island
-  // unmounts. The old code attached these per image and never cleaned up.
-  function onWindowMove(event: MouseEvent) {
-    if (!isDragging) return;
-    panX = dragStart.panX + (event.clientX - dragStart.x);
-    panY = dragStart.panY + (event.clientY - dragStart.y);
+  function onPointerMove(event: PointerEvent) {
+    if (!activePointers.has(event.pointerId)) return;
+    activePointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+
+    if (activePointers.size >= 2 && pinchAnchor) {
+      const pair = getGesturePair();
+      const [, first] = pair[0];
+      const [, second] = pair[1];
+      const midpoint = getMidpoint(first, second);
+      const nextZoom = clampZoom(
+        pinchAnchor.zoom * (getDistance(first, second) / pinchAnchor.distance),
+      );
+
+      zoom = nextZoom;
+      if (nextZoom === 1) {
+        panX = 0;
+        panY = 0;
+      } else {
+        panX = pinchAnchor.panX + midpoint.x - pinchAnchor.midpoint.x;
+        panY = pinchAnchor.panY + midpoint.y - pinchAnchor.midpoint.y;
+      }
+      return;
+    }
+
+    if (activePointers.size === 1 && zoom > 1 && panAnchor?.pointerId === event.pointerId) {
+      panX = panAnchor.panX + event.clientX - panAnchor.x;
+      panY = panAnchor.panY + event.clientY - panAnchor.y;
+    }
   }
-  const endDrag = () => (isDragging = false);
+
+  function onPointerEnd(event: PointerEvent) {
+    if (!activePointers.has(event.pointerId)) return;
+    const wasPinching = activePointers.size >= 2;
+    activePointers.delete(event.pointerId);
+
+    const container = event.currentTarget as HTMLElement;
+    try {
+      if (container.hasPointerCapture(event.pointerId)) {
+        container.releasePointerCapture(event.pointerId);
+      }
+    } catch {
+      // The browser may already have released a cancelled pointer.
+    }
+
+    if (activePointers.size >= 2) {
+      beginPinch();
+      return;
+    }
+
+    if (activePointers.size === 1) {
+      const [pointerId, point] = activePointers.entries().next().value as [number, Point];
+      // LEARN: re-anchoring the survivor prevents a jump when pinch becomes pan.
+      if (wasPinching && zoom > 1) beginPan(pointerId, point);
+      isGesturing = true;
+      return;
+    }
+
+    panAnchor = null;
+    pinchAnchor = null;
+    isGesturing = false;
+  }
 
   function onKeydown(event: KeyboardEvent) {
     if (event.key === 'Escape' && open) closeLightbox();
@@ -136,14 +266,13 @@
   });
 </script>
 
-<svelte:window onmousemove={onWindowMove} onmouseup={endDrag} onkeydown={onKeydown} />
+<svelte:window onkeydown={onKeydown} />
 
 <!-- Thumbnail.
      LEARN: the <picture>/<img> is emitted here directly rather than through the
-     shared ui/ components, and is NOT wrapped in anything. WorkImageGrid's layout
-     keys off `> picture:only-of-type` / `> img:only-of-type`, so any wrapper
-     element — even display:contents — would break the single-image grid case.
-     Svelte's {#if} anchors are comments, which don't count as siblings.
+     shared ui/ components, and is NOT wrapped in anything. WorkImageGrid now
+     detects the surrounding astro-island, while its grid item remains this direct
+     <picture>/<img> because Astro gives the island `display: contents`.
 
      The keydown handler mirrors the original, which was unreachable in practice:
      an <img> is not focusable without tabindex, and adding one would create a tab
@@ -196,7 +325,7 @@
   <!-- Lightbox -->
   <div
     use:portal
-    class="image-lightbox fixed inset-0 backdrop-blur-xl bg-white/95 z-50 flex items-center justify-center p-4 px-20"
+    class="fixed inset-0 z-50 grid grid-rows-[minmax(0,1fr)_auto] bg-[color-mix(in_srgb,var(--color-backgroundcolor)_94%,transparent)] p-6 backdrop-blur-[20px]"
     data-image-lightbox
     role="presentation"
     transition:fade={{ duration: reduceMotion ? 0 : 250 }}
@@ -205,87 +334,103 @@
     }}
   >
     <div
-      class="image-panel w-full max-w-5xl max-h-[100vh] flex flex-col items-center justify-center relative"
+      class="col-start-1 row-start-1 row-span-2 grid min-h-0 grid-rows-[minmax(0,1fr)_auto]"
       data-image-panel
       transition:growFromTrigger
     >
-      <button
-        type="button"
-        class="absolute -top-5 right-0 z-10 text-white bg-red-400 rounded-full p-3 hover:text-gray-300 transition-colors cursor-pointer group"
-        aria-label="Close"
-        data-image-close
-        onclick={closeLightbox}
-      >
-        <svg class="w-8 h-8 group-hover:rotate-180 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      </button>
-      <div class="w-full flex flex-col gap-4 items-center max-h-[100vh] text-left">
-        <!-- Zoomable image container -->
+      <!-- LEARN: min-height:0 lets the 1fr row shrink so controls stay on-screen. -->
+      <div class="relative flex min-h-0 items-center justify-center" data-image-stage>
+        <button
+          type="button"
+          class="absolute right-0 top-0 z-10 flex size-[52px] cursor-pointer items-center justify-center rounded-full border border-card-border bg-cardbg text-syoro shadow-[0_2px_10px_color-mix(in_srgb,var(--color-syoro)_6%,transparent)] transition-[color,border-color,transform] duration-180 ease-[var(--ease-snappy)] hover:rotate-90 hover:border-[color-mix(in_srgb,var(--color-link)_24%,var(--color-card-border))] hover:text-konpeki focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-link"
+          aria-label="Close"
+          data-image-close
+          onclick={closeLightbox}
+        >
+          <svg class="size-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
+        <!-- LEARN: touch-action:none keeps native scrolling/page zoom from
+             taking over before this captured pointer gesture can run. -->
         <div
-          class="zoom-container w-full md:w-[80%] overflow-hidden rounded-lg relative select-none"
+          class="flex h-full w-full max-w-[1000px] touch-none select-none items-center justify-center overflow-hidden rounded-xl"
           data-zoom-container
           role="presentation"
-          style={`cursor: ${zoom > 1 ? (isDragging ? 'grabbing' : 'grab') : 'default'}`}
-          onmousedown={startDrag}
+          style={`cursor: ${zoom > 1 ? (isGesturing ? 'grabbing' : 'grab') : 'default'}`}
+          onpointerdown={onPointerDown}
+          onpointermove={onPointerMove}
+          onpointerup={onPointerEnd}
+          onpointercancel={onPointerEnd}
         >
           <img
             src={fullSrc}
             {alt}
-            class="w-full max-h-[80vh] object-contain rounded-lg shadow-2xl block"
+            class="block max-h-full max-w-full select-none rounded-xl border border-card-border object-contain shadow-[0_18px_50px_color-mix(in_srgb,var(--color-syoro)_14%,transparent)] [transform-origin:center_center] [will-change:transform]"
             data-zoom-image
-            style={`transform: ${imgTransform}; transition: ${isDragging ? 'none' : 'transform 0.15s ease'};`}
+            draggable="false"
+            style={`transform: ${imgTransform}; transition: ${isGesturing ? 'none' : 'transform 260ms var(--ease-snappy)'};`}
           />
         </div>
+      </div>
 
-        <!-- Zoom slider -->
-        <div class="flex items-center gap-3 md:w-[1/3]">
-          <span class="font-sans text-lg text-syoro shrink-0">1×</span>
-          <input
-            type="range"
-            min="100"
-            max="400"
-            value={zoom * 100}
-            step="4"
-            class="flex-1 accent-konpeki cursor-pointer"
-            data-zoom-slider
-            aria-label="Zoom level"
-            oninput={onSliderInput}
-          />
-          <!-- LEARN: the live readout the old code tried to update and never
-               could — it queried [data-zoom-label], which existed nowhere. -->
-          <span class="font-sans text-lg text-syoro w-8 text-right shrink-0" data-zoom-label>
-            {zoom.toFixed(1)}×
-          </span>
-          {#if zoom > 1}
-            <button
-              type="button"
-              class="font-sans text-lg text-konpeki border border-konpeki rounded px-2 py-1 shrink-0 hover:bg-konpeki hover:text-white transition-colors"
-              data-zoom-reset
-              aria-label="Reset zoom"
-              onclick={resetZoom}>Reset</button
-            >
-          {/if}
-        </div>
-
+      <div class="flex flex-wrap items-end justify-between gap-8 pt-5" data-image-toolbar>
         {#if title || description}
-          <div class="text-syoro w-full text-center mt-2">
-            {#if title}<h3 class="text-4xl font-sans font-bold">{title}</h3>{/if}
-            {#if description}<p class="text-2xl text-syoro font-serif mt-4">{description}</p>{/if}
+          <div class="flex min-w-0 max-w-[60ch] flex-[1_1_320px] flex-col gap-1.5 text-left text-syoro" data-image-caption>
+            {#if title}<h3 class="font-serif text-xl font-medium">{title}</h3>{/if}
+            {#if description}<p class="font-serif text-base leading-[1.55]">{description}</p>{/if}
           </div>
         {/if}
+
+        <div
+          class="flex shrink-0 items-center gap-2 rounded-full border border-card-border bg-cardbg p-1.5 shadow-[0_2px_14px_color-mix(in_srgb,var(--color-syoro)_7%,transparent)]"
+          data-zoom-controls
+        >
+          <button
+            type="button"
+            class="flex size-10 items-center justify-center rounded-full text-syoro transition-colors duration-180 hover:bg-[color-mix(in_srgb,var(--color-syoro)_6%,transparent)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-link disabled:cursor-default disabled:opacity-30"
+            data-zoom-out
+            aria-label="Zoom out"
+            disabled={zoom <= 1}
+            onclick={() => stepZoom(-1)}
+          >
+            <svg class="size-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M5 12h14" />
+            </svg>
+          </button>
+
+          <span
+            class="w-[52px] text-center font-mono text-[13px] tracking-[0.06em] text-syoro [font-variant-numeric:tabular-nums]"
+            data-zoom-label
+          >
+            {formatZoom(zoom)}
+          </span>
+
+          <button
+            type="button"
+            class="flex size-10 items-center justify-center rounded-full text-syoro transition-colors duration-180 hover:bg-[color-mix(in_srgb,var(--color-syoro)_6%,transparent)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-link disabled:cursor-default disabled:opacity-30"
+            data-zoom-in
+            aria-label="Zoom in"
+            disabled={zoom >= 4}
+            onclick={() => stepZoom(1)}
+          >
+            <svg class="size-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 5v14M5 12h14" />
+            </svg>
+          </button>
+
+          <span class="mx-0.5 h-6 w-px bg-card-border" aria-hidden="true"></span>
+
+            <button
+              type="button"
+              class="h-10 rounded-full px-4 font-sans text-[15px] font-medium uppercase tracking-[0.1em] text-konpeki transition-colors duration-180 hover:bg-chip focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-link"
+              data-zoom-reset
+              aria-label="Reset zoom"
+              onclick={resetZoom}
+            >Reset</button>
+        </div>
       </div>
     </div>
   </div>
 {/if}
-
-<style>
-  :global(.image-lightbox img) {
-    height: auto;
-    border-radius: 8px;
-  }
-  [data-zoom-image] {
-    transform-origin: center center;
-    will-change: transform;
-  }
-</style>
