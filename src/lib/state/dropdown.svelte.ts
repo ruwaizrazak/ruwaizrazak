@@ -6,9 +6,10 @@
  * script reaching into classList.
  *
  * `hidden` deliberately lags `open` by the transition duration. The panel fades
- * and scales out first, and only then leaves layout flow — adding `hidden`
- * (display:none) immediately would cut the transition off mid-flight. The e2e
- * suite asserts exactly this: it waits for the `hidden` class as the end state.
+ * and slides back behind the nav pill first, and only then leaves layout flow —
+ * adding `hidden` (display:none) immediately would cut the transition off
+ * mid-flight. The e2e suite asserts exactly this: it waits for the `hidden` class
+ * as the end state.
  */
 export class Dropdown {
   open = $state(false);
@@ -17,7 +18,13 @@ export class Dropdown {
   #timer: ReturnType<typeof setTimeout> | undefined;
   readonly #delayMs: number;
 
-  constructor(delayMs = 200) {
+  /**
+   * LEARN: 260ms is not arbitrary — it is the panel's transition duration, taken
+   * from the design file (which animates transform at 260ms). `hidden` applies
+   * display:none, so if this lag were shorter the panel would vanish mid-slide and
+   * the retract would snap. Raise one and you must raise the other.
+   */
+  constructor(delayMs = 260) {
     this.#delayMs = delayMs;
   }
 
@@ -40,7 +47,7 @@ export class Dropdown {
   // LEARN: hover menus need a grace window so the pointer can cross the gap
   // between the trigger and the panel. `show()` clears this timer, so entering
   // the panel cancels the pending close. Click-outside still calls `close()`
-  // immediately so the e2e "hidden after 200ms" contract is unchanged.
+  // immediately, so the e2e "ends up hidden" contract is unchanged.
   scheduleClose(): void {
     clearTimeout(this.#timer);
     this.#timer = setTimeout(() => this.close(), this.#delayMs);

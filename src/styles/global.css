@@ -49,6 +49,14 @@
   --color-backgroundcolor:#ffffff;
   --color-link:#1A86FF;
 
+  /* LEARN: the Garden "floating shelf" (1c) palette. These are defined here AND
+     overridden in .dark below, so `bg-chip` / `hover:bg-surface-hover` /
+     `text-muted` swap themes on their own — no `dark:` twin on the utility,
+     the same way syoro / konpeki / cardbg already work. */
+  --color-chip:#EAF3FF;           /* icon chip + open-tab background */
+  --color-surface-hover:#FAF7F0;  /* shelf item hover wash */
+  --color-muted:#5c7070;          /* shelf item description */
+
   /* LEARN: Shared easing vocabulary. The built-in CSS easings are too weak —
      these Emil-style curves have the punch that makes UI feel intentional.
      Tailwind 4 turns the --ease-* namespace into utilities: ease-snappy, ease-smooth. */
@@ -66,6 +74,9 @@
     --color-card-border: #3a3a3a;
     --color-link: #6bb3ff;
     --color-text-primary: #e0e8e8;
+    --color-chip: #22313d;
+    --color-surface-hover: #343434;
+    --color-muted: #a9b8b8;
   }
 }
 
