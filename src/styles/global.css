@@ -57,6 +57,20 @@
   --color-surface-hover:#FAF7F0;  /* shelf item hover wash */
   --color-muted:#5c7070;          /* shelf item description */
 
+  /* LEARN: design-system values that kept escaping as arbitrary utilities.
+     Each of these was repeated 4-8 times as `text-[15px]` / `tracking-[0.16em]`
+     etc., which is the signal for a missing token rather than a one-off. Tailwind
+     v4 turns these namespaces into utilities: text-eyebrow, tracking-meta,
+     leading-body, pt-section. */
+  --text-label: 10px;
+  --text-micro: 13px;
+  --text-eyebrow: 15px;
+  --text-note: 17px;
+  --tracking-meta: 0.1em;
+  --tracking-eyebrow: 0.16em;
+  --leading-body: 1.65;
+  --spacing-section: 72px;
+
   /* LEARN: Shared easing vocabulary. The built-in CSS easings are too weak —
      these Emil-style curves have the punch that makes UI feel intentional.
      Tailwind 4 turns the --ease-* namespace into utilities: ease-snappy, ease-smooth. */
@@ -78,6 +92,16 @@
     --color-surface-hover: #343434;
     --color-muted: #a9b8b8;
   }
+}
+
+/* LEARN: the full-bleed breakout idiom — `w-screen max-w-[100vw] ml-[calc(50%-50vw)]`
+   repeated at eight call sites (PageHero, .note-main-wrapper, NotePostHero, About).
+   A repeated multi-declaration idiom is a missing @utility, not something each
+   component re-derives. */
+@utility full-bleed {
+  width: 100vw;
+  max-width: 100vw;
+  margin-left: calc(50% - 50vw);
 }
 
 /* LEARN: every editorial card shares one shell so spacing, borders, focus, and

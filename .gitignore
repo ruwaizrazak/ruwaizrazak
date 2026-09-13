@@ -32,3 +32,4 @@ current_feed.xml
 # Playwright artifacts (failure screenshots, traces)
 test-results/
 playwright-report/
+.style-snap/

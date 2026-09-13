@@ -47,6 +47,51 @@ Applies whenever the plan's source is a `.dc.html` file from a Claude Design pro
 - **Treat every specified value as intentional**, including tracking, line-height and max-width in `ch`. If a repo convention contradicts a plan value, stop and ask rather than silently picking one.
 - **Preserve hierarchy exactly.** Which row an element sits in is design, not layout detail. Moving a pill between an eyebrow row and a meta row is a deviation and needs permission.
 
+### Translate to utilities, don't transcribe declarations
+
+A `.dc.html` canvas expresses everything as inline CSS. Converting it means **mapping each declaration to its utility** — not pasting the declaration into a `<style>` block. Transcription is how a 21-line component style block became 237, and how two design imports added 541 lines of scoped CSS in a single day.
+
+**A scoped `<style>` block is justified only when a rule needs one of:**
+
+1. **A selector Tailwind cannot write** — `:global()`, `[data-*]`, `>` / `+` / `~` combinators, `::before` / `::after`, `:has()`, `:only-of-type`, `:nth-*`
+2. **A property Tailwind has no utility for** — `mask`, `clip-path`, `content`, `grid-template-areas`, `offset-path`, `transform-origin`, `font-variant-numeric`, `animation-timeline`, `will-change`
+3. **`@keyframes`**
+4. **A two-token `color-mix()`** — `color-mix(in srgb, var(--a) N%, var(--b))`. The one-token form `color-mix(in srgb, var(--token) N%, transparent)` **is** `bg-token/N`, so it does not qualify.
+
+Everything else is a utility. If a rule qualifies, put *only the qualifying declarations* in the block — do not let one `mask` drag twenty layout declarations in with it.
+
+**When a value has no utility and no token, add a token — do not reach for an arbitrary value or a `<style>` block.** A raw value repeated three or more times (`text-[15px]`, `tracking-[0.16em]`) is a missing `@theme` entry. A multi-declaration idiom repeated across files is a missing `@utility` (see `full-bleed`).
+
+| Scoped CSS | Utility |
+|---|---|
+| `color-mix(in srgb, var(--color-syoro) 5%, transparent)` | `bg-syoro/5` |
+| `font-family: var(--font-sans)` | `font-sans` |
+| `transition-timing-function: var(--ease-snappy)` | `ease-snappy` |
+| `display:flex; flex-direction:column; gap:12px` | `flex flex-col gap-3` |
+| `@media (min-width: 768px) { … }` | `md:` |
+| `@media (prefers-reduced-motion: reduce)` | `motion-reduce:` |
+| `@media (hover:hover) and (pointer:fine)` | `hover:` — Tailwind v4 already compiles to `@media (hover: hover)` |
+
+**Two translation traps that are NOT 1:1** — both found by a computed-style diff, neither visible by eye:
+
+- **Named `text-*` values carry a paired line-height.** `text-sm` is `font-size:14px; line-height:20px`. CSS that declared only `font-size: 14px` inherited its line-height — often 21px. Use `text-[14px]` when the original set size alone, or state the leading explicitly.
+- **`auto-rows-fr` is `minmax(0, 1fr)`, not `1fr`.** `1fr` means `minmax(auto, 1fr)` and will not shrink below content; the Tailwind utility will. If the CSS said `1fr`, write `auto-rows-[1fr]`.
+
+Colour-space notation is the opposite case — a false alarm. Tailwind's `bg-token/N` mixes in oklab where the CSS said `color-mix(in srgb, …)`. Mixing with `transparent` only changes alpha, so both render identical pixels (verified on canvas). Same for `rounded-full` (`calc(infinity*1px)`) vs `border-radius: 999px`.
+
+**Colour utilities set all four sides; CSS shorthands often did not.** `border-b border-card-border` sets `border-color` on every edge, so `border-top-color` changes even though only the bottom has width. When the original declared `border-bottom: 1px solid X`, write `border-b border-b-card-border`. Same for `border-r-*`, `border-t-*`.
+
+**`transition-colors` is not one property.** It covers colour, background, border, outline, text-decoration, fill, stroke and the gradient stops. If the CSS said `transition: background-color 150ms ease`, write `transition-[background-color] duration-150 ease-[ease]` — and note plain `ease` is not Tailwind's default timing function (`cubic-bezier(.4,0,.2,1)`), so it needs `ease-[ease]`.
+
+**Unlayered element rules in `global.css` beat every Tailwind utility.** `global.css` declares bare `img`, `table`, `code`, `blockquote` and `hr` rules *outside* any `@layer`. In the CSS cascade, unlayered author styles win over layered ones — so `img { height: auto }` defeats `size-3.5`, which then sets width but not height and the image renders at its intrinsic ratio. A scoped descendant selector (`.pill img { height: 14px }`) outranks it and is the correct escape until those rules are moved into `@layer base` — a change that alters `img` precedence site-wide and needs its own plan. **Check for an unlayered rule before translating any styling on `img`, `table`, `code`, `blockquote` or `hr` — and on anything that overrides `.card-shell`, `.card-band` or `.card-footer`, which are unlayered too.** A variant that changes their padding, gap, border-style or border-colour cannot be a utility.
+
+**A class is not always a style.** Test locators (`.hero-meta-row`), microformats markers (`.p-name`, `.dt-published`, `.h-entry`) and `data-*` hooks carry meaning independent of CSS. When you strip a `<style>` block, keep those class names on the element — stripping the styling must not strip the semantics. Grep the e2e specs for the classes you are about to remove.
+
+**Two Tailwind-in-Svelte traps** that make people give up and write CSS — know them rather than avoiding the framework:
+
+- Never `class:some-tailwind-utility={cond}`. The v4 scanner reads `class:` as a variant and emits nothing. Use the object form: `class={['base', { 'translate-x-full': open }]}`.
+- Svelte renames `@keyframes` in a scoped block. If a Tailwind arbitrary utility references the name (`animate-[foo_1s]`), declare it `@keyframes -global-foo`.
+
 ### Component boundaries
 
 - **Svelte scoped CSS cannot cross into a child component.** A class passed as a prop crosses the boundary; the scoping hash does not, so the rule compiles to `.thing.svelte-hash`, matches nothing, and is stripped silently. Style a wrapper the parent owns and reach the child with `.wrapper :global(img)`. Prefer that to a bare `:global(.name)`.

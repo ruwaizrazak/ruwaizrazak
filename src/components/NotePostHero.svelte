@@ -54,10 +54,19 @@
   const tagLabel = (tag: string) => tag.charAt(0).toUpperCase() + tag.slice(1);
 </script>
 
-<section id="note-hero-content" class="note-post-hero">
-  <div class="note-post-hero-inner">
-    <div class="hero-eyebrow-row">
-      <a href={collectionHref} class="hero-eyebrow">
+<section
+  id="note-hero-content"
+  class="full-bleed mt-6 mb-10 border-b border-b-card-border bg-syoro/5 pt-10 pb-2.5 md:pt-14"
+>
+  <!-- LEARN: px ladder matches <main>'s px-6/md:px-12/lg:px-20 rather than the
+       design's flat 28px — the hero is a full-bleed breakout OUT of main, so
+       borrowing main's ladder keeps the h1 aligned with the body copy below. -->
+  <div class="mx-auto w-[min(100%,1180px)] px-6 md:px-12 lg:px-20">
+    <div class="hero-eyebrow-row mb-[22px] flex flex-wrap items-center gap-3.5">
+      <a
+        href={collectionHref}
+        class="hero-eyebrow inline-flex items-center gap-2 font-sans text-eyebrow font-medium tracking-eyebrow uppercase text-konpeki"
+      >
         <span
           class="card-collection-icon"
           style={`--card-icon: url('${collectionIcon}')`}
@@ -66,37 +75,44 @@
         <span>{collectionLabel}</span>
       </a>
       {#if maturityIcon && maturity}
-        <span class="hero-dot" aria-hidden="true"></span>
-        <span class="hero-maturity-pill">
-          <img src={maturityIcon} alt="" />
+        <span class="size-1 shrink-0 rounded-full bg-muted/45" aria-hidden="true"></span>
+        <span class="hero-maturity-pill inline-flex items-center gap-1.5 rounded-full border border-card-border bg-cardbg px-3 py-[5px] font-mono text-label tracking-[0.14em] uppercase text-muted">
+          <img src={maturityIcon} alt="" class="opacity-70" />
           <span>{maturity}</span>
         </span>
       {/if}
     </div>
 
-    <h1 class="p-name">{title}</h1>
-    <p class="p-summary">{description}</p>
+    <h1
+      class="p-name font-sans text-[56px] leading-[0.94] font-medium tracking-[-0.025em] text-balance text-syoro md:text-[88px]"
+    >{title}</h1>
+    <p
+      class="p-summary mt-7 max-w-[62ch] font-serif text-[20px] leading-[1.5] text-pretty text-syoro md:text-[24px]"
+    >{description}</p>
 
-    <div class="hero-meta-row">
-      <div class="hero-meta-primary">
+    <div class="hero-meta-row my-[34px] flex flex-wrap items-center gap-3.5 font-sans text-[14px] tracking-meta uppercase text-muted md:text-[16px]">
+      <div class="flex flex-wrap items-center gap-2.5">
         <time datetime={pubDate.toISOString()} class="dt-published">{formattedDate}</time>
         {#if formattedUpdatedDate}
-          <span class="hero-dot" aria-hidden="true"></span>
+          <span class="size-1 shrink-0 rounded-full bg-muted/45" aria-hidden="true"></span>
           <span>Updated {formattedUpdatedDate}</span>
         {/if}
         {#if readingTime}
-          <span class="hero-dot" aria-hidden="true"></span>
+          <span class="size-1 shrink-0 rounded-full bg-muted/45" aria-hidden="true"></span>
           <span>{readingTime} min read</span>
         {/if}
       </div>
 
       <!-- Always rendered: the rule closes the meta row even on a tagless post. -->
-      <span class="hero-meta-line" aria-hidden="true"></span>
+      <span class="hero-meta-line h-px min-w-12 flex-[1_1_120px] bg-syoro/12" aria-hidden="true"></span>
 
       {#if tags.length > 0}
-        <nav class="hero-tags" aria-label="Tags">
+        <nav class="hero-tags flex flex-wrap items-center gap-2.5" aria-label="Tags">
           {#each tags as tag (tag)}
-            <a href={`/tags/${tag.toLowerCase()}`}>{tagLabel(tag)}</a>
+            <a
+              href={`/tags/${tag.toLowerCase()}`}
+              class="tracking-[0.06em] normal-case text-muted transition-[color,font-style] duration-150 ease-[ease] hover:text-konpeki hover:italic"
+            >{tagLabel(tag)}</a>
           {/each}
         </nav>
       {/if}
@@ -111,7 +127,7 @@
       only the descendant needs :global, which keeps the name from leaking.
     -->
     {#if picture}
-      <figure class="hero-figure">
+      <figure class="hero-figure my-11 aspect-[16/7] overflow-hidden rounded-t-xl border border-b-0 border-card-border">
         <OptimizedPictureView {picture} alt="" loading="eager" />
       </figure>
     {/if}
@@ -119,139 +135,18 @@
 </section>
 
 <style>
-  .note-post-hero {
-    width: 100vw;
-    max-width: 100vw;
-    margin: 24px 0 40px calc(50% - 50vw);
-    border-bottom: 1px solid var(--color-card-border);
-    background: color-mix(in srgb, var(--color-syoro) 5%, transparent);
-    padding: 40px 0 10px;
-  }
+  /* LEARN: the ONLY rules here that cannot be utilities.
 
-  .note-post-hero-inner {
-    /* LEARN: this matches <main>'s own px-6 / md:px-12 / lg:px-20 ladder rather
-       than the design's flat 28px. The hero is a 100vw breakout OUT of main, so
-       borrowing main's ladder keeps the h1's left edge aligned with the body
-       copy beneath it. Without any padding-inline the hero ran edge-to-edge on
-       phones. */
-    width: min(100%, 1180px);
-    margin: 0 auto;
-    padding-inline: 24px;
-  }
+     1. `.hero-figure` is in THIS template so it scopes normally, but the
+        <picture>/<img> inside it are declared in ui/OptimizedPicture.svelte — a
+        parent's scoping hash never reaches them, so the descendant half is :global().
 
-  .hero-eyebrow-row {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 14px;
-    margin-bottom: 22px;
-  }
-
-  .hero-eyebrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-family: var(--font-sans);
-    font-size: 15px;
-    font-weight: 500;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--color-konpeki);
-  }
-
-  h1 {
-    color: var(--color-syoro);
-    font-family: var(--font-sans);
-    font-size: 56px;
-    font-weight: 500;
-    line-height: 0.94;
-    letter-spacing: -0.025em;
-    text-wrap: balance;
-  }
-
-  .p-summary {
-    max-width: 62ch;
-    margin-top: 28px;
-    color: var(--color-syoro);
-    font-family: var(--font-serif);
-    font-size: 20px;
-    line-height: 1.5;
-    text-wrap: pretty;
-  }
-
-  .hero-meta-row {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 14px;
-    margin: 34px 0;
-    color: var(--color-muted);
-    font-family: var(--font-sans);
-    font-size: 14px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-  }
-
-  .hero-meta-primary,
-  .hero-tags {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .hero-maturity-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    border: 1px solid var(--color-card-border);
-    border-radius: 999px;
-    background: var(--color-cardbg);
-    padding: 5px 12px;
-    font-family: var(--font-mono);
-    font-size: 10px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--color-muted);
-  }
-
-  .hero-maturity-pill img {
-    width: 14px;
-    height: 14px;
-    opacity: 0.7;
-  }
-
-  .hero-dot {
-    width: 4px;
-    height: 4px;
-    flex-shrink: 0;
-    border-radius: 999px;
-    background: color-mix(in srgb, var(--color-muted) 45%, transparent);
-  }
-
-  .hero-meta-line {
-    min-width: 48px;
-    height: 1px;
-    flex: 1 1 120px;
-    background: color-mix(in srgb, var(--color-syoro) 12%, transparent);
-  }
-
-  .hero-tags a {
-    letter-spacing: 0.06em;
-    color: var(--color-muted);
-    text-transform: none;
-    transition: color 150ms ease, font-style 150ms ease;
-  }
-
-  .hero-figure {
-    margin: 44px 0;
-    overflow: hidden;
-    aspect-ratio: 16 / 7;
-    border: 1px solid var(--color-card-border);
-    border-bottom: 0;
-    border-radius: 12px 12px 0 0;
-  }
-
+     2. The pill icon's height. `global.css` carries a bare `img { height: auto }`
+        OUTSIDE any @layer, and unlayered author styles beat EVERY layered Tailwind
+        utility — so `size-3.5` sets width but loses height, and the icon renders at
+        its intrinsic ratio. A descendant selector outranks it. (The real fix is
+        moving that rule into @layer base, but that changes img precedence
+        site-wide and is not this refactor's job.) */
   .hero-figure :global(picture),
   .hero-figure :global(img) {
     display: block;
@@ -260,38 +155,8 @@
     object-fit: cover;
   }
 
-  @media (min-width: 768px) {
-    .note-post-hero {
-      padding: 56px 0 10px;
-    }
-
-    .note-post-hero-inner {
-      padding-inline: 48px;
-    }
-
-    h1 {
-      font-size: 88px;
-    }
-
-    .p-summary {
-      font-size: 24px;
-    }
-
-    .hero-meta-row {
-      font-size: 16px;
-    }
-  }
-
-  @media (min-width: 1024px) {
-    .note-post-hero-inner {
-      padding-inline: 80px;
-    }
-  }
-
-  @media (hover: hover) and (pointer: fine) {
-    .hero-tags a:hover {
-      color: var(--color-konpeki);
-      font-style: italic;
-    }
+  .hero-maturity-pill img {
+    width: 14px;
+    height: 14px;
   }
 </style>

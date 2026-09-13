@@ -42,6 +42,14 @@
 - **Pure computation / canvas / math → a plain module** in `src/scripts/` (`garden/curveUtils`, `garden/grassCanvas`, `analytics`). Rule of thumb: if it queries the DOM it belongs in a component or action; if it only computes, it stays a module.
 - **Page-level script in an `.astro` layout → `initOnLoad()`** from `src/utils/initOnLoad.ts`. It runs the callback exactly once per page view and re-runs on view-transition navigations. Return a cleanup function from the callback — it is invoked before the next run and on `astro:before-swap`.
 
+### Styling: translate to utilities, don't transcribe declarations
+
+Tailwind owns layout, spacing, colour, typography, responsive and state. A scoped `<style>` block is justified **only** when a rule needs a selector Tailwind cannot write (`:global()`, `[data-*]`, combinators, `::before`, `:has()`, `:nth-*`), a property it has no utility for (`mask`, `clip-path`, `content`, `grid-template-areas`, `transform-origin`, `will-change`), `@keyframes`, or a **two-token** `color-mix()`. The one-token form `color-mix(in srgb, var(--token) N%, transparent)` is just `bg-token/N`.
+
+When a rule qualifies, put only the qualifying declarations in it — one `mask` must not drag twenty layout declarations along. A raw value used three or more times is a missing `@theme` token, not an arbitrary utility; a repeated multi-declaration idiom is a missing `@utility`.
+
+This matters most on design imports: a `.dc.html` is inline CSS, and pasting its declarations into `<style>` is how 541 lines of scoped CSS appeared in one day. Full rule and translation table in `AGENTS.md`.
+
 ### Astro/Svelte boundaries (learned the hard way)
 
 - A Svelte component **cannot render an `.astro` child**, cannot `await` during render, and cannot reach `astro:assets`, `astro:content` or the `Astro` global.

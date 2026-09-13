@@ -27,7 +27,7 @@
   class="card-shell series-post-card group"
   style={`view-transition-name: ${transitionName}`}
 >
-  <span class="series-post-meta">
+  <span class="flex items-center gap-2.5">
     <span class="card-eyebrow">
       <span
         class="card-collection-icon"
@@ -36,7 +36,7 @@
       ></span>
       <span>Part {post.data.seriesOrder ?? '—'}</span>
     </span>
-    <span class="series-post-dot" aria-hidden="true"></span>
+    <span class="size-1 shrink-0 rounded-full bg-syoro/28" aria-hidden="true"></span>
     <time class="card-meta" datetime={post.data.pubDate.toISOString()}>
       {formatDate(post.data.pubDate)}
     </time>
@@ -48,45 +48,10 @@
   <p class={`${cardType.description} card-description`}>{post.data.description}</p>
 
   {#if post.data.tags.length > 0}
-    <span class="series-post-tags">
+    <span class="mt-auto flex flex-wrap gap-2 pt-0.5">
       {#each post.data.tags as tag (tag)}
-        <span class="series-post-tag">{tag}</span>
+        <span class="rounded-full border border-card-border px-2.5 py-1 font-mono text-label tracking-meta uppercase text-muted">{tag}</span>
       {/each}
     </span>
   {/if}
 </a>
-
-<style>
-  .series-post-meta {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .series-post-dot {
-    width: 4px;
-    height: 4px;
-    flex-shrink: 0;
-    border-radius: 999px;
-    background: color-mix(in srgb, var(--color-syoro) 28%, transparent);
-  }
-
-  .series-post-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: auto;
-    padding-top: 2px;
-  }
-
-  .series-post-tag {
-    border: 1px solid var(--color-card-border);
-    border-radius: 999px;
-    padding: 4px 10px;
-    font-family: var(--font-mono);
-    font-size: 10px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--color-muted);
-  }
-</style>
