@@ -53,11 +53,6 @@ export class Dropdown {
     this.#timer = setTimeout(() => this.close(), this.#delayMs);
   }
 
-  toggle(): void {
-    if (this.open) this.close();
-    else this.show();
-  }
-
   /** Clear the pending timer so a destroyed island can't write state later. */
   destroy(): void {
     clearTimeout(this.#timer);

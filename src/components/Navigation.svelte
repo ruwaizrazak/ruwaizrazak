@@ -13,7 +13,6 @@
     menuItems?: MenuItem[];
     logoText?: string;
     logoHref?: string;
-    class?: string;
     additionalLinks?: MenuItem[];
   }
 
@@ -21,11 +20,7 @@
     menuItems = [],
     logoText = 'Ruwaiz Razak',
     logoHref = '/',
-    class: className = '',
-    additionalLinks = [
-      { name: 'About', href: '/about' },
-      { name: 'Contact', href: '/contact' },
-    ],
+    additionalLinks = [],
   }: Props = $props();
 
   /**
@@ -58,17 +53,60 @@
 
   const closeMobile = () => (mobileOpen = false);
 
-  // LEARN: the icon mask is inlined per item; kept as a helper so the same string
-  // isn't duplicated across the three places icons render.
-  const maskStyle = (icon: string) =>
-    `background-color: var(--color-syoro); mask: url(${icon}) center/contain no-repeat; -webkit-mask: url(${icon}) center/contain no-repeat;`;
-
-  // LEARN: the Garden dropdown's "floating shelf" chip icon (1c in the design
-  // review) uses --color-konpeki, not the --color-syoro every other masked icon
-  // in this file uses — a separate helper beats overloading maskStyle with a
-  // color argument nothing else needs.
+  // LEARN: every masked icon in the nav is a chip icon now — the desktop shelf and
+  // the mobile drawer both tint them --color-konpeki against a --color-chip circle.
   const chipIconStyle = (icon: string) =>
     `background-color: var(--color-konpeki); mask: url(${icon}) center/contain no-repeat; -webkit-mask: url(${icon}) center/contain no-repeat;`;
+
+  interface ContactLink {
+    contact: string;
+    href: string;
+    label: string;
+    description: string;
+    external: boolean;
+    path: string;
+    /** true = an outline icon (fill:none + stroke), false = a solid filled path */
+    stroked: boolean;
+  }
+
+  /**
+   * LEARN: these three links render in two shapes now — a desktop card (icon chip +
+   * title + description) and a mobile capsule (inline icon + label). They used to be
+   * six hand-written <a> blocks, so every change had to be made twice, and the mobile
+   * copies had already drifted: no icons at all, and "LINKED IN" spelled as two words.
+   *
+   * `data-contact` is load-bearing. analytics.ts delegates off `[data-contact]` to
+   * report which contact method was used, so it has to survive on every copy.
+   */
+  const contactLinks: ContactLink[] = [
+    {
+      contact: 'linkedin',
+      href: 'https://www.linkedin.com/in/ruwaizrazak',
+      label: 'LinkedIn',
+      description: 'Where I post the work',
+      external: true,
+      path: 'M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z',
+      stroked: false,
+    },
+    {
+      contact: 'email',
+      href: 'mailto:hello@ruwaizrazak.com',
+      label: 'Mail me',
+      description: 'hello@ruwaizrazak.com',
+      external: false,
+      path: 'M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z',
+      stroked: true,
+    },
+    {
+      contact: 'resume',
+      href: 'https://www.ruwaizrazak.com/ruwaizcv.pdf',
+      label: 'Download resume',
+      description: 'PDF, one page',
+      external: true,
+      path: 'M12,2 L22,12 L12,22 L2,12 Z',
+      stroked: false,
+    },
+  ];
 
   // Close-on-outside for both dropdowns, from a single document listener.
   $effect(() => {
@@ -137,7 +175,25 @@
     about.scheduleClose();
   };</script>
 
-<nav class={`relative z-50 ${className}`}>
+<!-- LEARN: one snippet, both presentations. currentColor means the call site picks
+     the colour with a text-* class instead of the icon hardcoding a fill per theme. -->
+{#snippet contactIcon(link: ContactLink, size: number)}
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill={link.stroked ? 'none' : 'currentColor'}
+    stroke={link.stroked ? 'currentColor' : undefined}
+    stroke-width={link.stroked ? 2 : undefined}
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    aria-hidden="true"
+  >
+    <path d={link.path} />
+  </svg>
+{/snippet}
+
+<nav class="relative z-50">
   <div>
     <!-- LEARN: 1c makes the nav row itself a surface (rounded-full, its own soft
          shadow) — that is what the shelf below detaches FROM. The mock sits this
@@ -291,120 +347,89 @@
                 href={link.href}
                 class="flex items-center justify-center px-5 py-1.5 text-sm md:text-lg lg:text-xl text-syoro rounded-full uppercase transition-colors duration-200 ease-snappy hover:bg-chip focus:outline-none focus:ring-2 focus:ring-syoro/20"
               >
-                <span class="font-sans font-medium text-sm md:text-lg lg:text-xl flex items-center gap-2">
-                  {#if link.icon}
-                    <span
-                      class="flex-shrink-0 w-6 h-6 inline-block"
-                      style={maskStyle(link.icon)}
-                      role="img"
-                      aria-label={link.name}
-                    ></span>
-                  {/if}
-                  {link.name}
-                </span>
+                <!-- LEARN: no icon here on purpose. additionalLinks carries no `icon`,
+                     and neither 2a nor 2b puts icons on About/Live — they are plain
+                     labels in the pill. Garden items get chips via chipIconStyle(). -->
+                <span class="font-sans font-medium text-sm md:text-lg lg:text-xl">{link.name}</span>
               </a>
             {/each}
           </div>
 
           <!-- Work with me contact dropdown (desktop) -->
-          <!-- LEARN: no `relative` here any more. The clip wrapper below has to measure
-               from the BAR's bottom edge; anchored to this button instead, its top edge
-               would sit ~12px higher — inside the pill — and the panel would be seen
-               sliding across the pill's own background instead of out from under it. -->
-          <div id="contact-button">
-            <div class="bg-link rounded-full">
-              <button
-                bind:this={aboutButton}
-                id="about-menu-button"
-                onmouseover={showAbout}
-                onfocus={showAbout}
-                onmouseleave={leaveAbout}
-                onblur={leaveAbout}
-                class="flex items-center text-sm md:text-lg lg:text-xl font-medium text-white rounded-full hover:bg-syoro/10 dark:hover:bg-syoro/10 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-syoro/20 dark:focus:ring-syoro/20 transition-[transform,background-color] duration-200 ease-snappy uppercase hover:scale-95 px-5 py-2"
+          <!--
+            LEARN: Turn 2 of the design takes this panel OFF the behind-the-pill
+            entrance the Garden shelf uses and gives it its own: a floating card that
+            scales up out of the button's top-right corner. So it is anchored to the
+            button again (hence `relative` here) and needs no clip wrapper — it is a
+            small card that never overlaps the bar, and the corner-origin scale is
+            what makes it read as belonging to the button rather than to the bar.
+          -->
+          <div class="relative">
+            <button
+              bind:this={aboutButton}
+              id="about-menu-button"
+              onmouseover={showAbout}
+              onfocus={showAbout}
+              onmouseleave={leaveAbout}
+              onblur={leaveAbout}
+              aria-haspopup="true"
+              aria-expanded={about.open}
+              aria-controls="about-dropdown"
+              class="flex items-center gap-2 px-[22px] py-2.5 text-sm md:text-lg lg:text-xl font-medium uppercase rounded-full bg-link text-white dark:text-[#10222f] transition-colors duration-200 ease-snappy focus:outline-none focus:ring-2 focus:ring-syoro/20"
+            >
+              Work with me
+              <svg
+                class={['w-4 h-4 flex-shrink-0 transition-transform duration-200 ease-snappy', { 'rotate-180': about.open }]}
+                id="about-chevron"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
               >
-                Work with me
-                <span class="text-white">
-                  <svg
-                    class={['ml-2 -mr-1 w-4 h-4 flex-shrink-0 transition-transform duration-200', { 'rotate-180': about.open }]}
-                    id="about-chevron"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                  </svg>
-                </span>
-              </button>
-            </div>
-            <!-- Same clip-and-slide as the Garden shelf, so both panels in this bar
-                 enter the same way. Right-aligned to the bar's edge rather than the
-                 button's, which matches how the shelf sits full-bleed to the bar. -->
-            <div class="absolute top-full mt-px right-0 -mr-12 px-12 pb-16 overflow-hidden pointer-events-none">
-              <div
-                bind:this={aboutEl}
-                id="about-dropdown"
-                role="region"
-                aria-label="Contact"
-                onmouseover={showAbout}
-                onmouseleave={leaveAbout}
-                onfocusin={showAbout}
-                class={[
-                  // LEARN: same fix as the Garden shelf — bg-backgroundcolor is the page
-                  // colour (#1a1a1a) in dark, so this panel had no surface either, and
-                  // `border` with no colour fell back to the default grey. Not part of
-                  // the 1c design, but it is the sibling panel in the same bar.
-                  'relative mt-2.5 w-56 shadow-lg rounded-xl bg-cardbg transition-[opacity,transform] duration-260 ease-snappy motion-reduce:transition-none motion-reduce:translate-y-0 border border-card-border z-50',
-                  { hidden: about.hidden },
-                  about.open
-                    ? 'opacity-100 translate-y-0 pointer-events-auto'
-                    : 'opacity-0 translate-y-[calc(-100%-10px)] pointer-events-none',
-                ]}
-              >
-              <div>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </button>
+
+            <div
+              bind:this={aboutEl}
+              id="about-dropdown"
+              role="region"
+              aria-label="Contact"
+              onmouseover={showAbout}
+              onmouseleave={leaveAbout}
+              onfocusin={showAbout}
+              class={[
+                'absolute top-full mt-3.5 right-0 w-[286px] z-50 flex flex-col gap-0.5 p-2.5 rounded-[26px] border border-card-border bg-cardbg',
+                'shadow-[0_18px_48px_rgba(0,53,53,0.14)] dark:shadow-[0_18px_48px_rgba(0,0,0,0.45)]',
+                // LEARN: origin-top-right is the whole trick — the card grows out of the
+                // button's corner instead of drifting down the page. Both the 220ms
+                // transform and the fade finish inside Dropdown's 260ms hidden lag, so
+                // display:none never lands mid-flight.
+                'origin-top-right transition-[opacity,transform] duration-220 ease-snappy motion-reduce:transition-none motion-reduce:translate-y-0 motion-reduce:scale-100',
+                { hidden: about.hidden },
+                about.open
+                  ? 'opacity-100 translate-y-0 scale-100 pointer-events-auto'
+                  : 'opacity-0 -translate-y-1.5 scale-[0.97] pointer-events-none',
+              ]}
+            >
+              {#each contactLinks as link (link.contact)}
                 <a
-                  href="https://www.linkedin.com/in/ruwaizrazak"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  data-contact="linkedin"
-                  class="p-4 text-sm md:text-lg lg:text-xl font-medium text-konpeki hover:bg-blue-50 dark:hover:bg-syoro/10 hover:text-link hover:scale-95 rounded-t-xl flex gap-2 transition-[transform,background-color,color] duration-200 ease-snappy"
+                  href={link.href}
+                  data-contact={link.contact}
+                  target={link.external ? '_blank' : undefined}
+                  rel={link.external ? 'noopener noreferrer' : undefined}
+                  class="flex items-center gap-3 px-3.5 py-3 rounded-2xl transition-colors duration-200 ease-snappy hover:bg-surface-hover focus:outline-none focus:ring-2 focus:ring-inset focus:ring-syoro/20"
                 >
-                  <span class="text-syoro">
-                    <svg class="contact-icon w-6 h-6" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                      <path class="contact-icon-symbol" fill="currentColor" d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-                    </svg>
+                  <span class="flex items-center justify-center flex-shrink-0 w-[38px] h-[38px] rounded-full bg-chip text-konpeki">
+                    {@render contactIcon(link, 18)}
                   </span>
-                  LinkedIn
-                </a>
-                <a
-                  href="mailto:hello@ruwaizrazak.com"
-                  data-contact="email"
-                  class="group flex gap-2 hover:gap-4 transition-[transform,background-color,color,gap] duration-200 ease-snappy p-4 text-sm md:text-lg lg:text-xl font-medium text-konpeki hover:bg-blue-50 dark:hover:bg-syoro/10 hover:text-link hover:scale-95"
-                >
-                  <span class="text-syoro flex-shrink-0">
-                    <svg class="contact-icon w-6 h-6 transition-colors duration-200 ease-snappy" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                      <path class="contact-icon-symbol" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                    </svg>
+                  <span class="flex flex-col">
+                    <span class="font-serif text-[17px] font-medium text-syoro">{link.label}</span>
+                    <span class="font-serif text-[13px] text-muted">{link.description}</span>
                   </span>
-                  Mail me
                 </a>
-                <a
-                  href="https://www.ruwaizrazak.com/ruwaizcv.pdf"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  data-contact="resume"
-                  class="flex gap-2 p-4 text-sm md:text-lg lg:text-xl font-medium text-konpeki hover:bg-blue-50 dark:hover:bg-syoro/10 hover:text-link hover:scale-95 transition-[transform,background-color,color] duration-200 ease-snappy rounded-b-xl"
-                >
-                  <span class="text-syoro flex-shrink-0">
-                    <svg class="contact-icon w-6 h-6" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                      <path class="contact-icon-diamond" fill="currentColor" d="M12,2 L22,12 L12,22 L2,12 Z" />
-                    </svg>
-                  </span>
-                  Download resume
-                </a>
-              </div>
+              {/each}
             </div>
           </div>
-        </div>
       </div>
 
       <!-- Mobile: menu button -->
@@ -414,10 +439,10 @@
           onclick={() => (mobileOpen = !mobileOpen)}
           class="inline-flex items-center justify-center p-2 rounded-md text-syoro hover:text-link hover:bg-syoro/10 dark:hover:bg-syoro/10 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-syoro/20 dark:focus:ring-syoro/20 transition-colors"
         >
-          <svg class={['h-6 w-6', { hidden: mobileOpen }]} id="mobile-menu-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+          <svg class={['h-6 w-6', { hidden: mobileOpen }]} fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
           </svg>
-          <svg class={['h-6 w-6', { hidden: !mobileOpen }]} id="mobile-close-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg class={['h-6 w-6', { hidden: !mobileOpen }]} fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
@@ -436,108 +461,109 @@
     ]}
   ></div>
 
-  <!-- Mobile Sidebar -->
+  <!--
+    Mobile Sidebar
+    LEARN: 2b keeps this a 320px drawer rather than a full-screen sheet, so tapping
+    the overlay still dismisses it. Everything inside is the shelf vocabulary at
+    mobile scale: icon chips, serif titles, mono section labels, and the contact
+    links as capsules. Every link and section from the old drawer is still here —
+    only the presentation changed.
+  -->
   <div
     id="mobile-sidebar"
     class={[
-      'md:hidden fixed top-0 right-0 h-full w-80 bg-backgroundcolor border border-card-border shadow-xl z-50 transform transition-transform duration-300 ease-drawer overflow-y-auto scroll-auto',
+      'md:hidden fixed top-0 right-0 h-full w-80 flex flex-col gap-3.5 p-3.5 pb-5 bg-backgroundcolor border-l border-card-border shadow-xl z-50 overflow-y-auto scroll-auto',
+      'transition-transform duration-300 ease-drawer motion-reduce:transition-none',
       { 'translate-x-full': !mobileOpen },
     ]}
   >
-    <div class="flex items-end justify-end p-4 border-b">
+    <!-- Header: wordmark + a round close chip, per the design -->
+    <div class="flex items-center justify-between px-1.5 pt-1">
+      <a href={logoHref} onclick={closeMobile} class="font-handwriting text-[28px] font-medium text-syoro">
+        {logoText}
+      </a>
       <button
         id="mobile-close-button"
         onclick={closeMobile}
-        class="p-2 rounded-md text-syoro hover:text-link hover:bg-syoro/10 dark:hover:bg-syoro/10 transition-colors"
+        aria-label="Close menu"
+        class="flex items-center justify-center flex-shrink-0 w-[38px] h-[38px] rounded-full bg-syoro/8 dark:bg-syoro/10 text-syoro transition-colors duration-200 ease-snappy hover:bg-chip"
       >
-        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <path d="M6 18L18 6M6 6l12 12" />
         </svg>
       </button>
     </div>
 
-    <div class="py-4">
-      <!-- Additional Links in Mobile -->
+    <!-- About / Live as filled cards with a trailing arrow -->
+    <div class="flex flex-col gap-1.5">
       {#each additionalLinks as link (link.href)}
         <a
           href={link.href}
           onclick={closeMobile}
-          class="flex items-center px-4 py-3 text-konpeki hover:scale-95 hover:text-link transition-[transform,color] duration-200 ease-snappy border-b border-gray-100 dark:border-card-border"
+          class="flex items-center justify-between gap-3 px-4 py-3.5 rounded-[20px] bg-surface-hover dark:bg-cardbg hover:bg-chip dark:hover:bg-surface-hover transition-colors duration-200 ease-snappy focus:outline-none focus:ring-2 focus:ring-inset focus:ring-syoro/20"
         >
-          {#if link.icon}
-            <span class="flex-shrink-0 mr-3">
-              <span class="block w-6 h-6" style={maskStyle(link.icon)} role="img" aria-label={link.name}></span>
-            </span>
-          {/if}
-          <div class="flex-1">
-            <div class="font-medium font-serif">{link.name}</div>
-            <div class="text-sm text-gray-500">{link.description}</div>
-          </div>
+          <!-- LEARN: min-w-0 is required, not decorative. A flex child defaults to
+               min-width:auto, so it refuses to shrink below its content and the
+               description runs out past the drawer edge instead of wrapping. -->
+          <span class="flex flex-col min-w-0">
+            <span class="font-sans text-xl font-medium tracking-[0.05em] uppercase text-syoro">{link.name}</span>
+            {#if link.description}
+              <span class="font-serif text-[13px] text-muted">{link.description}</span>
+            {/if}
+          </span>
+          <span aria-hidden="true" class="font-sans text-lg text-link">&rarr;</span>
         </a>
       {/each}
+    </div>
 
-      <!-- Separator -->
-      <div class="border-t border-gray-200 dark:border-card-border my-2"></div>
-
-      <!-- Garden Menu Items -->
-      <div class="px-4 py-2">
-        <p class="text-sm font-semibold text-gray-400 uppercase tracking-wider">Garden</p>
-      </div>
+    <p class="font-mono text-[11px] tracking-[0.16em] uppercase text-muted px-1.5 pt-1.5">Garden</p>
+    <div class="flex flex-col">
       {#each menuItems as item (item.href)}
         <a
           href={item.href}
           onclick={closeMobile}
-          class="flex items-center px-4 py-3 text-konpeki hover:bg-syoro/10 dark:hover:bg-syoro/10 hover:text-link transition-colors duration-200"
+          class="flex items-center gap-3.5 px-2 py-3 rounded-[18px] border-b border-card-border hover:bg-surface-hover transition-colors duration-200 ease-snappy focus:outline-none focus:ring-2 focus:ring-inset focus:ring-syoro/20"
         >
           {#if item.icon}
-            <span class="flex-shrink-0 mr-3">
-              <span class="block w-6 h-6" style={maskStyle(item.icon)} role="img" aria-label={item.name}></span>
+            <span class="flex items-center justify-center flex-shrink-0 w-10 h-10 rounded-full bg-chip">
+              <span class="block w-5 h-5" style={chipIconStyle(item.icon)} role="img" aria-label={item.name}></span>
             </span>
           {/if}
-          <div class="flex-1">
-            <div class="font-medium">{item.name}</div>
+          <span class="flex flex-col min-w-0">
+            <span class="font-serif text-lg font-medium text-syoro">{item.name}</span>
             {#if item.description}
-              <div class="text-sm text-gray-500">{item.description}</div>
+              <span class="font-serif text-[13px] text-muted">{item.description}</span>
             {/if}
-          </div>
+          </span>
         </a>
       {/each}
+    </div>
 
-      <!-- Separator -->
-      <div class="border-t border-gray-200 dark:border-card-border my-2"></div>
-
-      <!-- About / Connect section in mobile -->
-      <div class="px-4 py-2">
-        <p class="text-sm font-semibold text-gray-400 uppercase tracking-wider">Contact</p>
-      </div>
-      <a
-        href="https://www.linkedin.com/in/ruwaizrazak"
-        target="_blank"
-        rel="noopener noreferrer"
-        data-contact="linkedin"
-        onclick={closeMobile}
-        class="flex items-center px-4 py-3 text-konpeki hover:bg-syoro/10 dark:hover:bg-syoro/10 hover:text-link transition-colors duration-200"
-      >
-        <div class="flex-1"><div class="font-medium">LINKED IN</div></div>
-      </a>
-      <a
-        href="mailto:hello@ruwaizrazak.com"
-        data-contact="email"
-        onclick={closeMobile}
-        class="flex items-center px-4 py-3 text-konpeki hover:bg-syoro/10 dark:hover:bg-syoro/10 hover:text-link transition-colors duration-200"
-      >
-        <div class="flex-1"><div class="font-medium">Mail me</div></div>
-      </a>
-      <a
-        href="https://www.ruwaizrazak.com/ruwaizcv.pdf"
-        target="_blank"
-        rel="noopener noreferrer"
-        data-contact="resume"
-        onclick={closeMobile}
-        class="flex items-center px-4 py-3 text-konpeki hover:bg-syoro/10 dark:hover:bg-syoro/10 hover:text-link transition-colors duration-200"
-      >
-        <div class="flex-1"><div class="font-medium">Download resume</div></div>
-      </a>
+    <p class="font-mono text-[11px] tracking-[0.16em] uppercase text-muted px-1.5 pt-1.5">Contact</p>
+    <div class="flex flex-col gap-2">
+      <!-- LEARN: same contactLinks array the desktop card renders, so the two can't
+           drift apart again. The last one is the primary action and is filled. -->
+      {#each contactLinks as link, i (link.contact)}
+        {@const isPrimary = i === contactLinks.length - 1}
+        <a
+          href={link.href}
+          data-contact={link.contact}
+          target={link.external ? '_blank' : undefined}
+          rel={link.external ? 'noopener noreferrer' : undefined}
+          onclick={closeMobile}
+          class={[
+            'flex items-center gap-3 px-4 py-3 rounded-full transition-colors duration-200 ease-snappy focus:outline-none focus:ring-2 focus:ring-inset focus:ring-syoro/20',
+            isPrimary
+              ? 'bg-link text-white dark:text-[#10222f] hover:bg-konpeki dark:hover:bg-[#4c9cf0]'
+              : 'border border-card-border text-konpeki hover:bg-surface-hover',
+          ]}
+        >
+          {@render contactIcon(link, 17)}
+          <span class={['font-sans text-lg font-medium tracking-[0.05em] uppercase', isPrimary ? '' : 'text-syoro']}>
+            {link.label}
+          </span>
+        </a>
+      {/each}
     </div>
   </div>
 </nav>

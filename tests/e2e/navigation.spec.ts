@@ -157,9 +157,28 @@ test.describe('mobile navigation', () => {
 
   test('closes when a link inside it is followed', async ({ page }) => {
     await page.locator('#mobile-menu-button').click();
-    await page.locator('#mobile-sidebar a').first().click();
+    // Target a destination explicitly. The drawer's first <a> is the wordmark now,
+    // so `a.first()` would quietly stop exercising a nav link.
+    await page.locator('#mobile-sidebar a[href="/garden"]').click();
 
     await expect(page.locator('#mobile-sidebar')).toHaveClass(/translate-x-full/);
+  });
+
+  test('keeps every destination and the analytics hook on the contact links', async ({ page }) => {
+    await page.locator('#mobile-menu-button').click();
+    const drawer = page.locator('#mobile-sidebar');
+
+    // The garden destinations and both section links survived the restyle.
+    for (const href of ['/garden', '/essays', '/notes', '/series', '/playground', '/about', '/live']) {
+      await expect(drawer.locator(`a[href="${href}"]`)).toHaveCount(1);
+    }
+
+    // analytics.ts delegates off [data-contact] to report the contact method. The
+    // desktop card and this drawer now render from one shared array, so a mistake
+    // there would silently drop contact tracking on mobile.
+    for (const method of ['linkedin', 'email', 'resume']) {
+      await expect(drawer.locator(`a[data-contact="${method}"]`)).toHaveCount(1);
+    }
   });
 
   test('closes itself when the viewport grows to desktop', async ({ page }) => {
