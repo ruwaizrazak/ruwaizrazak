@@ -1,0 +1,50 @@
+---
+import OptimizedPicture from '../ui/OptimizedPicture.svelte';
+import { optimizePicture } from '../../utils/optimizeImage';
+
+interface Fact {
+  label: string;
+  value: string;
+}
+
+interface Props {
+  facts: Fact[];
+}
+
+const { facts } = Astro.props;
+const portrait = await optimizePicture('/about/ruwaiz1.jpg');
+---
+
+<aside data-about-rail class="flex w-full max-w-[400px] flex-col gap-5 lg:sticky lg:top-8">
+  <div
+    data-about-portrait
+    class="aspect-[4/5] overflow-hidden rounded-2xl border border-card-border [&_picture]:block [&_picture]:h-full [&_picture]:w-full"
+  >
+    <OptimizedPicture
+      picture={portrait}
+      alt="Portrait of Ruwaiz Razak"
+      loading="eager"
+      class="h-full w-full rounded-none object-cover"
+      passthroughClass="h-full w-full rounded-none object-cover"
+    />
+  </div>
+
+  <dl>
+    {facts.map((fact) => (
+      <div class="grid grid-cols-[auto_minmax(0,1fr)] gap-5 border-b border-card-border py-3">
+        <dt class="font-mono text-[10px] uppercase tracking-[0.16em] text-muted">{fact.label}</dt>
+        <dd class="text-right font-sans text-[17px] font-medium tracking-[0.04em] text-syoro">
+          {fact.value}
+        </dd>
+      </div>
+    ))}
+  </dl>
+
+  <a
+    data-about-email
+    href="mailto:hello@ruwaizrazak.com"
+    class="inline-flex items-center justify-center rounded-full border border-card-border px-5 py-3 text-center font-sans text-base font-medium uppercase tracking-[0.1em] text-syoro transition-colors duration-200 hover:border-[color-mix(in_srgb,var(--color-link)_24%,var(--color-card-border))] hover:text-konpeki focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-link"
+  >
+    Email me
+  </a>
+</aside>

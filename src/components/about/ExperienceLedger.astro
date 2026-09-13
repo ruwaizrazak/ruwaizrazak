@@ -1,0 +1,51 @@
+---
+/**
+ * LEARN: the Astro resolver owns image optimization and tooltip metadata because
+ * Svelte cannot await astro:assets or build-time metadata during render.
+ */
+import ExperienceLedgerView from './ExperienceLedgerView.svelte';
+import { optimizeImage } from '../../utils/optimizeImage';
+import { resolveTooltipMeta } from '../../utils/resolveTooltipMeta';
+import { buildTooltipHTML } from '../../utils/buildTooltipHTML';
+
+interface ExperienceEntry {
+  role: string;
+  company: string;
+  period: string;
+  website: string;
+  bullets: string[];
+  image: string;
+}
+
+interface Props {
+  entries: ExperienceEntry[];
+}
+
+const { entries } = Astro.props;
+const resolved = await Promise.all(
+  entries.map(async (entry) => {
+    const meta = await resolveTooltipMeta(entry.website, true);
+    return {
+      ...entry,
+      logo: await optimizeImage(entry.image),
+      websiteTooltip: meta
+        ? buildTooltipHTML({
+            title: meta.tooltipTitle,
+            description: meta.tooltipDesc,
+            favicon: meta.favicon,
+            displayUrl: meta.displayUrl,
+            isExternal: true,
+          })
+        : '',
+    };
+  }),
+);
+---
+
+<ExperienceLedgerView entries={resolved} />
+
+<script>
+  // LEARN: tooltip markup needs the binder on the same rendered page; Astro
+  // deduplicates this module when another tooltip-producing component imports it.
+  import '../../scripts/linkTooltips.ts';
+</script>

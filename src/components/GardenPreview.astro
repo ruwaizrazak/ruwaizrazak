@@ -8,9 +8,10 @@ import { optimizeImage } from '../utils/optimizeImage';
 
 interface Props {
   posts: any[];
+  variant?: 'cards' | 'list';
 }
 
-const { posts } = Astro.props;
+const { posts, variant = 'cards' } = Astro.props;
 // LEARN: Defensive filter — this block is essays-only even if a parent passes more
 const essays = posts.filter((post) => post.collection === 'essays');
 const cards = await Promise.all(
@@ -18,4 +19,6 @@ const cards = await Promise.all(
 );
 ---
 
-<GardenPreviewView cards={cards} pathname={Astro.url.pathname} />
+<!-- LEARN: one resolver serves both surfaces so the essays filter and image
+     optimization cannot drift; only the view treatment varies by page. -->
+<GardenPreviewView cards={cards} pathname={Astro.url.pathname} {variant} />

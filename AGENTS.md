@@ -30,6 +30,44 @@
 - Validate parser-style utilities with edge cases that match content reality: URLs, inline code, hyphenated words, snake_case, frontmatter, and MDX syntax.
 - Avoid optional tests that pass when the required fixture is absent. Add or request an explicit fixture when coverage depends on content.
 
+## Design Implementation Guidelines (Claude Design imports)
+
+Applies whenever the plan's source is a `.dc.html` file from a Claude Design project.
+
+### Before editing anything
+
+- **Build the ownership map first.** For every file the plan names, grep who else imports it. Single-consumer files can be changed freely; shared ones need a variant, a new export, or the user's permission. Put the map in your implementation read. Most design drift starts as an unnoticed second consumer.
+- **Read the canvas as data, not markup.** A `.dc.html` is inline-styled scaffolding: `sc-for` is an `{#each}`, `style-hover` is a `:hover` rule, `{{ x }}` is an interpolation, and `support.js` / `DCLogic` is canvas runtime that never ships. Port the *values*, never the structure.
+- **The canvas is one viewport.** These files are authored at a single width (usually 1280px). Every responsive decision is yours, so state the ladder you chose in your summary. Never ship a canvas value that makes a phone unusable — an 88px h1 or a flat 80px page padding is a bug at 375px.
+
+### Translating values
+
+- **Tokens, never hex.** Every colour in these mocks already has a token in `global.css` (`--color-syoro`, `--color-konpeki`, `--color-card-border`, `--color-muted`, `--color-cardbg`, `--ease-snappy`). Hard-coded hex does not shift in dark mode — the theme switches on a `.dark` class, not `prefers-color-scheme`. Use `color-mix(in srgb, var(--token) N%, transparent)` for the mock's `rgba()` values.
+- **Reuse the shared systems.** `.card-shell` / `.card-band` / `.card-eyebrow` / `.card-meta` / `.card-collection-icon` already exist in `global.css`. If a mock draws a card or a collection glyph, it is drawing those — do not write a second implementation.
+- **Treat every specified value as intentional**, including tracking, line-height and max-width in `ch`. If a repo convention contradicts a plan value, stop and ask rather than silently picking one.
+- **Preserve hierarchy exactly.** Which row an element sits in is design, not layout detail. Moving a pill between an eyebrow row and a meta row is a deviation and needs permission.
+
+### Component boundaries
+
+- **Svelte scoped CSS cannot cross into a child component.** A class passed as a prop crosses the boundary; the scoping hash does not, so the rule compiles to `.thing.svelte-hash`, matches nothing, and is stripped silently. Style a wrapper the parent owns and reach the child with `.wrapper :global(img)`. Prefer that to a bare `:global(.name)`.
+- **Check it before claiming it works:** `compile(src, { css: 'external' }).warnings.filter(w => w.code === 'css_unused_selector')`. A build prints these too — read them.
+- **Anything needing `await`, `astro:assets`, `astro:content` or the `Astro` global is a resolver/view split** — a thin `.astro` doing the async work, passing flat props to a `.svelte` view.
+- **Whatever renders tooltip markup must also import `../scripts/linkTooltips.ts`.** Emitting `data-tippy-content` without the binder produces markup that looks right and does nothing. Astro dedupes the import.
+- **Static by default.** A component with no interaction gets no `client:*` directive and should ship zero JS. Confirm with `grep -c '<astro-island' dist/<route>/index.html`.
+
+### Testing a design import
+
+- **Assert geometry, not class names.** A class can be present while the CSS behind it was pruned — that is precisely how a broken hero image ships. Measure `boundingBox()` ratios, computed radii, widths.
+- **Pick the route that actually exercises the feature.** If the change touches a hero image, test a route whose entry has one. Check the fixture's frontmatter before writing the assertion.
+- **Never let a conditional create fake coverage.** `if (await x.count())` around an assertion passes when the fixture is missing. If coverage needs a fixture that does not exist, add one or ask — do not guard the test.
+- **Pin both sides of a variant.** When a shared component gains a variant, assert the new branch on the new page *and* the old branch on the existing one. That is what keeps the default honest.
+- **Write a test that fails on the old behaviour.** If it passes before and after, it is not coverage. Check it against the previous implementation.
+- **Run chromium and webkit.** Masks, `backdrop-filter` and sticky positioning all diverge, and the repo already carries two iOS Safari workarounds.
+
+### Reporting back
+
+State the responsive ladder you chose, any canvas value you deliberately did not ship and why, the ownership map, and which checks you ran. Flag content edits separately and loudly — changing published writing is never a silent implementation detail.
+
 ## Code Style & Conventions
 - PascalCase for components (e.g., `ContentCard.astro`)
 - Centralized types in `src/types.ts`, constants in `src/consts.ts`

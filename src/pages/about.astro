@@ -1,32 +1,33 @@
 ---
-import { Picture } from 'astro:assets';
-import Layout from '../layouts/AboutLayout.astro';
-import WorkCardCompact from '../components/WorkCardCompact.svelte';
-import { toWorkCardsCompact } from '../utils/workCards';
-import { resolveImage } from '../utils/resolveImage';
-import StickyExperience from '../components/StickyExperience.astro';
 import { getCollection } from 'astro:content';
-import Link from '../components/mdxComponents/Link.astro';
-import { proseClasses } from '../utils/proseClasses';
+import AboutRail from '../components/about/AboutRail.astro';
+import ExperienceLedger from '../components/about/ExperienceLedger.astro';
+import SectionHeading from '../components/about/SectionHeading.astro';
 import GardenPreview from '../components/GardenPreview.astro';
-import PageHero from '../components/PageHero.svelte';
+import Link from '../components/mdxComponents/Link.astro';
+import WorkCardCompact from '../components/WorkCardCompact.svelte';
+import Layout from '../layouts/AboutLayout.astro';
 import { getPublishedAndSorted } from '../utils/collections';
-import { pageType } from '../styles/typography';
+import { toWorkCardsCompact } from '../utils/workCards';
 
-// LEARN: Homepage garden strip is essays-only; notes stay on /garden
 const gardenPosts = (await getPublishedAndSorted('essays')).slice(0, 3);
 
 const works = await getCollection('works', ({ data }) => data.publish === true);
-// LEARN: WorkCardCompact is Svelte — resolve hero images on the Astro side.
 const workCards = await toWorkCardsCompact(works);
+
+const facts = [
+  { label: 'Now', value: 'Senior UX Designer, Nordeus' },
+  { label: 'From', value: 'India' },
+  { label: 'Working on', value: 'Player-facing systems' },
+];
 
 const experience = [
   {
     role: 'Senior UX Designer',
     company: 'Nordeus',
     period: '2024 – Present',
-	website:'https://www.nordeus.com',
-	image:'/works/nordeus.jpeg',
+    website: 'https://www.nordeus.com',
+    image: '/about/nordeus.png',
     bullets: [
       'Maintaining cross-team design documentation to ensure seamless collaborations.',
       'Collaborating with cross-functional teams and UX researchers to ensure accessibility, usability, and data informed solutions at every stage of development.',
@@ -37,8 +38,8 @@ const experience = [
     role: 'Senior UX Designer',
     company: 'Zynga',
     period: '2023 – 2024',
-	website:'https://www.zynga.com',
-	image:'/works/zynga.jpeg',
+    website: 'https://www.zynga.com',
+    image: '/about/zynga.png',
     bullets: [
       'Redesigned navigation and FTUE to improve new-user retention.',
       'Mentored two junior designers through their first shipped features',
@@ -49,8 +50,8 @@ const experience = [
     role: 'UX Designer',
     company: 'Zynga',
     period: '2021 – 2023',
-	website:'https://www.zynga.com',
-	image:'/works/zynga.jpeg',
+    website: 'https://www.zynga.com',
+    image: '/about/zynga.png',
     bullets: [
       'Designed experience at Farmville 3 from softlaunch through live operations',
       'Built the design system in Figma and mirrored it in Unity prefabs',
@@ -61,8 +62,8 @@ const experience = [
     role: 'Associate UX Designer',
     company: 'Zynga',
     period: '2019 – 2021',
-	website:'https://www.zynga.com',
-	image:'/works/zynga.jpeg',
+    website: 'https://www.zynga.com',
+    image: '/about/zynga.png',
     bullets: [
       'Designed features by conducting Competitive Analysis, UX Research and diverse design stages.',
       'Collaborated with PMs and Game Designers, to synchronize feature alignment with business needs, market feedback and user testing',
@@ -73,111 +74,102 @@ const experience = [
     role: 'Associate UX Designer',
     company: 'Glu Mobile (Now EA)',
     period: '2018 – 2019',
-	website:'https://www.ea.com/ea-studios/slingshot-studios',
-	image:'/works/glu.jpeg',
+    website: 'https://www.ea.com/ea-studios/slingshot-studios',
+    image: '/about/glu.png',
     bullets: [
       'Conducted funnel analysis on user onboarding reducing churn and improving retention.',
       'Built multiple features adhering to Agile methodology by conducting Usability Testing, User Research, creating Wireframes, Prototypes, User flows, use cases, defining VFX and SFX for features.',
       'Facilitated multiple play tests using playtest cloud to analyze user inputs and formulated actionable reports',
-	  'Conducted both quantitative and qualitative surveys using data dashboards and survey monkey to make data informed decisions',
+      'Conducted both quantitative and qualitative surveys using data dashboards and survey monkey to make data informed decisions',
     ],
   },
 ];
 ---
 
 <Layout
-	title="About Ruwaiz Razak"
-	description="A designer who started building before he knew design existed. UX, systems thinking, data, and code."
+  title="About Ruwaiz Razak"
+  description="A designer who started building before he knew design existed. UX, systems thinking, data, and code."
 >
-	<!-- Hero — matches notesPost structure: #note-hero-bg + #note-hero-content for GSAP scroll animations -->
-	<section class="relative w-screen max-w-[100vw] ml-[calc(50%-50vw)] overflow-hidden">
-		<!-- Background: animated zoom from scale(1.15) → 1.0 on scroll -->
+  <div class="grid grid-cols-1 items-start gap-12 pt-12 lg:grid-cols-[minmax(0,30%)_minmax(0,1fr)] lg:gap-14">
+    <AboutRail {facts} />
 
-		<!-- Hero content: fades out on scroll -->
-		<div id="note-hero-content" class="flex flex-col md:flex-row px-10 md:px-12 lg:px-20 justify-between items-start md:items-center">
-			<div class="flex flex-col gap-10 py-10 my-5 md:py-20 lg:py-30">
-				<h1 class:list={[pageType.header, "text-syoro mb-5 w-full md:max-w-[12ch] -ml-2"]}>
-					Hi, I'm Ruwaiz.
-				  </h1>
-			<div class="note-layout flex relative w-full max-w-8xl py-10 -mt-20 mb-10">
-				<article class={`${proseClasses}`}>
-					<p class="text-lg md:text-xl xl:text-2xl">I started building websites as a teenager, before I knew "design" was a thing one could do for a living. That instinct, wanting to make something and see it work never really went away.</p>
-					<p class="text-lg md:text-xl xl:text-2xl">Today I design player facing systems at <Link href="http://www.nordeus.com">Nordeus</Link>, onboarding, retention, live engagement by being at the intersection of behavioural systems, interaction design, and research.</p>
-				</article>
-			</div>
-			</div>
-			<Picture
-				src={resolveImage('/about/ruwaiz1.jpg')!}
-				formats={['avif', 'webp']}
-				fallbackFormat="webp"
-				alt="Ruwaiz Razak"
-				class="w-100 h-auto rounded-2xl object-cover"
-			/>
-		</div>
-	</section>
+    <div data-about-content class="min-w-0">
+      <section data-about-intro class="flex flex-col gap-[22px]">
+        <p class="font-sans text-[15px] font-medium uppercase tracking-[0.16em] text-konpeki">About</p>
+        <h1
+          class="font-sans text-[clamp(52px,6.4vw,82px)] font-medium leading-[0.94] tracking-[-0.03em] text-syoro [text-wrap:balance]"
+        >
+          Hi, I'm Ruwaiz.
+        </h1>
+        <div class="flex max-w-[62ch] flex-col gap-[22px] font-serif text-[21px] leading-[1.65] text-syoro [text-wrap:pretty]">
+          <p>
+            I started building websites as a teenager, before I knew "design" was a thing one could
+            do for a living. That instinct, wanting to make something and see it work never really
+            went away.
+          </p>
+          <p>
+            Today I design player facing systems at <Link href="https://www.nordeus.com">Nordeus</Link>,
+            onboarding, retention, live engagement by being at the intersection of behavioural
+            systems, interaction design, and research.
+          </p>
+        </div>
+      </section>
 
-	<!-- LEARN: .note-main-wrapper slides up 120px over the hero on scroll (CSS scroll-timeline, see global.css).
-	     bg-backgroundcolor gives it a solid background so it covers the hero as it overlaps. -->
-	<div class="note-main-wrapper px-10 md:px-12 lg:px-20 relative z-10 bg-backgroundcolor">
+      <section data-about-experience class="pt-[72px]">
+        <SectionHeading label="Work Experience" />
+        <ExperienceLedger entries={experience} />
+      </section>
 
-		<!-- Work Experience — sticky stacking cards -->
-		<section class="py-5 md:py-10">
-			<h2 class={`${pageType.sectionLabel} text-syoro dark:text-white/60 md:col-span-2`}>
-				Work Experience
-			</h2>
-			<StickyExperience entries={experience} />
-		</section>
+      <section data-about-history class="flex flex-col gap-5 pt-[72px]">
+        <SectionHeading label="A Little History" />
+        <div class="flex max-w-[68ch] flex-col gap-7 font-serif text-xl leading-[1.65] text-syoro [text-wrap:pretty]">
+          <p>
+            It started in 2009. A classmate mentioned he was building a website and suddenly it felt
+            like something I could do too. I spent weeks on no-code builders like webs.com,
+            webspot.com, whatever I could find before discovering Blogspot to built a car blog called
+            "onthewheels.in" in my regional language.
+          </p>
+          <p>
+            I remember staring at the screen the first time something I made was live on the internet.
+            That feeling hasn't gone away.
+          </p>
+          <p>
+            From there it was Bootstrap, then Jekyll, then a long stretch of learning how to learn,
+            reading documentation instead of watching tutorials, picking up Sass and templating
+            languages by building things that probably should've stayed private. Im writing about
+            this whole journey in <Link href="/series/portfolio-to-garden/">From Portfolio to Garden</Link>
+            — tracing how a teenager's car blog eventually became this site, built from scratch in Astro.
+          </p>
+          <p>
+            I'm from India, grew up between languages and cultures, and that background shows up in
+            how I think about design. Im always aware that what feels obvious to one person can be
+            completely invisible to another.
+          </p>
+        </div>
+      </section>
 
-		<!-- A Little History -->
-		<section class="note-layout flex relative w-full max-w-8xl">
-			<div class={`${proseClasses} w-full`}>
-				<h2>
-					A Little History
-				</h2>
-				<div class="flex flex-col gap-5 font-serif text-syoro/90 dark:text-white/80 leading-relaxed">
-					<p class="text-lg md:text-xl xl:text-2xl">
-						It started in 2009. A classmate mentioned he was building a website and suddenly it felt like something I could do too. I spent weeks on no-code builders like webs.com, webspot.com, whatever I could find before discovering Blogspot to built a car blog called "onthewheels.in" in my regional language. 
-						
-						I remember staring at the screen the first time something I made was live on the internet. That feeling hasn't gone away.
-					</p>
-					<p class="text-lg md:text-xl xl:text-2xl">
-						From there it was Bootstrap, then Jekyll, then a long stretch of learning how to learn, reading documentation instead of watching tutorials, picking up Sass and templating languages by building things that probably should've stayed private. Im writing about this whole journey in <Link href="/series/portfolio-to-garden/">From Portfolio to Garden</Link> — tracing how a teenager's car blog eventually became this site, built from scratch in Astro.
-					</p>
-					<p class="text-lg md:text-xl xl:text-2xl">
-						I'm from India, grew up between languages and cultures, and that background shows up in how I think about design. Im always aware that what feels obvious to one person can be completely invisible to another.
-					</p>
-				</div>
-			</div>
-		</section>
+      <section data-about-projects class="pt-[72px]">
+        <SectionHeading label="Selected Projects" />
+        <p class="mb-8 mt-5 font-serif text-xl leading-[1.65] text-syoro">
+          Some of the work I've shipped.
+        </p>
+        <div class="grid grid-cols-[repeat(auto-fit,minmax(260px,1fr))] gap-5">
+          {workCards.map((card) => <WorkCardCompact {...card} />)}
+        </div>
+      </section>
 
-		<!-- Selected Projects -->
-		<section class="py-14 md:py-20 mb-16">
-			<h2 class={`${pageType.sectionLabel} text-syoro dark:text-white/60 md:col-span-2`}>
-				Selected Projects
-			</h2>
-			<p class="text-lg md:text-xl font-serif text-syoro/70 dark:text-white/50 leading-relaxed mb-8">
-				Some of the work I've shipped.
-			</p>
-			<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-				{workCards.map(card => (
-					<WorkCardCompact {...card} />
-				))}
-			</div>
-		</section>
-		<section class="mb-16">
-			<GardenPreview posts={gardenPosts} />
-		</section>
-	</div>
-
+      <section data-about-garden class="pb-24 pt-[72px]">
+        <SectionHeading label="From the Garden">
+          <a
+            slot="action"
+            href="/garden/"
+            class="inline-flex shrink-0 items-center rounded-full bg-konpeki px-5 py-[11px] font-sans text-sm font-medium uppercase tracking-[0.1em] text-white transition-opacity duration-150 hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-link"
+          >
+            Visit garden
+          </a>
+        </SectionHeading>
+        <GardenPreview posts={gardenPosts} variant="list" />
+      </section>
+    </div>
+  </div>
 </Layout>
-
-<!-- Hero overlap is now CSS scroll-driven (see .note-main-wrapper in global.css) -->
-
-<style>
-	/* LEARN: Breaks out of the parent Main component's px-20 padding
-	   so the main wrapper spans the full viewport width — same technique as notesPost.astro */
-	.note-main-wrapper {
-		width: 100vw;
-		margin-left: calc((100% - 100vw) / 2);
-	}
-</style>

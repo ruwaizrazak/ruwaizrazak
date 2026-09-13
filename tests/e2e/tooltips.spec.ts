@@ -89,7 +89,7 @@ test.describe('tooltips outside MDX', () => {
   /**
    * REGRESSION GUARD. The tooltip markup and the script that binds it come from
    * different places: Link.astro emits both, but the resolver shells
-   * (IntroSection, StickyExperience) emit the markup through LinkView.svelte and
+   * (IntroSection, ExperienceLedger) emit the markup through LinkView.svelte and
    * have to import the binder themselves. When Footer and IntroSection stopped
    * rendering Link.astro during the Svelte migration, the homepage kept its
    * data-tippy-content attribute and silently lost the binding — no test noticed,
@@ -111,4 +111,3 @@ test.describe('tooltips outside MDX', () => {
       .toBe(true);
   });
 });
-

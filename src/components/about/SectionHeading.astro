@@ -1,0 +1,20 @@
+---
+interface Props {
+  label: string;
+}
+
+const { label } = Astro.props;
+const hasAction = Astro.slots.has('action');
+---
+
+<div class="flex items-center gap-4">
+  <h2 class="shrink-0 font-sans text-xl font-semibold uppercase tracking-[0.16em] text-syoro">
+    {label}
+  </h2>
+  <span class="h-px min-w-4 flex-1 bg-card-border" aria-hidden="true"></span>
+  {hasAction && (
+    <div class="shrink-0">
+      <slot name="action" />
+    </div>
+  )}
+</div>
