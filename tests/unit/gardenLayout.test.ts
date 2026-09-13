@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { gardenSpan, partitionGardenPosts } from '../../src/utils/gardenLayout';
+import { gardenSpan, groupGardenPostsByDate, partitionGardenPosts } from '../../src/utils/gardenLayout';
 
 const post = (id: string, collection: string) => ({ id, collection });
 
@@ -53,5 +53,24 @@ describe('gardenSpan', () => {
     expect(gardenSpan('notes')).toBe('card');
     expect(gardenSpan('playground')).toBe('card');
     expect(gardenSpan('unknown')).toBe('card');
+  });
+});
+
+describe('groupGardenPostsByDate', () => {
+  it('preserves the incoming chronological order across series and grid groups', () => {
+    const result = groupGardenPostsByDate([
+      post('series-new', 'series'),
+      post('essay-new', 'essays'),
+      post('note-new', 'notes'),
+      post('series-old', 'series'),
+      post('note-old', 'notes'),
+    ]);
+
+    expect(result).toEqual([
+      { type: 'series', post: post('series-new', 'series') },
+      { type: 'grid', posts: [post('essay-new', 'essays'), post('note-new', 'notes')] },
+      { type: 'series', post: post('series-old', 'series') },
+      { type: 'grid', posts: [post('note-old', 'notes')] },
+    ]);
   });
 });

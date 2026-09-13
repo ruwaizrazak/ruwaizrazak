@@ -45,7 +45,7 @@
     <blockquote
       {cite}
       class="relative !m-0 !border-0 !p-0 !not-italic font-serif !text-syoro
-             text-2xl md:text-3xl leading-snug
+             text-[24px] md:text-[28px] leading-[1.35] font-medium
              before:!content-none
              [&>p]:!m-0 [&>p]:inline [&>p]:font-medium
              [&>p:first-of-type]:before:content-none [&>p:last-of-type]:after:content-none"
@@ -61,8 +61,8 @@
     <!-- LEARN: hairline rule fills the gap to the left of the credit on desktop,
          pulling the eye toward the attribution (reference detail). -->
     <figcaption
-      class="ml-auto mt-6 flex w-full items-center gap-3 font-sans text-sm
-             font-medium leading-none text-syoro/90 md:w-1/2"
+      class="mt-5 flex w-full items-center gap-3 font-sans text-[15px]
+             font-medium uppercase tracking-[0.1em] leading-none text-syoro/90"
     >
       <span class="hidden h-px flex-grow bg-syoro/25 md:block"></span>
       <span class="md:ml-auto md:text-right">

@@ -17,9 +17,10 @@ type LayoutProps = CollectionEntry<'notes'>['data'] & {
   transitionName?: string;
   seriesPosts?: any[];
   seriesTitle?: string;
+  readingTime?: number;
 };
 
-const { title, description, pubDate, updatedDate, heroImage, tags = [], maturity, collection, transitionName, seriesPosts, seriesTitle } = Astro.props as LayoutProps;
+const { title, description, pubDate, updatedDate, heroImage, tags = [], maturity, collection, transitionName, seriesPosts, seriesTitle, readingTime } = Astro.props as LayoutProps;
 // LEARN: NotePostHero is Svelte now, so the AVIF/WebP <picture> for the hero is
 // resolved here (astro:assets is async + Astro-only) and passed down as data.
 const heroPicture = await optimizePicture(heroImage);
@@ -86,6 +87,8 @@ const blogPostingSchema = {
         picture={heroPicture}
         tags={tags}
         maturity={maturity}
+        collection={collection}
+        readingTime={readingTime}
       />
 
       <!-- Main content wrapper: overlaps hero on scroll (CSS, see global.css) -->
@@ -97,7 +100,7 @@ const blogPostingSchema = {
           <a href="https://ruwaizrazak.com" class="u-url p-name">Ruwaiz Razak</a>
           <img src="/avatar.jpg" class="u-photo" alt="" />
         </span>
-        <NoteMain>
+        <NoteMain maturity={maturity}>
           <slot />
         </NoteMain>
         <Webmentions url={canonicalURL} />

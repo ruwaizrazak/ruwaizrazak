@@ -1,5 +1,14 @@
 ---
-import { proseClasses } from '../utils/proseClasses';
+import { notePostProseClasses } from '../utils/proseClasses';
+import { getMaturityIcon, maturityFooterCopy } from '../utils/maturityIcons';
+import type { Maturity } from '../types';
+
+interface Props {
+  maturity?: Maturity;
+}
+
+const { maturity } = Astro.props;
+const maturityIcon = maturity ? getMaturityIcon(maturity) : null;
 ---
 
 <!-- LEARN: TocPill used to render here and then reparent itself to <body> at
@@ -7,8 +16,36 @@ import { proseClasses } from '../utils/proseClasses';
      scroll-driven transform, and a transformed ancestor breaks position:fixed.
      The layout now renders the pill outside that wrapper instead, so the
      appendChild workaround is gone. -->
-<div class="note-layout mx-auto relative w-full max-w-7xl">
-  <article class={`${proseClasses} e-content px-5 md:px-12 lg:px-20 py-20 w-full mx-auto min-w-0`}>
+<div class="note-layout mx-auto relative w-full max-w-[760px]">
+  <article class={`${notePostProseClasses} e-content px-5 py-[72px] md:px-0 md:pb-24 w-full mx-auto min-w-0`}>
     <slot />
+    {maturity && maturityIcon && (
+      <footer class="maturity-footer-line">
+        <img src={maturityIcon} alt={`${maturity} maturity`} />
+        <span>{maturityFooterCopy[maturity]}</span>
+      </footer>
+    )}
   </article>
 </div>
+
+<style>
+  .maturity-footer-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 40px;
+    border-top: 1px solid var(--color-card-border);
+    padding-top: 24px;
+    font-family: var(--font-sans);
+    font-size: 16px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  .maturity-footer-line img {
+    width: 15px;
+    height: 15px;
+    opacity: 0.7;
+  }
+</style>

@@ -7,23 +7,20 @@ const waitForGardenHydration = async (page: import('@playwright/test').Page) => 
 };
 
 test.describe('garden layout', () => {
-  test('renders series panels before the feature grid with no console errors', async ({ page, baseURL }) => {
+  test('renders cards in descending date order with no console errors', async ({ page, baseURL }) => {
     const { errors } = watchPage(page, baseURL!);
 
     await page.goto(ROUTES.garden);
     await waitForGardenHydration(page);
 
     await expect(page.locator('.card-shell-series').first()).toBeVisible();
-    await expect(page.locator('.garden-feature-grid')).toBeVisible();
+    await expect(page.locator('.garden-feature-grid').first()).toBeVisible();
 
-    const order = await page.evaluate(() => {
-      const series = document.querySelector('.card-shell-series');
-      const grid = document.querySelector('.garden-feature-grid');
-      if (!series || !grid) return 0;
-      return series.compareDocumentPosition(grid) & Node.DOCUMENT_POSITION_FOLLOWING;
+    const dates = await page.locator('.garden-card-item').evaluateAll((nodes) => {
+      return nodes.map((node) => new Date((node as HTMLElement).dataset.date ?? '').valueOf());
     });
 
-    expect(order).toBeTruthy();
+    expect(dates).toEqual([...dates].sort((a, b) => b - a));
     expect(errors).toEqual([]);
   });
 

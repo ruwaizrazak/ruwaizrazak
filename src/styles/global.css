@@ -262,8 +262,8 @@ blockquote {
   font-family: var(--font-serif);
   font-style: normal;
   font-weight: 500;
-  font-size: 1.25em;
-  line-height: 1.4;
+  font-size: 24px;
+  line-height: 1.35;
   color: var(--color-syoro);
 }
 
@@ -289,12 +289,33 @@ blockquote::before {
   font-style: normal;
   font-weight: 500;
   font-family: var(--font-serif);
+  font-size: 24px;
+  line-height: 1.35;
   color: var(--color-syoro);
+}
+
+/* LEARN: :only-of-type so a MULTI-paragraph markdown blockquote still stacks.
+   A blanket `display: inline` collapses every paragraph in the quote into one
+   run-on line — no content hits that today, but the first one written would. */
+.prose blockquote p {
+  margin: 0;
+  font-weight: 500;
+}
+
+.prose blockquote p:only-of-type {
+  display: inline;
 }
 
 .prose blockquote p:first-of-type::before,
 .prose blockquote p:last-of-type::after {
   content: none;
+}
+
+@media (min-width: 768px) {
+  blockquote,
+  .prose blockquote {
+    font-size: 28px;
+  }
 }
 
 hr {

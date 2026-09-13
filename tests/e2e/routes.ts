@@ -20,6 +20,13 @@ export const ROUTES = {
   pageWithTooltips: '/essays/deconstructionofcodm/',
   /** Carries the fixture webmentions — see tests/fixtures/webmentions.sample.json. */
   pageWithWebmentions: '/notes/whythissite/',
+  /**
+   * The only long-form routes with a non-empty `heroImage` are the three essays —
+   * every published note has `heroImage: ''`. Named separately because the hero
+   * figure's geometry is otherwise untestable, and that is exactly how it once
+   * shipped unstyled.
+   */
+  pageWithHeroImage: '/essays/deconstructionofcodm/',
   /** First part of a series: related notes take the "More in <series>" branch. */
   seriesPart: '/series/prototyping-in-code/01-the-problem/',
   /** Renders the inline TocPillDemo component. */

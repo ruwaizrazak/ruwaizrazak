@@ -3,7 +3,7 @@
   import ContentCard from '../ContentCard.svelte';
   import type { OptimizedImg } from '../../utils/optimizeImage';
   import { urlForEntry } from '../../utils/urls';
-  import { gardenSpan, partitionGardenPosts } from '../../utils/gardenLayout';
+  import { gardenSpan, groupGardenPostsByDate } from '../../utils/gardenLayout';
 
   /**
    * LEARN: this component also absorbs the only thing
@@ -42,54 +42,28 @@
   let revealed = $state(false);
 
   const imageByPost = $derived(new Map(cards.map(({ post, image }) => [post, image])));
-  const gardenPartitions = $derived(partitionGardenPosts(cards.map(({ post }) => post)));
+  const gardenGroups = $derived(groupGardenPostsByDate(cards.map(({ post }) => post)));
+
+  function delayFor(post: any) {
+    return cards.findIndex((card) => card.post === post) * 40;
+  }
 
 </script>
 
 <section class="garden-cards-section pb-40">
   {#if layout === 'garden'}
     <div class="flex flex-col gap-5">
-      {#each gardenPartitions.seriesPosts as post, i (post.id)}
-        <div
-          class="garden-card-item post-item h-full"
-          class:cascade-pending={mounted && !revealed}
-          class:cascade-in={revealed}
-          style={`transition-delay: ${i * 40}ms`}
-          data-tags={post.data.tags?.join(' ')}
-          data-collection={post.collection}
-        >
-          <ContentCard
-            title={post.data.title}
-            description={post.data.description || ''}
-            pubDate={post.data.pubDate}
-            url={urlForEntry(post.collection, post.id)}
-            image={imageByPost.get(post) ?? null}
-            maturity={post.data.maturity}
-            collection={post.collection}
-            variant="series"
-            headingLevel={2}
-            startedDate={post.data.startedDate}
-            lastUpdated={post.data.lastUpdated}
-            postCount={post.postCount}
-            posts={post.data.posts}
-            transitionName={`card-${post.collection}-${post.id}`}
-          />
-        </div>
-      {/each}
-    </div>
-
-    {#if gardenPartitions.gridPosts.length > 0}
-      <div class="garden-feature-grid mt-5">
-        {#each gardenPartitions.gridPosts as post, i (post.id)}
-          {@const span = gardenSpan(post.collection)}
+      {#each gardenGroups as group}
+        {#if group.type === 'series'}
+          {@const post = group.post}
           <div
             class="garden-card-item post-item h-full"
-            class:garden-span-wide={span === 'wide'}
             class:cascade-pending={mounted && !revealed}
             class:cascade-in={revealed}
-            style={`transition-delay: ${(gardenPartitions.seriesPosts.length + i) * 40}ms`}
+            style={`transition-delay: ${delayFor(post)}ms`}
             data-tags={post.data.tags?.join(' ')}
             data-collection={post.collection}
+            data-date={post.data.pubDate?.toISOString?.()}
           >
             <ContentCard
               title={post.data.title}
@@ -99,7 +73,7 @@
               image={imageByPost.get(post) ?? null}
               maturity={post.data.maturity}
               collection={post.collection}
-              variant={span}
+              variant="series"
               headingLevel={2}
               startedDate={post.data.startedDate}
               lastUpdated={post.data.lastUpdated}
@@ -108,9 +82,42 @@
               transitionName={`card-${post.collection}-${post.id}`}
             />
           </div>
-        {/each}
-      </div>
-    {/if}
+        {:else}
+          <div class="garden-feature-grid">
+            {#each group.posts as post (post.id)}
+              {@const span = gardenSpan(post.collection)}
+              <div
+                class="garden-card-item post-item h-full"
+                class:garden-span-wide={span === 'wide'}
+                class:cascade-pending={mounted && !revealed}
+                class:cascade-in={revealed}
+                style={`transition-delay: ${delayFor(post)}ms`}
+                data-tags={post.data.tags?.join(' ')}
+                data-collection={post.collection}
+                data-date={post.data.pubDate?.toISOString?.()}
+              >
+                <ContentCard
+                  title={post.data.title}
+                  description={post.data.description || ''}
+                  pubDate={post.data.pubDate}
+                  url={urlForEntry(post.collection, post.id)}
+                  image={imageByPost.get(post) ?? null}
+                  maturity={post.data.maturity}
+                  collection={post.collection}
+                  variant={span}
+                  headingLevel={2}
+                  startedDate={post.data.startedDate}
+                  lastUpdated={post.data.lastUpdated}
+                  postCount={post.postCount}
+                  posts={post.data.posts}
+                  transitionName={`card-${post.collection}-${post.id}`}
+                />
+              </div>
+            {/each}
+          </div>
+        {/if}
+      {/each}
+    </div>
   {:else}
     <!-- LEARN: auto-rows-fr gives every collection signature the same row height;
          the 16:10 band and footer auto-margin keep the internal baselines aligned. -->

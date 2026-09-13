@@ -9,6 +9,7 @@ import NotePostHero from '../../components/NotePostHero.svelte';
 import { optimizePicture } from '../../utils/optimizeImage';
 import SeriesCard from '../../components/SeriesCard.svelte';
 import { getSeriesWithPosts } from '../../utils/collections';
+import { readingTime } from '../../utils/readingTime';
 
 export async function getStaticPaths() {
   const seriesIndexes = await getCollection('series', ({ data }) => data.publish);
@@ -67,6 +68,7 @@ const ogImage = `/og${Astro.url.pathname.replace(/\/$/, '')}.png`;
 // Render the active part content in frontmatter so it's available in the template
 const renderResult = activePart ? await render(activePart) : null;
 const Content = renderResult?.Content;
+const minutesToRead = activePart ? readingTime(activePart.body ?? '') : undefined;
 ---
 
 {kind === 'part' && activePart && Content ? (
@@ -77,6 +79,9 @@ const Content = renderResult?.Content;
     updatedDate={activePart.data.updatedDate}
     heroImage={activePart.data.heroImage}
     tags={activePart.data.tags ?? []}
+    maturity={activePart.data.maturity}
+    collection="seriesPosts"
+    readingTime={minutesToRead}
     seriesPosts={relatedParts}
     seriesTitle={seriesDoc?.data.title}
   >

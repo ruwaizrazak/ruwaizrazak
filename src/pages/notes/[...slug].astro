@@ -5,6 +5,7 @@ import { render } from 'astro:content';
 import NotesPost from '../../layouts/notesPost.astro';
 import Link from "../../components/mdxComponents/Link.astro"
 import { getStaticPathsForCollection } from '../../utils/collections';
+import { readingTime } from '../../utils/readingTime';
 
 export async function getStaticPaths() {
 	return getStaticPathsForCollection('notes');
@@ -13,8 +14,9 @@ type Props = CollectionEntry<'notes'>;
 
 const post = Astro.props;
 const { Content } = await render(post);
+const minutesToRead = readingTime(post.body ?? '');
 ---
 
-<NotesPost {...post.data} collection="notes" icon="/icons/notes.svg" transitionName={`card-notes-${post.id}`}>
+<NotesPost {...post.data} collection="notes" icon="/icons/notes.svg" transitionName={`card-notes-${post.id}`} readingTime={minutesToRead}>
 	<Content components={mdxComponents} />
 </NotesPost>
