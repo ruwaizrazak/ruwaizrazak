@@ -25,6 +25,7 @@ const ROUTES = [
   '/essays/deconstructionofcodm/',
   '/notes/whythissite/',
   '/works/01Farmville3/',
+  '/embed/works/01Farmville3/', // the embed layout — covered by no other route
   // LEARN: these two are not decoration. SeriesCard and SeriesPostCard render on
   // NEITHER /series/ nor /garden/ in the shape they take here — a first pass
   // "verified" a SeriesPostCard translation against routes that never render it,
@@ -89,7 +90,15 @@ async function capture(page, route, baseURL, theme) {
     const deadline = Date.now() + 2000;
     // 1. fonts — text metrics move until these resolve
     try { await document.fonts.ready; } catch {}
-    // 2. images — a not-yet-decoded <img> measures 0 tall
+    // 2. images — a not-yet-decoded <img> measures 0 tall.
+    //    LEARN: force lazy images eager FIRST. An off-screen loading="lazy" image
+    //    never decodes during a static capture, so its geometry is 0x0 in one run
+    //    and real in another depending on scroll heuristics — which is what made
+    //    the imgur-heavy routes flake. Promoting them to eager makes the whole
+    //    page's imagery deterministic instead of merely detectable.
+    for (const img of document.images) {
+      if (img.loading === 'lazy') img.loading = 'eager';
+    }
     await Promise.all(
       [...document.images].map((img) =>
         img.complete
@@ -97,11 +106,21 @@ async function capture(page, route, baseURL, theme) {
           : new Promise((res) => {
               img.addEventListener('load', res, { once: true });
               img.addEventListener('error', res, { once: true });
-              setTimeout(res, 5000);
+              setTimeout(res, 10000);
             }),
       ),
     );
-    // 3. animations — poll until nothing is running (entrance cascades,
+    // 3. scroll-coupled components — VideoBreakout derives its height from
+    //    getBoundingClientRect().top at mount, which runs before late-loading
+    //    images have finished shifting the layout above it, so the value it
+    //    captures is a race. It recomputes on scroll, so nudge one and let its
+    //    rAF throttle fire: the height then reflects the SETTLED layout every
+    //    time. General fix — anything scroll-coupled benefits.
+    window.scrollTo(0, 0);
+    window.dispatchEvent(new Event('scroll'));
+    await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+
+    // 4. animations — poll until nothing is running (entrance cascades,
     //    transitions). Budget is deliberately short: perpetual animators (the TOC
     //    pill's odometer) never settle, so a long deadline is pure wall-clock
     //    cost on every page. They are excluded from capture instead.
@@ -162,8 +181,31 @@ async function capture(page, route, baseURL, theme) {
       // lists two entries — CSS repeats a single value across the list. Collapse
       // runs of identical comma-separated values so that notation does not read
       // as a change.
+      // LEARN: split on TOP-LEVEL commas only. A naive v.split(',') looks correct
+      // until a value contains a function call — it shreds
+      // `cubic-bezier(0.33, 1, 0.68, 1)` at its internal commas, so two identical
+      // timing functions never collapse and every such element reads as changed.
+      // 4,254 captured elements carry a timing function with internal commas.
+      const splitTop = (v) => {
+        const out = [];
+        let depth = 0;
+        let cur = '';
+        for (const ch of v) {
+          if (ch === '(') depth++;
+          else if (ch === ')') depth--;
+          if (ch === ',' && depth === 0) {
+            out.push(cur.trim());
+            cur = '';
+          } else cur += ch;
+        }
+        out.push(cur.trim());
+        return out;
+      };
+      // Only for transition-duration / timing-function, where a repeated value is
+      // the same thing as one value applied across the property list. NOT for
+      // transition-property, whose entries are genuinely distinct.
       const canonList = (v) => {
-        const parts = v.split(',').map((x) => x.trim());
+        const parts = splitTop(v);
         return parts.length > 1 && parts.every((x) => x === parts[0]) ? parts[0] : v;
       };
       const canonRadius = (v) =>
@@ -174,10 +216,25 @@ async function capture(page, route, baseURL, theme) {
         .filter((el) => !exclude.some((sel) => el.closest(sel)))
         .slice(0, max);
 
+      // LEARN: a remote image that has not decoded measures 0x0, which is
+      // indistinguishable from a CSS regression — it produced 16 phantom diffs on
+      // the imgur-heavy embed route, present in some theme/viewport combos and not
+      // others (a real CSS change cannot be theme-dependent). `naturalWidth` is a
+      // property of the decoded resource and never of CSS, so it discriminates a
+      // failed fetch from a styling change exactly. Geometry is sentinelled; every
+      // other property is still recorded.
+      const GEOMETRY = new Set(['width', 'height', 'transform-origin']);
+      const unloaded = (el) => {
+        const img = el.tagName === 'IMG' ? el : el.querySelector(':scope > img');
+        return !!img && (!img.complete || img.naturalWidth === 0);
+      };
+
       for (const el of all) {
         const cs = getComputedStyle(el);
+        const isUnloaded = unloaded(el);
         out[path(el)] = props
           .map((p) => {
+            if (isUnloaded && GEOMETRY.has(p)) return '__unloaded__';
             const v = cs.getPropertyValue(p);
             if (p.includes('color')) return canonColor(v);
             if (p === 'border-radius') return canonRadius(v);
