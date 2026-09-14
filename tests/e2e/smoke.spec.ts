@@ -49,13 +49,16 @@ test.describe('core pages render their furniture', () => {
     }
   });
 
-  test('every page exposes a <footer> landmark', async ({ page }) => {
-    // CLAUDE.md requires semantic <article>/<nav>/<main>/<section>/<header>/<footer>.
-    // Footer.astro currently renders a <section>, so no page has a footer landmark
-    // for assistive tech or search engines. Expected to fail until that changes.
+  test('every page exposes a contentinfo landmark', async ({ page }) => {
+    // CLAUDE.md requires semantic landmarks. This asserts the ROLE, not the tag:
+    // `<footer>` scoped inside an <article> is not a landmark, and ContentCard
+    // renders one per card — so /garden and /series carry three <footer> elements
+    // and a `locator('footer')` count could never be 1. getByRole('contentinfo')
+    // matches only the page-level one, which is the thing assistive tech and
+    // search engines actually anchor to.
     for (const route of pages) {
       await page.goto(route);
-      await expect(page.locator('footer'), `${route} has no <footer>`).toHaveCount(1);
+      await expect(page.getByRole('contentinfo'), `${route} has no contentinfo landmark`).toHaveCount(1);
     }
   });
 });

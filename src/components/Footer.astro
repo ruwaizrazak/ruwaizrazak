@@ -1,13 +1,14 @@
 ---
 /**
- * LEARN: resolver half. Each page link carries a build-time tooltip, and
- * resolveTooltipMeta() is an awaited network fetch — unreachable from Svelte.
- * Resolve here; FooterView.svelte renders and owns the hover morph.
+ * LEARN: this stays .astro purely as the island's mount point — layouts import it
+ * and it applies client:visible. It no longer resolves anything async: the page
+ * links used to carry build-time tooltips via resolveTooltipMeta(), which the
+ * redesign drops for a numbered index. That also closes a latent bug — this file
+ * rendered tooltip markup but never imported scripts/linkTooltips.ts, so the
+ * binder was missing and those tooltips could not have worked.
  */
 import { SOCIAL_LINKS } from '../consts';
 import FooterView from './FooterView.svelte';
-import { resolveTooltipMeta } from '../utils/resolveTooltipMeta';
-import { buildTooltipHTML } from '../utils/buildTooltipHTML';
 
 const PAGE_LINKS = [
   { href: '/', label: 'Home' },
@@ -18,24 +19,6 @@ const PAGE_LINKS = [
   { href: '/playground', label: 'Playground' },
   { href: '/live', label: 'Live' },
 ];
-
-const pageLinks = await Promise.all(
-  PAGE_LINKS.map(async (link) => {
-    const meta = await resolveTooltipMeta(link.href, false);
-    return {
-      ...link,
-      tooltipHTML: meta
-        ? buildTooltipHTML({
-            title: meta.tooltipTitle,
-            description: meta.tooltipDesc,
-            favicon: meta.favicon,
-            displayUrl: meta.displayUrl,
-            isExternal: false,
-          })
-        : '',
-    };
-  }),
-);
 
 // The data-contact attribute drives GA4's contact_click event.
 const CONTACT_BY_LABEL: Record<string, string> = {
@@ -49,4 +32,4 @@ const socialLinks = SOCIAL_LINKS.map((link) => ({
 }));
 ---
 
-<FooterView client:visible socialLinks={socialLinks} pageLinks={pageLinks} />
+<FooterView client:visible socialLinks={socialLinks} pageLinks={PAGE_LINKS} />

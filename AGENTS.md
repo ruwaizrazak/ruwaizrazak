@@ -131,7 +131,7 @@ State the responsive ladder you chose, any canvas value you deliberately did not
 - Use module scripts (`<script>`) for deferred behavior
 - Lazy load images below the fold; eager load above-the-fold hero images
 - Minimize bundle size: avoid importing entire libraries when only a function is needed
-- Animation tool order: **CSS → Svelte built-ins (`svelte/transition|animate|easing`) → GSAP.** GSAP is justified only for interruptible timelines that must resume proportionally, and for flubber path morphs — it survives in exactly two places (the garden character walk, the footer icon morph) and is dynamically imported in both.
+- Animation tool order: **CSS → Svelte built-ins (`svelte/transition|animate|easing`) → GSAP.** GSAP is justified only for interruptible timelines that must resume proportionally — it now survives in exactly **one** place, the garden character walk, and is dynamically imported there. The footer icon morph was the second; the footer redesign replaced it with static brand glyphs, which also retired `iconMorph` and left `flubber` an unused dependency.
 - Always gate motion on `prefers-reduced-motion`.
 - Use Astro's `<Image />` component for automatic image optimization when adding new images
 - Remote image domains must be authorized in `astro.config.mjs` under `image.domains` (e.g. `i.imgur.com` is already added)
@@ -142,7 +142,7 @@ State the responsive ladder you chose, any canvas value you deliberately did not
 ### Where behaviour lives
 
 - **Interactive component → Svelte island.** Own the state with `$state`, derive the markup from it, and return teardown from `onMount`/`$effect`. Do NOT add idempotency guards — an island mounts once and cleans up. Guards in this codebase were all workarounds for a double-fire that no longer exists.
-- **Reusable DOM behaviour → a Svelte action** in `src/lib/actions/` (`intersect`, `iconMorph`, `portal`).
+- **Reusable DOM behaviour → a Svelte action** in `src/lib/actions/` (`intersect`, `portal`).
 - **Shared reactive state → `src/lib/state/*.svelte.ts`** (runes are allowed in `.svelte.ts`).
 - **Pure computation / canvas / math → a plain module** in `src/scripts/` (`garden/curveUtils`, `garden/grassCanvas`, `analytics`). Rule of thumb: if it queries the DOM it belongs in a component or action; if it only computes, it stays a module.
 - **Page-level script in an `.astro` layout → `initOnLoad()`** from `src/utils/initOnLoad.ts`. It runs the callback exactly once per page view and re-runs on view-transition navigations. Return a cleanup function from the callback — it is invoked before the next run and on `astro:before-swap`.
@@ -165,7 +165,7 @@ State the responsive ladder you chose, any canvas value you deliberately did not
 ### Gotchas that will bite
 
 - **Never write `class:some-tailwind-utility={cond}`.** Tailwind v4's scanner reads `class:` as a variant and never emits the utility, so the class lands with no CSS behind it. Use the object form: `class={['base', { 'translate-x-full': !open }]}`.
-- **Any island whose script transitively imports `gsap`, `ScrollTrigger` or `flubber` must `await import()` it inside `onMount`.** An island's `<script>` is evaluated during SSR: `gsap.registerPlugin(ScrollTrigger)` crashes the build, and flubber's CommonJS named export breaks `astro dev`.
+- **Any island whose script transitively imports `gsap` or `ScrollTrigger` must `await import()` it inside `onMount`.** An island's `<script>` is evaluated during SSR, and `gsap.registerPlugin(ScrollTrigger)` crashes the build. (The same applied to `flubber`, whose CommonJS named export broke `astro dev`, until the footer morph was retired.)
 - Svelte renames `@keyframes` declared in a scoped style. If the name is referenced from outside that block — e.g. a Tailwind arbitrary utility like `animate-[toc-dot-pulse_…]` — declare it `@keyframes -global-name`.
 - Reusable MDX layout patterns belong in `src/components/mdxComponents/` as Astro components (e.g., `WorkSection.astro`, `WorkImageGrid.astro`) — MDX files should import components, not duplicate Tailwind classes
 - Keep inline `<script>` blocks in `.astro` files to ≤10 lines — if logic grows beyond that, it probably wants to be an island
@@ -206,7 +206,7 @@ Example:
 - `src/utils/optimizeImage.ts` — `optimizeImage()` / `optimizePicture()`; the Astro-side half of every image in a Svelte component
 - `src/utils/workCards.ts` — flattens a works `CollectionEntry` into card props with the image resolved
 - `src/utils/initOnLoad.ts` — runs a page-level script once per page view and on view-transition navigations; supports a cleanup return
-- `src/lib/actions/` — reusable DOM behaviour (`intersect`, `iconMorph`, `portal`)
+- `src/lib/actions/` — reusable DOM behaviour (`intersect`, `portal`)
 - `src/lib/state/dropdown.svelte.ts` — reactive open/close used by the nav dropdowns
 - `src/lib/easing.ts` — `easeSnappy`, a real function for the `--ease-snappy` curve, so JS animation and CSS agree
 - `src/content.config.ts` — content collection schemas
