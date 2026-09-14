@@ -34,8 +34,8 @@
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <section class="related-notes-section px-5 md:px-20" onclick={flagSlideTransition}>
-  <div class="related-notes-panel card-panel">
-    <h2 class="related-notes-heading">
+  <div class="related-notes-panel card-panel mt-20 mb-10">
+    <h2 class="mb-5 font-sans text-[26px] font-medium tracking-[0.02em] text-syoro">
       {isSeries ? `More in ${seriesTitle}` : 'Related to'}
     </h2>
     <div
@@ -78,19 +78,20 @@
 </section>
 
 <style>
+  /* LEARN: what survives the justified-<style> bar.
+
+     `.card-panel` is declared in global.css OUTSIDE any @layer (phase 1 only
+     moved the bare ELEMENT rules), so its `border-radius: 18px` and
+     `padding: 20px` beat any layered utility — these two overrides cannot be
+     translated. The margin did move to utilities; nothing global sets it.
+
+     The cascade is an @keyframes plus the two rules that reference it. Naming it
+     from a Tailwind arbitrary (`animate-[related-card-in_…]`) would require
+     `@keyframes -global-…`, because Svelte renames scoped keyframes — not worth
+     leaking the name globally for one component. */
   .related-notes-panel {
-    margin-block: 5rem 2.5rem;
     border-radius: 26px;
     padding: 28px;
-  }
-
-  .related-notes-heading {
-    margin-bottom: 20px;
-    font-family: var(--font-sans);
-    font-size: 26px;
-    font-weight: 500;
-    letter-spacing: 0.02em;
-    color: var(--color-syoro);
   }
 
   .related-card.cascade-pending { opacity: 0; }

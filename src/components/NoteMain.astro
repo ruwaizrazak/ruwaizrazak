@@ -20,8 +20,8 @@ const maturityIcon = maturity ? getMaturityIcon(maturity) : null;
   <article class={`${notePostProseClasses} e-content px-5 py-[72px] md:px-0 md:pb-24 w-full mx-auto min-w-0`}>
     <slot />
     {maturity && maturityIcon && (
-      <footer class="maturity-footer-line">
-        <img src={maturityIcon} alt={`${maturity} maturity`} />
+      <footer class="maturity-footer-line mt-10 flex items-center gap-2 border-t border-t-card-border pt-6 font-sans text-[16px] tracking-meta uppercase text-muted">
+        <img src={maturityIcon} alt={`${maturity} maturity`} class="opacity-70" />
         <span>{maturityFooterCopy[maturity]}</span>
       </footer>
     )}
@@ -29,23 +29,14 @@ const maturityIcon = maturity ? getMaturityIcon(maturity) : null;
 </div>
 
 <style>
-  .maturity-footer-line {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-top: 40px;
-    border-top: 1px solid var(--color-card-border);
-    padding-top: 24px;
-    font-family: var(--font-sans);
-    font-size: 16px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--color-muted);
-  }
-
+  /* LEARN: this rule cannot be a utility, and the reason is NOT the unlayered
+     `img` rule that phase 1 fixed. This <img> lives inside the `prose` article,
+     and @tailwindcss/typography's `prose-img:w-full` compiles to a compound
+     `:is(:where(img)…)` selector that OUT-SPECIFIES a plain `size-[15px]`
+     utility — translating it blew the 15px icon up to 505px, caught by the
+     computed-style diff. A descendant selector outranks the prose variant. */
   .maturity-footer-line img {
     width: 15px;
     height: 15px;
-    opacity: 0.7;
   }
 </style>

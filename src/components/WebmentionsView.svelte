@@ -50,25 +50,25 @@
   const plural = $derived(likes.length !== 1 ? 's' : '');
 </script>
 
-<div class="wm-outer">
-  <div class="wm-container">
-    <h3 class="wm-title">Mentions around the web</h3>
+<div class="mx-auto mt-12 max-w-[65ch] px-6">
+  <div class="overflow-hidden rounded-xl border border-card-border bg-cardbg">
+    <h3 class="m-0 px-6 pt-5 pb-3 font-sans text-[1rem] font-light text-syoro">Mentions around the web</h3>
 
     {#if likes.length > 0}
-      <div class="wm-likes-section">
-        <div class="wm-avatar-row">
+      <div class="border-b border-b-card-border px-6 pb-5">
+        <div class="flex flex-wrap items-center">
           {#each uniqueLikes.slice(0, 20) as like (like.url)}
-            <div class="wm-avatar-slot">
+            <div class="z-[1] -ml-2.5 first:ml-0">
               {#if like.author.photo}
-                <img src={like.author.photo} alt={like.author.name} loading="lazy" />
+                <img src={like.author.photo} alt={like.author.name} loading="lazy" class="block size-9 rounded-[50%] border-2 border-cardbg object-cover" />
               {:else}
-                <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <svg class="block size-9 rounded-[50%] border-2 border-cardbg object-cover" width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <circle cx="18" cy="18" r="18" fill="var(--color-konpeki)" opacity="0.3" />
                 </svg>
               {/if}
             </div>
           {/each}
-          <span class="wm-likes-count"
+          <span class="wm-likes-count ml-3 font-sans text-[0.8125rem] text-syoro opacity-70"
             >{likes.length} Like{plural} &amp; Repost{plural}</span
           >
         </div>
@@ -77,24 +77,39 @@
 
     {#if mentions.length > 0}
       <div class="wm-mentions-section">
-        <div class="wm-mentions-list">
+        <div class="flex flex-col">
           {#each mentions as m, index (m.url)}
-            <div class={['wm-reply', { 'wm-hidden': !expanded && index >= VISIBLE }]}>
+            <div
+              class={[
+                'wm-reply flex items-start gap-3 px-6 py-4',
+                { 'border-t border-t-card-border': index > 0 },
+                // `wm-hidden` carries no styles now but the e2e suite selects on
+                // `.wm-reply:not(.wm-hidden)`, so it stays as a hook beside `hidden`.
+                { 'wm-hidden hidden': !expanded && index >= VISIBLE },
+              ]}
+            >
               {#if m.author.photo}
-                <img src={m.author.photo} alt={m.author.name} class="wm-reply-avatar" loading="lazy" />
+                <img src={m.author.photo} alt={m.author.name} class="size-10 shrink-0 rounded-[50%] object-cover" loading="lazy" />
               {:else}
-                <svg class="wm-reply-avatar" width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <svg class="size-10 shrink-0 rounded-[50%] object-cover" width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <circle cx="20" cy="20" r="20" fill="var(--color-konpeki)" opacity="0.3" />
                 </svg>
               {/if}
-              <div class="wm-reply-body">
-                <a href={m.url} target="_blank" rel="noopener noreferrer" class="wm-reply-meta">
-                  <span class="wm-reply-author">{m.author.name || m.url.split('/')[2]}</span>
-                  <span class="wm-reply-type">{mentionType(m)}</span>
-                  <time class="wm-reply-date">{formatDate(m['wm-received'])}</time>
+              <div class="flex min-w-0 flex-col gap-1">
+                <a
+                  href={m.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="wm-reply-meta group/meta flex flex-wrap items-baseline gap-[0.4rem] text-syoro no-underline"
+                >
+                  <span
+                    class="font-sans text-[0.875rem] font-semibold text-konpeki transition-[color] duration-150 ease-[ease] group-hover/meta:text-link"
+                  >{m.author.name || m.url.split('/')[2]}</span>
+                  <span class="font-sans text-[0.75rem] text-syoro opacity-50">{mentionType(m)}</span>
+                  <time class="font-sans text-[0.75rem] text-syoro opacity-50">{formatDate(m['wm-received'])}</time>
                 </a>
                 {#if m.content?.text}
-                  <p class="wm-reply-content">{formatContent(m.content.text)}</p>
+                  <p class="m-0 font-serif text-[0.9375rem] leading-[1.6] text-syoro opacity-90">{formatContent(m.content.text)}</p>
                 {/if}
               </div>
             </div>
@@ -103,7 +118,7 @@
 
         {#if mentions.length > VISIBLE}
           <button
-            class="wm-show-more"
+            class="wm-show-more block w-full cursor-pointer border-0 border-t border-t-card-border bg-transparent p-4 font-sans text-[0.8125rem] text-syoro opacity-60 transition-[opacity,background] duration-150 ease-[ease] hover:bg-card-border hover:opacity-100"
             data-total={mentions.length}
             onclick={() => (expanded = !expanded)}
           >
@@ -114,167 +129,3 @@
     {/if}
   </div>
 </div>
-
-<style>
-  .wm-outer {
-    max-width: 65ch;
-    margin: 3rem auto 0;
-    padding: 0 1.5rem;
-  }
-
-  .wm-container {
-    border: 1px solid var(--color-card-border);
-    border-radius: 0.75rem;
-    background: var(--color-cardbg);
-    overflow: hidden;
-  }
-
-  .wm-title {
-    font-family: var(--font-sans);
-    font-size: 1rem;
-    font-weight: 300;
-    color: var(--color-syoro);
-    margin: 0;
-    padding: 1.25rem 1.5rem 0.75rem;
-  }
-
-  /* Likes avatar row */
-  .wm-likes-section {
-    padding: 0 1.5rem 1.25rem;
-    border-bottom: 1px solid var(--color-card-border);
-  }
-
-  .wm-avatar-row {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-  }
-
-  .wm-avatar-slot {
-    margin-left: -10px;
-    z-index: 1;
-  }
-
-  .wm-avatar-slot:first-child {
-    margin-left: 0;
-  }
-
-  .wm-avatar-slot img,
-  .wm-avatar-slot svg {
-    display: block;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    border: 2px solid var(--color-cardbg);
-    object-fit: cover;
-  }
-
-  .wm-likes-count {
-    font-family: var(--font-sans);
-    font-size: 0.8125rem;
-    color: var(--color-syoro);
-    opacity: 0.7;
-    margin-left: 0.75rem;
-  }
-
-  /* Replies / mentions */
-  .wm-mentions-list {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .wm-reply {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.75rem;
-    padding: 1rem 1.5rem;
-  }
-
-  .wm-reply + .wm-reply {
-    border-top: 1px solid var(--color-card-border);
-  }
-
-  .wm-hidden {
-    display: none;
-  }
-
-  .wm-reply-avatar {
-    width: 2.5rem;
-    height: 2.5rem;
-    border-radius: 50%;
-    object-fit: cover;
-    flex-shrink: 0;
-  }
-
-  .wm-reply-body {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-    min-width: 0;
-  }
-
-  .wm-reply-meta {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: 0.4rem;
-    text-decoration: none;
-    color: var(--color-syoro);
-  }
-
-  .wm-reply-meta:hover .wm-reply-author {
-    color: var(--color-link);
-  }
-
-  .wm-reply-author {
-    font-family: var(--font-sans);
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: var(--color-konpeki);
-    transition: color 0.15s;
-  }
-
-  .wm-reply-type {
-    font-family: var(--font-sans);
-    font-size: 0.75rem;
-    color: var(--color-syoro);
-    opacity: 0.5;
-  }
-
-  .wm-reply-date {
-    font-family: var(--font-sans);
-    font-size: 0.75rem;
-    color: var(--color-syoro);
-    opacity: 0.5;
-  }
-
-  .wm-reply-content {
-    font-family: var(--font-serif);
-    font-size: 0.9375rem;
-    line-height: 1.6;
-    color: var(--color-syoro);
-    opacity: 0.9;
-    margin: 0;
-  }
-
-  /* Show more button */
-  .wm-show-more {
-    display: block;
-    width: 100%;
-    padding: 1rem;
-    font-family: var(--font-sans);
-    font-size: 0.8125rem;
-    color: var(--color-syoro);
-    opacity: 0.6;
-    background: transparent;
-    border: none;
-    border-top: 1px solid var(--color-card-border);
-    cursor: pointer;
-    transition: opacity 0.15s, background 0.15s;
-  }
-
-  .wm-show-more:hover {
-    opacity: 1;
-    background: var(--color-card-border);
-  }
-</style>
