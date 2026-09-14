@@ -55,7 +55,13 @@ const blogPostingSchema = {
 };
 ---
 
-<html lang="en" class="scroll-smooth">
+<!-- LEARN: NO `scroll-smooth` on <html>. ClientRouter sets
+     history.scrollRestoration='manual' and restores scroll itself with a
+     scrollTo() — and `scroll-behavior: smooth` turns that into an ANIMATION over
+     the full document height (116k px on the CODM essay), which never lands, so
+     Back silently drops you at the top. TocPill does its own
+     scrollIntoView({behavior:'smooth'}), so nothing here needs the CSS. -->
+<html lang="en">
   <head>
     <BaseHead title={title} description={description} image={ogImage} schema={blogPostingSchema} />
     <ClientRouter />

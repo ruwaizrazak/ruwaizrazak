@@ -55,4 +55,61 @@ test.describe('client-side navigation', () => {
     await page.waitForLoadState('domcontentloaded');
     await expect(page.locator('html')).toHaveClass(/dark/);
   });
+  test('does not put scroll-behavior:smooth on the scrolling element', async ({ page }) => {
+    // ClientRouter restores scroll with its own scrollTo(). `scroll-behavior:
+    // smooth` on <html> turns that into an ANIMATION over the full document
+    // height, which on a long essay never lands — Back silently drops the reader
+    // at the top. TocPill does its own scrollIntoView({behavior:'smooth'}), so
+    // nothing needs the CSS. This is the direct guard; the behavioural one below
+    // only bites once the document is tall enough.
+    for (const route of [ROUTES.pageWithToc, ROUTES.workWithVideo]) {
+      await page.goto(route);
+      const behavior = await page.evaluate(
+        () => getComputedStyle(document.documentElement).scrollBehavior,
+      );
+      expect(behavior, `${route} must not smooth-scroll the root`).not.toBe('smooth');
+    }
+  });
+
+  test('restores scroll position on browser back', async ({ page }) => {
+    await page.goto(ROUTES.pageWithToc);
+
+    // The bug needs DISTANCE: a short smooth scroll still completes, so with
+    // lazy images unloaded the document is too short to reproduce it. Promote
+    // them and wait, so the page reaches its real height first.
+    await page.evaluate(async () => {
+      for (const img of document.images) if (img.loading === 'lazy') img.loading = 'eager';
+      await Promise.all(
+        [...document.images].map((img) =>
+          img.complete
+            ? null
+            : new Promise((res) => {
+                img.addEventListener('load', res, { once: true });
+                img.addEventListener('error', res, { once: true });
+                setTimeout(res, 8000);
+              }),
+        ),
+      );
+    });
+
+    const from = await page.evaluate(() => {
+      const y = Math.round(document.documentElement.scrollHeight * 0.8);
+      window.scrollTo(0, y);
+      return Math.round(window.scrollY);
+    });
+    // Guard the setup itself: below ~20k px the bug does not reproduce, so a
+    // pass would be meaningless.
+    expect(from, 'document must be tall enough to reproduce the bug').toBeGreaterThan(20_000);
+
+    // RelatedNotes is client:visible — a click before hydration is swallowed.
+    await expect(page.locator('astro-island:not([ssr])').first()).toBeAttached({ timeout: 15_000 });
+    await page.locator('.related-notes-section a').first().click();
+    await page.waitForURL((u) => !u.pathname.includes('deconstructionofcodm'), { timeout: 15_000 });
+
+    await page.goBack();
+
+    await expect
+      .poll(() => page.evaluate(() => Math.round(window.scrollY)), { timeout: 10_000 })
+      .toBeGreaterThan(from - 2000);
+  });
 });
