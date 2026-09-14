@@ -25,11 +25,11 @@ const { title, description, pubDate, updatedDate, heroImage } = post.data;
 <html lang="en">
   <head>
     <BaseHead title={title} description={description} />
-    <style>
-      body { margin: 0; padding: 0; background: var(--color-backgroundcolor, #fafafa); }
-    </style>
   </head>
-  <body class="bg-backgroundcolor">
+  <!-- LEARN: m-0/p-0 were a page-level <style> block. Preflight already zeroes
+       body margin, but stating them keeps the intent legible rather than relying
+       on a reset that could change. -->
+  <body class="m-0 bg-backgroundcolor p-0">
     <article class={`${proseClasses} mx-auto px-6 py-8`}>
       <h1 class="text-konpeki font-serif">{title}</h1>
       <p class="text-syoro italic text-lg">{description}</p>

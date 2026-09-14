@@ -57,9 +57,13 @@
         {#if group.type === 'series'}
           {@const post = group.post}
           <div
-            class="garden-card-item post-item h-full"
-            class:cascade-pending={mounted && !revealed}
-            class:cascade-in={revealed}
+            class={[
+              'garden-card-item post-item h-full',
+              {
+                'cascade-pending transform-[translateY(8px)] opacity-0 motion-reduce:transform-none motion-reduce:opacity-100': mounted && !revealed,
+                'cascade-in transform-[translateY(0)] opacity-100 transition-[opacity,transform] duration-300 ease-[ease] motion-reduce:transition-none': revealed,
+              },
+            ]}
             style={`transition-delay: ${delayFor(post)}ms`}
             data-tags={post.data.tags?.join(' ')}
             data-collection={post.collection}
@@ -87,10 +91,14 @@
             {#each group.posts as post (post.id)}
               {@const span = gardenSpan(post.collection)}
               <div
-                class="garden-card-item post-item h-full"
-                class:garden-span-wide={span === 'wide'}
-                class:cascade-pending={mounted && !revealed}
-                class:cascade-in={revealed}
+                class={[
+                  'garden-card-item post-item h-full',
+                  {
+                    'garden-span-wide': span === 'wide',
+                    'cascade-pending transform-[translateY(8px)] opacity-0 motion-reduce:transform-none motion-reduce:opacity-100': mounted && !revealed,
+                    'cascade-in transform-[translateY(0)] opacity-100 transition-[opacity,transform] duration-300 ease-[ease] motion-reduce:transition-none': revealed,
+                  },
+                ]}
                 style={`transition-delay: ${delayFor(post)}ms`}
                 data-tags={post.data.tags?.join(' ')}
                 data-collection={post.collection}
@@ -124,9 +132,13 @@
     <div class="card-masonry grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 auto-rows-fr gap-5">
       {#each cards as { post, image }, i (post.id)}
         <div
-          class="garden-card-item post-item h-full"
-          class:cascade-pending={mounted && !revealed}
-          class:cascade-in={revealed}
+          class={[
+            'garden-card-item post-item h-full',
+            {
+              'cascade-pending transform-[translateY(8px)] opacity-0 motion-reduce:transform-none motion-reduce:opacity-100': mounted && !revealed,
+              'cascade-in transform-[translateY(0)] opacity-100 transition-[opacity,transform] duration-300 ease-[ease] motion-reduce:transition-none': revealed,
+            },
+          ]}
           style={`transition-delay: ${i * 40}ms`}
           data-tags={post.data.tags?.join(' ')}
           data-collection={post.collection}
@@ -152,28 +164,3 @@
     </div>
   {/if}
 </section>
-
-<style>
-  /* Entrance cascade — mirrors the values the old listingFilters.ts used. */
-  .garden-card-item.cascade-pending {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  .garden-card-item.cascade-in {
-    opacity: 1;
-    transform: translateY(0);
-    transition:
-      opacity 300ms ease,
-      transform 300ms ease;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .garden-card-item.cascade-pending {
-      opacity: 1;
-      transform: none;
-    }
-    .garden-card-item.cascade-in {
-      transition: none;
-    }
-  }
-</style>

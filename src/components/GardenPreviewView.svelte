@@ -39,7 +39,7 @@
           <span class="font-serif text-[21px] leading-[1.3] transition-colors duration-150">
             {post.data.title}
           </span>
-          <span class="garden-list-description font-serif text-base leading-[1.5]">
+          <span class="garden-list-description font-serif text-base leading-[1.5] text-syoro/88">
             {post.data.description}
           </span>
         </span>
@@ -87,9 +87,3 @@
     </div>
   </section>
 {/if}
-
-<style>
-  .garden-list-description {
-    color: color-mix(in srgb, var(--color-syoro) 88%, transparent);
-  }
-</style>

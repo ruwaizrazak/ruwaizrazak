@@ -51,8 +51,13 @@
       >
         {#each cards as card, i (card.url)}
           <div
-            class="other-works-card"
-            class:is-shown={shown}
+            class={[
+              'other-works-card transition-[opacity,transform] duration-400 [transition-timing-function:cubic-bezier(0.33,1,0.68,1),cubic-bezier(0.33,1,0.68,1)] motion-reduce:transform-none motion-reduce:opacity-100 motion-reduce:transition-none',
+              {
+                'transform-[translateY(24px)_scale(0.92)] opacity-0': !shown,
+                'is-shown transform-[translateY(0)_scale(1)] opacity-100': shown,
+              },
+            ]}
             data-other-works-card
             style={`transition-delay: ${i * 200}ms`}
           >
@@ -63,27 +68,3 @@
     </div>
   </div>
 </div>
-
-<style>
-  /* LEARN: mirrors the old GSAP values exactly — opacity 0, y 24px, scale 0.92,
-     0.4s duration, 0.2s between cards. `power2.out` maps to a cubic ease-out. */
-  .other-works-card {
-    opacity: 0;
-    transform: translateY(24px) scale(0.92);
-    transition:
-      opacity 400ms cubic-bezier(0.33, 1, 0.68, 1),
-      transform 400ms cubic-bezier(0.33, 1, 0.68, 1);
-  }
-  .other-works-card.is-shown {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .other-works-card {
-      opacity: 1;
-      transform: none;
-      transition: none;
-    }
-  }
-</style>

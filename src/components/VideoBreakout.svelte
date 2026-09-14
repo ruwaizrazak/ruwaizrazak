@@ -61,24 +61,15 @@
 
 <div
   bind:this={wrapper}
-  class="video-breakout w-screen max-w-[100vw] ml-[calc(50%-50vw)] mb-8 rounded-none overflow-hidden"
+  class="video-breakout ml-[calc(50%-50vw)] mb-8 h-[56.25vw] w-screen max-w-[100vw] overflow-hidden rounded-none"
   data-video-breakout
   style:height
 >
   <iframe
     {src}
     {title}
-    class="video-breakout__iframe w-full rounded-lg"
+    class="video-breakout__iframe h-[56.25vw] w-full rounded-lg"
     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
     allowfullscreen
   ></iframe>
 </div>
-
-<style>
-  .video-breakout {
-    height: 56.25vw; /* fallback before the island hydrates */
-  }
-  .video-breakout__iframe {
-    height: 56.25vw; /* 16:9 of viewport width — video keeps aspect, wrapper clips on scroll */
-  }
-</style>

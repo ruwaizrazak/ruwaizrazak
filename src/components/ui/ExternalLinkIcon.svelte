@@ -1,6 +1,6 @@
 <!-- Outbound-link arrow, shown after external anchors. -->
 <svg
-  class="externalLinkIcon"
+  class="externalLinkIcon [--icon-color:#ff005e] hover:[--icon-color:#004a8f]"
   xmlns="http://www.w3.org/2000/svg"
   viewBox="0 0 191.4 192.17"
   aria-hidden="true"
@@ -10,12 +10,3 @@
     stroke="var(--icon-color)"
   />
 </svg>
-
-<style>
-  .externalLinkIcon {
-    --icon-color: #ff005e;
-  }
-  .externalLinkIcon:hover {
-    --icon-color: #004a8f;
-  }
-</style>

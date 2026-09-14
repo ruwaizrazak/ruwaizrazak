@@ -21,7 +21,7 @@
 <a href={href} class="group block hover:scale-95 transition-transform duration-200 ease-snappy">
   <div class="flex flex-col md:flex-row gap-8 md:gap-12 items-start">
     <!-- Card metadata (sticky on desktop) -->
-    <div class="work-card-content w-full md:w-1/3 flex flex-col gap-2">
+    <div class="work-card-content flex w-full flex-col gap-2 md:sticky md:top-[30vh] md:w-1/3">
       <p class={`${cardType.meta} text-syoro/60`}>{duration}</p>
       <h2 class={`${cardType.title} text-syoro`}>{title}</h2>
       <h3 class={`${cardType.meta} text-syoro`}>{role}</h3>
@@ -40,12 +40,3 @@
     </div>
   </div>
 </a>
-
-<style>
-  @media (min-width: 768px) {
-    .work-card-content {
-      position: sticky;
-      top: 30vh;
-    }
-  }
-</style>
