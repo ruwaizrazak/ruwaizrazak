@@ -23,17 +23,9 @@
   onMount(() => {
     mounted = true;
   });
-
-  function flagSlideTransition(event: MouseEvent) {
-    if ((event.target as Element | null)?.closest('a')) {
-      sessionStorage.setItem('nav-from-related', '1');
-    }
-  }
 </script>
 
-<!-- svelte-ignore a11y_no_static_element_interactions -->
-<!-- svelte-ignore a11y_click_events_have_key_events -->
-<section class="related-notes-section px-5 md:px-20" onclick={flagSlideTransition}>
+<section class="related-notes-section px-5 md:px-20">
   <div class="related-notes-panel card-panel mt-20 mb-10">
     <h2 class="mb-5 font-sans text-[26px] font-medium tracking-[0.02em] text-syoro">
       {isSeries ? `More in ${seriesTitle}` : 'Related to'}
