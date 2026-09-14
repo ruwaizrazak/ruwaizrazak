@@ -53,6 +53,23 @@ const siteSchema = {
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <meta name="color-scheme" content="light dark" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/theme-toggles@4/css/classic.min.css" />
+<!-- LEARN: records which way the reader is travelling so a view transition can
+     tell "opening" from "going back". Astro sets its own data-astro-transition,
+     but only for ~16ms (measured: set at 11ms, removed at 27ms) — far shorter
+     than a 400ms animation, so scoping CSS to it would cut the animation short.
+     This attribute persists until the next navigation instead. Written to the
+     INCOMING document so it is already present when the swap lands — setting it
+     after the swap leaves a ~13ms window where the attribute is absent.
+     Registered once; document listeners survive ClientRouter swaps. -->
+<script is:inline>
+  if (!window.__navDirection) {
+    window.__navDirection = 1;
+    var dir = 'forward';
+    document.addEventListener('astro:before-preparation', function (e) { dir = e.direction || 'forward'; });
+    document.addEventListener('astro:before-swap', function (e) { e.newDocument.documentElement.dataset.navDirection = dir; });
+  }
+</script>
+
 <script is:inline>
   (function() {
     const stored = localStorage.getItem('theme');

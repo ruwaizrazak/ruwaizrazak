@@ -112,4 +112,42 @@ test.describe('client-side navigation', () => {
       .poll(() => page.evaluate(() => Math.round(window.scrollY)), { timeout: 10_000 })
       .toBeGreaterThan(from - 2000);
   });
+  test('does not replay the open animation when going back', async ({ page }) => {
+    // `main` carries a per-post transition:name, so old and new never pair and
+    // work-scale-in plays as an ENTER animation on every arrival — including a
+    // back navigation, where zooming in reads as opening something new. The rule
+    // is scoped to :root:not([data-nav-direction="back"]); BaseHead records the
+    // direction on the INCOMING document during the swap.
+    await page.goto(ROUTES.pageWithToc);
+
+    const scoped = await page.evaluate(() =>
+      [...document.querySelectorAll('style')].some(
+        (s) =>
+          s.textContent!.includes('view-transition-new') &&
+          s.textContent!.includes('data-nav-direction'),
+      ),
+    );
+    expect(scoped, 'the open animation must be direction-scoped').toBe(true);
+
+    await page.locator('.related-notes-section').scrollIntoViewIfNeeded();
+    await expect(page.locator('astro-island:not([ssr])').first()).toBeAttached({ timeout: 15_000 });
+    await page.locator('.related-notes-section a').first().click();
+    await page.waitForURL((u) => !u.pathname.includes('deconstructionofcodm'), { timeout: 15_000 });
+
+    await expect
+      .poll(() => page.evaluate(() => document.documentElement.dataset.navDirection))
+      .toBe('forward');
+
+    await page.goBack();
+
+    await expect
+      .poll(() => page.evaluate(() => document.documentElement.dataset.navDirection))
+      .toBe('back');
+
+    // With direction=back the scale-in selector must no longer match the root.
+    const wouldApply = await page.evaluate(
+      () => !document.documentElement.matches('[data-nav-direction="back"]'),
+    );
+    expect(wouldApply, 'the open animation must not apply on a back navigation').toBe(false);
+  });
 });
