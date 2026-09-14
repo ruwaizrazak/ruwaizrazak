@@ -131,7 +131,7 @@ State the responsive ladder you chose, any canvas value you deliberately did not
 - Use module scripts (`<script>`) for deferred behavior
 - Lazy load images below the fold; eager load above-the-fold hero images
 - Minimize bundle size: avoid importing entire libraries when only a function is needed
-- Animation tool order: **CSS → Svelte built-ins (`svelte/transition|animate|easing`) → GSAP.** GSAP is justified only for interruptible timelines that must resume proportionally — it now survives in exactly **one** place, the garden character walk, and is dynamically imported there. The footer icon morph was the second; the footer redesign replaced it with static brand glyphs, which also retired `iconMorph` and left `flubber` an unused dependency.
+- Animation tool order: **CSS → Svelte built-ins (`svelte/transition|animate|easing`) → GSAP.** GSAP is justified only for interruptible timelines that must resume proportionally — it now survives in exactly **one** place, the garden character walk, and is dynamically imported there. The footer icon morph was the second; the footer redesign replaced it with static brand glyphs, which retired `iconMorph` and removed `flubber` from the project entirely.
 - Always gate motion on `prefers-reduced-motion`.
 - Use Astro's `<Image />` component for automatic image optimization when adding new images
 - Remote image domains must be authorized in `astro.config.mjs` under `image.domains` (e.g. `i.imgur.com` is already added)
@@ -165,7 +165,7 @@ State the responsive ladder you chose, any canvas value you deliberately did not
 ### Gotchas that will bite
 
 - **Never write `class:some-tailwind-utility={cond}`.** Tailwind v4's scanner reads `class:` as a variant and never emits the utility, so the class lands with no CSS behind it. Use the object form: `class={['base', { 'translate-x-full': !open }]}`.
-- **Any island whose script transitively imports `gsap` or `ScrollTrigger` must `await import()` it inside `onMount`.** An island's `<script>` is evaluated during SSR, and `gsap.registerPlugin(ScrollTrigger)` crashes the build. (The same applied to `flubber`, whose CommonJS named export broke `astro dev`, until the footer morph was retired.)
+- **Any island whose script transitively imports `gsap` or `ScrollTrigger` must `await import()` it inside `onMount`.** An island's `<script>` is evaluated during SSR, and `gsap.registerPlugin(ScrollTrigger)` crashes the build. The rule applies to any CommonJS-only package too: `flubber` used to break `astro dev` the same way, before the footer morph was retired and it was uninstalled.
 - Svelte renames `@keyframes` declared in a scoped style. If the name is referenced from outside that block — e.g. a Tailwind arbitrary utility like `animate-[toc-dot-pulse_…]` — declare it `@keyframes -global-name`.
 - Reusable MDX layout patterns belong in `src/components/mdxComponents/` as Astro components (e.g., `WorkSection.astro`, `WorkImageGrid.astro`) — MDX files should import components, not duplicate Tailwind classes
 - Keep inline `<script>` blocks in `.astro` files to ≤10 lines — if logic grows beyond that, it probably wants to be an island
