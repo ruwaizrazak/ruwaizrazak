@@ -239,34 +239,36 @@
 
 
 
-textarea {
-  width: 100%;
-  font-size: 16px;
-}
+@layer base {
+  textarea {
+    width: 100%;
+    font-size: 16px;
+  }
 
-input {
-  font-size: 16px;
-}
+  input {
+    font-size: 16px;
+  }
 
-table {
-  width: 100%;
-}
+  table {
+    width: 100%;
+  }
 
-img {
-  max-width: 100%;
-  height: auto;
-  border-radius: 8px;
-}
+  img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+  }
 
-code {
-  padding: 2px 5px;
-  background-color: rgb(var(--gray-light));
-  border-radius: 2px;
-}
+  code {
+    padding: 2px 5px;
+    background-color: rgb(var(--gray-light));
+    border-radius: 2px;
+  }
 
-pre {
-  padding: 1.5em;
-  border-radius: 8px;
+  pre {
+    padding: 1.5em;
+    border-radius: 8px;
+  }
 }
 
 pre>code {
@@ -278,17 +280,19 @@ pre>code {
    can't express). The signature is a serif opening quote mark hanging in the left
    margin (text stays flush) instead of the old 4px accent bar. The hang of -0.55em
    stays inside `main`'s page padding, so it never clips. */
-blockquote {
-  position: relative;
-  margin: 2rem 0;
-  padding: 0;
-  border: 0;
-  font-family: var(--font-serif);
-  font-style: normal;
-  font-weight: 500;
-  font-size: 24px;
-  line-height: 1.35;
-  color: var(--color-syoro);
+@layer base {
+  blockquote {
+    position: relative;
+    margin: 2rem 0;
+    padding: 0;
+    border: 0;
+    font-family: var(--font-serif);
+    font-style: normal;
+    font-weight: 500;
+    font-size: 24px;
+    line-height: 1.35;
+    color: var(--color-syoro);
+  }
 }
 
 blockquote::before {
@@ -342,9 +346,11 @@ blockquote::before {
   }
 }
 
-hr {
-  border: none;
-  border-top: 1px solid rgb(var(--gray-light));
+@layer base {
+  hr {
+    border: none;
+    border-top: 1px solid rgb(var(--gray-light));
+  }
 }
 
 @media (max-width: 720px) {
