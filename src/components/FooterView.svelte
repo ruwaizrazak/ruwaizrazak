@@ -32,7 +32,7 @@
      landmark, which assistive tech and search engines anchor to. The #Contact id
      is load-bearing: analytics and the nav's contact anchor both target it. -->
 <footer id="Contact" class="w-full border-t border-t-card-border bg-syoro/7 text-syoro">
-  <div class="mx-auto w-[min(100%,1180px)] px-6 pt-18 pb-7">
+  <div class="mx-auto w-full px-6 md:px-12 lg:px-20 pt-18 pb-7">
     <div class="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] items-start gap-x-18 gap-y-14">
       <!-- Invitation + contact -->
       <div class="flex min-w-0 flex-col gap-10">
