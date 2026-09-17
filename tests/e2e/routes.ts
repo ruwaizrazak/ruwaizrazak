@@ -33,6 +33,8 @@ export const ROUTES = {
   pageWithTocDemo: '/live/',
   /** The three TocPillDemo variants, plus the real pill on the same page. */
   pageWithTocAnatomy: '/playground/floating-table-of-contents/',
+  /** The SeriesCardDemo, shipped and deliberately broken side by side. */
+  pageWithSeriesCardDemo: '/playground/series-master-card/',
   /** Full-bleed video breakout. Also carries lightbox-able content images. */
   workWithVideo: '/works/01Farmville3/',
   /** Content images that open the zoomable lightbox. */
