@@ -57,48 +57,41 @@
   });
 </script>
 
-{#snippet collectionMark(size = 'card-collection-icon')}
-  <span
-    class={size}
-    style={`--card-icon: url('${collectionIcon}')`}
-    aria-hidden="true"
-  ></span>
+{#snippet collectionMark(imageClass = 'size-[15px] shrink-0 opacity-70 dark:invert')}
+  <img src={collectionIcon} alt={`${label} icon`} class={imageClass} />
 {/snippet}
 
-{#snippet optimizedImage(imageClass: string)}
+{#snippet contentImage(imageClass: string)}
   {#if image}
-    {#if image.passthrough}
-      <img src={image.src} alt={title} class={imageClass} />
-    {:else}
-      <img
-        src={image.src}
-        alt={title}
-        loading="lazy"
-        decoding="async"
-        fetchpriority="auto"
-        width={image.width}
-        height={image.height}
-        class={imageClass}
-      />
-    {/if}
+    <div
+      class={`${imageClass} bg-cover bg-center bg-no-repeat`}
+      style={`background-image: url('${image.src}')`}
+      role="img"
+      aria-label={title}
+    ></div>
   {/if}
 {/snippet}
 
 {#snippet cardBand()}
-  <span class="card-band-stack flex min-w-0 flex-col">
+  <span class={['card-band-stack flex min-w-0 flex-col', { 'md:h-full': isWide }]}>
     {#if isSeriesCollection}
-      <span class="series-sheet mx-4" aria-hidden="true"></span>
-      <span class="series-sheet mx-2" aria-hidden="true"></span>
+      <span class="mx-4 h-[5px] rounded-t-xl border border-b-0 border-card-border bg-cardbg" aria-hidden="true"></span>
+      <span class="mx-2 h-[5px] rounded-t-xl border border-b-0 border-card-border bg-cardbg" aria-hidden="true"></span>
     {/if}
     <span
-      class:card-band-note={isNote || !image}
-      class:card-band-playground={isPlayground}
-      class="card-band"
+      class={[
+        'card-band !aspect-auto h-52 sm:h-56 md:h-48 lg:h-44 xl:h-40',
+        {
+          'bg-syoro/5': isNote || !image,
+          '!border-dashed': isPlayground,
+          'md:!h-full': isWide,
+        },
+      ]}
     >
       {#if image}
-        {@render optimizedImage('garden-card-image h-full w-full object-cover')}
+        {@render contentImage('garden-card-image h-full w-full')}
       {:else}
-        {@render collectionMark('card-band-icon')}
+        {@render collectionMark('size-[34px] opacity-30 dark:invert')}
       {/if}
       {#if isPlayground}
         <span
@@ -117,19 +110,22 @@
 {/snippet}
 
 {#if isSeries}
-  <article class="card-shell card-shell-series group" style={vtStyle}>
+  <article
+    class="card-shell card-shell-series group relative !flex min-h-[34rem] !flex-col !gap-0 overflow-hidden !p-0 md:!h-[520px] md:min-h-0 md:!flex-row"
+    style={vtStyle}
+  >
     <a href={url} class="absolute inset-0 z-10" aria-label={`View the ${title} series`}></a>
-    <div class="series-featured-band flex aspect-[16/10] items-center justify-center overflow-hidden md:aspect-auto md:w-[48%] md:shrink-0 md:border-r md:border-r-card-border">
+    <div class="flex h-56 items-center justify-center overflow-hidden bg-syoro/5 sm:h-64 md:h-full md:w-[48%] md:shrink-0 md:border-r md:border-r-card-border">
       {#if image}
-        {@render optimizedImage('h-full w-full object-cover')}
+        {@render contentImage('h-full w-full')}
       {:else}
-        {@render collectionMark('card-band-icon')}
+        {@render collectionMark('size-[34px] opacity-30 dark:invert')}
       {/if}
     </div>
 
     <div class="flex min-w-0 flex-1 flex-col p-5">
       {@render eyebrowRow(postCount != null ? `Series · ${postCount} ${postCount === 1 ? 'part' : 'parts'}` : 'Series')}
-      <svelte:element this={titleTag} class={`${cardType.title} card-title`}>{title}</svelte:element>
+      <svelte:element this={titleTag} class={`${cardType.title} card-title md:!text-[30px] md:!leading-[1.15]`}>{title}</svelte:element>
       {#if description}<p class={`${cardType.description} card-description`}>{description}</p>{/if}
 
       {#if posts.length > 0}
@@ -137,19 +133,24 @@
           this={postsHeadingTag}
           class="mt-5 mb-2.5 font-sans text-[14px] font-medium tracking-eyebrow uppercase text-syoro"
         >Posts in this series</svelte:element>
-        <ul class="series-post-list relative z-20 flex max-h-[50vh] min-h-0 flex-1 flex-col gap-2 overflow-y-auto overscroll-contain pr-1 md:max-h-none">
+        <ul class="relative z-20 flex max-h-[14.5rem] min-h-0 flex-col gap-2 overflow-y-auto overscroll-contain pr-1">
           {#each posts as post, index (post.url)}
-            <li>
+            <li class="shrink-0">
               <a
                 href={post.url}
-                class="series-post-row group/row flex items-center gap-3.5 rounded-xl bg-syoro/5 p-3.5 transition-[background-color] duration-150 ease-[ease]"
+                class="series-post-row group/row flex h-18 items-center gap-3.5 rounded-xl bg-syoro/5 p-3.5 transition-[background-color] duration-150 ease-[ease] hover:bg-syoro/10"
               >
                 <span class="shrink-0 font-mono text-[11px] tracking-meta text-muted">Part {index + 1}</span>
                 <span class="min-w-0 flex-1">
                   <span class="block overflow-hidden font-serif text-[17px] font-medium text-ellipsis whitespace-nowrap text-syoro">{post.title}</span>
-                  {#if post.description}<span class="mt-0.5 block font-serif text-[14px] text-muted">{post.description}</span>{/if}
+                  {#if post.description}<span class="mt-0.5 block truncate font-serif text-[14px] text-muted">{post.description}</span>{/if}
                 </span>
-                <svg class="series-row-arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <svg
+                  class="size-[18px] shrink-0 text-muted transition-[transform,color] duration-200 ease-snappy group-hover/row:translate-x-[3px] group-hover/row:text-link motion-reduce:transition-none motion-reduce:group-hover/row:translate-x-0"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  aria-hidden="true"
+                >
                   <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                 </svg>
               </a>
@@ -160,24 +161,38 @@
 
       <footer class="relative z-20 mt-[18px] flex items-center justify-between gap-4">
         {#if seriesMeta}<p class="card-meta uppercase">{seriesMeta}</p>{/if}
-        <a href={url} class="series-view-all">View all</a>
+        <a
+          href={url}
+          class="series-view-all relative z-20 shrink-0 rounded-full bg-konpeki px-[22px] py-3 font-sans text-base font-medium tracking-[0.08em] text-white uppercase transition-[transform,opacity] duration-150 ease-snappy hover:text-white hover:opacity-90 active:scale-[0.97] motion-reduce:transition-none motion-reduce:active:scale-100"
+        >View all</a>
       </footer>
     </div>
   </article>
 {:else}
   <a
     href={url}
-    class:card-shell-wide={isWide}
-    class="card-shell group"
+    class={[
+      'card-shell group',
+      {
+        'card-shell-wide !grid md:!grid-cols-2 md:!items-stretch md:!gap-[18px]': isWide,
+      },
+    ]}
     data-collection={collectionKey}
     style={vtStyle}
   >
     {@render cardBand()}
     <span class="flex min-w-0 flex-1 flex-col gap-3">
       {@render eyebrowRow(eyebrow)}
-      <svelte:element this={titleTag} class={`${cardType.title} card-title`}>{title}</svelte:element>
-      {#if description}<span class={`${cardType.description} card-description line-clamp-2`}>{description}</span>{/if}
-      <span class:card-footer-note={isNote} class="card-footer">
+      <svelte:element
+        this={titleTag}
+        class={[
+          cardType.title,
+          'card-title',
+          { 'md:!text-[26px] md:!leading-[1.15]': isWide },
+        ]}
+      >{title}</svelte:element>
+      {#if description}<span class={[cardType.description, 'card-description line-clamp-2', { 'md:line-clamp-3': isWide }]}>{description}</span>{/if}
+      <span class={['card-footer', { 'border-t border-dashed border-t-syoro/25 pt-2.5': isNote }]}>
         <span class="card-meta">
           {isSeriesCollection && lastUpdated ? `Updated ${formatDate(lastUpdated)}` : formattedDate}
         </span>
@@ -186,141 +201,3 @@
     </span>
   </a>
 {/if}
-
-<style>
-  /* LEARN: what is left here is only what the justified-<style> bar allows —
-     see AGENTS.md. Three reasons appear:
-       (a) a two-token color-mix(), which has no `bg-token/N` equivalent;
-       (b) mask, which Tailwind has no utility for;
-       (c) a selector or media query Tailwind cannot write — descendant rules,
-           and `(hover: hover) and (pointer: fine)`, whose `pointer: fine` half
-           Tailwind's `hover:` variant drops.
-     A fourth reason is specific to this repo: `.card-shell`, `.card-band` and
-     `.card-footer` are declared in global.css OUTSIDE any @layer, and unlayered
-     author styles beat every layered utility — so a variant that overrides their
-     padding, gap or border-style cannot be a utility either. */
-
-  /* (a) two-token color-mix */
-  .series-sheet {
-    height: 5px;
-    border: 1px solid var(--color-card-border);
-    border-bottom: 0;
-    border-radius: 12px 12px 0 0;
-    background: color-mix(in srgb, var(--color-cardbg) 94%, var(--color-card-border));
-  }
-
-  .card-band-note {
-    background: color-mix(in srgb, var(--color-syoro) 5%, var(--color-cardbg));
-  }
-
-  .series-featured-band {
-    background: color-mix(in srgb, var(--color-syoro) 5%, var(--color-cardbg));
-  }
-
-  /* Both override an unlayered global rule: `.card-band`'s `border: 1px solid`
-     shorthand, and `.card-shell`'s `border-color`. A layered utility loses to
-     either, so neither can be translated. */
-  .card-band-playground { border-style: dashed; }
-
-  .card-footer-note {
-    border-top: 1px dashed color-mix(in srgb, var(--color-syoro) 25%, transparent);
-    padding-top: 10px;
-  }
-
-  /* (b) mask */
-  .card-band-icon {
-    width: 34px;
-    height: 34px;
-    background: color-mix(in srgb, var(--color-syoro) 30%, transparent);
-    -webkit-mask: var(--card-icon) center / contain no-repeat;
-    mask: var(--card-icon) center / contain no-repeat;
-  }
-
-  .series-post-list {
-    -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 1.5rem), transparent);
-    mask-image: linear-gradient(to bottom, #000 calc(100% - 1.5rem), transparent);
-  }
-
-  /* Variant shells: both override unlayered `.card-shell` padding/gap. */
-  .card-shell-wide { display: grid; }
-
-  .card-shell-series {
-    position: relative;
-    display: flex;
-    min-height: 34rem;
-    flex-direction: column;
-    gap: 0;
-    overflow: hidden;
-    padding: 0;
-  }
-
-  /* Per-property durations AND easings differ, which no single transition-*
-     utility pair can express. */
-  .series-row-arrow {
-    width: 18px;
-    height: 18px;
-    flex-shrink: 0;
-    color: var(--color-muted);
-    transition: transform 200ms var(--ease-snappy), color 150ms ease;
-  }
-
-  .series-view-all {
-    flex-shrink: 0;
-    border-radius: 999px;
-    background: var(--color-konpeki);
-    padding: 12px 22px;
-    font-family: var(--font-sans);
-    font-size: 16px;
-    font-weight: 500;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: white;
-    transition: transform 150ms var(--ease-snappy), opacity 150ms ease;
-  }
-
-  .series-view-all:hover { color: white; opacity: 0.9; }
-  .series-view-all:active { transform: scale(0.97); }
-
-  /* (c) descendant selectors */
-  @media (min-width: 768px) {
-    .card-shell-wide {
-      grid-template-columns: 1fr 1fr;
-      align-items: stretch;
-      gap: 18px;
-    }
-
-    .card-shell-wide .card-band-stack { height: 100%; }
-    .card-shell-wide .card-band { aspect-ratio: auto; height: 100%; }
-    .card-shell-wide .card-title { font-size: 26px; line-height: 1.15; }
-    .card-shell-wide .card-description {
-      display: -webkit-box;
-      overflow: hidden;
-      -webkit-box-orient: vertical;
-      -webkit-line-clamp: 3;
-      line-clamp: 3;
-    }
-
-    .card-shell-series {
-      min-height: 0;
-      height: 470px;
-      flex-direction: row;
-    }
-
-    .card-shell-series .card-title { font-size: 30px; line-height: 1.15; }
-  }
-
-  /* Tailwind's `hover:` is `(hover: hover)` only — it drops `pointer: fine`,
-     so translating these would make them fire on tap. */
-  @media (hover: hover) and (pointer: fine) {
-    .card-shell-wide:hover { transform: scale(0.98); }
-    .series-post-row:hover { background: color-mix(in srgb, var(--color-syoro) 10%, transparent); }
-    .series-post-row:hover .series-row-arrow { transform: translateX(3px); color: var(--color-link); }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .series-row-arrow,
-    .series-view-all { transition: none; }
-    .series-post-row:hover .series-row-arrow,
-    .series-view-all:active { transform: none; }
-  }
-</style>
