@@ -16,34 +16,9 @@ The canonical rules for every agent working in this repo. `CLAUDE.md` imports th
 
 ## Executing a Claude plan
 
-You are the executor. Claude wrote the plan and will review your diff line by line against it. You run non-interactively: nobody can answer a question mid-run, so every rule below that would normally be "ask" is "stop and report". The loop, schema and prompts are in `scripts/agents/`; the full design is `docs/plans/codex-execution-workflow-2026-09-17-0655-*.md`.
+The executor contract is global: "Executing a Claude plan" in `~/.codex/AGENTS.md` (source: `~/.agents/codex-workflow/contracts/executor.md`). What is specific to this repo lives in **`.agents/profile.sh`**: the checks Codex runs (build, unit, integrity), the ones only the reviewer can run (Playwright on chromium + webkit, which cannot bind a port in the sandbox), protected paths (`package.json`, the lockfile, `src/content/**`), the added-line scan rules, and the known baseline failures. Plans live in `docs/plans/`; branches are `codex/<plan-base>`.
 
-### Source of truth
-- The plan trio `docs/plans/<base>-{plan,decisions,architecture}.md` plus the clarifications in your prompt. Clarifications override plan text where they conflict. Read all three files before editing.
-- Implement **only the step IDs named in your prompt**. Other steps are context, not work.
-- In a read-only implementation read, change nothing: return the ownership map, every place the plan is wrong about the repo, and every decision the plan leaves open.
-
-### Scope
-- Touch only files listed in that step's `files:`. Needing any other file is a stop.
-- Deliver exactly the acceptance criteria. No refactors, renames, reformatting, dependency changes, comment rewrites or "while I'm here" fixes outside them — put those in `notes` instead.
-- **Mechanical drift you may absorb and must report** under `deviations` (kind `mechanical`): moved line numbers, a renamed local variable, import order. **Everything else is a stop:** a missing file or export, an API that differs from the plan, a second consumer of a file you must change, a design or content value that conflicts with a repo rule, a test fixture that does not exist.
-
-### Stop protocol
-When a step hits a stop: revert your edits for that step **by editing the files back** (not with git), mark it `blocked` with a question that offers concrete options, and continue only with steps whose `depends-on` does not include it. Never guess to stay unblocked — a blocked step costs one round-trip; a guessed one costs a review cycle and trust.
-
-### Never
-- Run git commands that write (`commit`, `checkout`, `switch`, `stash`, `reset`, `restore`, `branch`, `merge`).
-- `npm install`, or edit `package.json` / the lockfile, unless the step lists them.
-- Edit `docs/plans/**`, `CLAUDE.md`, `AGENTS.md`, or published content (`src/content/**`) unless listed. If a listed step edits published content, list the file under `content_edits`.
-- Skip, `.only`, weaken, delete or conditionally guard a test. A test that cannot fail is not coverage.
-
-### Checks
-- Run `npm run build`, `npx vitest run tests/unit` and `npx vitest run tests/integrity`, and report each exit code. Read the build output for `css_unused_selector` warnings.
-- Do not run Playwright — the sandbox cannot bind a port. List the specs that exercise your change under `e2e_specs_to_run`; the reviewer runs them on chromium and webkit.
-- Known baseline failures are listed in your prompt; do not try to fix them unless a step says so.
-
-### Report
-Your final message is JSON matching the schema you were given. Every acceptance criterion gets `met` and `evidence` — a `file:line` or a command result. "Implemented as planned" is not evidence. When a review finding is wrong, dispute it with evidence instead of complying.
+Edits to published writing under `src/content/` are never an implementation detail — a step must list the file literally, and it is reported under `content_edits`.
 
 ## Plan Drift Lessons
 

@@ -1,5 +1,7 @@
 # Codex execution workflow — Claude plans, Codex builds, Claude reviews
 
+> **Superseded in location by the global toolkit (2026-09-17).** The design stands, but the scripts, prompts, schema and template it describes under `scripts/agents/` were moved to `~/.agents/codex-workflow/` and removed from this repo; this repo now holds only `.agents/profile.sh`. Canonical copy of this trio: `~/.agents/codex-workflow/docs/plans/`. Kept here as history.
+
 Repo: `/Users/ruwaizrazak/Developer/ruwaizrazak` (Astro 5 + Svelte 5 + Tailwind 4)
 
 Companions: `codex-execution-workflow-2026-09-17-0655-decisions.md` (why) and `codex-execution-workflow-2026-09-17-0655-architecture.md` (how the pieces fit, schemas, prompt contracts).
