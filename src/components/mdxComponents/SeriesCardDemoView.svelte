@@ -74,16 +74,16 @@
           ></span>
           <span>Series · 6 parts</span>
         </span>
-        <h3 class={`${cardType.title} mt-3 text-syoro md:text-[30px] md:leading-[1.15]`}>
+        <p class={`${cardType.title} mt-3 text-syoro md:text-[30px] md:leading-[1.15]`}>
           An Invented Series
-        </h3>
+        </p>
         <p class={`${cardType.description} mt-2 text-syoro/88`}>
           Not a real series. The parts are filler, so the card has something to scroll.
         </p>
 
-        <h4 class="mt-5 mb-2.5 font-sans text-[14px] font-medium tracking-eyebrow uppercase text-syoro">
+        <p class="mt-5 mb-2.5 font-sans text-[14px] font-medium tracking-eyebrow uppercase text-syoro">
           Posts in this series
-        </h4>
+        </p>
         <ul
           data-seriesdemo-list
           class={[
