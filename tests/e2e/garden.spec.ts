@@ -7,6 +7,29 @@ const waitForGardenHydration = async (page: import('@playwright/test').Page) => 
 };
 
 test.describe('garden layout', () => {
+  test('matches the viewport width and does not serialize article bodies', async ({ page }) => {
+    await page.setViewportSize({ width: 768, height: 1024 });
+    await page.goto(ROUTES.garden);
+    await waitForGardenHydration(page);
+
+    const dimensions = await page.evaluate(() => ({
+      viewport: window.innerWidth,
+      document: document.documentElement.scrollWidth,
+      strip: document.querySelector('.garden-strip')?.getBoundingClientRect().width,
+    }));
+    expect(dimensions.document).toBe(dimensions.viewport);
+    expect(dimensions.strip).toBe(dimensions.viewport);
+
+    // Production component URLs are hashed, so identify the island by the
+    // garden section it owns instead of coupling the test to a dev-only path.
+    const props = await page.locator('.garden-cards-section').evaluate((section) =>
+      section.closest('astro-island')?.getAttribute('props'),
+    );
+    expect(props).not.toContain('"body"');
+    expect(props).not.toContain('"filePath"');
+    expect(props).not.toContain('"digest"');
+  });
+
   test('renders cards in descending date order with no console errors', async ({ page, baseURL }) => {
     const { errors } = watchPage(page, baseURL!);
 
