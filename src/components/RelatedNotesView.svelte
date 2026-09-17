@@ -31,7 +31,7 @@
       {isSeries ? `More in ${seriesTitle}` : 'Related to'}
     </h2>
     <div
-      class="related-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 auto-rows-fr gap-4"
+      class="related-grid grid grid-cols-1 items-start md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
       data-series={isSeries ? '' : undefined}
       use:intersect={{
         once: true,
@@ -45,7 +45,7 @@
         <div
           class:cascade-pending={mounted && !revealed}
           class:cascade-in={revealed}
-          class="related-card h-full"
+          class="related-card"
           style={`animation-delay: ${index * 40}ms`}
         >
           {#if note.collection === 'seriesPosts'}

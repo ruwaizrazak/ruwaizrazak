@@ -73,18 +73,17 @@
 {/snippet}
 
 {#snippet cardBand()}
-  <span class={['card-band-stack flex min-w-0 flex-col', { 'md:h-full': isWide }]}>
+  <span class="card-band-stack flex min-w-0 flex-col">
     {#if isSeriesCollection}
       <span class="mx-4 h-[5px] rounded-t-xl border border-b-0 border-card-border bg-cardbg" aria-hidden="true"></span>
       <span class="mx-2 h-[5px] rounded-t-xl border border-b-0 border-card-border bg-cardbg" aria-hidden="true"></span>
     {/if}
     <span
       class={[
-        'card-band !aspect-auto h-52 sm:h-56 md:h-48 lg:h-44 xl:h-40',
+        'card-band',
         {
           'bg-syoro/5': isNote || !image,
           '!border-dashed': isPlayground,
-          'md:!h-full': isWide,
         },
       ]}
     >
@@ -191,7 +190,7 @@
           { 'md:!text-[26px] md:!leading-[1.15]': isWide },
         ]}
       >{title}</svelte:element>
-      {#if description}<span class={[cardType.description, 'card-description line-clamp-2', { 'md:line-clamp-3': isWide }]}>{description}</span>{/if}
+      {#if description}<span class={[cardType.description, 'card-description line-clamp-2', { 'md:line-clamp-2': isWide }]}>{description}</span>{/if}
       <span class={['card-footer', { 'border-t border-dashed border-t-syoro/25 pt-2.5': isNote }]}>
         <span class="card-meta">
           {isSeriesCollection && lastUpdated ? `Updated ${formatDate(lastUpdated)}` : formattedDate}

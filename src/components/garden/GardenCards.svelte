@@ -52,7 +52,7 @@
           {@const card = group.post}
           <div
             class={[
-              'garden-card-item post-item h-full',
+              'garden-card-item post-item',
               {
                 'cascade-pending transform-[translateY(8px)] opacity-0 motion-reduce:transform-none motion-reduce:opacity-100': mounted && !revealed,
                 'cascade-in transform-[translateY(0)] opacity-100 transition-[opacity,transform] duration-300 ease-[ease] motion-reduce:transition-none': revealed,
@@ -86,7 +86,7 @@
               {@const span = gardenSpan(card.collection)}
               <div
                 class={[
-                  'garden-card-item post-item h-full',
+                  'garden-card-item post-item',
                   {
                     'garden-span-wide': span === 'wide',
                     'cascade-pending transform-[translateY(8px)] opacity-0 motion-reduce:transform-none motion-reduce:opacity-100': mounted && !revealed,
@@ -121,13 +121,11 @@
       {/each}
     </div>
   {:else}
-    <!-- LEARN: auto-rows-fr gives every collection signature the same row height;
-         the 16:10 band and footer auto-margin keep the internal baselines aligned. -->
-    <div class="card-masonry grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 auto-rows-fr gap-5">
+    <div class="card-masonry grid grid-cols-1 items-start md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
       {#each cards as card, i (card.id)}
         <div
           class={[
-            'garden-card-item post-item h-full',
+            'garden-card-item post-item',
             {
               'cascade-pending transform-[translateY(8px)] opacity-0 motion-reduce:transform-none motion-reduce:opacity-100': mounted && !revealed,
               'cascade-in transform-[translateY(0)] opacity-100 transition-[opacity,transform] duration-300 ease-[ease] motion-reduce:transition-none': revealed,
