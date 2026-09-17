@@ -1,0 +1,62 @@
+---
+title: 'The floating table of contents'
+description: 'Rebuilding a table of contents interaction I saw on twitter: a scroll-spy band near reading position, an odometer label, and two iOS Safari bugs.'
+pubDate: 'Sep 17 2026'
+tags: ['design', 'tech', 'animation']
+publish: true
+maturity: 'plant'
+---
+
+At the end of June I saw a designer post a table of contents interaction on twitter, and I sat there replaying the video far longer than a table of contents deserves. I never saved the tweet and I still dont know who made it, which is its own small tragedy. What stuck wasn't the animation. It was how little the thing asked for. A long page, and a small quiet object at the bottom keeping track of where you were in it.
+
+So I built my own version, and it has been sitting under the notes and essays here since July. The honest measure of whether it worked is that I stopped noticing it. Thats the best outcome for any interaction, it works and you stop thinking about it.
+
+Which makes writing about it slightly absurd, but a few people asked how it works, and the parts that took the longest turned out to have almost nothing to do with the animation. The real pill is live at the bottom of your screen right now, on this page. Everything embedded below is a deliberate copy of it, frozen inside its own frame, so you can poke at one without dragging the real one around with you.
+
+## The pill
+
+It sits fixed at the bottom center of the page, collapsed down to the name of whatever section you're currently reading. Tap it and it opens upward into the full list of sections. Tap a section and it scrolls you there and closes itself. Thats the entire interface.
+
+The collapsed state is the part I care about most. Most tables of contents on the web are a sidebar you either ignore or lose, and a sidebar has to be permanently visible to be useful. A pill that names your current section is doing the same job in about fourteen characters, and it can afford to be small because it only ever tells you one thing at a time.
+
+<TocPillDemo />
+
+## Finding your place
+
+The scroll-spy is the bit I rebuilt the most. The obvious way to decide which heading is "current" is to wait for the previous one to scroll off the top of the screen. It's simple, and it feels broken. You read a new section for a full paragraph while the label still insists you're in the last one.
+
+So instead of a boundary at the top, there's a thin band roughly a quarter to a third of the way down the viewport, and a heading becomes current the moment it crosses into that band. Thats near where your eyes actually are. Nothing about the animation changed when I switched to this, and the lag disappeared completely, which was humbling. (The demos below run a slightly higher band than the real one, because their frames are shorter than a viewport. Reading position is relative to what you're reading in.)
+
+The label itself rolls like an odometer rather than swapping. The new section enters from the direction you were scrolling and the old one leaves the opposite way, so scrolling down pushes text up, and scrolling back up pulls it back down. It's a very small thing. But it means the motion agrees with the gesture instead of arguing with it, and I think thats most of why the pill reads as attached to the page rather than sitting on top of it.
+
+<TocPillDemo
+  variant="band"
+  headings={['Where It Starts', 'The Band', 'Crossing Over', 'Reading Position', 'Why It Lags Otherwise']}
+  caption="The shaded strip is the band. A section goes current the moment its heading crosses into it, not when the one before it leaves the top."
+/>
+
+## The expanded list
+
+Open it and the list isn't really a list, it's a vertical timeline. Sections you've already passed get a solid dot. The one you're in gets a dot that pulses. The ones ahead get a faint ring and an even fainter rail connecting them, so the path you haven't walked yet is drawn more quietly than the path you have. You can read your progress through the piece without reading a single word of it.
+
+The open and close is entirely CSS, driven off a single `data-expanded` attribute. The width springs with a slight overshoot, which is where the Dynamic Island feeling comes from, and the panel uses the `grid-template-rows: 0fr → 1fr` trick so nothing has to measure a height in JavaScript. I like this more than I expected to. Since no script touches the element mid-morph, you can hammer the button and it can never get stranded halfway open.
+
+<TocPillDemo
+  variant="expanded"
+  headings={['First Movement', 'Second Movement', 'Third Movement', 'Coda']}
+  caption="Left open so the rail is visible: a solid dot behind you, a pulsing one where you are, faint rings ahead."
+/>
+
+## Two bugs on iPhone
+
+Here's the part that ate the most time, and it isn't design at all.
+
+The pill has a frosted blur behind it, which means `backdrop-filter`. On iOS Safari, putting `backdrop-filter` on a `position: fixed` element breaks hit-testing. The button swallows your tap and then simply never fires, so on an iPhone the pill looked exactly right and read as not expandable. Separately, `backdrop-filter` with rounded corners and overflow hidden fails to clip the blur to the radius, so the pill rendered with square corners.
+
+Both bugs come from the same cause, so the fix is to split the pill into two layers. The interactive container carries no `backdrop-filter` at all, which lets taps land and lets its own radius clip properly. A second layer behind it, non interactive and invisible to pointers, owns the blur and the tint. Your finger never touches a blurred surface. Two visual layers pretending to be one object, purely to route around a rendering engine, and nobody looking at it will ever know.
+
+## What it doesn't do
+
+All the motion is gated on `prefers-reduced-motion`. If you've asked your system to calm down, the label swaps instead of rolling, the dot stops pulsing, and the pill still tells you exactly where you are.
+
+And once you scroll past the end of the article into the related notes, the pill fades out and stops taking taps. There's no table of contents left to navigate, so it leaves. I keep coming back to that as the actual test for this kind of thing. Not whether it's clever while it's on screen, but whether it knows when it has stopped being useful.
