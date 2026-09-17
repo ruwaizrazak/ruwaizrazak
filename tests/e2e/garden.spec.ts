@@ -74,9 +74,7 @@ test.describe('garden layout', () => {
     await expect(essay.locator('.card-meta')).toContainText(/\d{4}/);
 
     const playground = page.locator('.garden-feature-grid [data-collection="playground"]').first();
-    if (await playground.count()) {
-      await expect(playground.locator('.card-meta')).toContainText(/\d{4}/);
-    }
+    await expect(playground.locator('.card-meta')).toContainText(/\d{4}/);
   });
 
   test('keeps cards visible when reduced motion is preferred', async ({ page }) => {
