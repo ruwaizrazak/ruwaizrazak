@@ -32,6 +32,8 @@ Append-only. Each bullet is a general cause behind a real review finding; Claude
 - Treat design-token and typography values as intentional. If repo rules conflict with a plan value, pause and ask before silently choosing one.
 - Validate parser-style utilities with edge cases that match content reality: URLs, inline code, hyphenated words, snake_case, frontmatter, and MDX syntax.
 - Avoid optional tests that pass when the required fixture is absent. Add or request an explicit fixture when coverage depends on content.
+- Never set "byte-identical rendered output" as the bar for a change to a hydrated island. Adding a prop re-derives the island's `uid` and serializes the new key even when its value is `undefined` (`&quot;variant&quot;:[0]`); adding an `{#if}` emits an empty block anchor (`<!--[-1--><!--]-->`); and adding any page at all rotates shared Rollup chunk hashes in every other page's script tags. Compare the component's DOM subtree, or normalise those four artifacts explicitly — otherwise the check fails for reasons that have nothing to do with the change, and the real invariant goes unverified.
+- When a plan finally supplies the fixture that a guarded assertion was waiting for, remove the guard in that same plan. An `if (await x.count())` wrapper is an assertion that has never executed; leaving it in place next to a real fixture is worse than either state on its own, because the suite now looks like it covers the thing it silently skips.
 
 ## Design Implementation Guidelines (Claude Design imports)
 
