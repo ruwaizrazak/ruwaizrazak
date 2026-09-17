@@ -34,3 +34,8 @@ scan WARN "*.ts *.js *.svelte *.astro *.mdx" 'LEARN:'                    "LEARN 
 # Pre-existing since before the Codex workflow (verified 2026-09-17, fails with and without the sandbox): two content
 # images lack a descriptive alt. Fixing it edits published writing, so it needs its own plan and the user's approval.
 known_baseline_failure "tests/integrity/seo.test.ts › images › gives content images a descriptive, non-empty alt"
+
+# Verified pre-existing 2026-09-17 by re-running the spec with all of that day's source changes reverted: the same
+# four fail. `mobile-chrome` is a Pixel 7 profile, i.e. a touch device with no hover, and the spec drives
+# `locator.hover()` — the hover never resolves and each test times out at 30s. Chromium and webkit pass.
+known_baseline_failure "tests/e2e/tooltips.spec.ts › link tooltips › (all four) — mobile-chrome only: hover on a touch device"

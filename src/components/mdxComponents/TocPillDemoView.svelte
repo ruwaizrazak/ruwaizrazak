@@ -27,6 +27,7 @@
     /** Dummy section names shown in the fake article and the pill's list. */
     headings?: string[];
     caption?: string;
+    variant?: 'default' | 'band' | 'expanded';
   }
 
   let {
@@ -39,8 +40,11 @@
       'Where This Goes',
     ],
     caption = 'Scroll inside the frame — the label rolls and the rail fills as you pass each section. Tap the pill to open the list.',
+    variant = 'default',
   }: Props = $props();
 
+  const SPY_TOP = 15;
+  const SPY_BOTTOM = 72;
   const slugify = (t: string) => t.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '');
 
   // LEARN: deterministic "random" skeleton bars — derived from the indices rather
@@ -50,7 +54,7 @@
 
   const rows = $derived(headings.map((text) => ({ id: `tocdemo-${slugify(text)}`, text })));
 
-  let expanded = $state(false);
+  let expanded = $state(variant === 'expanded');
   let activeId = $state('');
   let direction = $state<1 | -1>(1);
   let reduceMotion = $state(false);
@@ -117,7 +121,7 @@
         );
         activeId = topmost.target.id;
       },
-      { root: scroller, rootMargin: '-15% 0px -72% 0px', threshold: 0 },
+      { root: scroller, rootMargin: `-${SPY_TOP}% 0px -${SPY_BOTTOM}% 0px`, threshold: 0 },
     );
     headingEls.forEach((h) => observer.observe(h));
 
@@ -144,6 +148,7 @@
 <figure class="not-prose my-10 md:my-16">
   <div
     data-tocdemo
+    data-tocdemo-variant={variant === 'default' ? undefined : variant}
     class="relative overflow-hidden rounded-2xl border border-syoro/10 dark:border-syoro/20 bg-backgroundcolor"
   >
     <!-- Fake article. `relative` makes it the offsetParent for the fake headings,
@@ -172,6 +177,17 @@
       <!-- Tail space so the final section can still reach the scroll-spy band. -->
       <div class="h-52" aria-hidden="true"></div>
     </div>
+
+    {#if variant === 'band'}
+      <div
+        data-tocdemo-band
+        aria-hidden="true"
+        class="pointer-events-none absolute inset-x-0 z-[1] border-y border-dashed border-syoro/30 bg-syoro/5"
+        style={`top: ${SPY_TOP}%; height: ${100 - SPY_TOP - SPY_BOTTOM}%`}
+      >
+        <span class="absolute right-2 top-1 font-sans text-[11px] uppercase tracking-meta text-syoro/50">active band</span>
+      </div>
+    {/if}
 
     <!-- Edge fades: signal "there's more above/below" without a scrollbar. -->
     <div aria-hidden="true" class="pointer-events-none absolute inset-x-0 top-0 h-10 bg-gradient-to-b from-backgroundcolor to-transparent"></div>

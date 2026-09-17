@@ -15,8 +15,9 @@ import TocPillDemoView from './TocPillDemoView.svelte';
 interface Props {
   headings?: string[];
   caption?: string;
+  variant?: 'default' | 'band' | 'expanded';
 }
-const { headings, caption } = Astro.props;
+const { headings, caption, variant } = Astro.props;
 ---
 
-<TocPillDemoView client:load headings={headings} caption={caption} />
+<TocPillDemoView client:load headings={headings} caption={caption} variant={variant} />

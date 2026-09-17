@@ -9,6 +9,7 @@ import GardenIntro from './GardenIntro.svelte';
 import GardenCards from './GardenCards.svelte';
 import GardenStrip from './GardenStrip.svelte';
 import { optimizeImage } from '../../utils/optimizeImage';
+import type { GardenCardProps } from '../../types';
 
 interface Props {
   title: string;
@@ -20,9 +21,17 @@ interface Props {
 const { title, description, posts, layout = 'grid' } = Astro.props;
 
 const cardVariantCollections = new Set(['essays', 'playground']);
-const cards = await Promise.all(
+// LEARN: Content entries contain their complete source body. Project only the
+// fields the island renders so Astro does not serialize every article into HTML.
+const cards: GardenCardProps[] = await Promise.all(
   (posts ?? []).map(async (post) => ({
-    post,
+    id: post.id,
+    collection: post.collection,
+    title: post.data.title,
+    description: post.data.description ?? '',
+    pubDate: post.data.pubDate,
+    tags: post.data.tags ?? [],
+    maturity: post.data.maturity,
     image: await optimizeImage(
       post.collection === 'series'
         ? post.data.featuredImage
@@ -30,6 +39,10 @@ const cards = await Promise.all(
           ? post.data.heroImage
           : undefined,
     ),
+    startedDate: post.data.startedDate,
+    lastUpdated: post.data.lastUpdated,
+    postCount: post.postCount,
+    posts: post.data.posts,
   })),
 );
 
@@ -39,8 +52,12 @@ const TREE_COUNT = 23;
 const treeIndices = Array.from({ length: 8 }, () => Math.floor(Math.random() * TREE_COUNT));
 ---
 
-<Header />
-<main>
+<!-- Keep page chrome aligned without making fixed/full-width surfaces inherit
+     the page gutter. The dropdown's shadow clip also stays inside the viewport. -->
+<div class="px-5 md:px-20">
+  <Header />
+</div>
+<main class="px-5 md:px-20">
   <GardenIntro title={title} description={description} />
   <!-- LEARN: client:visible — the cascade is an entrance animation, so there is
        nothing to do until the grid is on screen. -->

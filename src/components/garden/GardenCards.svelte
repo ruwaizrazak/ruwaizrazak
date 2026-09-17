@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import ContentCard from '../ContentCard.svelte';
-  import type { OptimizedImg } from '../../utils/optimizeImage';
+  import type { GardenCardProps } from '../../types';
   import { urlForEntry } from '../../utils/urls';
   import { gardenSpan, groupGardenPostsByDate } from '../../utils/gardenLayout';
 
@@ -19,13 +19,8 @@
    * idempotency guard either, so initOnLoad's double-fire re-ran the whole
    * cascade on first load.
    */
-  interface GardenCard {
-    post: any;
-    image: OptimizedImg | null;
-  }
-
   interface Props {
-    cards: GardenCard[];
+    cards: GardenCardProps[];
     layout?: 'grid' | 'garden';
   }
 
@@ -41,11 +36,10 @@
   });
   let revealed = $state(false);
 
-  const imageByPost = $derived(new Map(cards.map(({ post, image }) => [post, image])));
-  const gardenGroups = $derived(groupGardenPostsByDate(cards.map(({ post }) => post)));
+  const gardenGroups = $derived(groupGardenPostsByDate(cards));
 
-  function delayFor(post: any) {
-    return cards.findIndex((card) => card.post === post) * 40;
+  function delayFor(card: GardenCardProps) {
+    return cards.indexOf(card) * 40;
   }
 
 </script>
@@ -55,7 +49,7 @@
     <div class="flex flex-col gap-5">
       {#each gardenGroups as group}
         {#if group.type === 'series'}
-          {@const post = group.post}
+          {@const card = group.post}
           <div
             class={[
               'garden-card-item post-item h-full',
@@ -64,32 +58,32 @@
                 'cascade-in transform-[translateY(0)] opacity-100 transition-[opacity,transform] duration-300 ease-[ease] motion-reduce:transition-none': revealed,
               },
             ]}
-            style={`transition-delay: ${delayFor(post)}ms`}
-            data-tags={post.data.tags?.join(' ')}
-            data-collection={post.collection}
-            data-date={post.data.pubDate?.toISOString?.()}
+            style={`transition-delay: ${delayFor(card)}ms`}
+            data-tags={card.tags.join(' ')}
+            data-collection={card.collection}
+            data-date={card.pubDate?.toISOString?.()}
           >
             <ContentCard
-              title={post.data.title}
-              description={post.data.description || ''}
-              pubDate={post.data.pubDate}
-              url={urlForEntry(post.collection, post.id)}
-              image={imageByPost.get(post) ?? null}
-              maturity={post.data.maturity}
-              collection={post.collection}
+              title={card.title}
+              description={card.description}
+              pubDate={card.pubDate}
+              url={urlForEntry(card.collection, card.id)}
+              image={card.image}
+              maturity={card.maturity}
+              collection={card.collection}
               variant="series"
               headingLevel={2}
-              startedDate={post.data.startedDate}
-              lastUpdated={post.data.lastUpdated}
-              postCount={post.postCount}
-              posts={post.data.posts}
-              transitionName={`card-${post.collection}-${post.id}`}
+              startedDate={card.startedDate}
+              lastUpdated={card.lastUpdated}
+              postCount={card.postCount}
+              posts={card.posts}
+              transitionName={`card-${card.collection}-${card.id}`}
             />
           </div>
         {:else}
           <div class="garden-feature-grid">
-            {#each group.posts as post (post.id)}
-              {@const span = gardenSpan(post.collection)}
+            {#each group.posts as card (card.id)}
+              {@const span = gardenSpan(card.collection)}
               <div
                 class={[
                   'garden-card-item post-item h-full',
@@ -99,26 +93,26 @@
                     'cascade-in transform-[translateY(0)] opacity-100 transition-[opacity,transform] duration-300 ease-[ease] motion-reduce:transition-none': revealed,
                   },
                 ]}
-                style={`transition-delay: ${delayFor(post)}ms`}
-                data-tags={post.data.tags?.join(' ')}
-                data-collection={post.collection}
-                data-date={post.data.pubDate?.toISOString?.()}
+                style={`transition-delay: ${delayFor(card)}ms`}
+                data-tags={card.tags.join(' ')}
+                data-collection={card.collection}
+                data-date={card.pubDate?.toISOString?.()}
               >
                 <ContentCard
-                  title={post.data.title}
-                  description={post.data.description || ''}
-                  pubDate={post.data.pubDate}
-                  url={urlForEntry(post.collection, post.id)}
-                  image={imageByPost.get(post) ?? null}
-                  maturity={post.data.maturity}
-                  collection={post.collection}
+                  title={card.title}
+                  description={card.description}
+                  pubDate={card.pubDate}
+                  url={urlForEntry(card.collection, card.id)}
+                  image={card.image}
+                  maturity={card.maturity}
+                  collection={card.collection}
                   variant={span}
                   headingLevel={2}
-                  startedDate={post.data.startedDate}
-                  lastUpdated={post.data.lastUpdated}
-                  postCount={post.postCount}
-                  posts={post.data.posts}
-                  transitionName={`card-${post.collection}-${post.id}`}
+                  startedDate={card.startedDate}
+                  lastUpdated={card.lastUpdated}
+                  postCount={card.postCount}
+                  posts={card.posts}
+                  transitionName={`card-${card.collection}-${card.id}`}
                 />
               </div>
             {/each}
@@ -130,7 +124,7 @@
     <!-- LEARN: auto-rows-fr gives every collection signature the same row height;
          the 16:10 band and footer auto-margin keep the internal baselines aligned. -->
     <div class="card-masonry grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 auto-rows-fr gap-5">
-      {#each cards as { post, image }, i (post.id)}
+      {#each cards as card, i (card.id)}
         <div
           class={[
             'garden-card-item post-item h-full',
@@ -140,24 +134,24 @@
             },
           ]}
           style={`transition-delay: ${i * 40}ms`}
-          data-tags={post.data.tags?.join(' ')}
-          data-collection={post.collection}
+          data-tags={card.tags.join(' ')}
+          data-collection={card.collection}
         >
           <ContentCard
-            title={post.data.title}
-            description={post.data.description || ''}
-            pubDate={post.data.pubDate}
-            url={urlForEntry(post.collection, post.id)}
-            {image}
-            maturity={post.data.maturity}
-            collection={post.collection}
+            title={card.title}
+            description={card.description}
+            pubDate={card.pubDate}
+            url={urlForEntry(card.collection, card.id)}
+            image={card.image}
+            maturity={card.maturity}
+            collection={card.collection}
             variant="card"
             headingLevel={2}
-            startedDate={post.data.startedDate}
-            lastUpdated={post.data.lastUpdated}
-            postCount={post.postCount}
-            posts={post.data.posts}
-            transitionName={`card-${post.collection}-${post.id}`}
+            startedDate={card.startedDate}
+            lastUpdated={card.lastUpdated}
+            postCount={card.postCount}
+            posts={card.posts}
+            transitionName={`card-${card.collection}-${card.id}`}
           />
         </div>
       {/each}

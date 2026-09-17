@@ -1,0 +1,13 @@
+---
+import SeriesCardDemoView from './SeriesCardDemoView.svelte';
+
+interface Props {
+  variant?: 'default' | 'swallowed';
+  parts?: { title: string; description: string }[];
+  caption?: string;
+}
+
+const { variant, parts, caption } = Astro.props;
+---
+
+<SeriesCardDemoView client:load {variant} {parts} {caption} />

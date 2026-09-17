@@ -33,6 +33,26 @@ export interface ContentCardProps {
   posts?: { title: string; description: string; url: string }[];
 }
 
+/**
+ * Browser-safe data for a garden card. Content collection entries also carry the
+ * complete source body, file path, and digest; none of those belong in an island's
+ * serialized props when the card only renders this small projection.
+ */
+export interface GardenCardProps {
+  id: string;
+  collection: CollectionName;
+  title: string;
+  description: string;
+  pubDate: Date;
+  tags: string[];
+  maturity?: Maturity;
+  image: OptimizedImg | null;
+  startedDate?: Date;
+  lastUpdated?: Date;
+  postCount?: number;
+  posts?: NonNullable<ContentCardProps['posts']>;
+}
+
 // LEARN: WebMention types follow the JF2 format from webmention.io API.
 // brid.gy bridges Bluesky/Twitter mentions into this standard format.
 export interface WebMentionAuthor {
