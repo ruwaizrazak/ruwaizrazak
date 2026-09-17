@@ -33,3 +33,6 @@ current_feed.xml
 test-results/
 playwright-report/
 .style-snap/
+
+# Codex run artifacts: prompts, JSONL events, raw reports (the runlog in docs/plans is the tracked record)
+.agent-runs/

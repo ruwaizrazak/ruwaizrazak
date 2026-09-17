@@ -1,0 +1,136 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "mode",
+    "plan_base",
+    "phase",
+    "overall_status",
+    "steps",
+    "ownership_map",
+    "mismatches",
+    "deviations",
+    "questions",
+    "findings_addressed",
+    "checks_run",
+    "e2e_specs_to_run",
+    "content_edits",
+    "notes"
+  ],
+  "properties": {
+    "mode": { "type": "string", "enum": ["read", "implement", "fix"] },
+    "plan_base": { "type": "string" },
+    "phase": { "type": "integer" },
+    "overall_status": { "type": "string", "enum": ["read_only", "completed", "partial", "blocked"] },
+    "steps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "status", "files_changed", "acceptance"],
+        "properties": {
+          "id": { "type": "string" },
+          "status": {
+            "type": "string",
+            "enum": ["read_only", "done", "blocked", "skipped_dependency", "not_started"]
+          },
+          "files_changed": { "type": "array", "items": { "type": "string" } },
+          "acceptance": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["id", "met", "evidence"],
+              "properties": {
+                "id": { "type": "string" },
+                "met": { "type": ["boolean", "null"] },
+                "evidence": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "ownership_map": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["file", "importers"],
+        "properties": {
+          "file": { "type": "string" },
+          "importers": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "mismatches": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["step", "plan_says", "repo_has"],
+        "properties": {
+          "step": { "type": "string" },
+          "plan_says": { "type": "string" },
+          "repo_has": { "type": "string" }
+        }
+      }
+    },
+    "deviations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["step", "kind", "description"],
+        "properties": {
+          "step": { "type": "string" },
+          "kind": { "type": "string", "enum": ["mechanical", "other"] },
+          "description": { "type": "string" }
+        }
+      }
+    },
+    "questions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["step", "question", "options", "blocking"],
+        "properties": {
+          "step": { "type": "string" },
+          "question": { "type": "string" },
+          "options": { "type": "array", "items": { "type": "string" } },
+          "blocking": { "type": "boolean" }
+        }
+      }
+    },
+    "findings_addressed": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["finding_id", "status", "evidence"],
+        "properties": {
+          "finding_id": { "type": "string" },
+          "status": { "type": "string", "enum": ["fixed", "disputed", "blocked"] },
+          "evidence": { "type": "string" }
+        }
+      }
+    },
+    "checks_run": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["command", "exit_code", "summary"],
+        "properties": {
+          "command": { "type": "string" },
+          "exit_code": { "type": "integer" },
+          "summary": { "type": "string" }
+        }
+      }
+    },
+    "e2e_specs_to_run": { "type": "array", "items": { "type": "string" } },
+    "content_edits": { "type": "array", "items": { "type": "string" } },
+    "notes": { "type": "string" }
+  }
+}

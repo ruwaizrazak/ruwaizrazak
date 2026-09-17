@@ -1,5 +1,7 @@
 # AGENTS.md — ruwaizrazak.com
 
+The canonical rules for every agent working in this repo. `CLAUDE.md` imports this file with `@AGENTS.md`, so Claude and Codex read the same text — **edit shared rules here, never in `CLAUDE.md`**.
+
 ## Project Overview
 - Astro 5 static site (SSG) deployed on Vercel
 - Stack: Astro 5 + Svelte 5 + Tailwind CSS 4 + GSAP + MDX
@@ -12,15 +14,41 @@
 - `npm run build` — production build
 - `npm run preview` — preview built site
 
-## Plan Execution Workflow
-- When the user provides a plan or modular test case created with Claude Opus, treat that plan as the source of truth.
-- Before editing files, do an implementation read: inspect the relevant code, compare the plan against the repo, and report questions or state that there are no questions.
-- Stick to the provided plan. If a change to the plan seems useful or necessary, explicitly ask the user's permission before deviating.
-- Execute approved plans using GPT-5.6 Sol at high reasoning effort when that model and effort are available.
-- Keep verification light by default. Run focused checks for the changed area, and use heavier test/build verification only when the plan requests it or the change is high-risk.
-- After implementation, summarize changed files, assumptions, and any checks run so the user can hand the work to Claude Opus for testing.
+## Executing a Claude plan
+
+You are the executor. Claude wrote the plan and will review your diff line by line against it. You run non-interactively: nobody can answer a question mid-run, so every rule below that would normally be "ask" is "stop and report". The loop, schema and prompts are in `scripts/agents/`; the full design is `docs/plans/codex-execution-workflow-2026-09-17-0655-*.md`.
+
+### Source of truth
+- The plan trio `docs/plans/<base>-{plan,decisions,architecture}.md` plus the clarifications in your prompt. Clarifications override plan text where they conflict. Read all three files before editing.
+- Implement **only the step IDs named in your prompt**. Other steps are context, not work.
+- In a read-only implementation read, change nothing: return the ownership map, every place the plan is wrong about the repo, and every decision the plan leaves open.
+
+### Scope
+- Touch only files listed in that step's `files:`. Needing any other file is a stop.
+- Deliver exactly the acceptance criteria. No refactors, renames, reformatting, dependency changes, comment rewrites or "while I'm here" fixes outside them — put those in `notes` instead.
+- **Mechanical drift you may absorb and must report** under `deviations` (kind `mechanical`): moved line numbers, a renamed local variable, import order. **Everything else is a stop:** a missing file or export, an API that differs from the plan, a second consumer of a file you must change, a design or content value that conflicts with a repo rule, a test fixture that does not exist.
+
+### Stop protocol
+When a step hits a stop: revert your edits for that step **by editing the files back** (not with git), mark it `blocked` with a question that offers concrete options, and continue only with steps whose `depends-on` does not include it. Never guess to stay unblocked — a blocked step costs one round-trip; a guessed one costs a review cycle and trust.
+
+### Never
+- Run git commands that write (`commit`, `checkout`, `switch`, `stash`, `reset`, `restore`, `branch`, `merge`).
+- `npm install`, or edit `package.json` / the lockfile, unless the step lists them.
+- Edit `docs/plans/**`, `CLAUDE.md`, `AGENTS.md`, or published content (`src/content/**`) unless listed. If a listed step edits published content, list the file under `content_edits`.
+- Skip, `.only`, weaken, delete or conditionally guard a test. A test that cannot fail is not coverage.
+
+### Checks
+- Run `npm run build`, `npx vitest run tests/unit` and `npx vitest run tests/integrity`, and report each exit code. Read the build output for `css_unused_selector` warnings.
+- Do not run Playwright — the sandbox cannot bind a port. List the specs that exercise your change under `e2e_specs_to_run`; the reviewer runs them on chromium and webkit.
+- Known baseline failures are listed in your prompt; do not try to fix them unless a step says so.
+
+### Report
+Your final message is JSON matching the schema you were given. Every acceptance criterion gets `met` and `evidence` — a `file:line` or a command result. "Implemented as planned" is not evidence. When a review finding is wrong, dispute it with evidence instead of complying.
 
 ## Plan Drift Lessons
+
+Append-only. Each bullet is a general cause behind a real review finding; Claude adds one at the close of every delegated plan that produced a new one.
+
 - Map every design-plan requirement to a concrete implementation target before editing: component, route, fixture, and expected visual/state outcome.
 - Test the page state that proves the feature. If the change affects a hero image, choose a route with a hero image; do not let conditional assertions create fake coverage.
 - Respect component boundaries. Svelte scoped styles cannot style markup rendered inside child components unless using an owned wrapper plus `:global(...)` descendants where appropriate.
@@ -147,11 +175,20 @@ State the responsive ladder you chose, any canvas value you deliberately did not
 - **Pure computation / canvas / math → a plain module** in `src/scripts/` (`garden/curveUtils`, `garden/grassCanvas`, `analytics`). Rule of thumb: if it queries the DOM it belongs in a component or action; if it only computes, it stays a module.
 - **Page-level script in an `.astro` layout → `initOnLoad()`** from `src/utils/initOnLoad.ts`. It runs the callback exactly once per page view and re-runs on view-transition navigations. Return a cleanup function from the callback — it is invoked before the next run and on `astro:before-swap`.
 
+### Styling: translate to utilities, don't transcribe declarations
+
+Tailwind owns layout, spacing, colour, typography, responsive and state. A scoped `<style>` block is justified **only** when a rule needs a selector Tailwind cannot write (`:global()`, `[data-*]`, combinators, `::before`, `:has()`, `:nth-*`), a property it has no utility for (`mask`, `clip-path`, `content`, `grid-template-areas`, `transform-origin`, `will-change`), `@keyframes`, or a **two-token** `color-mix()`. The one-token form `color-mix(in srgb, var(--token) N%, transparent)` is just `bg-token/N`.
+
+When a rule qualifies, put only the qualifying declarations in it — one `mask` must not drag twenty layout declarations along. A raw value used three or more times is a missing `@theme` token, not an arbitrary utility; a repeated multi-declaration idiom is a missing `@utility`.
+
+This matters most on design imports: a `.dc.html` is inline CSS, and pasting its declarations into `<style>` is how 541 lines of scoped CSS appeared in one day. Full rule and translation table under *Design Implementation Guidelines* above.
+
 ### Astro/Svelte boundaries (learned the hard way)
 
 - A Svelte component **cannot render an `.astro` child**, cannot `await` during render, and cannot reach `astro:assets`, `astro:content` or the `Astro` global.
 - When a component needs any of those, use the **resolver/view split**: a thin `.astro` does the async work and passes flat, serialisable props to a `.svelte` view. See `Link.astro` + `LinkView.svelte`, `Image.astro` + `ImageLightbox.svelte`, `Webmentions.astro` + `WebmentionsView.svelte`.
 - Images: resolve with `optimizeImage()` / `optimizePicture()` (`src/utils/optimizeImage.ts`) on the Astro side, render with `ui/OptimizedImage.svelte` / `ui/OptimizedPicture.svelte`. Those two must stay `<style>`-free, or Svelte stamps a scoping class onto the `<img>`.
+- **The corollary: a parent's scoped styles cannot reach into them either.** A class passed down as a prop crosses the component boundary; Svelte's scoping hash does not. A rule written in the parent for an element declared in the child compiles to `.thing.svelte-hash`, matches nothing, and is silently stripped with a `css_unused_selector` warning — this shipped the note-post hero image with no aspect-ratio, border or radius at all. Style a wrapper the parent owns and reach the child with `.wrapper :global(img)`, which scopes the wrapper half and globalises only the descendant. Prefer that to a bare `:global(.some-class)`, which publishes a generic name into the global sheet. To check without a build: `compile(src, { css: 'external' }).warnings.filter(w => w.code === 'css_unused_selector')`.
 - A component passed through the MDX components map **cannot carry a `client:*` directive** ([astro#5853](https://github.com/withastro/astro/issues/5853)) — but an `.astro` component used in MDX can. That is what the thin wrappers (`Image.astro`, `VideoBreakout.astro`, `TocPillDemo.astro`) are for.
 - `Astro.url` is unavailable in Svelte — pass `pathname` as a prop.
 - Astro's `transition:name` directive has no Svelte equivalent — set `style="view-transition-name: …"`, which is what it compiles to.
