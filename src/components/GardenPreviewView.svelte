@@ -72,7 +72,7 @@
         Visit garden
       </Button>
     </div>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 items-start gap-6 md:grid-cols-3">
       {#each cards as { post, image } (post.id)}
         <ContentCard
           title={post.data.title}
