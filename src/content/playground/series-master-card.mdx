@@ -1,0 +1,60 @@
+---
+title: 'The series master card'
+description: 'A card that stands for a whole set of posts: fixed height, a list that scrolls inside it, and one big link with smaller links stacked on top.'
+pubDate: 'Sep 17 2026'
+tags: ['design', 'tech', 'animation']
+publish: true
+maturity: 'plant'
+---
+
+Every other card on this site stands for one thing. A note, an essay, this playground page. One title, one date, one place to go, so the whole card can just be a link and be done with it.
+
+A series isn't one thing. It's four or five posts with an order to them, and the card has to say two things at once: here's the series, and here are the parts of it. The moment you put the parts on the card, the card stops being a link. It becomes a link with more links inside it, and nearly every problem I ran into came out of that one sentence.
+
+I rebuilt this at the end of June, in the same stretch where I was fixing the [table of contents pill](/playground/floating-table-of-contents/). It had been bothering me in the way things bother you when they look correct. Nothing was visibly wrong, it just didn't behave the way I expected, and I kept not looking closely enough to find out why.
+
+## The card itself
+
+The layout takes one line to describe. A featured image on one side, and on the other the series title, its description, the list of posts in that series, and a View all button pinned at the bottom.
+
+The part that matters is that it's a fixed height object. On a phone it stacks, image on top, with a `min-height` of `34rem`. In the desktop row layout it's a flat `height: 470px`, and I measured it again today to be sure. It's 470. Not "roughly". That number is the whole design decision, because a card in a grid next to other cards cannot be allowed to grow with its contents. A three part series and an eight part series have to be the same object.
+
+So the list scrolls inside the card instead of the card growing to fit it. On the live series page right now there's 288px of list sitting in a 233px box. Overflowing is the normal state here, not an edge case.
+
+<SeriesCardDemo />
+
+## One big link, full of smaller links
+
+The whole card is clickable. That's a blanket anchor stretched across it, `position: absolute; inset: 0; z-index: 10`, which works fine right up until you want something inside the card to be clickable too.
+
+The post list and the footer sit at `z-index: 20`, above the blanket. So each row is its own link and wins the click on its own pixels.
+
+I hit-tested the middle of the second row both ways, because I didn't trust myself on this one. At `z-20` that click resolves to `/series/portfolio-to-garden/learning-to-build/`, the actual part. Drop the list below the blanket link and the identical click, same pixel, resolves to `/series/portfolio-to-garden/` instead, the series index. Nothing moves. Nothing looks different. You just quietly land on the wrong page.
+
+The demo below is the broken version, deliberately. Both demos on this page report back which link received your click, so click a row in each. The wrong one is convincing, which is sort of the point, it doesn't read as a bug. It reads as the site ignoring you.
+
+<SeriesCardDemo variant="swallowed" />
+
+## Scrolling past the end
+
+The list has `overscroll-behavior: contain`. One declaration, and all it does is stop a scroll from continuing into the page once the list hits its bottom.
+
+Without it you get scroll chaining, the browser default. You reach the end of the inner list and the rest of your gesture keeps going, taking the page with it. I tested it with an identical five notch wheel scroll starting from the bottom of the list. With `contain`, the page moved 0px. With `auto`, it moved 500px. Same gesture, half a screen of difference.
+
+Five hundred pixels is enough to lose the thing you were reading, and you can't even attribute it. It just feels like the page lurched at you. There's no demo of that one here, deliberately. A page that hijacks your scroll to make a point about hijacked scrolling has rather missed the point.
+
+## The small things that took the longest
+
+The bottom edge of the list is faded with a mask, `linear-gradient(to bottom, #000 calc(100% - 1.5rem), transparent)`, so the last visible row dissolves rather than being sliced in half by the card's edge. A hard cut reads as the end of the list. A fade reads as more below, and it's the only thing in the entire card telling you it scrolls at all.
+
+Row hover is wrapped in a hand written `@media (hover: hover) and (pointer: fine)`, not Tailwind's `hover:` variant. Tailwind's compiles down to `(hover: hover)` only and drops the `pointer: fine` half, which means on a touch device the hover state fires on tap and then sits there after your finger has gone. The utility is about 95% right, and the missing 5% is exactly the case I needed it for.
+
+What the hover does is tiny. The arrow slides 3px right and picks up the link colour. `transform 200ms var(--ease-snappy), color 150ms ease`. Two properties, two durations, two easings, which is why it stayed as CSS, there's no transition utility pair that can say that. I doubt anyone has consciously noticed, but 200ms of colour feels sluggish and 150ms of movement feels twitchy, so they get different numbers.
+
+All of it is off under `prefers-reduced-motion`.
+
+## What it actually was
+
+Almost none of this turned out to be design. The proportions, the image, the type, that was an afternoon. The rest is a stacking context, one overflow property and a gradient mask, and all three are completely invisible when they're right.
+
+Which is more or less what I said about the TOC pill, so either I keep learning this or I keep forgetting it. Probably both.

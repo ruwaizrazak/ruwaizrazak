@@ -28,6 +28,7 @@ import SideBySide from './sideBySide.astro';
 // Interactive (.astro for now — these become island wrappers in Phase 4)
 import VideoBreakout from '../VideoBreakout.astro';
 import TocPillDemo from './TocPillDemo.astro';
+import SeriesCardDemo from './SeriesCardDemo.astro';
 
 // Static Svelte components — zero JS
 import Callout from './Callout.svelte';
@@ -66,6 +67,7 @@ export const mdxComponents = {
   SideBySide,
   VideoBreakout,
   TocPillDemo,
+  SeriesCardDemo,
   Callout,
   SideNote,
   WorkSection,
