@@ -81,7 +81,9 @@
             />
           </div>
         {:else}
-          <div class="garden-feature-grid grid grid-cols-1 items-start gap-5 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <!-- LEARN: --garden-cols is the single source for the column count, so the
+               note-band height rule below can derive one column's width from it. -->
+          <div class="garden-feature-grid @container grid grid-cols-(--garden-cols) items-start gap-5 [--garden-cols:1] md:[--garden-cols:2] lg:[--garden-cols:3] xl:[--garden-cols:4]">
             {#each packGardenGrid(group.posts) as { post: card, spans } (card.id)}
               {@const span = gardenSpan(card.collection)}
               <div
@@ -156,3 +158,17 @@
     </div>
   {/if}
 </section>
+
+<style>
+  /* LEARN: .card-band is 16:10, so a note stretched to 2 columns would grow twice
+     as tall as its neighbours. Pin its height to a 1-column card's band instead:
+     one column = (grid width − gaps) / cols, minus the card's 20px padding and
+     1px border on each side. 100cqw is the grid's width (@container on it).
+     Essays keep their own wide-variant layout, so they are excluded. */
+  .garden-feature-grid > :not([data-collection='essays']) :global(.card-band) {
+    aspect-ratio: auto;
+    height: calc(
+      ((100cqw - var(--spacing) * 5 * (var(--garden-cols) - 1)) / var(--garden-cols) - 42px) * 10 / 16
+    );
+  }
+</style>

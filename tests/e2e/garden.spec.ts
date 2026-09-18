@@ -131,6 +131,26 @@ test.describe('garden layout', () => {
     }
   });
 
+  test('a stretched note grows sideways only: its band matches a 1-column note', async ({ page }) => {
+    // 1100px packs grid0 as essay | note(1) + note(2), so both widths are on the page.
+    for (const width of [800, 1100, 1440]) {
+      await page.setViewportSize({ width, height: 900 });
+      await page.goto(ROUTES.garden);
+      await waitForGardenHydration(page);
+
+      const bands = await page
+        .locator('.garden-feature-grid > [data-collection="notes"] .card-band')
+        .evaluateAll((nodes) => nodes.map((node) => node.getBoundingClientRect()).map((r) => ({ w: r.width, h: r.height })));
+      const heights = bands.map((band) => band.h);
+
+      if (width === 1100) {
+        const widths = bands.map((band) => band.w);
+        expect(Math.max(...widths), 'a 2-column note exists at 1100px').toBeGreaterThan(Math.min(...widths) * 1.5);
+      }
+      expect(Math.max(...heights) - Math.min(...heights), `band heights at ${width}px`).toBeLessThanOrEqual(1);
+    }
+  });
+
   // Playground entries are all `publish: false`, so /garden has no playground card to
   // assert on. Re-add a playground date check here once one is published.
   test('note cards show maturity while essays show dates', async ({ page }) => {
