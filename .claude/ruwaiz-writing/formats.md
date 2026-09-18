@@ -27,18 +27,14 @@ The `OneLiner` is short and lowercase-style ("Learning Swift again, finishing Gh
 - `## Section Title 🎮` — subsections with optional emoji at the end of the heading. Not every section needs an emoji, but many do.
 - Sections cover whatever was actually happening: health, learning, games, work, projects, gratitude, life.
 - Includes work-in-progress thoughts. Doesn't have to be conclusive.
-- Image embeds: `<img src="..." alt="..."/>` or `<PolaroidImage ... />` for special framing.
-- Internal links use the `<Link href="..." />` component imported from `'../../components/mdxComponents/Link.astro'`.
+- Image embeds: `<img src="..." alt="..."/>`, or `<Image src="..." alt="..." />` for an optimised image with the zoomable lightbox.
+- Internal links use the `<Link href="..." />` component (no import needed).
 
 **Voice register**: Conversational, philosophical, slightly meandering. Asides and emojis welcome. Missing apostrophes are fine (he won't always fix them).
 
 **Closing**: A single reflective beat that lingers. Not a summary of the month.
 
-**Imports** (when needed):
-```
-import Link from '../../components/mdxComponents/Link.astro';
-import PolaroidImage from '../../components/mdxComponents/PolaroidImage.astro';
-```
+**Imports**: none. Every MDX component (`Link`, `Image`, `ImagesLeft`, `SideBySide`, `SideNote`, `Callout`, `Quote`, `TargetAudience`, `References`, …) is registered globally in `src/components/mdxComponents/map.ts`, so write the tag directly. Adding an `import` line is unnecessary, and a stale path breaks the build.
 
 ## 2. Notes
 
@@ -99,23 +95,14 @@ publish: true
 **Conventions**:
 - Often includes `<TargetAudience description="..." />` near the top to frame who the piece is for.
 - Heavy use of section headings: `# Section`, `## Subsection`, `### Sub-subsection`.
-- Custom MDX components for layout: `<Image>`, `<ImagesLeft>`, `<SideBySide>`, `<SideNote>`, `<H3>`, `<References>`.
+- Custom MDX components for layout: `<Image>`, `<ImagesLeft>`, `<SideBySide>`, `<SideNote>`, `<References>`.
 - Citations and references at the end via `<References references={[...]} />` (usage below). It's registered globally in `mdxComponents/map.ts`, so it needs no import.
 - Industry vocabulary used confidently (NURR, MAU, retention, archetypes, coreloop, meta loop).
 - Still has voice: undercuts, asides, occasional emoji.
 
 **Voice register**: Most rigorous, but still recognisably him. Don't over-formalise. The CODM essay is the model — analytical depth, casual seasoning.
 
-**Common imports**:
-```
-import Link from '../../components/mdxComponents/Link.astro';
-import Image from '../../components/mdxComponents/Image.astro';
-import ImagesLeft from '../../components/mdxComponents/ImagesLeft.astro';
-import TargetAudience from '../../components/mdxComponents/targetedAudience.astro';
-import SideBySide from '../../components/mdxComponents/sideBySide.astro';
-import SideNote from '../../components/mdxComponents/SideNote.astro';
-import H3 from '../../components/mdxComponents/H3.astro';
-```
+**Imports**: none. Every MDX component (`Link`, `Image`, `ImagesLeft`, `SideBySide`, `SideNote`, `Callout`, `Quote`, `TargetAudience`, `References`, …) is registered globally in `src/components/mdxComponents/map.ts`, so write the tag directly. Adding an `import` line is unnecessary, and a stale path breaks the build.
 
 **References**: one `<References>` block at the end of the piece. It renders as a grouped shelf, and the group comes from the URL:
 - **no `url`** → *Books*: a cover card, not a link (add `isbn` for an Open Library cover)
