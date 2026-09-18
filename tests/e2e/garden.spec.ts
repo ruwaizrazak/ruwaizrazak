@@ -163,6 +163,23 @@ test.describe('garden layout', () => {
     }
   });
 
+  test('a wide essay image fills the card height', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto(ROUTES.garden);
+    await waitForGardenHydration(page);
+
+    const essays = await page.locator('.garden-feature-grid > [data-collection="essays"] .card-shell-wide').evaluateAll((nodes) =>
+      nodes.map((card) => {
+        const style = getComputedStyle(card);
+        const inner = card.getBoundingClientRect().height - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom)
+          - parseFloat(style.borderTopWidth) - parseFloat(style.borderBottomWidth);
+        return { inner, band: card.querySelector('.card-band')!.getBoundingClientRect().height };
+      }),
+    );
+    expect(essays.length).toBeGreaterThan(0);
+    for (const essay of essays) expect(Math.abs(essay.band - essay.inner)).toBeLessThanOrEqual(1);
+  });
+
   test('a stretched note grows sideways only: its band matches a 1-column note', async ({ page }) => {
     // 1100px packs grid0 as essay | note(1) + note(2), so both widths are on the page.
     for (const width of [800, 1100, 1440]) {
