@@ -3,7 +3,7 @@
   import ContentCard from '../ContentCard.svelte';
   import type { GardenCardProps } from '../../types';
   import { urlForEntry } from '../../utils/urls';
-  import { gardenSpan, groupGardenPostsByDate } from '../../utils/gardenLayout';
+  import { GARDEN_PLACEMENT_CLASS, gardenPlacementStyle, gardenSpan, packGardenGrid } from '../../utils/gardenLayout';
 
   /**
    * LEARN: this component also absorbs the only thing
@@ -36,8 +36,6 @@
   });
   let revealed = $state(false);
 
-  const gardenGroups = $derived(groupGardenPostsByDate(cards));
-
   function delayFor(card: GardenCardProps) {
     return cards.indexOf(card) * 40;
   }
@@ -46,78 +44,44 @@
 
 <section class="garden-cards-section pb-40">
   {#if layout === 'garden'}
-    <div class="flex flex-col gap-5">
-      {#each gardenGroups as group}
-        {#if group.type === 'series'}
-          {@const card = group.post}
-          <div
-            class={[
-              'garden-card-item post-item',
-              {
-                'cascade-pending transform-[translateY(8px)] opacity-0 motion-reduce:transform-none motion-reduce:opacity-100': mounted && !revealed,
-                'cascade-in transform-[translateY(0)] opacity-100 transition-[opacity,transform] duration-300 ease-[ease] motion-reduce:transition-none': revealed,
-              },
-            ]}
-            style={`transition-delay: ${delayFor(card)}ms`}
-            data-tags={card.tags.join(' ')}
-            data-collection={card.collection}
-            data-date={card.pubDate?.toISOString?.()}
-          >
-            <ContentCard
-              title={card.title}
-              description={card.description}
-              pubDate={card.pubDate}
-              url={urlForEntry(card.collection, card.id)}
-              image={card.image}
-              maturity={card.maturity}
-              collection={card.collection}
-              variant="series"
-              headingLevel={2}
-              startedDate={card.startedDate}
-              lastUpdated={card.lastUpdated}
-              postCount={card.postCount}
-              posts={card.posts}
-              transitionName={`card-${card.collection}-${card.id}`}
-            />
-          </div>
-        {:else}
-          <div class="garden-feature-grid">
-            {#each group.posts as card (card.id)}
-              {@const span = gardenSpan(card.collection)}
-              <div
-                class={[
-                  'garden-card-item post-item',
-                  {
-                    'garden-span-wide': span === 'wide',
-                    'cascade-pending transform-[translateY(8px)] opacity-0 motion-reduce:transform-none motion-reduce:opacity-100': mounted && !revealed,
-                    'cascade-in transform-[translateY(0)] opacity-100 transition-[opacity,transform] duration-300 ease-[ease] motion-reduce:transition-none': revealed,
-                  },
-                ]}
-                style={`transition-delay: ${delayFor(card)}ms`}
-                data-tags={card.tags.join(' ')}
-                data-collection={card.collection}
-                data-date={card.pubDate?.toISOString?.()}
-              >
-                <ContentCard
-                  title={card.title}
-                  description={card.description}
-                  pubDate={card.pubDate}
-                  url={urlForEntry(card.collection, card.id)}
-                  image={card.image}
-                  maturity={card.maturity}
-                  collection={card.collection}
-                  variant={span}
-                  headingLevel={2}
-                  startedDate={card.startedDate}
-                  lastUpdated={card.lastUpdated}
-                  postCount={card.postCount}
-                  posts={card.posts}
-                  transitionName={`card-${card.collection}-${card.id}`}
-                />
-              </div>
-            {/each}
-          </div>
-        {/if}
+    <!-- LEARN: one grid for every card. Series, essays and notes all take a width
+         and a position per breakpoint from packGardenGrid, passed as custom
+         properties because Tailwind cannot see per-card numbers. Grid items
+         stretch by default, so every card in a row shares the row's height. -->
+    <div class="garden-feature-grid @container grid grid-cols-[repeat(var(--garden-cols),minmax(0,1fr))] gap-5 [--garden-cols:1] md:[--garden-cols:2] lg:[--garden-cols:3] xl:[--garden-cols:4]">
+      {#each packGardenGrid(cards) as { post: card, spans, orders } (card.id)}
+        <div
+          class={[
+            `garden-card-item post-item ${GARDEN_PLACEMENT_CLASS}`,
+            {
+              'cascade-pending transform-[translateY(8px)] opacity-0 motion-reduce:transform-none motion-reduce:opacity-100': mounted && !revealed,
+              'cascade-in transform-[translateY(0)] opacity-100 transition-[opacity,transform] duration-300 ease-[ease] motion-reduce:transition-none': revealed,
+            },
+          ]}
+          style={`transition-delay: ${delayFor(card)}ms; ${gardenPlacementStyle(spans, orders)}`}
+          data-tags={card.tags.join(' ')}
+          data-collection={card.collection}
+          data-spans={`${spans.md}-${spans.lg}-${spans.xl}`}
+          data-orders={`${orders.md}-${orders.lg}-${orders.xl}`}
+          data-date={card.pubDate?.toISOString?.()}
+        >
+          <ContentCard
+            title={card.title}
+            description={card.description}
+            pubDate={card.pubDate}
+            url={urlForEntry(card.collection, card.id)}
+            image={card.image}
+            maturity={card.maturity}
+            collection={card.collection}
+            variant={card.collection === 'series' ? 'series' : gardenSpan(card.collection)}
+            headingLevel={2}
+            startedDate={card.startedDate}
+            lastUpdated={card.lastUpdated}
+            postCount={card.postCount}
+            posts={card.posts}
+            transitionName={`card-${card.collection}-${card.id}`}
+          />
+        </div>
       {/each}
     </div>
   {:else}
@@ -156,3 +120,30 @@
     </div>
   {/if}
 </section>
+
+<style>
+  /* LEARN: .card-band is 16:10, so a note stretched to 2 columns would grow twice
+     as tall as its neighbours. Pin its height to a 1-column card's band instead:
+     one column = (grid width − gaps) / cols, minus the card's 20px padding and
+     1px border on each side. 100cqw is the grid's width (@container on it).
+     Essays keep their own wide-variant layout and series panels have no band. */
+  .garden-feature-grid > :not([data-collection='essays']):not([data-collection='series']) :global(.card-band) {
+    aspect-ratio: auto;
+    height: calc(
+      ((100cqw - var(--spacing) * 5 * (var(--garden-cols) - 1)) / var(--garden-cols) - 42px) * 10 / 16
+    );
+  }
+
+  /* LEARN: the grid stretches each cell to its row's height; the card fills the
+     cell and an ordinary card's .card-footer sits on the bottom edge, so a row
+     reads as one band. The series panel keeps its own layout and fixed md height
+     (!important). .card-shell is unlayered in global.css, so this needs a scoped
+     selector, not a utility. */
+  .garden-feature-grid > * > :global(.card-shell) {
+    height: 100%;
+  }
+
+  .garden-feature-grid > * :global(.card-footer) {
+    margin-top: auto;
+  }
+</style>

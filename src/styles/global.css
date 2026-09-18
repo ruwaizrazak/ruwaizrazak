@@ -207,36 +207,6 @@
   .card-shell:active { transform: none; }
 }
 
-/* LEARN: Dense flow lets a 1-column note fill the leftover slot beside a wide
-   essay, so the garden keeps a deliberate rhythm without visible holes. */
-.garden-feature-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 20px;
-  grid-auto-flow: row dense;
-  align-items: start;
-}
-
-@media (min-width: 768px) {
-  .garden-feature-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .garden-span-wide { grid-column: span 2; }
-}
-
-@media (min-width: 1024px) {
-  .garden-feature-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-
-@media (min-width: 1280px) {
-  .garden-feature-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-  .garden-span-wide { grid-column: span 3; }
-}
-
-
-
-
-
 @layer base {
   textarea {
     width: 100%;

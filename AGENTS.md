@@ -37,6 +37,8 @@ Append-only. Each bullet is a general cause behind a real review finding; Claude
 - **A component embedded in an MDX article must render no heading elements.** `TocPill` scans `h1, h2, h3` inside `.note-layout article` and keys its `{#each}` by heading id. A demo card that renders its title as an `<h3>` therefore puts a heading into the article, and two copies of it on one page put in two with the same slug — which throws `each_key_duplicate`, leaves the real TOC pill rendering **zero rows**, and pollutes the document outline. `TocPillDemoView.svelte` states this rule for its own fake headings; it applies to every illustrative component, for the card title, the section label and anything else that merely looks like a heading. Use `<p>` or `<div>` with the same classes.
 - **Read the console and look at the page; assertions alone will not tell you.** Two real defects shipped through a green build, 94 passing unit tests, a baseline-clean integrity suite, a clean scope check and a scoped e2e spec: a third of a card rendering blank (a sized `.card-collection-icon` computing to `display: inline` outside a flex parent, so it measured 0×0), and the heading leak above. The first was caught by looking at a screenshot, the second only by `smoke.spec.ts`'s console-error sweep in the **full** suite. Run the full suite before calling a change done, and open the page with the console visible.
 
+- **Tailwind v4's `utility-(--var)` shorthand drops the custom property in verbatim, and it does not build the value for you.** `grid-cols-(--cols)` compiles to `grid-template-columns: var(--cols)`, so a variable holding `4` produces invalid CSS; the browser silently falls back to content-sized tracks. Keep the variable as a count and write the track list yourself: `grid-cols-[repeat(var(--cols),minmax(0,1fr))]`. `col-span-(--x)` and `order-(--x)` are fine, because their property takes a bare number. A test that only checks each row adds up to the full width can't catch this, since uneven columns still sum to 100%. Pin each card's width to span × column + (span − 1) × gap.
+
 ## Design Implementation Guidelines (Claude Design imports)
 
 Applies whenever the plan's source is a `.dc.html` file from a Claude Design project.
@@ -123,6 +125,28 @@ Colour-space notation is the opposite case — a false alarm. Tailwind's `bg-tok
 ### Reporting back
 
 State the responsive ladder you chose, any canvas value you deliberately did not ship and why, the ownership map, and which checks you ran. Flag content edits separately and loudly — changing published writing is never a silent implementation detail.
+
+## Svelte Best Practice (Svelte MCP)
+
+Every Svelte change follows the current Svelte 5 docs and passes the official autofixer. The Svelte MCP server gives you access to comprehensive Svelte 5 and SvelteKit documentation. `npx sv add ai-tools` enabled it for Claude Code as the `svelte@svelte` plugin in `.claude/settings.json`. Clients with no MCP (Codex) use the matching `@sveltejs/mcp` CLI commands below.
+
+This site is **Astro + Svelte 5, not SvelteKit.** Use the Svelte docs sections. Ignore SvelteKit-only guidance (routing, `+page`/`+layout` files, load functions, form actions, adapters). Astro owns all of that here. The Astro/Svelte boundary rules under *Modularization Rules* still win.
+
+### Available Svelte MCP tools
+
+1. **list-sections**: use this FIRST to discover all available documentation sections. It returns a structured list with titles, `use_cases` and paths. When a task involves Svelte, ALWAYS call it at the start to find the relevant sections.
+   CLI: `npx -y @sveltejs/mcp list-sections`
+2. **get-documentation**: retrieves the full content of one or more sections. After `list-sections`, you MUST analyze the returned sections (especially `use_cases`) and fetch ALL of them that are relevant to the task.
+   CLI: `npx -y @sveltejs/mcp get-documentation 'svelte/$state,svelte/$effect'`
+3. **svelte-autofixer**: analyzes Svelte code and returns issues and suggestions. You MUST run it on every `.svelte` / `.svelte.ts` file you write or change, before calling the work done. Keep re-running it until it returns no issues and no suggestions.
+   CLI: `npx -y @sveltejs/mcp svelte-autofixer 'src/components/garden/GardenCards.svelte'` (defaults to Svelte 5; returns `issues`, `suggestions`, `require_another_tool_call_after_fixing`)
+4. **playground-link**: generates a Svelte Playground link for code. Offer one only when the code was not written into this project, and only after the user says yes. NEVER for code written to files here.
+
+### Applying it
+
+- **Claude:** use the MCP tools. When reviewing a Codex diff, run the autofixer on every changed `.svelte` file as part of the review.
+- **Codex:** run the CLI autofixer on each `.svelte` file you touched, and list it under `checks_run` with its verbatim output. `npx` needs the network. If the sandbox can't reach it, say so in the report; never skip it silently.
+- **Where they conflict:** an autofixer suggestion that conflicts with a rule in this file (e.g. one that adds a `class:` directive for a Tailwind utility, or an idempotency guard in an island) is a stop, not a silent choice. Report it and keep this file's rule.
 
 ## Code Style & Conventions
 - PascalCase for components (e.g., `ContentCard.astro`)

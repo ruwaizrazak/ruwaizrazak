@@ -73,7 +73,11 @@
 {/snippet}
 
 {#snippet cardBand()}
-  <span class="card-band-stack flex min-w-0 flex-col">
+  <!-- LEARN: from md, a wide essay's band drops its 16:10 ratio and fills the
+       card's height, so its bg-cover image stretches with the row (like the
+       series panel) instead of floating at the top. `!` is needed because
+       .card-band is an unlayered rule in global.css. -->
+  <span class={['card-band-stack flex min-w-0 flex-col', { 'md:h-full': isWide }]}>
     {#if isSeriesCollection}
       <span class="mx-4 h-[5px] rounded-t-xl border border-b-0 border-card-border bg-cardbg" aria-hidden="true"></span>
       <span class="mx-2 h-[5px] rounded-t-xl border border-b-0 border-card-border bg-cardbg" aria-hidden="true"></span>
@@ -84,6 +88,7 @@
         {
           'bg-syoro/5': isNote || !image,
           '!border-dashed': isPlayground,
+          'md:!aspect-auto md:flex-1': isWide,
         },
       ]}
     >
