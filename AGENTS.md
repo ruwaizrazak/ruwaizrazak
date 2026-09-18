@@ -214,6 +214,8 @@ This matters most on design imports: a `.dc.html` is inline CSS, and pasting its
 - Reusable MDX layout patterns belong in `src/components/mdxComponents/` as Astro components (e.g., `WorkSection.astro`, `WorkImageGrid.astro`) — MDX files should import components, not duplicate Tailwind classes
 - Keep inline `<script>` blocks in `.astro` files to ≤10 lines — if logic grows beyond that, it probably wants to be an island
 - One module per feature is fine when concerns share state; don't over-split into files that need to pass context between each other
+- **`References` is the one MDX component allowed a heading.** It renders a single `<h2 id="references">` so the reference list keeps its entry in the TOC pill (there is one per page, and the id is fixed). Its group labels (Books / From the garden / On the web) are plain text, never headings. Every other MDX component still follows the no-headings rule in Plan Drift Lessons.
+- **Remote book covers are the one exception to Astro `<Image />`.** `References` draws Open Library covers (only for entries with an `isbn`) as lazy CSS backgrounds on a sized `div`, unoptimised, because they are third-party, optional and resolved from content at render time. Every site-owned image still goes through `<Image />` / `optimizeImage()`.
 
 ## Commenting Guidelines (Learning-Oriented)
 When modifying code, add concise comments that help the user learn:

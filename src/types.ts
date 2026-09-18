@@ -84,3 +84,46 @@ export interface WebMentionCache {
   lastFetched: string | null;
   children: WebMention[];
 }
+
+// References shelf — src/components/mdxComponents/references.svelte, grouped by src/utils/references.ts
+export type ReferenceKind = 'book' | 'garden' | 'web';
+
+export interface ReferenceInput {
+  title: string;
+  url?: string;
+  author?: string;
+  year?: string;
+  publisher?: string;
+  isbn?: string;
+  kind?: ReferenceKind;
+}
+
+export type GardenCollection = 'notes' | 'essays' | 'series' | 'playground';
+
+export interface BookReference {
+  title: string;
+  href: string | null;
+  author: string | null;
+  meta: string;
+  cover: string | null;
+}
+
+export interface GardenReference {
+  title: string;
+  href: string;
+  collection: GardenCollection | null;
+  label: string;
+}
+
+export interface WebReference {
+  title: string;
+  href: string;
+  byline: string;
+  host: string;
+}
+
+export interface ReferenceGroups {
+  books: BookReference[];
+  garden: GardenReference[];
+  web: WebReference[];
+}
