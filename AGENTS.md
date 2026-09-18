@@ -14,9 +14,13 @@ The canonical rules for every agent working in this repo. `CLAUDE.md` imports th
 - `npm run build` — production build
 - `npm run preview` — preview built site
 
+## Git branches
+
+**No agent creates, switches, renames or deletes a git branch unless the user explicitly asks for it in the current conversation.** Work and commit on the branch that is checked out. This overrides `BRANCH_POLICY` in `.agents/profile.sh`, the Codex runbook and any script message. If a step seems to need a branch, stop and ask. (Codex already has no git write access; this binds Claude and every other agent.)
+
 ## Executing a Claude plan
 
-The executor contract is global: "Executing a Claude plan" in `~/.codex/AGENTS.md` (source: `~/.agents/codex-workflow/contracts/executor.md`). What is specific to this repo lives in **`.agents/profile.sh`**: the checks Codex runs (build, unit, integrity), the ones only the reviewer can run (Playwright on chromium + webkit, which cannot bind a port in the sandbox), protected paths (`package.json`, the lockfile, `src/content/**`), the added-line scan rules, and the known baseline failures. Plans live in `docs/plans/`; branches are `codex/<plan-base>`.
+The executor contract is global: "Executing a Claude plan" in `~/.codex/AGENTS.md` (source: `~/.agents/codex-workflow/contracts/executor.md`). What is specific to this repo lives in **`.agents/profile.sh`**: the checks Codex runs (build, unit, integrity), the ones only the reviewer can run (Playwright on chromium + webkit, which cannot bind a port in the sandbox), protected paths (`package.json`, the lockfile, `src/content/**`), the added-line scan rules, and the known baseline failures. Plans live in `docs/plans/`.
 
 Edits to published writing under `src/content/` are never an implementation detail — a step must list the file literally, and it is reported under `content_edits`.
 
@@ -210,6 +214,8 @@ This matters most on design imports: a `.dc.html` is inline CSS, and pasting its
 - Reusable MDX layout patterns belong in `src/components/mdxComponents/` as Astro components (e.g., `WorkSection.astro`, `WorkImageGrid.astro`) — MDX files should import components, not duplicate Tailwind classes
 - Keep inline `<script>` blocks in `.astro` files to ≤10 lines — if logic grows beyond that, it probably wants to be an island
 - One module per feature is fine when concerns share state; don't over-split into files that need to pass context between each other
+- **`References` is the one MDX component allowed a heading.** It renders a single `<h2 id="references">` so the reference list keeps its entry in the TOC pill (there is one per page, and the id is fixed). Its group labels (Books / From the garden / On the web) are plain text, never headings. Every other MDX component still follows the no-headings rule in Plan Drift Lessons.
+- **Remote book covers are the one exception to Astro `<Image />`.** `References` draws Open Library covers (only for entries with an `isbn`) as lazy CSS backgrounds on a sized `div`, unoptimised, because they are third-party, optional and resolved from content at render time. Every site-owned image still goes through `<Image />` / `optimizeImage()`.
 
 ## Commenting Guidelines (Learning-Oriented)
 When modifying code, add concise comments that help the user learn:

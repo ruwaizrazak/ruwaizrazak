@@ -41,4 +41,8 @@ export const ROUTES = {
   pageWithLightbox: '/works/01Farmville3/',
   /** Garden strip canvas + tag chips over a post grid. */
   pageWithGardenStrip: '/garden/',
+  /** Three URL-less books and one web link: the References shelf's books + web groups. */
+  pageWithBookReferences: '/essays/aidsingames/',
+  /** Five web links: the References shelf with a single group. */
+  pageWithWebReferences: '/essays/deconstructionofcodm/',
 } as const;
