@@ -17,8 +17,9 @@ interface Props {
   posts: any[];
   sortedTags: string[];
   layout?: 'grid' | 'garden';
+  collection?: string;
 }
-const { title, description, posts, layout = 'grid' } = Astro.props;
+const { title, description, posts, layout = 'grid', collection } = Astro.props;
 
 const cardVariantCollections = new Set(['essays', 'playground']);
 // LEARN: Content entries contain their complete source body. Project only the
@@ -58,7 +59,7 @@ const treeIndices = Array.from({ length: 8 }, () => Math.floor(Math.random() * T
   <Header />
 </div>
 <main class="px-5 md:px-20">
-  <GardenIntro title={title} description={description} />
+  <GardenIntro title={title} description={description} collection={collection} />
   <!-- LEARN: client:visible — the cascade is an entrance animation, so there is
        nothing to do until the grid is on screen. -->
   <GardenCards client:visible cards={cards} layout={layout} />

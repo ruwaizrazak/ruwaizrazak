@@ -63,3 +63,30 @@ test.describe('post hero accents', () => {
     await expect(page.locator('.hero-eyebrow')).toHaveCSS('color', DARK.tokusa);
   });
 });
+
+test.describe('index hero accents', () => {
+  const indexHero = (page: Page) => page.locator('section#note-hero-content');
+
+  test('each collection index tints its hero band', async ({ page }) => {
+    await page.goto(ROUTES.garden);
+    const neutral = await indexHero(page).evaluate((el) => getComputedStyle(el).backgroundColor);
+
+    for (const [route, accent] of [
+      [ROUTES.essaysIndex, 'essays'],
+      [ROUTES.notesIndex, 'notes'],
+      [ROUTES.seriesIndex, 'series'],
+      ['/playground/', 'playground'],
+    ] as const) {
+      await page.goto(route);
+      await expect(indexHero(page)).toHaveAttribute('data-accent', accent);
+      expect(await indexHero(page).evaluate((el) => getComputedStyle(el).backgroundColor)).not.toBe(neutral);
+    }
+  });
+
+  test('mixed listings keep the neutral hero', async ({ page }) => {
+    for (const route of [ROUTES.garden, '/tags/ai/']) {
+      await page.goto(route);
+      await expect(indexHero(page)).not.toHaveAttribute('data-accent', /.+/);
+    }
+  });
+});
