@@ -57,8 +57,15 @@
   });
 </script>
 
-{#snippet collectionMark(imageClass = 'size-[15px] shrink-0 opacity-70 dark:invert')}
-  <img src={collectionIcon} alt={`${label} icon`} class={imageClass} />
+{#snippet collectionMark(iconClass = '')}
+  <!-- LEARN: a mask icon paints in currentColor, so it follows the card accent
+       in both themes; the old <img> needed opacity + dark:invert and stayed grey.
+       Decorative: the eyebrow text already names the collection. -->
+  <span
+    class={['card-collection-icon', iconClass]}
+    style={`--card-icon: url('${collectionIcon}')`}
+    aria-hidden="true"
+  ></span>
 {/snippet}
 
 {#snippet contentImage(imageClass: string)}
@@ -86,7 +93,7 @@
       class={[
         'card-band',
         {
-          'bg-syoro/5': isNote || !image,
+          'bg-card-accent/6 dark:bg-card-accent/10': isNote || !image,
           '!border-dashed': isPlayground,
           'md:!aspect-auto md:flex-1': isWide,
         },
@@ -95,11 +102,11 @@
       {#if image}
         {@render contentImage('garden-card-image h-full w-full')}
       {:else}
-        {@render collectionMark('size-[34px] opacity-30 dark:invert')}
+        {@render collectionMark('!size-[34px] text-card-accent/50')}
       {/if}
       {#if isPlayground}
         <span
-          class="absolute right-2.5 bottom-2.5 rounded-full border border-card-border bg-cardbg px-2 py-[3px] font-mono text-[9px] tracking-[0.12em] uppercase text-syoro"
+          class="absolute right-2.5 bottom-2.5 rounded-full border border-card-border bg-cardbg px-2 py-[3px] font-mono text-[9px] tracking-[0.12em] uppercase text-card-accent"
         >Interactive</span>
       {/if}
     </span>
@@ -116,14 +123,15 @@
 {#if isSeries}
   <article
     class="card-shell card-shell-series group relative !flex min-h-[34rem] !flex-col !gap-0 overflow-hidden !p-0 md:!h-[520px] md:min-h-0 md:!flex-row"
+    data-collection={collectionKey}
     style={vtStyle}
   >
     <a href={url} class="absolute inset-0 z-10" aria-label={`View the ${title} series`}></a>
-    <div class="flex h-56 items-center justify-center overflow-hidden bg-syoro/5 sm:h-64 md:h-full md:w-[48%] md:shrink-0 md:border-r md:border-r-card-border">
+    <div class="flex h-56 items-center justify-center overflow-hidden bg-card-accent/6 dark:bg-card-accent/10 sm:h-64 md:h-full md:w-[48%] md:shrink-0 md:border-r md:border-r-card-border">
       {#if image}
         {@render contentImage('h-full w-full')}
       {:else}
-        {@render collectionMark('size-[34px] opacity-30 dark:invert')}
+        {@render collectionMark('!size-[34px] text-card-accent/50')}
       {/if}
     </div>
 
@@ -135,22 +143,22 @@
       {#if posts.length > 0}
         <svelte:element
           this={postsHeadingTag}
-          class="mt-5 mb-2.5 font-sans text-[14px] font-medium tracking-eyebrow uppercase text-syoro"
+          class="mt-5 mb-2.5 font-sans text-[14px] font-medium tracking-eyebrow uppercase text-card-accent"
         >Posts in this series</svelte:element>
         <ul class="relative z-20 flex max-h-[14.5rem] min-h-0 flex-col gap-2 overflow-y-auto overscroll-contain pr-1">
           {#each posts as post, index (post.url)}
             <li class="shrink-0">
               <a
                 href={post.url}
-                class="series-post-row group/row flex h-18 items-center gap-3.5 rounded-xl bg-syoro/5 p-3.5 transition-[background-color] duration-150 ease-[ease] hover:bg-syoro/10"
+                class="series-post-row group/row flex h-18 items-center gap-3.5 rounded-xl bg-card-accent/5 p-3.5 transition-[background-color] duration-150 ease-[ease] hover:bg-card-accent/10"
               >
-                <span class="shrink-0 font-mono text-[11px] tracking-meta text-muted">Part {index + 1}</span>
+                <span class="shrink-0 font-mono text-[11px] tracking-meta text-card-accent">Part {index + 1}</span>
                 <span class="min-w-0 flex-1">
                   <span class="block overflow-hidden font-serif text-[17px] font-medium text-ellipsis whitespace-nowrap text-syoro">{post.title}</span>
                   {#if post.description}<span class="mt-0.5 block truncate font-serif text-[14px] text-muted">{post.description}</span>{/if}
                 </span>
                 <svg
-                  class="size-[18px] shrink-0 text-muted transition-[transform,color] duration-200 ease-snappy group-hover/row:translate-x-[3px] group-hover/row:text-link motion-reduce:transition-none motion-reduce:group-hover/row:translate-x-0"
+                  class="size-[18px] shrink-0 text-muted transition-[transform,color] duration-200 ease-snappy group-hover/row:translate-x-[3px] group-hover/row:text-card-accent motion-reduce:transition-none motion-reduce:group-hover/row:translate-x-0"
                   viewBox="0 0 24 24"
                   fill="none"
                   aria-hidden="true"
@@ -167,7 +175,7 @@
         {#if seriesMeta}<p class="card-meta uppercase">{seriesMeta}</p>{/if}
         <a
           href={url}
-          class="series-view-all relative z-20 shrink-0 rounded-full bg-konpeki px-[22px] py-3 font-sans text-base font-medium tracking-[0.08em] text-white uppercase transition-[transform,opacity] duration-150 ease-snappy hover:text-white hover:opacity-90 active:scale-[0.97] motion-reduce:transition-none motion-reduce:active:scale-100"
+          class="series-view-all relative z-20 shrink-0 rounded-full bg-card-accent px-[22px] py-3 font-sans text-base font-medium tracking-[0.08em] text-on-accent uppercase transition-[transform,opacity] duration-150 ease-snappy hover:text-on-accent hover:opacity-90 active:scale-[0.97] motion-reduce:transition-none motion-reduce:active:scale-100"
         >View all</a>
       </footer>
     </div>
@@ -196,11 +204,11 @@
         ]}
       >{title}</svelte:element>
       {#if description}<span class={[cardType.description, 'card-description line-clamp-2', { 'md:line-clamp-2': isWide }]}>{description}</span>{/if}
-      <span class={['card-footer', { 'border-t border-dashed border-t-syoro/25 pt-2.5': isNote }]}>
+      <span class={['card-footer', { 'border-t border-dashed border-t-card-accent/30 pt-2.5': isNote }]}>
         <span class="card-meta">
           {isSeriesCollection && lastUpdated ? `Updated ${formatDate(lastUpdated)}` : formattedDate}
         </span>
-        {#if maturity}<MaturityBadge {maturity} />{/if}
+        {#if maturity}<MaturityBadge {maturity} textClass={`${cardType.meta} text-muted`} />{/if}
       </span>
     </span>
   </a>
