@@ -3,6 +3,7 @@
   import { getMaturityIcon } from '../utils/maturityIcons';
   import OptimizedPictureView from './ui/OptimizedPicture.svelte';
   import { formatDate } from '../utils/formatDate';
+  import { ACCENT_COLLECTIONS } from '../consts';
 
   interface Props {
     title: string;
@@ -41,10 +42,14 @@
     playground: 'Playground',
     series: 'Series',
     seriesPosts: 'Series',
+    live: 'Live',
   };
   const collectionLabel = $derived(collectionLabels[collection] ?? collection);
   const collectionHref = $derived(`/${collectionKey}/`);
-  const collectionIcon = $derived(`/icons/${collectionKey}.svg`);
+  const iconOverrides: Record<string, string> = { live: 'garden' };
+  const collectionIcon = $derived(`/icons/${iconOverrides[collectionKey] ?? collectionKey}.svg`);
+  // LEARN: only the four garden collections carry an accent; /live keeps the neutral hero.
+  const isAccented = $derived((ACCENT_COLLECTIONS as readonly string[]).includes(collectionKey));
 
   const formattedDate = $derived(formatDate(pubDate, 'short'));
   const formattedUpdatedDate = $derived(updatedDate ? formatDate(updatedDate, 'short') : undefined);
@@ -56,7 +61,11 @@
 
 <section
   id="note-hero-content"
-  class="full-bleed mt-6 mb-10 border-b border-b-card-border bg-syoro/5 pt-10 pb-2.5 md:pt-14"
+  data-accent={isAccented ? collectionKey : undefined}
+  class={[
+    'full-bleed mt-6 mb-10 border-b border-b-card-border pt-10 pb-2.5 md:pt-14',
+    isAccented ? 'bg-card-accent/6 dark:bg-card-accent/10' : 'bg-syoro/5',
+  ]}
 >
   <!-- LEARN: px ladder matches <main>'s px-6/md:px-12/lg:px-20 rather than the
        design's flat 28px — the hero is a full-bleed breakout OUT of main, so
@@ -65,7 +74,7 @@
     <div class="hero-eyebrow-row mb-[22px] flex flex-wrap items-center gap-3.5">
       <a
         href={collectionHref}
-        class="hero-eyebrow inline-flex items-center gap-2 font-sans text-eyebrow font-medium tracking-eyebrow uppercase text-konpeki"
+        class="hero-eyebrow inline-flex items-center gap-2 font-sans text-eyebrow font-medium tracking-eyebrow uppercase text-card-accent"
       >
         <span
           class="card-collection-icon"
@@ -111,7 +120,7 @@
           {#each tags as tag (tag)}
             <a
               href={`/tags/${tag.toLowerCase()}`}
-              class="tracking-[0.06em] normal-case text-muted transition-[color,font-style] duration-150 ease-[ease] hover:text-konpeki hover:italic"
+              class="tracking-[0.06em] normal-case text-muted transition-[color,font-style] duration-150 ease-[ease] hover:text-card-accent hover:italic"
             >{tagLabel(tag)}</a>
           {/each}
         </nav>

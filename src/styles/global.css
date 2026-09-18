@@ -162,10 +162,11 @@
 /* LEARN: the accent is keyed on .card-shell[data-collection], not on any
    [data-collection]: notesPost.astro puts data-collection on <main>, and the
    article, hero and prose must not inherit a card accent. */
-.card-shell[data-collection='essays'] { --card-accent: var(--color-konpeki); }
-.card-shell[data-collection='notes'] { --card-accent: var(--color-tokusa); }
-.card-shell[data-collection='series'] { --card-accent: var(--color-kincha); }
-.card-shell[data-collection='playground'] { --card-accent: var(--color-shu); }
+/* [data-accent] is the opt-in for non-card surfaces (hero bands); set it on the band only. */
+.card-shell[data-collection='essays'], [data-accent='essays'] { --card-accent: var(--color-konpeki); }
+.card-shell[data-collection='notes'], [data-accent='notes'] { --card-accent: var(--color-tokusa); }
+.card-shell[data-collection='series'], [data-accent='series'] { --card-accent: var(--color-kincha); }
+.card-shell[data-collection='playground'], [data-accent='playground'] { --card-accent: var(--color-shu); }
 
 .card-shell:focus-visible,
 .card-shell-series:focus-within {
