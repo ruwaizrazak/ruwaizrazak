@@ -72,18 +72,63 @@ test.describe('garden layout', () => {
     expect(essayBox?.width ?? 0).toBeGreaterThan((noteBox?.width ?? 0) * 1.5);
   });
 
-  test('dense packing fills the slot beside the first essay', async ({ page }) => {
-    await page.setViewportSize({ width: 1280, height: 900 });
-    await page.goto(ROUTES.garden);
-    await waitForGardenHydration(page);
+  test('every garden grid row is full and cards read in date order', async ({ page }) => {
+    // md = 2, lg = 3, xl = 4 columns
+    for (const width of [800, 1100, 1440]) {
+      await page.setViewportSize({ width, height: 900 });
+      await page.goto(ROUTES.garden);
+      await waitForGardenHydration(page);
 
-    const firstEssay = page.locator('.garden-feature-grid [data-collection="essays"]').first();
-    const firstEssayBox = await firstEssay.boundingBox();
-    const noteBoxes = await page
-      .locator('.garden-feature-grid [data-collection="notes"]')
-      .evaluateAll((nodes) => nodes.map((node) => node.getBoundingClientRect().toJSON() as DOMRect));
+      // offsetTop/offsetLeft ignore the entrance cascade's staggered translateY,
+      // so cards in the same row share a top even mid-animation.
+      const grids = await page.locator('.garden-feature-grid').evaluateAll((nodes) =>
+        nodes.map((grid) => {
+          const style = getComputedStyle(grid);
+          return {
+            width: grid.clientWidth,
+            gap: parseFloat(style.columnGap),
+            cols: style.gridTemplateColumns.split(' ').length,
+            items: [...grid.children].map((child, index) => {
+              const el = child as HTMLElement;
+              return {
+                index,
+                collection: el.dataset.collection,
+                top: el.offsetTop,
+                left: el.offsetLeft,
+                width: el.getBoundingClientRect().width,
+              };
+            }),
+          };
+        }),
+      );
+      expect(grids.length).toBeGreaterThan(0);
 
-    expect(noteBoxes.some((box) => Math.abs(box.y - (firstEssayBox?.y ?? -9999)) <= 2)).toBe(true);
+      for (const grid of grids) {
+        const rows = new Map<number, typeof grid.items>();
+        for (const item of grid.items) rows.set(item.top, [...(rows.get(item.top) ?? []), item]);
+        const tops = [...rows.keys()].sort((a, b) => a - b);
+
+        const visualOrder = tops.flatMap((top) =>
+          rows.get(top)!.sort((a, b) => a.left - b.left).map((item) => item.index),
+        );
+        expect(visualOrder, `visual order at ${width}px`).toEqual(grid.items.map((item) => item.index));
+
+        const column = (grid.width - grid.gap * (grid.cols - 1)) / grid.cols;
+        tops.forEach((top, rowIndex) => {
+          const row = rows.get(top)!;
+          const filled = row.reduce((sum, item) => sum + item.width, 0) + grid.gap * (row.length - 1);
+          if (Math.abs(filled - grid.width) <= 2) return;
+
+          // Only the final row may be short, and only when every card in it is a note
+          // already at the 2-column cap, so nothing could have grown to close the gap.
+          expect(rowIndex, `short row that is not the last, at ${width}px`).toBe(tops.length - 1);
+          for (const item of row) {
+            expect(item.collection, `short-row card at ${width}px`).not.toBe('essays');
+            expect(Math.abs(item.width - (column * 2 + grid.gap)), `capped note at ${width}px`).toBeLessThanOrEqual(2);
+          }
+        });
+      }
+    }
   });
 
   test('note cards show maturity while essays and playground show dates', async ({ page }) => {

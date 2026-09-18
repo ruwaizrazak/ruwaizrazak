@@ -3,7 +3,7 @@
   import ContentCard from '../ContentCard.svelte';
   import type { GardenCardProps } from '../../types';
   import { urlForEntry } from '../../utils/urls';
-  import { gardenSpan, groupGardenPostsByDate } from '../../utils/gardenLayout';
+  import { gardenSpan, gardenSpanClass, groupGardenPostsByDate, packGardenGrid } from '../../utils/gardenLayout';
 
   /**
    * LEARN: this component also absorbs the only thing
@@ -81,14 +81,13 @@
             />
           </div>
         {:else}
-          <div class="garden-feature-grid">
-            {#each group.posts as card (card.id)}
+          <div class="garden-feature-grid grid grid-cols-1 items-start gap-5 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {#each packGardenGrid(group.posts) as { post: card, spans } (card.id)}
               {@const span = gardenSpan(card.collection)}
               <div
                 class={[
-                  'garden-card-item post-item',
+                  `garden-card-item post-item ${gardenSpanClass(spans)}`,
                   {
-                    'garden-span-wide': span === 'wide',
                     'cascade-pending transform-[translateY(8px)] opacity-0 motion-reduce:transform-none motion-reduce:opacity-100': mounted && !revealed,
                     'cascade-in transform-[translateY(0)] opacity-100 transition-[opacity,transform] duration-300 ease-[ease] motion-reduce:transition-none': revealed,
                   },
@@ -96,6 +95,7 @@
                 style={`transition-delay: ${delayFor(card)}ms`}
                 data-tags={card.tags.join(' ')}
                 data-collection={card.collection}
+                data-spans={`${spans.md}-${spans.lg}-${spans.xl}`}
                 data-date={card.pubDate?.toISOString?.()}
               >
                 <ContentCard
