@@ -64,6 +64,7 @@
   --color-kincha:#8A5A12;         /* series accent */
   --color-shu:#B33E1A;            /* playground accent */
   --color-on-accent:#ffffff;      /* text on a filled accent (series "View all") */
+  --color-prose-link:#0B63CE;     /* links inside reading text (≈5.6:1 on white) */
 
   /* LEARN: design-system values that kept escaping as arbitrary utilities.
      Each of these was repeated 4-8 times as `text-[15px]` / `tracking-[0.16em]`
@@ -93,6 +94,17 @@
   --color-card-accent: var(--card-accent, var(--color-konpeki));
 }
 
+/* LEARN: typography colours prose via --tw-prose-* vars; pointing them (and the
+   -invert- twins dark:prose-invert swaps to) at our tokens fixes lists and markers at once. */
+@utility prose-tokens {
+  --tw-prose-body: var(--color-syoro);
+  --tw-prose-bullets: var(--color-muted);
+  --tw-prose-counters: var(--color-muted);
+  --tw-prose-invert-body: var(--color-syoro);
+  --tw-prose-invert-bullets: var(--color-muted);
+  --tw-prose-invert-counters: var(--color-muted);
+}
+
 @layer theme {
   .dark {
     --color-backgroundcolor: #1a1a1a;
@@ -109,6 +121,7 @@
     --color-kincha: #E0B56A;
     --color-shu: #F29A7A;
     --color-on-accent: #1a1a1a;
+    --color-prose-link: #6bb3ff;
   }
 }
 
