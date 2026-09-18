@@ -131,7 +131,9 @@ test.describe('garden layout', () => {
     }
   });
 
-  test('note cards show maturity while essays and playground show dates', async ({ page }) => {
+  // Playground entries are all `publish: false`, so /garden has no playground card to
+  // assert on. Re-add a playground date check here once one is published.
+  test('note cards show maturity while essays show dates', async ({ page }) => {
     await page.goto(ROUTES.garden);
     await waitForGardenHydration(page);
 
@@ -140,9 +142,6 @@ test.describe('garden layout', () => {
 
     const essay = page.locator('.garden-feature-grid [data-collection="essays"]').first();
     await expect(essay.locator('.card-meta')).toContainText(/\d{4}/);
-
-    const playground = page.locator('.garden-feature-grid [data-collection="playground"]').first();
-    await expect(playground.locator('.card-meta')).toContainText(/\d{4}/);
   });
 
   test('keeps cards visible when reduced motion is preferred', async ({ page }) => {
