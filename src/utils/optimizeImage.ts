@@ -1,5 +1,6 @@
 import { getImage } from 'astro:assets';
 import { resolveImage } from './resolveImage';
+import { coverSizes, type SizeSlot } from './coverSizes';
 
 /**
  * A plain, serialisable description of an optimized image.
@@ -42,6 +43,8 @@ export async function optimizeImage(path?: string): Promise<OptimizedImg | null>
 /** A resolved <picture>: modern-format sources plus the fallback <img>. */
 export interface OptimizedPicture {
   sources: { srcset: string; type: string }[];
+  /** `sizes` for every <source>; set only when the sources carry a width srcset. */
+  sizes?: string;
   img: OptimizedImg;
 }
 
@@ -74,6 +77,34 @@ export async function optimizePicture(
   const fallback = await getImage({ src: meta, format: fallbackFormat });
   return {
     sources,
+    img: { src: fallback.src, width: meta.width, height: meta.height, passthrough: false },
+  };
+}
+
+/** Candidate widths for card images; getImage() drops any wider than the source. */
+export const CARD_WIDTHS = [320, 480, 640, 800, 960, 1200, 1600];
+
+// LEARN: a width srcset lets the browser fetch only the pixels its slot needs; on a phone that is a
+// 480–1200w file instead of the 1200–1600w original. Same <Picture> shape as optimizePicture().
+export async function optimizeCoverPicture(
+  path: string | undefined,
+  slots: SizeSlot[],
+  boxAspect: number,
+): Promise<OptimizedPicture | null> {
+  if (!path) return null;
+  const meta = resolveImage(path);
+  if (!meta) return { sources: [], img: { src: path, passthrough: true } };
+
+  const sources = await Promise.all(
+    (['avif', 'webp'] as const).map(async (format) => {
+      const out = await getImage({ src: meta, format, widths: CARD_WIDTHS });
+      return { srcset: out.srcSet.attribute, type: `image/${format}` };
+    }),
+  );
+  const fallback = await getImage({ src: meta, format: 'webp' });
+  return {
+    sources,
+    sizes: coverSizes(slots, boxAspect, meta.width, meta.height),
     img: { src: fallback.src, width: meta.width, height: meta.height, passthrough: false },
   };
 }

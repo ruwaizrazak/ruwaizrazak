@@ -4,7 +4,7 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import IntroSection from '../components/IntroSection.astro';
 import SelectedWorksSection from '../components/SelectedWorksSection.svelte';
-import { toWorkCards } from '../utils/workCards';
+import { toWorkCards, WORK_CARD_SLOTS } from '../utils/workCards';
 import GardenPreview from '../components/GardenPreview.astro';
 
 import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
@@ -17,7 +17,7 @@ const works = await getCollection('works', ({ data }) => data.publish);
 // numeric file-name prefixes (01Farmville3, 02EmpiresAndAllies, 03DeerHunter2018)
 works.sort((a, b) => a.id.localeCompare(b.id));
 // LEARN: SelectedWorksSection is Svelte — resolve hero images here.
-const workCards = await toWorkCards(works);
+const workCards = await toWorkCards(works, WORK_CARD_SLOTS.home);
 
 // LEARN: Homepage garden strip is essays-only; notes stay on /garden
 const gardenPosts = (await getPublishedAndSorted('essays')).slice(0, 3);
