@@ -131,12 +131,16 @@ const siteSchema = {
 <meta property="twitter:description" content={description} />
 <meta property="twitter:image" content={new URL(image, Astro.url)} />
 
-<!-- Google tag (gtag.js) -->
-<script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}></script>
+<!-- LEARN: gtag.js (~168 KB) is injected after the load event, when the browser is idle, so it never
+     competes with first paint. window.gtag must be global: analytics.ts calls it for custom events. -->
 <script define:vars={{ GA_ID }}>
   window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
+  window.gtag = function () { dataLayer.push(arguments); };
   gtag('js', new Date());
-
   gtag('config', GA_ID);
+  addEventListener('load', () => (window.requestIdleCallback || setTimeout)(() => {
+    const s = document.createElement('script');
+    s.async = true; s.src = `https://www.googletagmanager.com/gtag/js?id=${GA_ID}`;
+    document.head.append(s);
+  }), { once: true });
 </script>

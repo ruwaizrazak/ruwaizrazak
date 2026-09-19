@@ -29,7 +29,7 @@
 
 <figure class="my-10 md:my-16 py-6 border-y border-syoro/10 dark:border-syoro/20">
   {#if caption}
-    <figcaption class="font-serif text-xs md:text-sm text-syoro/60 dark:text-syoro/50 mb-8">
+    <figcaption class="font-serif text-xs md:text-sm text-syoro/70 dark:text-syoro/50 mb-8">
       {caption}
     </figcaption>
   {/if}

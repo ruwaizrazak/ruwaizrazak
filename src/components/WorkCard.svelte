@@ -22,7 +22,7 @@
   <div class="flex flex-col md:flex-row gap-8 md:gap-12 items-start">
     <!-- Card metadata (sticky on desktop) -->
     <div class="work-card-content flex w-full flex-col gap-2 md:sticky md:top-[30vh] md:w-1/3">
-      <p class={`${cardType.meta} text-syoro/60`}>{duration}</p>
+      <p class={`${cardType.meta} text-syoro/70`}>{duration}</p>
       <h2 class={`${cardType.title} text-syoro`}>{title}</h2>
       <h3 class={`${cardType.meta} text-syoro`}>{role}</h3>
       {#if description}

@@ -137,7 +137,7 @@
     >{readout}</p>
   </div>
 
-  <figcaption class="mt-2 font-serif text-xs text-syoro/60 md:text-sm dark:text-syoro/50">
+  <figcaption class="mt-2 font-serif text-xs text-syoro/70 md:text-sm dark:text-syoro/50">
     {resolvedCaption}
   </figcaption>
 </figure>

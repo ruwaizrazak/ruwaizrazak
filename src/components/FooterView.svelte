@@ -89,7 +89,7 @@
       <nav class="flex min-w-0 flex-col gap-3.5" aria-label="Site index">
         <div class="flex items-center gap-3.5">
           <span
-            class="font-sans text-[14px] font-semibold tracking-[0.18em] uppercase text-syoro/60"
+            class="font-sans text-[14px] font-semibold tracking-[0.18em] uppercase text-syoro/70"
           >
             Index
           </span>
@@ -105,7 +105,7 @@
                 class="flex items-baseline justify-between gap-3 border-b border-b-syoro/10 py-[13px] font-sans text-[20px] font-medium tracking-[0.02em] text-syoro no-underline transition-[color,padding-inline-start] duration-200 ease-snappy hover:ps-1.5 hover:text-konpeki motion-reduce:transition-none motion-reduce:hover:ps-0"
               >
                 {link.label}
-                <span class="font-mono text-label tracking-meta text-muted/65" aria-hidden="true">
+                <span class="font-mono text-label tracking-meta text-muted" aria-hidden="true">
                   {String(i + 1).padStart(2, '0')}
                 </span>
               </a>
