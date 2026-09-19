@@ -39,3 +39,9 @@ known_baseline_failure "tests/integrity/seo.test.ts › images › gives content
 # four fail. `mobile-chrome` is a Pixel 7 profile, i.e. a touch device with no hover, and the spec drives
 # `locator.hover()` — the hover never resolves and each test times out at 30s. Chromium and webkit pass.
 known_baseline_failure "tests/e2e/tooltips.spec.ts › link tooltips › (all four) — mobile-chrome only: hover on a touch device"
+
+# Verified 2026-09-19: both playground posts are intentionally `publish: false` (commit b95acf3, the user's choice), so
+# getStaticPathsForCollection() builds no route for them and every demo spec lands on a 404 before its first assertion.
+# 15 tests × 3 projects = 45 failures; the baseline export fails the same 45. Remove these when the posts are published.
+known_baseline_failure "tests/e2e/toc-anatomy.spec.ts › the TOC pill showcase › (all eight, all projects) — /playground/floating-table-of-contents/ is publish:false, 404"
+known_baseline_failure "tests/e2e/series-card-demo.spec.ts › the series card showcase › (all seven, all projects) — /playground/series-master-card/ is publish:false, 404"
