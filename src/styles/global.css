@@ -47,7 +47,7 @@
   --color-syoro:#003535;
   --color-konpeki:#004A8F;
   --color-backgroundcolor:#ffffff;
-  --color-link:#1A86FF;
+  --color-link:#0071F0;
 
   /* LEARN: the Garden "floating shelf" (1c) palette. These are defined here AND
      overridden in .dark below, so `bg-chip` / `hover:bg-surface-hover` /

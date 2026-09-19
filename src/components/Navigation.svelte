@@ -436,6 +436,9 @@
       <div class="md:hidden flex items-center gap-2">
         <button
           id="mobile-menu-button"
+          aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+          aria-expanded={mobileOpen}
+          aria-controls="mobile-sidebar"
           onclick={() => (mobileOpen = !mobileOpen)}
           class="inline-flex items-center justify-center p-2 rounded-md text-syoro hover:text-link hover:bg-syoro/10 dark:hover:bg-syoro/10 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-syoro/20 dark:focus:ring-syoro/20 transition-colors"
         >
