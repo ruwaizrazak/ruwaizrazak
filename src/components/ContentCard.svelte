@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { ContentCardProps } from '../types';
+  import type { ClassValue } from 'svelte/elements';
   import { cardType } from '../styles/typography';
   import { formatDate } from '../utils/formatDate';
   import MaturityBadge from './MaturityBadge.svelte';
@@ -32,7 +33,6 @@
   const collectionKey = $derived(collection === 'seriesPosts' ? 'series' : collection);
   const label = $derived(collectionLabels[collection] ?? collection);
   const collectionIcon = $derived(`/icons/${collectionKey}.svg`);
-  const titleTag = $derived(`h${headingLevel}` as 'h2' | 'h3');
   const postsHeadingTag = $derived(`h${Math.min(headingLevel + 1, 6)}` as 'h3' | 'h4');
   const formattedDate = $derived(formatDate(pubDate));
   const isSeries = $derived(variant === 'series');
@@ -66,6 +66,16 @@
     style={`--card-icon: url('${collectionIcon}')`}
     aria-hidden="true"
   ></span>
+{/snippet}
+
+{#snippet titleHeading(className: ClassValue)}
+  <!-- LEARN: static tags, not <svelte:element>. Hydrating a dynamic element
+       detaches and re-inserts it, and a click whose press straddles that is lost. -->
+  {#if headingLevel === 2}
+    <h2 class={className}>{title}</h2>
+  {:else}
+    <h3 class={className}>{title}</h3>
+  {/if}
 {/snippet}
 
 {#snippet contentImage(imageClass: string)}
@@ -137,7 +147,7 @@
 
     <div class="flex min-w-0 flex-1 flex-col p-5">
       {@render eyebrowRow(postCount != null ? `Series · ${postCount} ${postCount === 1 ? 'part' : 'parts'}` : 'Series')}
-      <svelte:element this={titleTag} class={`${cardType.title} card-title md:!text-[30px] md:!leading-[1.15]`}>{title}</svelte:element>
+      {@render titleHeading(`${cardType.title} card-title md:!text-[30px] md:!leading-[1.15]`)}
       {#if description}<p class={`${cardType.description} card-description`}>{description}</p>{/if}
 
       {#if posts.length > 0}
@@ -195,14 +205,11 @@
     {@render cardBand()}
     <span class="flex min-w-0 flex-1 flex-col gap-3">
       {@render eyebrowRow(eyebrow)}
-      <svelte:element
-        this={titleTag}
-        class={[
-          cardType.title,
-          'card-title',
-          { 'md:!text-[26px] md:!leading-[1.15]': isWide },
-        ]}
-      >{title}</svelte:element>
+      {@render titleHeading([
+        cardType.title,
+        'card-title',
+        { 'md:!text-[26px] md:!leading-[1.15]': isWide },
+      ])}
       {#if description}<span class={[cardType.description, 'card-description line-clamp-2', { 'md:line-clamp-2': isWide }]}>{description}</span>{/if}
       <span class={['card-footer', { 'border-t border-dashed border-t-card-accent/30 pt-2.5': isNote }]}>
         <span class="card-meta">
