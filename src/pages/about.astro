@@ -8,12 +8,12 @@ import Link from '../components/mdxComponents/Link.astro';
 import WorkCardCompact from '../components/WorkCardCompact.svelte';
 import Layout from '../layouts/AboutLayout.astro';
 import { getPublishedAndSorted } from '../utils/collections';
-import { toWorkCardsCompact } from '../utils/workCards';
+import { toWorkCardsCompact, WORK_CARD_COMPACT_SLOTS } from '../utils/workCards';
 
 const gardenPosts = (await getPublishedAndSorted('essays')).slice(0, 3);
 
 const works = await getCollection('works', ({ data }) => data.publish === true);
-const workCards = await toWorkCardsCompact(works);
+const workCards = await toWorkCardsCompact(works, WORK_CARD_COMPACT_SLOTS.about);
 
 const facts = [
   { label: 'Now', value: 'Senior UX Designer, Nordeus' },

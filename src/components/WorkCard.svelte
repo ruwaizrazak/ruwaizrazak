@@ -1,7 +1,7 @@
 <script lang="ts">
-  import type { OptimizedImg } from '../utils/optimizeImage';
+  import type { OptimizedPicture as PictureData } from '../utils/optimizeImage';
   import { cardType } from '../styles/typography';
-  import OptimizedImage from './ui/OptimizedImage.svelte';
+  import OptimizedPicture from './ui/OptimizedPicture.svelte';
 
   interface Props {
     /** Plain data lifted off the works CollectionEntry by the .astro parent. */
@@ -11,7 +11,7 @@
     duration: string;
     href: string;
     /** LEARN: resolved by the .astro parent — Svelte can't reach astro:assets. */
-    image?: OptimizedImg | null;
+    image?: PictureData | null;
   }
 
   let { title, description, role, duration, href, image = null }: Props = $props();
@@ -31,12 +31,19 @@
     </div>
     <!-- Hero image with CSS parallax zoom (see .work-card-image in global.css) -->
     <div class="w-full md:w-2/3 overflow-hidden rounded-lg group-hover:border-4 group-hover:border-blue-200">
-      <OptimizedImage
-        {image}
-        alt={title}
-        class="work-card-image w-full aspect-[4/3] object-cover"
-        fallbackClass="w-full aspect-[4/3] bg-gray-200 dark:bg-gray-700"
-      />
+      {#if image}
+        <!-- LEARN: `contents` drops the <picture> box so the <img> stays the sized element; an inline
+             <picture> inside a flex parent measured 0×0 (plan P3). -->
+        <OptimizedPicture
+          picture={image}
+          alt={title}
+          loading="lazy"
+          pictureClass="contents"
+          class="work-card-image w-full aspect-[4/3] object-cover"
+        />
+      {:else}
+        <div class="w-full aspect-[4/3] bg-gray-200 dark:bg-gray-700"></div>
+      {/if}
     </div>
   </div>
 </a>
