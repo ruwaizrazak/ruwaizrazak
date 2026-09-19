@@ -40,7 +40,7 @@ export const proseClasses = [
 
 export const notePostProseClasses = [
   // Base
-  'prose prose-neutral dark:prose-invert max-w-[760px]',
+  'prose prose-neutral dark:prose-invert prose-tokens max-w-[760px]',
   // Paragraphs
   // LEARN: The design rhythm uses margins here rather than container gap,
   // because @tailwindcss/typography already owns prose element spacing.

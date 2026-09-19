@@ -12,6 +12,7 @@ interface Props {
   icon?: string;
   showTags?: boolean;
   layout?: 'grid' | 'garden';
+  collection?: string;
 }
 
 const {
@@ -20,6 +21,7 @@ const {
   posts,
   tags = ['all'],
   layout = 'grid',
+  collection,
 } = Astro.props;
 
 const sortedTags = [...tags.filter(tag => tag !== 'all').sort()];
@@ -43,6 +45,7 @@ const sortedTags = [...tags.filter(tag => tag !== 'all').sort()];
       posts={posts}
       sortedTags={sortedTags}
       layout={layout}
+      collection={collection}
     />
 
     <Footer />

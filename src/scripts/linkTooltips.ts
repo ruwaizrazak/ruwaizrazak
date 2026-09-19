@@ -29,7 +29,7 @@ let instances: Instance[] = [];
 let loading: Promise<void> | null = null;
 
 async function bindAll(): Promise<void> {
-  const { default: tippy } = await import('tippy.js');
+  const { default: tippy, inlinePositioning } = await import('tippy.js');
   document.querySelectorAll<HTMLElement>(SELECTOR).forEach((el) => {
     // Skip elements that already have a tippy instance (e.g. after client-side navigation)
     if ((el as unknown as { _tippy?: Instance })._tippy) return;
@@ -40,6 +40,10 @@ async function bindAll(): Promise<void> {
         delay: [300, 100],
         maxWidth: 320,
         placement: 'top',
+        // LEARN: links are inline now and can wrap. inlinePositioning anchors the
+        // tooltip to the link's first line instead of the box around all its lines.
+        inlinePositioning: true,
+        plugins: [inlinePositioning],
         arrow: true,
         appendTo: document.body,
       }),

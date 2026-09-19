@@ -104,6 +104,7 @@ const minutesToRead = activePart ? readingTime(activePart.body ?? '') : undefine
             updatedDate={seriesDoc.data.lastUpdated}
             picture={seriesPicture}
             tags={seriesDoc.data.tags ?? []}
+            collection="series"
           />
         )}
 

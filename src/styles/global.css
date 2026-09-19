@@ -57,6 +57,15 @@
   --color-surface-hover:#FAF7F0;  /* shelf item hover wash */
   --color-muted:#5c7070;          /* shelf item description */
 
+  /* LEARN: per-collection card accents. Each ContentCard sets --card-accent
+     from its data-collection (below), so one set of utilities
+     (text-card-accent, bg-card-accent/6) paints four collections. */
+  --color-tokusa:#3D5D42;         /* notes accent */
+  --color-kincha:#8A5A12;         /* series accent */
+  --color-shu:#B33E1A;            /* playground accent */
+  --color-on-accent:#ffffff;      /* text on a filled accent (series "View all") */
+  --color-prose-link:#0B63CE;     /* links inside reading text (≈5.6:1 on white) */
+
   /* LEARN: design-system values that kept escaping as arbitrary utilities.
      Each of these was repeated 4-8 times as `text-[15px]` / `tracking-[0.16em]`
      etc., which is the signal for a missing token rather than a one-off. Tailwind
@@ -79,6 +88,23 @@
   --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);   /* iOS-like; used by view transitions */
 }
 
+/* LEARN: `inline` makes the utility read var(--card-accent) at the element,
+   instead of resolving it once on :root where no card has set it yet. */
+@theme inline {
+  --color-card-accent: var(--card-accent, var(--color-konpeki));
+}
+
+/* LEARN: typography colours prose via --tw-prose-* vars; pointing them (and the
+   -invert- twins dark:prose-invert swaps to) at our tokens fixes lists and markers at once. */
+@utility prose-tokens {
+  --tw-prose-body: var(--color-syoro);
+  --tw-prose-bullets: var(--color-muted);
+  --tw-prose-counters: var(--color-muted);
+  --tw-prose-invert-body: var(--color-syoro);
+  --tw-prose-invert-bullets: var(--color-muted);
+  --tw-prose-invert-counters: var(--color-muted);
+}
+
 @layer theme {
   .dark {
     --color-backgroundcolor: #1a1a1a;
@@ -91,6 +117,11 @@
     --color-chip: #22313d;
     --color-surface-hover: #343434;
     --color-muted: #a9b8b8;
+    --color-tokusa: #9CC5A1;
+    --color-kincha: #E0B56A;
+    --color-shu: #F29A7A;
+    --color-on-accent: #1a1a1a;
+    --color-prose-link: #6bb3ff;
   }
 }
 
@@ -128,6 +159,15 @@
 
 .card-panel { padding: 20px; }
 
+/* LEARN: the accent is keyed on .card-shell[data-collection], not on any
+   [data-collection]: notesPost.astro puts data-collection on <main>, and the
+   article, hero and prose must not inherit a card accent. */
+/* [data-accent] is the opt-in for non-card surfaces (hero bands); set it on the band only. */
+.card-shell[data-collection='essays'], [data-accent='essays'] { --card-accent: var(--color-konpeki); }
+.card-shell[data-collection='notes'], [data-accent='notes'] { --card-accent: var(--color-tokusa); }
+.card-shell[data-collection='series'], [data-accent='series'] { --card-accent: var(--color-kincha); }
+.card-shell[data-collection='playground'], [data-accent='playground'] { --card-accent: var(--color-shu); }
+
 .card-shell:focus-visible,
 .card-shell-series:focus-within {
   outline: 2px solid var(--color-link);
@@ -154,7 +194,7 @@
   font-weight: 500;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--color-konpeki);
+  color: var(--card-accent, var(--color-konpeki));
 }
 
 .card-collection-icon {
@@ -192,11 +232,11 @@
 
 @media (hover: hover) and (pointer: fine) {
   .card-shell:hover {
-    border-color: color-mix(in srgb, var(--color-link) 24%, var(--color-card-border));
+    border-color: color-mix(in srgb, var(--card-accent, var(--color-link)) 24%, var(--color-card-border));
     transform: scale(0.97);
   }
 
-  .card-shell:hover .card-title { color: var(--color-link); }
+  .card-shell:hover .card-title { color: var(--card-accent, var(--color-link)); }
 }
 
 .card-shell:active { transform: scale(0.97); }

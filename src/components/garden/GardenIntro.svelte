@@ -4,8 +4,9 @@
   interface Props {
     title: string;
     description: string;
+    collection?: string;
   }
-  let { title, description }: Props = $props();
+  let { title, description, collection }: Props = $props();
 </script>
 
-<PageHero {title} {description} />
+<PageHero {title} {description} accent={collection} />

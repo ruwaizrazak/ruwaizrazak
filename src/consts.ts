@@ -64,3 +64,7 @@ export const SOCIAL_LINKS = [
     symbolPath: 'M12 10.8c-1.087-2.114-4.046-6.053-6.798-7.995C2.566.944 1.561 1.266.902 1.565.139 1.908 0 3.08 0 3.768c0 .69.378 5.65.6 6.453.784 2.834 3.465 3.628 5.916 3.322-3.3.413-6.22 1.972-2.09 6.886C9.2 25.296 11.1 19.1 12 16.958c.9 2.142 2.4 8.203 7.575 3.471 4.088-4.871 1.209-6.473-2.091-6.886 2.451.306 5.132-.488 5.916-3.322.222-.804.6-5.763.6-6.453 0-.688-.139-1.86-.902-2.203-.659-.3-1.664-.62-4.3 1.24C16.046 4.748 13.087 8.687 12 10.8Z',
   },
 ];
+
+// LEARN: the collections that own a colour accent (global.css maps each to a token).
+// Anything else (live, works, mixed listings) renders the neutral default.
+export const ACCENT_COLLECTIONS = ['essays', 'notes', 'series', 'playground'] as const;

@@ -18,7 +18,6 @@
   }
 
   let { post, headingLevel = 3 }: Props = $props();
-  const titleTag = $derived(`h${headingLevel}` as 'h2' | 'h3');
   const transitionName = $derived(`card-seriesPosts-${post.id}`);
 </script>
 
@@ -42,9 +41,13 @@
     </time>
   </span>
 
-  <svelte:element this={titleTag} class={`${cardType.title} card-title`}>
-    {post.data.title}
-  </svelte:element>
+  <!-- LEARN: static tags, not <svelte:element>. Hydrating a dynamic element
+       detaches and re-inserts it, and a click whose press straddles that is lost. -->
+  {#if headingLevel === 2}
+    <h2 class={`${cardType.title} card-title`}>{post.data.title}</h2>
+  {:else}
+    <h3 class={`${cardType.title} card-title`}>{post.data.title}</h3>
+  {/if}
   <p class={`${cardType.description} card-description`}>{post.data.description}</p>
 
   {#if post.data.tags.length > 0}
