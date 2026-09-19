@@ -1,5 +1,32 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
 import { ROUTES } from './routes';
+
+// RelatedNotes is client:visible, so scrolling it into view is what starts its
+// hydration, and Svelte detaches and re-inserts each card's heading while it
+// hydrates. WebKit drops a click whose press straddles that re-insertion (the
+// router never starts), so click only once THIS island has hydrated. The first
+// island on the page is Navigation or TocPill, not RelatedNotes.
+const clickFirstRelatedCard = async (page: Page) => {
+  // Scroll the section, not the island: <astro-island> is display:contents, has no
+  // box, and so never counts as "stable" for Playwright's scroll.
+  await page.locator('.related-notes-section').scrollIntoViewIfNeeded();
+  const island = page.locator('astro-island:has(.related-notes-section)');
+  await expect(island).not.toHaveAttribute('ssr', { timeout: 15_000 });
+  await page.locator('.related-notes-section a').first().click();
+};
+
+// A ClientRouter navigation is finished at astro:page-load, which fires after the
+// swap. Under load, WebKit's view-transition swap of this very tall page has
+// measured ~4s after goBack() returns, so a fixed poll window can close before
+// the new document lands. Arm the waiter BEFORE triggering the navigation (the
+// window, and so the promise, survives the swap), then await it.
+const armPageLoad = (page: Page) =>
+  page.evaluate(() => {
+    (window as any).__nextPageLoad = new Promise<void>((resolve) =>
+      document.addEventListener('astro:page-load', () => resolve(), { once: true }),
+    );
+  });
+const pageLoaded = (page: Page) => page.evaluate(() => (window as any).__nextPageLoad);
 
 test.describe('client-side navigation', () => {
   test('navigating between pages keeps the site interactive', async ({ page }) => {
@@ -101,12 +128,14 @@ test.describe('client-side navigation', () => {
     // pass would be meaningless.
     expect(from, 'document must be tall enough to reproduce the bug').toBeGreaterThan(20_000);
 
-    // RelatedNotes is client:visible — a click before hydration is swallowed.
-    await expect(page.locator('astro-island:not([ssr])').first()).toBeAttached({ timeout: 15_000 });
-    await page.locator('.related-notes-section a').first().click();
-    await page.waitForURL((u) => !u.pathname.includes('deconstructionofcodm'), { timeout: 15_000 });
+    await armPageLoad(page);
+    await clickFirstRelatedCard(page);
+    await pageLoaded(page);
+    await expect(page).not.toHaveURL(/deconstructionofcodm/);
 
+    await armPageLoad(page);
     await page.goBack();
+    await pageLoaded(page);
 
     await expect
       .poll(() => page.evaluate(() => Math.round(window.scrollY)), { timeout: 10_000 })
@@ -129,20 +158,16 @@ test.describe('client-side navigation', () => {
     );
     expect(scoped, 'the open animation must be direction-scoped').toBe(true);
 
-    await page.locator('.related-notes-section').scrollIntoViewIfNeeded();
-    await expect(page.locator('astro-island:not([ssr])').first()).toBeAttached({ timeout: 15_000 });
-    await page.locator('.related-notes-section a').first().click();
-    await page.waitForURL((u) => !u.pathname.includes('deconstructionofcodm'), { timeout: 15_000 });
+    await armPageLoad(page);
+    await clickFirstRelatedCard(page);
+    await pageLoaded(page);
+    await expect(page).not.toHaveURL(/deconstructionofcodm/);
+    expect(await page.evaluate(() => document.documentElement.dataset.navDirection)).toBe('forward');
 
-    await expect
-      .poll(() => page.evaluate(() => document.documentElement.dataset.navDirection))
-      .toBe('forward');
-
+    await armPageLoad(page);
     await page.goBack();
-
-    await expect
-      .poll(() => page.evaluate(() => document.documentElement.dataset.navDirection))
-      .toBe('back');
+    await pageLoaded(page);
+    expect(await page.evaluate(() => document.documentElement.dataset.navDirection)).toBe('back');
 
     // With direction=back the scale-in selector must no longer match the root.
     const wouldApply = await page.evaluate(
