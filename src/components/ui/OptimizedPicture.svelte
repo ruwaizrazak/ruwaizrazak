@@ -8,6 +8,8 @@
     loading?: 'eager' | 'lazy';
     /** Class used for the passthrough (remote) <img>, which has no <picture> wrapper. */
     passthroughClass?: string;
+    /** Class for the <picture> itself; `contents` lets the <img> size against the parent. */
+    pictureClass?: string;
   }
 
   let {
@@ -16,6 +18,7 @@
     class: className = '',
     loading = 'eager',
     passthroughClass,
+    pictureClass,
   }: Props = $props();
 </script>
 
@@ -25,9 +28,9 @@
 {#if picture?.img.passthrough}
   <img src={picture.img.src} {alt} class={passthroughClass ?? className} {loading} />
 {:else if picture}
-  <picture>
+  <picture class={pictureClass}>
     {#each picture.sources as source (source.type)}
-      <source srcset={source.srcset} type={source.type} />
+      <source srcset={source.srcset} sizes={picture.sizes} type={source.type} />
     {/each}
     <img
       src={picture.img.src}
