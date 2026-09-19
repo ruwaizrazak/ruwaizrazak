@@ -35,7 +35,7 @@
 <button
   id="theme-toggle"
   type="button"
-  class="theme-toggle p-2 rounded-full text-syoro hover:bg-yellow-500 dark:hover:bg-gray-700 transition-[transform,background-color] duration-[140ms] ease-snappy active:scale-[0.95]"
+  class="theme-toggle p-2 rounded-full cursor-pointer text-syoro transition-[transform,background-color] duration-[140ms] ease-snappy active:scale-[0.95]"
   class:theme-toggle--toggled={isDark}
   title="Toggle theme"
   aria-label="Toggle theme"
@@ -69,3 +69,39 @@
     </g>
   </svg>
 </button>
+
+<style>
+  /* LEARN: vendored from theme-toggles@4 "classic" (MIT), trimmed to the rules this button uses. Local
+     instead of the CDN so the stylesheet no longer blocks first paint from a third-party origin. */
+  .theme-toggle__classic path {
+    transition-timing-function: cubic-bezier(0, 0, 0.15, 1.25);
+    transform-origin: center;
+    transition-duration: 400ms;
+  }
+  .theme-toggle__classic g path {
+    transition-property: opacity, transform;
+    transition-delay: 100ms;
+  }
+  .theme-toggle__classic :first-child path {
+    transition-property: transform, d;
+  }
+  .theme-toggle--toggled .theme-toggle__classic g path {
+    transform: scale(0.5) rotate(45deg);
+    opacity: 0;
+    transition-delay: 0s;
+  }
+  .theme-toggle--toggled .theme-toggle__classic :first-child path {
+    d: path('M-12 5h30a1 1 0 0 0 9 13v24h-39Z');
+    transition-delay: 100ms;
+  }
+  @supports not (d: path('')) {
+    .theme-toggle--toggled .theme-toggle__classic :first-child path {
+      transform: translate3d(-12px, 10px, 0);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .theme-toggle * {
+      transition: none !important;
+    }
+  }
+</style>

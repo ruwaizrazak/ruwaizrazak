@@ -1,12 +1,44 @@
 // @ts-check
-import { defineConfig } from 'astro/config';
+import { defineConfig, fontProviders } from 'astro/config';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import svelte from '@astrojs/svelte';
 import tailwindcss from '@tailwindcss/vite';
 import remarkWikiLink from '@portaljs/remark-wiki-link';
+
+// LEARN: Self-hosted fonts via Astro's fonts API: no third-party stylesheet blocks first paint,
+// and Astro emits @font-face, preload links and metric-matched fallbacks at build time.
+const fontFamily = (name, cssVariable, file, faces, fallback) => ({
+  provider: fontProviders.local(),
+  name,
+  cssVariable,
+  fallbacks: [fallback],
+  options: {
+    variants: faces.map(([weight, style]) => ({
+      weight,
+      style,
+      src: [`./src/assets/fonts/web/${file}-${String(weight).replace(' ', '-')}-${style}.woff2`],
+    })),
+  },
+});
+
 export default defineConfig({
   output: 'static',
+  experimental: {
+    fonts: [
+      fontFamily('IBM Plex Serif', '--font-plex-serif', 'IBMPlexSerif', [
+        [400, 'normal'], [500, 'normal'], [600, 'normal'], [700, 'normal'],
+        [400, 'italic'], [500, 'italic'], [600, 'italic'], [700, 'italic'],
+      ], 'serif'),
+      fontFamily('Saira Condensed', '--font-saira-condensed', 'SairaCondensed', [
+        [300, 'normal'], [400, 'normal'], [500, 'normal'], [600, 'normal'], [700, 'normal'],
+      ], 'sans-serif'),
+      fontFamily('IBM Plex Mono', '--font-plex-mono', 'IBMPlexMono', [
+        [400, 'normal'], [500, 'normal'], [700, 'normal'], [400, 'italic'],
+      ], 'monospace'),
+      fontFamily('Caveat', '--font-caveat', 'Caveat', [['400 700', 'normal']], 'cursive'),
+    ],
+  },
   image: {
     domains: ['i.imgur.com'],
   },

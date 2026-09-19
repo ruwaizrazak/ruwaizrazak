@@ -30,10 +30,10 @@
 }
 
 @theme {
-  --font-serif: "IBM Plex Serif",serif;
-  --font-sans: "Saira Condensed",sans-serif;
-  --font-mono: "IBM Plex Mono",monospace;
-  --font-handwriting: "Caveat",cursive;
+  --font-serif: var(--font-plex-serif);
+  --font-sans: var(--font-saira-condensed);
+  --font-mono: var(--font-plex-mono);
+  --font-handwriting: var(--font-caveat);
 
   --marker-color: chartreuese;
   --accent: #295757;
